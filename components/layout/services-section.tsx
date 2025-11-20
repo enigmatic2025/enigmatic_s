@@ -28,11 +28,11 @@ export function ServicesSection() {
               className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
             >
               Logistics is inherently complex, but swivel-chairing, fragile
-              processes, and tribal knowledge don't have to be. Enigmatic
+              processes, and tribal knowledge don&apos;t have to be. Enigmatic
               eliminates that chaos and gives you unbreakable control with two
               integrated approaches: hands-on Strategic Engineering and Nodal,
               the logistics-native platform built for real engineers. In a
-              market where every load counts, that's how you win.
+              market where every opportunity counts, that&apos;s how you win.
             </motion.p>
           </div>
 
