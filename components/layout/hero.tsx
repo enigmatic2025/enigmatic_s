@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { CTAButtons } from "@/components/ui/cta-buttons";
 
 export function Hero() {
   return (
@@ -40,6 +41,16 @@ export function Hero() {
           className="mt-6 max-w-2xl text-xl text-foreground/80 sm:text-2xl font-light"
         >
           We build or run the processes your core systems ignore.
+        </motion.div>
+
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-10"
+        >
+          <CTAButtons />
         </motion.div>
       </div>
     </section>

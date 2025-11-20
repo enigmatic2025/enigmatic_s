@@ -12,7 +12,7 @@
 ### Body Text
 
 - **Hero Subheadline**: `text-xl sm:text-2xl font-light`
-- **Body/Description**: `text-base`
+- **Body/Description**: `text-base text-secondary-foreground`
 - **Secondary Text**: Use `text-secondary-foreground` for high-contrast body text
 - **Muted Text**: Use `text-muted-foreground` for less important labels
 
@@ -27,7 +27,8 @@
 ### Text
 
 - Primary: `text-foreground` (theme-aware)
-- Secondary: `text-secondary-foreground` (high contrast) or `text-muted-foreground` (lower contrast)
+- Secondary: `text-secondary-foreground` (standard body text)
+- Muted: `text-muted-foreground` (labels, timestamps, less important info)
 - On Video Overlays: `text-white` (single color)
 
 ### Backgrounds

@@ -19,7 +19,6 @@ import {
   CheckCircle,
   Truck,
   Wrench,
-  ShoppingCart,
   Database,
   DollarSign,
   FileCheck,
@@ -45,9 +44,9 @@ const nodeTypes = {
 };
 
 const defaultEdgeOptions = {
-  type: "step",
-  animated: false,
-  style: { stroke: "var(--muted-foreground)", strokeWidth: 1.5 },
+  type: "smoothstep",
+  animated: true,
+  style: { stroke: "var(--muted-foreground)", strokeWidth: 1.5, opacity: 0.5 },
   markerEnd: {
     type: MarkerType.ArrowClosed,
     color: "var(--muted-foreground)",
@@ -86,8 +85,12 @@ const FlowWrapper = ({
         proOptions={{ hideAttribution: true }}
         panOnScroll={false}
         zoomOnScroll={false}
+        preventScrolling={false}
         nodesDraggable={false}
         nodesConnectable={false}
+        panOnDrag={false}
+        zoomOnPinch={false}
+        zoomOnDoubleClick={false}
         minZoom={minZoom}
       >
         <Background color="hsl(var(--muted-foreground))" gap={20} size={1} />
@@ -105,82 +108,82 @@ const onboardingNodes: Node[] = [
     type: "flowBlock",
     position: { x: 180, y: 0 },
     style: { width: 240 },
-    data: { 
-      label: "Application Received", 
-      subLabel: "Tenstreet Webhook", 
+    data: {
+      label: "Application Received",
+      subLabel: "Tenstreet Webhook",
       icon: Webhook,
       badge: "API",
-      iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900"
+      iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900",
     },
   },
   // 2. Documents collected
   {
     id: "2",
     type: "flowBlock",
-    position: { x: 180, y: 100 },
+    position: { x: 180, y: 140 },
     style: { width: 240 },
-    data: { 
-      label: "Documents Review", 
-      subLabel: "Stacy (Recruiting)", 
+    data: {
+      label: "Documents Review",
+      subLabel: "Stacy (Recruiting)",
       icon: User,
       badge: "Human",
-      iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900"
+      iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900",
     },
   },
   // 3. Background checks approved
   {
     id: "3",
     type: "flowBlock",
-    position: { x: 180, y: 200 },
+    position: { x: 180, y: 280 },
     style: { width: 240 },
-    data: { 
-      label: "Background Checks", 
-      subLabel: "Natalie AI Agent", 
+    data: {
+      label: "Background Checks",
+      subLabel: "Natalie AI Agent",
       icon: Bot,
       badge: "Automated",
-      iconBg: "bg-purple-100 text-purple-600 dark:bg-purple-900"
+      iconBg: "bg-purple-100 text-purple-600 dark:bg-purple-900",
     },
   },
   // 4. Orientation scheduled (Left Branch)
   {
     id: "4",
     type: "flowBlock",
-    position: { x: 0, y: 330 },
+    position: { x: 0, y: 440 },
     style: { width: 240 },
-    data: { 
-      label: "Orientation Scheduled", 
-      subLabel: "John (Ops)", 
+    data: {
+      label: "Orientation Scheduled",
+      subLabel: "John (Ops)",
       icon: Calendar,
       badge: "Human",
-      iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900"
+      iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900",
     },
   },
   // 5. Driver added to TMS and HR systems (Right Branch)
   {
     id: "5",
     type: "flowBlock",
-    position: { x: 360, y: 330 },
+    position: { x: 360, y: 440 },
     style: { width: 240 },
-    data: { 
-      label: "Systems Provisioning", 
-      subLabel: "TMS, HR, Payroll", 
+    data: {
+      label: "Systems Provisioning",
+      subLabel: "TMS, HR, Payroll",
       icon: Database,
       badge: "Automated",
-      iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900"
+      iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900",
     },
   },
   // 6. Driver ready for dispatch (Merge)
   {
     id: "6",
     type: "flowBlock",
-    position: { x: 180, y: 460 },
+    position: { x: 180, y: 600 },
     style: { width: 240 },
-    data: { 
-      label: "Ready for Dispatch", 
-      subLabel: "Status: Active", 
+    data: {
+      label: "Ready for Dispatch",
+      subLabel: "Status: Active",
       icon: Truck,
       badge: "Complete",
-      iconBg: "bg-green-100 text-green-600 dark:bg-green-900"
+      iconBg: "bg-green-100 text-green-600 dark:bg-green-900",
     },
   },
 ];
@@ -202,5 +205,79 @@ export const DriverOnboardingFlow = () => (
     initialEdges={onboardingEdges}
     fitView={false}
     defaultViewport={{ x: 80, y: 20, zoom: 0.9 }}
+  />
+);
+
+// --- Asset Maintenance Flow ---
+const maintenanceNodes: Node[] = [
+  // 1. DVIR Submitted
+  {
+    id: "m1",
+    type: "flowBlock",
+    position: { x: 0, y: 0 },
+    style: { width: 240 },
+    data: {
+      label: "DVIR Submitted",
+      subLabel: "Technician App",
+      icon: Truck,
+      badge: "Mobile",
+      iconBg: "bg-slate-100 text-slate-600 dark:bg-slate-800",
+    },
+  },
+  // 2. Defect Detected
+  {
+    id: "m2",
+    type: "flowBlock",
+    position: { x: 0, y: 140 },
+    style: { width: 240 },
+    data: {
+      label: "Defect Detected: Brakes",
+      subLabel: "Automated Trigger",
+      icon: AlertTriangle,
+      badge: "Alert",
+      iconBg: "bg-amber-100 text-amber-600 dark:bg-amber-900",
+    },
+  },
+  // 3. Work Orchestration
+  {
+    id: "m3",
+    type: "flowBlock",
+    position: { x: 0, y: 280 },
+    style: { width: 240 },
+    data: {
+      label: "Work Orchestration",
+      subLabel: "Parts & Labor Assigned",
+      icon: Wrench,
+      badge: "Auto",
+      iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900",
+    },
+  },
+  // 4. Update Fleet Status
+  {
+    id: "m4",
+    type: "flowBlock",
+    position: { x: 0, y: 420 },
+    style: { width: 240 },
+    data: {
+      label: "Update Fleet Status",
+      subLabel: "ERP & TMS",
+      icon: Database,
+      badge: "Sync",
+      iconBg: "bg-green-100 text-green-600 dark:bg-green-900",
+    },
+  },
+];
+
+const maintenanceEdges: Edge[] = [
+  { id: "e-m1-m2", source: "m1", target: "m2" },
+  { id: "e-m2-m3", source: "m2", target: "m3" },
+  { id: "e-m3-m4", source: "m3", target: "m4" },
+];
+
+export const AssetMaintenanceFlow = () => (
+  <FlowWrapper
+    initialNodes={maintenanceNodes}
+    initialEdges={maintenanceEdges}
+    fitView={true}
   />
 );

@@ -8,20 +8,23 @@ interface LogoProps {
   showText?: boolean;
 }
 
-export function Logo({ className, width = 40, height = 40, showText = false }: LogoProps) {
+export function Logo({
+  className,
+  width = 40,
+  height = 40,
+  showText = false,
+}: LogoProps) {
   return (
     <div className={cn("relative flex items-center gap-2", className)}>
       <Image
-        src="/images/logo.png"
+        src="/images/enigmatic-logo.png"
         alt="Logo"
         width={width}
         height={height}
         className="object-contain"
         priority
       />
-      {showText && (
-        <span className="text-xl font-normal">Enigmatic</span>
-      )}
+      {showText && <span className="text-xl font-normal">Enigmatic</span>}
     </div>
   );
 }

@@ -1,16 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AuroraBackground } from "@/components/ui/aurora-background";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   DriverOnboardingFlow,
+  AssetMaintenanceFlow,
 } from "@/components/layout/use-case-flows";
-import {
-  AssetMaintenancePreview,
-  BillingClaimsPreview,
-} from "@/components/layout/use-case-visualizations";
+import { BillingClaimsPreview } from "@/components/layout/use-case-visualizations";
+import { CTASection } from "@/components/layout/cta-section";
 
 const useCases = [
   {
@@ -24,7 +21,7 @@ const useCases = [
     title: "Asset Maintenance & Inspections",
     description:
       "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically—orchestrating cross-team work beyond the TMS.",
-    component: <AssetMaintenancePreview />,
+    component: <AssetMaintenanceFlow />,
     className: "md:col-span-1",
   },
   {
@@ -38,10 +35,9 @@ const useCases = [
 
 export default function UseCasesPage() {
   return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex min-h-screen flex-col bg-background">
       {/* Hero Section */}
-      <section className="relative flex min-h-[60vh] w-full flex-col items-center justify-center overflow-hidden px-4 md:px-6 py-20">
-        <AuroraBackground />
+      <section className="relative flex w-full flex-col items-center justify-center overflow-hidden px-4 md:px-6 pt-32 pb-12 md:pt-40 md:pb-20">
         <div className="container relative z-10 flex flex-col items-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -59,14 +55,15 @@ export default function UseCasesPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="max-w-2xl text-xl text-foreground/80 sm:text-2xl font-light"
           >
-            See how Enigmatic and Nodal solve complex logistics challenges with precision and automation.
+            See how Enigmatic and Nodal solve complex logistics challenges with
+            precision and automation.
           </motion.div>
         </div>
       </section>
 
       {/* Use Cases Sections */}
       <section className="container mx-auto px-4 md:px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border rounded-3xl overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border rounded-3xl overflow-hidden border border-border">
           {useCases.map((useCase, index) => (
             <div
               key={index}
@@ -76,15 +73,15 @@ export default function UseCasesPage() {
               )}
             >
               <div className="mb-8 max-w-2xl">
-                <h2 className="text-2xl md:text-3xl font-light tracking-tight text-foreground mb-4">
+                <h2 className="text-xl md:text-2xl font-normal tracking-tight text-foreground mb-4">
                   {useCase.title}
                 </h2>
-                <p className="text-lg text-muted-foreground leading-relaxed">
+                <p className="text-base text-secondary-foreground leading-relaxed">
                   {useCase.description}
                 </p>
               </div>
 
-              <div className="flex-1 w-full min-h-[500px] relative">
+              <div className="flex-1 w-full min-h-[600px] relative flex items-center justify-center">
                 {useCase.component}
               </div>
             </div>
@@ -93,19 +90,10 @@ export default function UseCasesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 md:px-6 py-20 mb-20">
-        <div className="rounded-3xl bg-muted/50 p-8 md:p-16 text-center border border-border">
-          <h2 className="text-3xl md:text-4xl font-light mb-6">
-            Have a unique challenge?
-          </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Our platform is designed to be flexible. Let's discuss how we can tailor a solution for your specific needs.
-          </p>
-          <Button size="lg" className="text-lg px-8">
-            Contact Us
-          </Button>
-        </div>
-      </section>
+      <CTASection
+        title="Have a unique challenge?"
+        description="Our team of engineers can build custom workflows tailored to your specific operational needs."
+      />
     </main>
   );
 }

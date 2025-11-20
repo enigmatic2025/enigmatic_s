@@ -16,6 +16,7 @@ import {
   Database,
   ArrowRight,
   FileCheck,
+  Bot,
 } from "lucide-react";
 import { FlowBlock } from "@/components/layout/nodal-visualizations";
 
@@ -66,7 +67,9 @@ export const DriverOnboardingPreview = () => {
             </div>
             <div>
               <h4 className="text-sm font-medium">Driver Onboarding</h4>
-              <p className="text-xs text-muted-foreground">Candidate: John Doe</p>
+              <p className="text-xs text-muted-foreground">
+                Candidate: John Doe
+              </p>
             </div>
           </div>
           <span className="text-xs font-medium bg-green-100 text-green-700 px-2 py-1 rounded-full">
@@ -85,7 +88,9 @@ export const DriverOnboardingPreview = () => {
           </div>
           <div className="flex items-center gap-3 p-2 rounded-lg bg-primary/5 border border-primary/20">
             <div className="h-4 w-4 rounded-full border-2 border-primary/50 border-t-transparent animate-spin"></div>
-            <span className="text-xs font-medium text-foreground">Drug Screen Results</span>
+            <span className="text-xs font-medium text-foreground">
+              Drug Screen Results
+            </span>
           </div>
           <div className="flex items-center gap-3 p-2 rounded-lg opacity-50">
             <div className="h-4 w-4 rounded-full border border-muted-foreground"></div>
@@ -97,133 +102,162 @@ export const DriverOnboardingPreview = () => {
   );
 };
 
-// --- Asset Maintenance Visual ---
-export const AssetMaintenancePreview = () => {
-  return (
-    <div className="relative flex flex-col items-center h-full w-full pt-6 pb-4">
-      {/* Step 1: DVIR Submission */}
-      <FlowBlock
-        label="DVIR Submitted"
-        subLabel="Technician App"
-        icon={Truck}
-        className="z-10 w-64"
-      />
-
-      {/* Edge 1 */}
-      <div className="h-6 w-px bg-border my-1"></div>
-
-      {/* Step 2: Logic / Trigger */}
-      <div className="relative z-10 bg-background border border-border rounded-lg p-2 shadow-sm flex items-center gap-2 mb-1">
-        <AlertTriangle className="h-4 w-4 text-amber-500" />
-        <span className="text-xs font-medium">Defect Detected: Brakes</span>
-      </div>
-
-      {/* Edge 2 (Branching) */}
-      <div className="h-6 w-px bg-border my-1"></div>
-      
-      {/* Parallel Actions Container */}
-      <div className="flex gap-4 w-full justify-center">
-        {/* Left Branch: Parts */}
-        <div className="flex flex-col items-center">
-           <div className="w-px h-4 bg-border mb-1"></div>
-           <FlowBlock
-            label="Order Parts"
-            subLabel="Inventory System"
-            icon={ShoppingCart}
-            className="w-48 scale-90"
-          />
-        </div>
-
-        {/* Right Branch: Assignment */}
-        <div className="flex flex-col items-center">
-           <div className="w-px h-4 bg-border mb-1"></div>
-           <FlowBlock
-            label="Assign Mechanic"
-            subLabel="Shop Schedule"
-            icon={Wrench}
-            className="w-48 scale-90"
-          />
-        </div>
-      </div>
-
-      {/* Edge 3 (Converge) */}
-      <div className="h-6 w-px bg-border my-1 mt-2"></div>
-
-      {/* Final Step */}
-      <FlowBlock
-        label="Update Fleet Status"
-        subLabel="ERP & TMS"
-        icon={Database}
-        iconBg="bg-green-100 text-green-600"
-        className="z-10 w-64"
-      />
-    </div>
-  );
-};
-
 // --- Billing & Claims Visual ---
 export const BillingClaimsPreview = () => {
   return (
-    <div className="relative flex flex-col items-center justify-center h-full w-full p-6">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-        {/* Header */}
-        <div className="bg-muted/30 border-b border-border p-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-green-600" />
-            <span className="text-sm font-medium">Claim Processing #CLM-892</span>
+    <div className="relative flex flex-col items-center justify-center h-full w-full p-4 md:p-8">
+      <div className="w-full h-full bg-card border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col">
+        {/* App Header */}
+        <div className="h-14 border-b border-border bg-muted/20 flex items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <span className="hover:text-foreground cursor-pointer">
+                Claims
+              </span>
+              <span>/</span>
+              <span className="text-foreground">#CLM-892</span>
+            </div>
+            <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium border border-green-200 dark:border-green-800">
+              Ready for Payment
+            </span>
           </div>
-          <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Automated</span>
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </div>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4 space-y-4">
-          {/* Documents Row */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            <div className="flex items-center gap-2 bg-background border border-border rounded p-2 min-w-[120px]">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-medium">BOL.pdf</span>
-                <span className="text-[8px] text-green-600">Matched</span>
-              </div>
+        {/* Main Content */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left Panel: Document Viewer */}
+          <div className="flex-1 bg-muted/10 p-6 border-r border-border flex flex-col gap-4">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-medium">Attached Documents (3)</h4>
+              <button className="text-xs text-primary hover:underline">
+                View All
+              </button>
             </div>
-            <div className="flex items-center gap-2 bg-background border border-border rounded p-2 min-w-[120px]">
-              <FileCheck className="h-4 w-4 text-muted-foreground" />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-medium">POD.pdf</span>
-                <span className="text-[8px] text-green-600">Verified</span>
-              </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { name: "Bill of Lading.pdf", type: "PDF", size: "1.2 MB" },
+                { name: "Proof of Delivery.pdf", type: "PDF", size: "840 KB" },
+                { name: "Invoice #4021.pdf", type: "PDF", size: "450 KB" },
+              ].map((doc, i) => (
+                <div
+                  key={i}
+                  className="group relative aspect-3/4 bg-background border border-border rounded-lg p-3 flex flex-col justify-between hover:border-primary/50 transition-colors cursor-pointer shadow-sm"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="h-8 w-8 rounded bg-red-100 dark:bg-red-900/20 flex items-center justify-center text-red-600">
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                  </div>
+
+                  {/* Document Skeleton Preview */}
+                  <div className="flex-1 w-full my-3 space-y-2 opacity-30">
+                    <div className="h-1.5 w-3/4 bg-foreground/20 rounded-full" />
+                    <div className="h-1.5 w-full bg-foreground/20 rounded-full" />
+                    <div className="h-1.5 w-5/6 bg-foreground/20 rounded-full" />
+                    <div className="h-1.5 w-full bg-foreground/20 rounded-full" />
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-medium truncate">{doc.name}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {doc.size}
+                    </p>
+                  </div>
+                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg" />
+                </div>
+              ))}
             </div>
-            <div className="flex items-center gap-2 bg-background border border-border rounded p-2 min-w-[120px]">
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-medium">Invoice</span>
-                <span className="text-[8px] text-green-600">Approved</span>
+
+            <div className="mt-auto bg-background border border-border rounded-lg p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
+                  <Bot className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">AI Analysis</p>
+                  <p className="text-xs text-muted-foreground">
+                    Nodal AI verified all line items against rate sheet.
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Rate Match</span>
+                  <span className="text-green-600 font-medium">100% Match</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Fuel Surcharge</span>
+                  <span className="text-green-600 font-medium">
+                    Verified ($452.00)
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Validation Steps */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Rate Validation</span>
-              <span className="text-green-600 flex items-center gap-1"><CheckCircle className="h-3 w-3" /> Passed</span>
+          {/* Right Panel: Validation & Actions */}
+          <div className="w-80 bg-background p-6 flex flex-col gap-6 overflow-y-auto">
+            <div>
+              <h4 className="text-sm font-medium mb-4">Validation Checklist</h4>
+              <div className="space-y-3">
+                {[
+                  { label: "Carrier Active", status: "success" },
+                  { label: "Insurance Valid", status: "success" },
+                  { label: "Rate Confirmation", status: "success" },
+                  { label: "POD Signature", status: "success" },
+                  { label: "No Claims Found", status: "success" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm">
+                    <div className="h-5 w-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 border border-green-200 dark:border-green-800">
+                      <CheckCircle className="h-3 w-3" />
+                    </div>
+                    <span className="text-foreground/80">{item.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Accessorial Check</span>
-              <span className="text-green-600 flex items-center gap-1"><CheckCircle className="h-3 w-3" /> Passed</span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Duplicate Check</span>
-              <span className="text-green-600 flex items-center gap-1"><CheckCircle className="h-3 w-3" /> Passed</span>
-            </div>
-          </div>
 
-          {/* Action Button */}
-          <div className="pt-2 border-t border-border mt-2">
-             <button className="w-full bg-primary text-primary-foreground text-xs py-2 rounded-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
-               <Database className="h-3 w-3" />
-               Submit to Accounting (QuickBooks)
-             </button>
+            <div className="h-px bg-border" />
+
+            <div>
+              <h4 className="text-sm font-medium mb-4">Payment Details</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Line Haul</span>
+                  <span>$2,400.00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Fuel</span>
+                  <span>$452.00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Lumper</span>
+                  <span>$150.00</span>
+                </div>
+                <div className="h-px bg-border my-2" />
+                <div className="flex justify-between font-medium text-base">
+                  <span>Total</span>
+                  <span>$3,002.00</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-auto pt-6">
+              <button className="w-full bg-primary text-primary-foreground h-10 rounded-md font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                <CheckCircle className="h-4 w-4" />
+                Approve for Payment
+              </button>
+              <button className="w-full mt-3 bg-muted text-muted-foreground h-10 rounded-md font-medium text-sm hover:bg-muted/80 transition-colors">
+                Flag for Review
+              </button>
+            </div>
           </div>
         </div>
       </div>

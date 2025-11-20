@@ -143,8 +143,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </NavigationMenu>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="outline">Sign In</Button>
-          <Button>Collaborate</Button>
+          <Button variant="ghost" asChild>
+            <Link href="/login">Sign In</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/contact">Collaborate</Link>
+          </Button>
           <ModeToggle />
         </div>
         <Button
@@ -194,10 +198,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </div>
         </NavigationMenu>
         <div className="flex flex-col gap-2">
-          <Button className="w-full bg-transparent" variant="outline">
-            Sign In
+          <Button className="w-full bg-transparent" variant="outline" asChild>
+            <Link href="/login">Sign In</Link>
           </Button>
-          <Button className="w-full">Get Started</Button>
+          <Button className="w-full" asChild>
+            <Link href="/contact">Collaborate</Link>
+          </Button>
           <div className="flex justify-center">
             <ModeToggle />
           </div>

@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -24,9 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistMono.variable} antialiased font-sans`}
-      >
+      <body className={`${geistMono.variable} antialiased font-sans`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,6 +34,7 @@ export default function RootLayout({
         >
           <Header transparent />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
