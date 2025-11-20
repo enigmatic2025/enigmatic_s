@@ -5,7 +5,9 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
-  DriverOnboardingPreview,
+  DriverOnboardingFlow,
+} from "@/components/layout/use-case-flows";
+import {
   AssetMaintenancePreview,
   BillingClaimsPreview,
 } from "@/components/layout/use-case-visualizations";
@@ -15,7 +17,7 @@ const useCases = [
     title: "Driver Onboarding & Hiring",
     description:
       "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
-    component: <DriverOnboardingPreview />,
+    component: <DriverOnboardingFlow />,
     className: "md:col-span-2",
   },
   {
@@ -89,7 +91,7 @@ export default function UseCasesPage() {
             {/* Visual Content */}
             <div className="flex-1 w-full">
               <div className="relative w-full aspect-square md:aspect-4/3 rounded-3xl border border-border bg-muted/30 overflow-hidden shadow-sm">
-                <div className="absolute inset-0 flex items-center justify-center bg-grid-black/[0.02] dark:bg-grid-white/[0.02]">
+                <div className="absolute inset-0">
                   {useCase.component}
                 </div>
               </div>

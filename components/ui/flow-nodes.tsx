@@ -30,7 +30,7 @@ export const FlowBlockNode = memo(({ data }: NodeProps) => {
   const Icon = data.icon || Calculator;
 
   return (
-    <div className="relative flex items-center gap-3 rounded-lg border border-border bg-background p-3 shadow-sm min-w-[180px]">
+    <div className="relative flex items-center gap-3 rounded-lg border border-border bg-background p-3 shadow-sm min-w-[180px] w-full">
       <Handle
         type="target"
         position={Position.Top}
