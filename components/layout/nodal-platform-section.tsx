@@ -44,7 +44,7 @@ export function NodalPlatformSection() {
           {/* Card 1: Visual Canvas (Tall, Left) */}
           <BentoGridItem
             title="Orchestrate with our visual canvas."
-            description="Build precise Action Flows for driver onboarding and rate updates. Enforce the exact same sequence every time, so execution never depends on who is at the desk."
+            description="Build precise Action Flows for processes like driver onboarding and rate updates. Enforce the exact same sequence every time, so execution never depends on who is at the desk."
             header={<VisualCanvasPreview />}
             className="md:col-span-1 md:row-span-2"
           />
@@ -52,7 +52,7 @@ export function NodalPlatformSection() {
           {/* Card 2: Powerful Blocks (Top Middle) */}
           <BentoGridItem
             title="Build with logic blocks."
-            description="Define strict rules for routing and carrier selection. Break down silos by orchestrating logic across your existing systems in one place."
+            description="Define strict rules for business processes. Break down silos by orchestrating logic across your existing systems in one place."
             header={<PowerfulBlocksPreview />}
             className="md:col-span-1"
           />
