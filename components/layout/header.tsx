@@ -281,7 +281,7 @@ const productLinks: LinkItem[] = [
   },
   {
     title: "Use Cases",
-    href: "#",
+    href: "/product/use-cases",
     description: "See how Enigmatic solves real-world problems",
     icon: LayersIcon,
   },
