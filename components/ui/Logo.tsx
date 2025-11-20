@@ -1,54 +1,27 @@
-import React from "react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface LogoProps {
-  size?: "sm" | "md" | "lg";
-  variant?: "light" | "dark";
+  className?: string;
+  width?: number;
+  height?: number;
+  showText?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({
-  size = "md",
-  variant = "dark",
-}) => {
-  const sizes = {
-    sm: "h-6 w-6",
-    md: "h-8 w-8",
-    lg: "h-12 w-12",
-  };
-
-  const colors = {
-    light: "text-white",
-    dark: "text-black",
-  };
-
+export function Logo({ className, width = 40, height = 40, showText = false }: LogoProps) {
   return (
-    <div
-      className={`${sizes[size]} ${colors[variant]} flex items-center justify-center`}
-    >
-      {/* Replace this with your actual logo SVG or image */}
-      <svg
-        viewBox="0 0 100 100"
-        fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          stroke="currentColor"
-          strokeWidth="2"
-          fill="none"
-        />
-        <text
-          x="50"
-          y="60"
-          textAnchor="middle"
-          fontSize="40"
-          fontWeight="bold"
-          fill="currentColor"
-        >
-          E
-        </text>
-      </svg>
+    <div className={cn("relative flex items-center gap-2", className)}>
+      <Image
+        src="/images/logo.png"
+        alt="Logo"
+        width={width}
+        height={height}
+        className="object-contain"
+        priority
+      />
+      {showText && (
+        <span className="text-xl font-normal">Enigmatic</span>
+      )}
     </div>
   );
-};
+}
