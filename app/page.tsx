@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/header";
 import { Hero } from "@/components/layout/hero";
 import { MissionQuote } from "@/components/layout/mission-quote";
 import { ProblemSection } from "@/components/layout/problem-section";
+import { ServicesSection } from "@/components/layout/services-section";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <MissionQuote />
       <ProblemSection />
+      <ServicesSection />
     </div>
   );
 }

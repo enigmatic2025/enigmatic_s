@@ -42,7 +42,7 @@ export function ProblemSection() {
               <h3 className="text-xl md:text-2xl font-normal text-foreground">
                 {item.title}
               </h3>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              <p className="text-base text-secondary-foreground leading-relaxed">
                 {item.description}
               </p>
             </motion.div>

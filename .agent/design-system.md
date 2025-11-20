@@ -12,8 +12,9 @@
 ### Body Text
 
 - **Hero Subheadline**: `text-xl sm:text-2xl font-light`
-- **Body/Description**: `text-base md:text-lg`
-- **Muted Text**: Use `text-muted-foreground` for secondary text
+- **Body/Description**: `text-base`
+- **Secondary Text**: Use `text-secondary-foreground` for high-contrast body text
+- **Muted Text**: Use `text-muted-foreground` for less important labels
 
 ### Font Weight
 
@@ -26,7 +27,7 @@
 ### Text
 
 - Primary: `text-foreground` (theme-aware)
-- Secondary: `text-muted-foreground` (theme-aware)
+- Secondary: `text-secondary-foreground` (high contrast) or `text-muted-foreground` (lower contrast)
 - On Video Overlays: `text-white` (single color)
 
 ### Backgrounds
@@ -104,6 +105,11 @@
 
 - All main sections on the home page should take up at least the full height of the viewport (`min-h-screen`).
 - Content should generally be vertically centered within these sections (`flex items-center justify-center`).
+
+### Floating Sections
+
+- Use `mx-4 md:mx-6` and `rounded-3xl` for sections that should appear as "floating cards" (e.g., Services Section).
+- Ensure internal padding matches standard sections (`py-20`).
 
 ### Container Widths
 
