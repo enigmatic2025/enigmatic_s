@@ -26,10 +26,12 @@ export function ServicesSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
           >
-            Swivel chairing, niche processes, and tribal knowledge all come from
-            the inherent complexity of logistics. Organizations with tighter
-            control over their operations dominate in a highly competitive
-            market where every load counts.
+            Logistics is inherently complex, but swivel-chairing, fragile
+            processes, and tribal knowledge don't have to be. Enigmatic
+            eliminates that chaos and gives you unbreakable control with two
+            integrated approaches: hands-on Strategic Engineering and Nodal, the
+            logistics-native platform built for real engineers. In a market
+            where every load counts, that's how you win.
           </motion.p>
         </div>
 
