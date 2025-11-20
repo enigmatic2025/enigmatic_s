@@ -6,7 +6,7 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-20">
+    <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 md:px-6 py-20">
       <AuroraBackground />
       <div className="container relative z-10 flex flex-col items-center text-center">
         {/* Logo-sized Enigmatic at top */}

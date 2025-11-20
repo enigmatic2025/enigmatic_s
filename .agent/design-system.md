@@ -5,12 +5,14 @@
 ### Headings
 
 - **Hero Headline**: `text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light`
-- **Section Headline**: `text-2xl md:text-3xl lg:text-4xl font-normal`
+- **Section Headline**: `text-2xl md:text-4xl font-normal`
 - **Video Overlay Text**: `text-xl md:text-2xl lg:text-3xl font-normal`
+- **Card/Item Title**: `text-xl md:text-2xl font-normal`
 
 ### Body Text
 
 - **Hero Subheadline**: `text-xl sm:text-2xl font-light`
+- **Body/Description**: `text-base md:text-lg`
 - **Muted Text**: Use `text-muted-foreground` for secondary text
 
 ### Font Weight
@@ -62,9 +64,8 @@
 
 ### Section Padding
 
-- Desktop: `px-6 md:px-12 lg:px-16 py-20`
-- Compact: `px-4 md:px-6 py-12`
-- Video Section: `px-4 md:px-6 py-12`
+- **Standard**: `px-4 md:px-6 py-20`
+- **Compact**: `px-4 md:px-6 py-12`
 
 ### Container Widths
 
@@ -98,6 +99,13 @@
 - Navigation: No shadow (removed)
 
 ## Layout Patterns
+
+### Full Screen Sections
+
+- All main sections on the home page should take up at least the full height of the viewport (`min-h-screen`).
+- Content should generally be vertically centered within these sections (`flex items-center justify-center`).
+
+### Container Widths
 
 ### Full-Screen Sections
 
@@ -160,5 +168,3 @@
 
 - Use `text-white` and `text-white/70` on dark video overlays
 - Background: `bg-black/40` to `bg-black/60`
-
-:3
