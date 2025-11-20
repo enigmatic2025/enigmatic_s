@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { NodalNLogo } from "@/components/ui/nodal-n-logo";
 import {
   VisualCanvasPreview,
   PowerfulBlocksPreview,
@@ -13,22 +14,26 @@ export function NodalPlatformSection() {
   return (
     <section className="min-h-screen flex flex-col bg-background text-foreground px-4 md:px-6 py-20">
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col">
-        {/* Section Header - Top Aligned */}
-        <div className="mb-16 md:mb-24">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
-          >
-            <span className="text-foreground">Unify Your Systems. </span>
-            <span className="text-muted-foreground">
-              Nodal adds a powerful orchestration layer on top of your existing
-              core systems, and tools, giving you perfect consistency and
-              visibility without replacing a single tool.
-            </span>
-          </motion.h2>
+        {/* Section Header - Top Aligned with Nodal N Logo */}
+        <div className="mb-16 md:mb-24 flex flex-col items-start gap-4">
+          <div className="flex items-start">
+            {/* Nodal N Logo, even larger and more spaced */}
+            <NodalNLogo size={88} className="mr-12 md:w-28 md:h-28 w-20 h-20" />
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
+            >
+              <span className="text-foreground">Unify Your Systems. </span>
+              <span className="text-muted-foreground">
+                Nodal adds a powerful orchestration layer on top of your
+                existing core systems and tools, giving you perfect consistency
+                and visibility without replacing a single tool.
+              </span>
+            </motion.h2>
+          </div>
         </div>
 
         {/* Bento Grid Layout */}
