@@ -37,27 +37,20 @@ export default function UseCasesPage() {
   return (
     <main className="flex min-h-screen flex-col bg-background">
       {/* Hero Section */}
-      <section className="relative flex w-full flex-col items-center justify-center overflow-hidden px-4 md:px-6 pt-32 pb-12 md:pt-40 md:pb-20">
-        <div className="container relative z-10 flex flex-col items-center text-center">
-          <motion.div
+      <section className="relative flex w-full flex-col justify-center overflow-hidden px-4 md:px-6 pt-32 pb-12 md:pt-40 md:pb-20">
+        <div className="container mx-auto relative z-10 flex flex-col items-center text-center">
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="text-2xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-justify hyphens-auto"
           >
-            <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl mb-6">
-              Use Cases
-            </h1>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="max-w-2xl text-xl text-foreground/80 sm:text-2xl font-light"
-          >
-            See how Enigmatic and Nodal solve complex logistics challenges with
-            precision and automation.
-          </motion.div>
+            <span className="text-foreground">Use Cases. </span>
+            <span className="text-muted-foreground">
+              See how Enigmatic and Nodal solve complex logistics challenges
+              with precision and automation.
+            </span>
+          </motion.h1>
         </div>
       </section>
 

@@ -15,11 +15,7 @@ export function CTAButtons({ className }: CTAButtonsProps) {
         className
       )}
     >
-      <Button
-        size="lg"
-        className="text-lg px-8 h-14 rounded-full w-full sm:w-auto"
-        asChild
-      >
+      <Button size="lg" className="text-lg px-8 h-14 w-full sm:w-auto" asChild>
         <Link href="/contact">
           Collaborate
           <ArrowRight className="ml-2 w-5 h-5" />
@@ -28,7 +24,7 @@ export function CTAButtons({ className }: CTAButtonsProps) {
       <Button
         size="lg"
         variant="outline"
-        className="text-lg px-8 h-14 rounded-full w-full sm:w-auto"
+        className="text-lg px-8 h-14 w-full sm:w-auto"
         asChild
       >
         <Link href="/login">Sign In</Link>

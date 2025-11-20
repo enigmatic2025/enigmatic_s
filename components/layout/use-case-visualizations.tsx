@@ -147,7 +147,7 @@ export const BillingClaimsPreview = () => {
               ].map((doc, i) => (
                 <div
                   key={i}
-                  className="group relative aspect-3/4 bg-background border border-border rounded-lg p-3 flex flex-col justify-between hover:border-primary/50 transition-colors cursor-pointer shadow-sm"
+                  className="group relative aspect-3/4 bg-background border border-border rounded-lg p-3 flex flex-col justify-between shadow-sm"
                 >
                   <div className="flex justify-between items-start">
                     <div className="h-8 w-8 rounded bg-red-100 dark:bg-red-900/20 flex items-center justify-center text-red-600">
@@ -170,7 +170,6 @@ export const BillingClaimsPreview = () => {
                       {doc.size}
                     </p>
                   </div>
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg" />
                 </div>
               ))}
             </div>
