@@ -24,9 +24,9 @@ export function NodalPlatformSection() {
           >
             <span className="text-foreground">Unify Your Systems. </span>
             <span className="text-muted-foreground">
-              Nodal adds a powerful orchestration layer on top of your TMS, EDI,
-              and ELD, giving you perfect consistency and visibility without
-              replacing a single tool.
+              Nodal adds a powerful orchestration layer on top of your existing
+              core systems, and tools, giving you perfect consistency and
+              visibility without replacing a single tool.
             </span>
           </motion.h2>
         </div>
@@ -44,7 +44,7 @@ export function NodalPlatformSection() {
           {/* Card 2: Powerful Blocks (Top Middle) */}
           <BentoGridItem
             title="Build with logic blocks."
-            description="Define strict rules for routing and carrier selection. Break down silos by orchestrating logic across your TMS, EDI, and ELD in one place."
+            description="Define strict rules for routing and carrier selection. Break down silos by orchestrating logic across your existing systems in one place."
             header={<PowerfulBlocksPreview />}
             className="md:col-span-1"
           />
