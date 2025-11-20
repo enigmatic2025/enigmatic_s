@@ -3,6 +3,7 @@ import { MissionQuote } from "@/components/layout/mission-quote";
 import { ProblemSection } from "@/components/layout/problem-section";
 import { ServicesSection } from "@/components/layout/services-section";
 import { NodalPlatformSection } from "@/components/layout/nodal-platform-section";
+import { PrinciplesSection } from "@/components/layout/principles-section";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <ProblemSection />
       <ServicesSection />
       <NodalPlatformSection />
+      <PrinciplesSection />
     </div>
   );
 }
