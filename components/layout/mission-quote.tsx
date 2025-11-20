@@ -19,7 +19,7 @@ export function MissionQuote() {
             <source src="/videos/truck_video.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          
+
           {/* Dark gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
@@ -32,7 +32,9 @@ export function MissionQuote() {
               transition={{ duration: 0.6 }}
             >
               <div className="text-xl md:text-2xl lg:text-3xl font-normal leading-relaxed text-white">
-                At Enigmatic, our mission is to reimagine the logistics technology ecosystem. We're engineering ways to give logistics teams more control over the technology that powers their operations.
+                At Enigmatic, we’re modernizing logistics technology to put
+                people back in control of the tools that run their day-to-day
+                operations.
               </div>
             </motion.div>
           </div>
