@@ -32,7 +32,9 @@ type LinkItem = {
 
 export function Header({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = React.useState(false);
-  const [scrollDirection, setScrollDirection] = React.useState<"up" | "down">("up");
+  const [scrollDirection, setScrollDirection] = React.useState<"up" | "down">(
+    "up"
+  );
   const [lastScrollY, setLastScrollY] = React.useState(0);
   const scrolled = useScroll(10);
 
@@ -50,13 +52,13 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   React.useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setScrollDirection("down");
       } else if (currentScrollY < lastScrollY) {
         setScrollDirection("up");
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -95,8 +97,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                           href={item.href}
                           className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
                         >
-                          <div className="font-medium text-base mb-1">{item.title}</div>
-                          <div className="text-sm text-muted-foreground">{item.description}</div>
+                          <div className="font-medium text-base mb-1">
+                            {item.title}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.description}
+                          </div>
                         </a>
                       </li>
                     ))}
@@ -115,8 +121,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                           href={item.href}
                           className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
                         >
-                          <div className="font-medium text-base mb-1">{item.title}</div>
-                          <div className="text-sm text-muted-foreground">{item.description}</div>
+                          <div className="font-medium text-base mb-1">
+                            {item.title}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.description}
+                          </div>
                         </a>
                       </li>
                     ))}
@@ -156,17 +166,30 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           <div className="flex w-full flex-col gap-y-2">
             <span className="text-sm font-medium">Product</span>
             {productLinks.map((link) => (
-              <a key={link.title} href={link.href} className="px-3 py-2 text-sm rounded-md hover:bg-accent">
+              <a
+                key={link.title}
+                href={link.href}
+                className="px-3 py-2 text-sm rounded-md hover:bg-accent"
+              >
                 {link.title}
               </a>
             ))}
             <span className="text-sm font-medium mt-2">Company</span>
             {companyLinks.map((link) => (
-              <a key={link.title} href={link.href} className="px-3 py-2 text-sm rounded-md hover:bg-accent">
+              <a
+                key={link.title}
+                href={link.href}
+                className="px-3 py-2 text-sm rounded-md hover:bg-accent"
+              >
                 {link.title}
               </a>
             ))}
-            <a href="#" className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2">Blog</a>
+            <a
+              href="#"
+              className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2"
+            >
+              Blog
+            </a>
           </div>
         </NavigationMenu>
         <div className="flex flex-col gap-2">
