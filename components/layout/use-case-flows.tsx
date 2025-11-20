@@ -72,7 +72,7 @@ const FlowWrapper = ({
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
   return (
-    <div className="h-full w-full min-h-[500px] bg-muted/10">
+    <div className="h-full w-full min-h-[500px]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -110,7 +110,7 @@ const onboardingNodes: Node[] = [
       subLabel: "Tenstreet Webhook", 
       icon: Webhook,
       badge: "API",
-      iconBg: "bg-blue-100 text-blue-600"
+      iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900"
     },
   },
   // 2. Documents collected
@@ -124,7 +124,7 @@ const onboardingNodes: Node[] = [
       subLabel: "Stacy (Recruiting)", 
       icon: User,
       badge: "Human",
-      iconBg: "bg-orange-100 text-orange-600"
+      iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900"
     },
   },
   // 3. Background checks approved
@@ -138,7 +138,7 @@ const onboardingNodes: Node[] = [
       subLabel: "Natalie AI Agent", 
       icon: Bot,
       badge: "Automated",
-      iconBg: "bg-purple-100 text-purple-600"
+      iconBg: "bg-purple-100 text-purple-600 dark:bg-purple-900"
     },
   },
   // 4. Orientation scheduled (Left Branch)
@@ -152,7 +152,7 @@ const onboardingNodes: Node[] = [
       subLabel: "John (Ops)", 
       icon: Calendar,
       badge: "Human",
-      iconBg: "bg-orange-100 text-orange-600"
+      iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900"
     },
   },
   // 5. Driver added to TMS and HR systems (Right Branch)
@@ -166,7 +166,7 @@ const onboardingNodes: Node[] = [
       subLabel: "TMS, HR, Payroll", 
       icon: Database,
       badge: "Automated",
-      iconBg: "bg-blue-100 text-blue-600"
+      iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900"
     },
   },
   // 6. Driver ready for dispatch (Merge)
@@ -180,7 +180,7 @@ const onboardingNodes: Node[] = [
       subLabel: "Status: Active", 
       icon: Truck,
       badge: "Complete",
-      iconBg: "bg-green-100 text-green-600"
+      iconBg: "bg-green-100 text-green-600 dark:bg-green-900"
     },
   },
 ];

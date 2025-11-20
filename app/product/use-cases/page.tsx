@@ -65,39 +65,31 @@ export default function UseCasesPage() {
       </section>
 
       {/* Use Cases Sections */}
-      <section className="container mx-auto px-4 md:px-6 py-20 space-y-24 md:space-y-32">
-        {useCases.map((useCase, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className={cn(
-              "flex flex-col gap-12 items-center",
-              index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-            )}
-          >
-            {/* Text Content */}
-            <div className="flex-1 space-y-6">
-              <h2 className="text-3xl md:text-4xl font-light tracking-tight text-foreground">
-                {useCase.title}
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                {useCase.description}
-              </p>
-            </div>
+      <section className="container mx-auto px-4 md:px-6 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border rounded-3xl overflow-hidden">
+          {useCases.map((useCase, index) => (
+            <div
+              key={index}
+              className={cn(
+                "flex flex-col bg-background p-8 md:p-10",
+                useCase.className
+              )}
+            >
+              <div className="mb-8 max-w-2xl">
+                <h2 className="text-2xl md:text-3xl font-light tracking-tight text-foreground mb-4">
+                  {useCase.title}
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  {useCase.description}
+                </p>
+              </div>
 
-            {/* Visual Content */}
-            <div className="flex-1 w-full">
-              <div className="relative w-full aspect-square md:aspect-4/3 rounded-3xl border border-border bg-muted/30 overflow-hidden shadow-sm">
-                <div className="absolute inset-0">
-                  {useCase.component}
-                </div>
+              <div className="flex-1 w-full min-h-[500px] relative">
+                {useCase.component}
               </div>
             </div>
-          </motion.div>
-        ))}
+          ))}
+        </div>
       </section>
 
       {/* CTA Section */}
