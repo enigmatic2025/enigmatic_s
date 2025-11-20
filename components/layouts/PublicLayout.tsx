@@ -1,5 +1,5 @@
-import React from 'react';
-import { Logo } from '@/components/ui/Logo';
+import React from "react";
+import { Logo } from "@/components/ui/Logo";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
