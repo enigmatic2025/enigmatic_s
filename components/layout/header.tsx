@@ -6,6 +6,7 @@ import {
   type LucideIcon,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { createPortal } from "react-dom";
 import { Logo } from "@/components/ui/logo";
@@ -80,9 +81,9 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
     >
       <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
         <div className="flex items-center gap-5">
-          <div className="p-2">
+          <Link href="/" className="p-2">
             <Logo width={32} height={32} showText />
-          </div>
+          </Link>
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>

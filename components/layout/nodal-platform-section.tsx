@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { NodalNLogo } from "@/components/ui/nodal-n-logo";
 import {
   VisualCanvasPreview,
   PowerfulBlocksPreview,
@@ -17,8 +16,12 @@ export function NodalPlatformSection() {
         {/* Section Header - Top Aligned with Nodal N Logo */}
         <div className="mb-16 md:mb-24 flex flex-col items-start gap-4">
           <div className="flex items-start">
-            {/* Nodal N Logo, even larger and more spaced */}
-            <NodalNLogo size={88} className="mr-12 md:w-28 md:h-28 w-20 h-20" />
+            {/* Nodal SVG Logo, large and spaced */}
+            <img
+              src="/images/services/nodal-logo.svg?v=3"
+              alt="Nodal Platform"
+              className="mr-12 md:w-28 md:h-28 w-20 h-20 object-contain object-top -mt-2"
+            />
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
