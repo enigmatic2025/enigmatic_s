@@ -25,27 +25,10 @@ export function NodalPlatformSection() {
             <span className="text-foreground">Unify Your Systems. </span>
             <span className="text-muted-foreground">
               Nodal adds a powerful orchestration layer on top of your TMS, EDI,
-              ELD, and every other tool you already use.
+              and ELD, giving you perfect consistency and visibility without
+              replacing a single tool.
             </span>
           </motion.h2>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base text-secondary-foreground max-w-3xl text-left space-y-4 mt-6"
-          >
-            <p>
-              Your engineers build precise Action Flows that enforce the exact
-              same sequence for every process (driver onboarding, exception
-              handling, rate updates) so nothing depends on who is at the desk
-              that day.
-            </p>
-            <p>
-              You get perfect consistency, zero silos, and full visibility
-              without replacing a single system.
-            </p>
-          </motion.div>
         </div>
 
         {/* Bento Grid Layout */}
@@ -53,7 +36,7 @@ export function NodalPlatformSection() {
           {/* Card 1: Visual Canvas (Tall, Left) */}
           <BentoGridItem
             title="Orchestrate with our visual canvas."
-            description="Map complex logistics workflows visually. Connect TMS, ELD, and ERP systems in a single view."
+            description="Build precise Action Flows for driver onboarding and rate updates. Enforce the exact same sequence every time, so execution never depends on who is at the desk."
             header={<VisualCanvasPreview />}
             className="md:col-span-1 md:row-span-2"
           />
@@ -61,7 +44,7 @@ export function NodalPlatformSection() {
           {/* Card 2: Powerful Blocks (Top Middle) */}
           <BentoGridItem
             title="Build with logic blocks."
-            description="Define precise rules for shipment routing, carrier selection, and exception handling."
+            description="Define strict rules for routing and carrier selection. Break down silos by orchestrating logic across your TMS, EDI, and ELD in one place."
             header={<PowerfulBlocksPreview />}
             className="md:col-span-1"
           />
@@ -69,7 +52,7 @@ export function NodalPlatformSection() {
           {/* Card 3: Extend Functionality (Top Right) */}
           <BentoGridItem
             title="Extend your capabilities."
-            description="Add custom calculations, data transformations, and automated alerts to any process."
+            description="Add custom calculations and automated alerts. Get full visibility into your data without changing your existing tech stack."
             header={<ExtendFunctionalityPreview />}
             className="md:col-span-1"
           />
@@ -77,7 +60,7 @@ export function NodalPlatformSection() {
           {/* Card 4: Human in Loop (Bottom Wide) */}
           <BentoGridItem
             title="Human-in-the-loop control."
-            description="Seamlessly route exceptions to operators when automated rules aren't enough. Keep humans in control of critical decisions."
+            description="Seamlessly route exceptions to operators. Ensure critical decisions get human attention while keeping the rest of your process running on autopilot."
             header={<HumanInLoopPreview />}
             className="md:col-span-2"
           />

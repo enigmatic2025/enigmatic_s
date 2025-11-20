@@ -48,7 +48,9 @@ export const BentoGridItem = ({
           {description}
         </div>
       </div>
-      <div className="flex-1 min-h-0 w-full">{header}</div>
+      <div className="flex-1 min-h-0 w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px] dark:bg-[radial-gradient(#ffffff22_1px,transparent_1px)] rounded-lg">
+        {header}
+      </div>
     </div>
   );
 };

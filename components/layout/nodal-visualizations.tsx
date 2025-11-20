@@ -7,7 +7,6 @@ import {
   Plus,
   Database,
   MessageSquare,
-  RefreshCw,
   Hash,
   UserCheck,
   AlertCircle,
@@ -184,12 +183,6 @@ export const HumanInLoopBlock = () => {
               </button>
             </div>
           </div>
-
-          <div className="mt-4 flex justify-center">
-            <span className="text-xs text-orange-500/80 flex items-center gap-1.5 bg-orange-500/5 px-3 py-1 rounded-full border border-orange-500/10">
-              <UserCheck className="h-3 w-3" /> Waiting for operator...
-            </span>
-          </div>
         </div>
       </div>
     </div>
@@ -280,7 +273,6 @@ export const ExtendFunctionalityPreview = () => {
     <div className="flex flex-col justify-center h-full w-full p-4">
       <ListBlock label="Calculate ETA" icon={Calculator} />
       <ListBlock label="Consolidate Loads" icon={Hash} />
-      <ListBlock label="Retry Assignment" icon={RefreshCw} cursor />
       <ListBlock label="Update TMS" icon={Database} />
     </div>
   );
@@ -289,7 +281,7 @@ export const ExtendFunctionalityPreview = () => {
 // --- Human In Loop Preview ---
 export const HumanInLoopPreview = () => {
   return (
-    <div className="flex items-center justify-center h-full w-full p-8 bg-muted/10">
+    <div className="flex items-center justify-center h-full w-full p-8">
       <HumanInLoopBlock />
     </div>
   );
