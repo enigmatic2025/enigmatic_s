@@ -6,7 +6,7 @@ import { Workflow, Network, Users } from "lucide-react";
 
 export function ServicesSection() {
   return (
-    <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
+    <section className="w-full min-h-dvh flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
       <div className="w-full max-w-[95%] bg-muted/50 text-foreground rounded-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 w-full">
           {/* Section Header */}

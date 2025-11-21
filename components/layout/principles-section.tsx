@@ -21,7 +21,7 @@ const principles = [
     icon: <Eye className="w-6 h-6" />,
     title: "Radical Transparency",
     description:
-      "Every process, status, and data point is visible in real time to you, your team, and your customers — no black boxes, no surprises, no excuses.",
+      "Every process, status, and data point is visible in real time to you, your team, and your customers. No black boxes, no surprises, no excuses.",
   },
 ];
 
@@ -68,7 +68,7 @@ export function PrinciplesSection() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <p className="text-xl md:text-2xl font-light text-white">
-                  We take a different approach — guided by three disciplines.
+                  We take a different approach, guided by three principles.
                 </p>
               </motion.div>
             </div>

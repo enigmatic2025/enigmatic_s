@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function MissionQuote() {
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center px-4 md:px-6 py-20">
+    <section className="relative w-full min-h-dvh flex items-center justify-center px-4 md:px-6 py-20">
       <div className="w-full max-w-[95%]">
         <div className="relative w-full aspect-square md:aspect-video rounded-2xl overflow-hidden border border-border shadow-2xl">
           {/* Self-hosted Video Background */}
