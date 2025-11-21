@@ -6,47 +6,49 @@ import { motion } from "framer-motion";
 
 export function ProblemSection() {
   return (
-    <section className="flex items-center justify-center py-16 md:py-24 bg-background text-foreground">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 w-full">
-        <div className="mb-12 md:mb-24">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
-          >
-            <span className="text-foreground">
-              The Logistics Fragmentation Problem.{" "}
-            </span>
-            <span className="text-muted-foreground">
-              Modern supply chains are breaking under the weight of outdated
-              tools and disconnected systems.
-            </span>
-          </motion.h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10 md:gap-y-16">
-          {items.map((item, i) => (
-            <motion.div
-              key={i}
+    <section className="w-full min-h-screen flex items-center justify-center py-16 md:py-24 px-4 md:px-6 bg-background">
+      <div className="w-full max-w-[95%] text-foreground rounded-3xl overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="mb-12 md:mb-24">
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-              className="flex flex-col gap-6"
+              transition={{ duration: 0.5 }}
+              className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
             >
-              <div className="w-full h-px bg-border/50" />
+              <span className="text-foreground">
+                The Logistics Fragmentation Problem.{" "}
+              </span>
+              <span className="text-muted-foreground">
+                Modern supply chains are breaking under the weight of outdated
+                tools and disconnected systems.
+              </span>
+            </motion.h2>
+          </div>
 
-              {/* Icon removed as requested */}
-              <h3 className="text-xl md:text-2xl font-normal text-foreground">
-                {item.title}
-              </h3>
-              <p className="text-base text-secondary-foreground leading-relaxed">
-                {item.description}
-              </p>
-            </motion.div>
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10 md:gap-y-16">
+            {items.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
+                className="flex flex-col gap-6"
+              >
+                <div className="w-full h-px bg-border/50" />
+
+                {/* Icon removed as requested */}
+                <h3 className="text-xl md:text-2xl font-normal text-foreground">
+                  {item.title}
+                </h3>
+                <p className="text-base text-secondary-foreground leading-relaxed">
+                  {item.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
