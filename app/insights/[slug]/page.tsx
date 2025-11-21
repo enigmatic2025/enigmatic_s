@@ -5,13 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
-import { blogPosts } from "@/lib/blog-data";
+import { insightPosts } from "@/lib/insights-data";
 import { CTASection } from "@/components/layout/cta-section";
 
-export default function BlogPostPage() {
+export default function InsightPostPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = insightPosts.find((p) => p.slug === slug);
 
   if (!post) {
     return notFound();
@@ -22,14 +22,14 @@ export default function BlogPostPage() {
       {/* Hero Section */}
       <section className="relative flex w-full flex-col justify-center overflow-hidden px-4 md:px-6 pt-32 pb-12 md:pt-40 md:pb-20">
         <div className="container mx-auto relative z-10 flex flex-col items-start max-w-4xl">
-          <Link 
-            href="/blog"
+          <Link
+            href="/insights"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Insights
           </Link>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

@@ -12,7 +12,7 @@
 ### Body Text
 
 - **Hero Subheadline**: `text-xl sm:text-2xl font-light`
-- **Body/Description**: `text-base text-secondary-foreground`
+- **Body/Description**: `text-base text-secondary-foreground leading-relaxed`
 - **Secondary Text**: Use `text-secondary-foreground` for high-contrast body text
 - **Muted Text**: Use `text-muted-foreground` for less important labels
 

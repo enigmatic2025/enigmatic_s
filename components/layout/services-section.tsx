@@ -31,8 +31,8 @@ export function ServicesSection() {
               processes, and tribal knowledge don&apos;t have to be. Enigmatic
               eliminates that chaos and gives you unbreakable control with two
               integrated approaches: hands-on Strategic Engineering and Nodal,
-              the logistics-native platform built for engineers. In a
-              market where every opportunity counts, that&apos;s how you win.
+              the logistics-native platform built for engineers. In a market
+              where every opportunity counts, that&apos;s how you win.
             </motion.p>
           </div>
 

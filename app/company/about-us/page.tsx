@@ -99,7 +99,7 @@ export default function AboutUsPage() {
           >
             <ShieldCheck className="w-10 h-10 text-primary" />
             <h3 className="text-xl font-medium text-foreground">Integrity</h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-base text-secondary-foreground leading-relaxed">
               We commit to truth in every system we uncover and every solution we build. Our work is precise, transparent, and dependable.
             </p>
           </motion.div>
@@ -112,7 +112,7 @@ export default function AboutUsPage() {
           >
             <Lightbulb className="w-10 h-10 text-primary" />
             <h3 className="text-xl font-medium text-foreground">Ingenuity</h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-base text-secondary-foreground leading-relaxed">
               We approach problems with curiosity and originality, creating solutions that push boundaries and elevate what is possible.
             </p>
           </motion.div>
@@ -125,7 +125,7 @@ export default function AboutUsPage() {
           >
             <HandHeart className="w-10 h-10 text-primary" />
             <h3 className="text-xl font-medium text-foreground">Responsibility</h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-base text-secondary-foreground leading-relaxed">
               We take full ownership of outcomes. We stand behind our work, deliver with care, and ensure every result reflects our standards.
             </p>
           </motion.div>
@@ -177,7 +177,7 @@ export default function AboutUsPage() {
                     <span className="sr-only">LinkedIn</span>
                   </a>
                 </div>
-                <p className="text-muted-foreground leading-relaxed text-base">
+                <p className="text-base text-secondary-foreground leading-relaxed">
                   {member.description}
                 </p>
               </div>
