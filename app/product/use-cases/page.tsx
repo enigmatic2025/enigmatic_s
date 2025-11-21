@@ -16,6 +16,7 @@ const useCases = [
       "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
     component: <DriverOnboardingFlow />,
     className: "md:col-span-2",
+    minHeight: "min-h-[600px] md:min-h-[800px]",
   },
   {
     title: "Asset Maintenance & Inspections",
@@ -23,6 +24,7 @@ const useCases = [
       "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically—orchestrating cross-team work beyond the TMS.",
     component: <AssetMaintenanceFlow />,
     className: "md:col-span-1",
+    minHeight: "min-h-[600px] md:min-h-[800px]",
   },
   {
     title: "Billing & Claims Processing",
@@ -30,6 +32,7 @@ const useCases = [
       "Accelerate cash flow by reducing leakage. Nodal provides a single workflow view for billing and claims, handling tasks, attachments, and validations before submitting clean data to your TMS or accounting system.",
     component: <BillingClaimsPreview />,
     className: "md:col-span-3",
+    minHeight: "min-h-[600px]",
   },
 ];
 
@@ -61,7 +64,7 @@ export default function UseCasesPage() {
             <div
               key={index}
               className={cn(
-                "flex flex-col bg-background p-8 md:p-10",
+                "flex flex-col bg-background p-6 md:p-10",
                 useCase.className
               )}
             >
@@ -74,7 +77,12 @@ export default function UseCasesPage() {
                 </p>
               </div>
 
-              <div className="flex-1 w-full min-h-[600px] relative flex items-center justify-center">
+              <div
+                className={cn(
+                  "flex-1 w-full relative flex items-center justify-center",
+                  useCase.minHeight
+                )}
+              >
                 {useCase.component}
               </div>
             </div>

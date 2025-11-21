@@ -8,7 +8,7 @@ export const CardNode = memo(({ data, selected }: NodeProps) => {
   return (
     <div
       className={cn(
-        "h-full w-full rounded-2xl border border-border bg-card p-6 shadow-sm transition-all",
+        "h-full w-full rounded-2xl border border-border bg-card p-6 transition-all",
         selected ? "ring-1 ring-primary" : ""
       )}
     >
@@ -30,7 +30,7 @@ export const FlowBlockNode = memo(({ data }: NodeProps) => {
   const Icon = data.icon || Calculator;
 
   return (
-    <div className="relative flex items-center gap-3 rounded-lg border border-border bg-background p-3 shadow-sm min-w-[180px] w-full">
+    <div className="relative flex items-center gap-3 rounded-lg border border-border bg-background p-3 min-w-[180px] w-full">
       <Handle
         type="target"
         position={Position.Top}
@@ -75,7 +75,7 @@ FlowBlockNode.displayName = "FlowBlockNode";
 // --- Condition Node (e.g. "Is Deal status 'Won'?") ---
 export const ConditionNode = memo(({ data }: NodeProps) => {
   return (
-    <div className="relative rounded-lg border border-border bg-background p-1 shadow-sm min-w-[200px]">
+    <div className="relative rounded-lg border border-border bg-background p-1 min-w-[200px]">
       <Handle
         type="target"
         position={Position.Top}

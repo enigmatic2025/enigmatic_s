@@ -56,7 +56,7 @@ const FlowWrapper = ({
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
   return (
-    <div className="h-full w-full min-h-[500px]">
+    <div className="h-full w-full">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -91,7 +91,7 @@ const onboardingNodes: Node[] = [
   {
     id: "1",
     type: "flowBlock",
-    position: { x: 180, y: 0 },
+    position: { x: 130, y: 0 },
     style: { width: 240 },
     data: {
       label: "Application Received",
@@ -105,7 +105,7 @@ const onboardingNodes: Node[] = [
   {
     id: "2",
     type: "flowBlock",
-    position: { x: 180, y: 140 },
+    position: { x: 130, y: 140 },
     style: { width: 240 },
     data: {
       label: "Documents Review",
@@ -119,7 +119,7 @@ const onboardingNodes: Node[] = [
   {
     id: "3",
     type: "flowBlock",
-    position: { x: 180, y: 280 },
+    position: { x: 130, y: 280 },
     style: { width: 240 },
     data: {
       label: "Background Checks",
@@ -147,7 +147,7 @@ const onboardingNodes: Node[] = [
   {
     id: "5",
     type: "flowBlock",
-    position: { x: 360, y: 440 },
+    position: { x: 260, y: 440 },
     style: { width: 240 },
     data: {
       label: "Systems Provisioning",
@@ -161,7 +161,7 @@ const onboardingNodes: Node[] = [
   {
     id: "6",
     type: "flowBlock",
-    position: { x: 180, y: 600 },
+    position: { x: 130, y: 600 },
     style: { width: 240 },
     data: {
       label: "Ready for Dispatch",
@@ -188,8 +188,7 @@ export const DriverOnboardingFlow = () => (
   <FlowWrapper
     initialNodes={onboardingNodes}
     initialEdges={onboardingEdges}
-    fitView={false}
-    defaultViewport={{ x: 80, y: 20, zoom: 0.9 }}
+    fitView={true}
   />
 );
 
