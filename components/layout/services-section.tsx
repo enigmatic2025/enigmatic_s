@@ -10,30 +10,17 @@ export function ServicesSection() {
       <div className="w-full max-w-[95%] bg-muted/50 text-foreground rounded-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 w-full">
           {/* Section Header */}
-          <div className="mb-8 md:mb-10">
+          <div className="mb-8 md:mb-10 w-full">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-6"
+              className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-8"
             >
-              Take Back Control
+              <span className="text-foreground">Take Back Control. </span>
+              <span className="text-muted-foreground">Modern logistics teams face chaos from outdated tools and disconnected processes. Enigmatic gives you control and clarity.</span>
             </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
-            >
-              Logistics is inherently complex, but swivel-chairing, fragile
-              processes, and tribal knowledge don&apos;t have to be. Enigmatic
-              eliminates that chaos and gives you unbreakable control with two
-              integrated approaches: hands-on Strategic Engineering and Nodal,
-              the logistics-native platform built for engineers. In a market
-              where every opportunity counts, that&apos;s how you win.
-            </motion.p>
           </div>
 
           {/* Main Grid Layout */}

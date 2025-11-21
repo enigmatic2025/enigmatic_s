@@ -175,10 +175,10 @@ export const HumanInLoopBlock = () => {
               </span>
             </div>
             <div className="flex gap-2">
-              <button className="flex-1 border border-green-500/30 text-green-600 hover:bg-green-500/5 text-xs py-2 rounded transition-colors font-normal">
+              <button className="flex-1 border border-green-500/30 text-green-600 text-xs py-2 rounded font-normal">
                 Approve
               </button>
-              <button className="flex-1 border border-red-500/30 text-red-600 hover:bg-red-500/5 text-xs py-2 rounded transition-colors font-normal">
+              <button className="flex-1 border border-red-500/30 text-red-600 text-xs py-2 rounded font-normal">
                 Reject
               </button>
             </div>

@@ -38,7 +38,7 @@ export function ProblemSection() {
             >
               <div className="w-full h-px bg-border/50" />
 
-              <div className="mb-2">{item.icon}</div>
+                {/* Icon removed as requested */}
               <h3 className="text-xl md:text-2xl font-normal text-foreground">
                 {item.title}
               </h3>
