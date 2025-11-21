@@ -94,7 +94,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                   <ul className="w-[400px] p-4">
                     {productLinks.map((item, i) => (
                       <li key={i}>
-                        <a
+                        <Link
                           href={item.href}
                           className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
                         >
@@ -104,7 +104,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                           <div className="text-sm text-muted-foreground">
                             {item.description}
                           </div>
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -118,7 +118,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                   <ul className="w-[400px] p-4">
                     {companyLinks.map((item, i) => (
                       <li key={i}>
-                        <a
+                        <Link
                           href={item.href}
                           className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
                         >
@@ -128,7 +128,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                           <div className="text-sm text-muted-foreground">
                             {item.description}
                           </div>
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -171,23 +171,23 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           <div className="flex w-full flex-col gap-y-2">
             <span className="text-sm font-medium">Product</span>
             {productLinks.map((link) => (
-              <a
+              <Link
                 key={link.title}
                 href={link.href}
                 className="px-3 py-2 text-sm rounded-md hover:bg-accent"
               >
                 {link.title}
-              </a>
+              </Link>
             ))}
             <span className="text-sm font-medium mt-2">Company</span>
             {companyLinks.map((link) => (
-              <a
+              <Link
                 key={link.title}
                 href={link.href}
                 className="px-3 py-2 text-sm rounded-md hover:bg-accent"
               >
                 {link.title}
-              </a>
+              </Link>
             ))}
             <a
               href="#"
@@ -297,7 +297,7 @@ const productLinks: LinkItem[] = [
 const companyLinks: LinkItem[] = [
   {
     title: "About Us",
-    href: "#",
+    href: "/company/about-us",
     description: "Learn about our mission and team",
     icon: Users,
   },

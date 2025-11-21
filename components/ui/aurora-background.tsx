@@ -20,8 +20,8 @@ export function AuroraBackground() {
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-background pointer-events-none">
-      {/* Theme-aware Aurora Gradients */}
-      <div className="absolute inset-0 opacity-30 blur-[80px]">
+      {/* Theme-aware Aurora Gradients - REMOVED per user request to keep only dots */}
+      {/* <div className="absolute inset-0 opacity-30 blur-[80px]">
         <motion.div
           className="absolute top-[-50%] left-[-50%] h-[200%] w-[200%]"
           animate={{
@@ -48,7 +48,7 @@ export function AuroraBackground() {
             `,
           }}
         />
-      </div>
+      </div> */}
 
       {/* Dot Grid Overlay */}
       <DotGrid mousePosition={mousePosition} />

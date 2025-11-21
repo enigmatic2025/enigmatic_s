@@ -17,7 +17,7 @@ export function Hero() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="inline-block text-4xl font-light tracking-tight sm:text-6xl md:text-7xl lg:text-8xl bg-gradient-to-r from-slate-400 via-purple-400 to-blue-400 bg-clip-text text-transparent px-1 pb-4 -mb-4">
+          <div className="inline-block text-4xl font-light tracking-tight sm:text-6xl md:text-7xl lg:text-8xl bg-linear-to-r from-slate-400 via-purple-400 to-blue-400 bg-clip-text text-transparent px-1 pb-4 -mb-4">
             Enigmatic
           </div>
         </motion.div>
@@ -29,7 +29,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
-            Map it. Automate it. Own it.
+            Map. Automate. Own.
           </h1>
         </motion.div>
 

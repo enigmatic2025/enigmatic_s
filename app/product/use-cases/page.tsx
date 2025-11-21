@@ -43,7 +43,7 @@ export default function UseCasesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-2xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-justify hyphens-auto"
+            className="text-2xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
           >
             <span className="text-foreground">Use Cases. </span>
             <span className="text-muted-foreground">
