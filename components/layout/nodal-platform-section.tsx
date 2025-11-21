@@ -13,30 +13,31 @@ export function NodalPlatformSection() {
   return (
     <section className="flex flex-col bg-background text-foreground px-4 md:px-6 py-16 md:py-24 min-h-dvh">
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col">
-        {/* Section Header - Top Aligned with Nodal N Logo */}
+        {/* Nodal SVG Logo */}
+        <div className="flex justify-center mb-12 md:mb-24">
+          <img
+            src="/images/brand/nodal-logo.svg?v=3"
+            alt="Nodal Platform"
+            className="md:w-40 md:h-40 w-32 h-32 object-contain"
+          />
+        </div>
+
+        {/* Section Header */}
         <div className="mb-12 md:mb-24 flex flex-col items-start gap-4">
-          <div className="flex items-start">
-            {/* Nodal SVG Logo, large and spaced */}
-            <img
-              src="/images/brand/nodal-logo.svg?v=3"
-              alt="Nodal Platform"
-              className="mr-6 md:mr-12 md:w-28 md:h-28 w-20 h-20 object-contain object-top -mt-2"
-            />
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
-            >
-              <span className="text-foreground">Unify Your Systems. </span>
-              <span className="text-muted-foreground">
-                Nodal adds a powerful orchestration layer on top of your
-                existing core systems and tools, giving you perfect consistency
-                and visibility without replacing a single tool.
-              </span>
-            </motion.h2>
-          </div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
+          >
+            <span className="text-foreground">Unify Your Systems. </span>
+            <span className="text-muted-foreground">
+              Nodal adds a powerful orchestration layer on top of your existing
+              core systems and tools, giving you perfect consistency and
+              visibility without replacing a single tool.
+            </span>
+          </motion.h2>
         </div>
 
         {/* Bento Grid Layout */}

@@ -21,7 +21,7 @@ export function MissionQuote() {
           </video>
 
           {/* Dark gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
 
           {/* Text Overlay - Bottom Left */}
           <div className="absolute bottom-0 left-0 p-6 md:p-12 lg:p-16 max-w-4xl">
