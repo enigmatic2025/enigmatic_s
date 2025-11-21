@@ -29,6 +29,14 @@ const team = [
       "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech.",
     linkedin: "https://www.linkedin.com/in/phi-tran-m-s/",
   },
+  {
+    name: "Anthony Flores",
+    role: "Founding Partner | Clients",
+    image: "/images/company/team/anthony.jpg",
+    description:
+      "Anthony leads customer success, ensuring smooth onboarding and value-driven implementations. He turns our solutions into real operational gains, strengthening partnerships over time.",
+    linkedin: "https://www.linkedin.com/in/anthony-flores-m-s/",
+  },
 ];
 
 export default function AboutUsPage() {
