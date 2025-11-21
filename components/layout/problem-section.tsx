@@ -6,9 +6,9 @@ import { motion } from "framer-motion";
 
 export function ProblemSection() {
   return (
-    <section className="min-h-screen flex items-center justify-center py-20 bg-background text-foreground">
+    <section className="flex items-center justify-center py-16 md:py-24 bg-background text-foreground">
       <div className="max-w-7xl mx-auto px-4 md:px-6 w-full">
-        <div className="mb-16 md:mb-24">
+        <div className="mb-12 md:mb-24">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -26,7 +26,7 @@ export function ProblemSection() {
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10 md:gap-y-16">
           {items.map((item, i) => (
             <motion.div
               key={i}

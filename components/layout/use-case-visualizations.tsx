@@ -108,7 +108,7 @@ export const DriverOnboardingPreview = () => {
 export const BillingClaimsPreview = () => {
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full p-2 md:p-8">
-      <div className="w-full max-w-5xl h-[600px] bg-background border border-border rounded-xl shadow-sm overflow-hidden flex">
+      <div className="w-full max-w-5xl h-[500px] md:h-[600px] bg-background border border-border rounded-xl shadow-sm overflow-hidden flex">
         {/* Sidebar (Desktop only) */}
         <div className="hidden md:flex w-64 bg-muted/30 border-r border-border flex-col p-4 gap-4">
           <div className="flex items-center gap-2 px-2 mb-4">
@@ -180,7 +180,9 @@ export const BillingClaimsPreview = () => {
                     <FileText className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">Signed_POD.pdf</p>
+                    <p className="text-sm font-medium truncate">
+                      Signed_POD.pdf
+                    </p>
                     <p className="text-xs text-muted-foreground">840 KB</p>
                   </div>
                   <CheckCircle className="h-4 w-4 text-green-500 ml-2 shrink-0" />

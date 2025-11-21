@@ -27,7 +27,7 @@ const principles = [
 
 export function PrinciplesSection() {
   return (
-    <section className="min-h-screen w-full flex items-center justify-center py-20 px-4 md:px-6">
+    <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
       <div className="relative w-full max-w-[95%] rounded-3xl overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">

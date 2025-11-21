@@ -14,8 +14,8 @@ export function CTASection({
   description = "Join the forward-thinking teams building better operations with Enigmatic.",
 }: CTASectionProps) {
   return (
-    <section className="min-h-screen w-full flex items-center justify-center py-20 px-4 md:px-6">
-      <div className="w-full max-w-[95%] bg-muted/50 rounded-3xl overflow-hidden flex flex-col items-center justify-center py-24 md:py-32">
+    <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
+      <div className="w-full max-w-[95%] bg-muted/50 rounded-3xl overflow-hidden flex flex-col items-center justify-center py-16 md:py-32">
         <div className="max-w-4xl mx-auto px-4 md:px-6 text-center flex flex-col items-center gap-10">
           {/* Logo */}
           <motion.div

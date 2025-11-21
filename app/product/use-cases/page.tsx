@@ -16,7 +16,7 @@ const useCases = [
       "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
     component: <DriverOnboardingFlow />,
     className: "md:col-span-2",
-    minHeight: "min-h-[600px] md:min-h-[800px]",
+    minHeight: "h-[500px] md:h-[800px]",
   },
   {
     title: "Asset Maintenance & Inspections",
@@ -24,7 +24,7 @@ const useCases = [
       "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically—orchestrating cross-team work beyond the TMS.",
     component: <AssetMaintenanceFlow />,
     className: "md:col-span-1",
-    minHeight: "min-h-[600px] md:min-h-[800px]",
+    minHeight: "h-[500px] md:h-[800px]",
   },
   {
     title: "Billing & Claims Processing",
@@ -32,7 +32,7 @@ const useCases = [
       "Accelerate cash flow by reducing leakage. Nodal provides a single workflow view for billing and claims, handling tasks, attachments, and validations before submitting clean data to your TMS or accounting system.",
     component: <BillingClaimsPreview />,
     className: "md:col-span-3",
-    minHeight: "min-h-[600px]",
+    minHeight: "h-[500px] md:h-[600px]",
   },
 ];
 
@@ -40,13 +40,13 @@ export default function UseCasesPage() {
   return (
     <main className="flex min-h-screen flex-col bg-background">
       {/* Hero Section */}
-      <section className="relative flex w-full flex-col justify-center overflow-hidden px-4 md:px-6 pt-32 pb-12 md:pt-40 md:pb-20">
+      <section className="relative flex w-full flex-col justify-center overflow-hidden px-4 md:px-6 pt-28 pb-12 md:pt-40 md:pb-20">
         <div className="container mx-auto relative z-10 flex flex-col items-center text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-2xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
+            className="text-3xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
           >
             <span className="text-foreground">Use Cases. </span>
             <span className="text-muted-foreground">

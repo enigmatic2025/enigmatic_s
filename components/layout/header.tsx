@@ -184,6 +184,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 key={link.title}
                 href={link.href}
                 className="px-3 py-2 text-sm rounded-md hover:bg-accent"
+                onClick={() => setOpen(false)}
               >
                 {link.title}
               </Link>
@@ -194,6 +195,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 key={link.title}
                 href={link.href}
                 className="px-3 py-2 text-sm rounded-md hover:bg-accent"
+                onClick={() => setOpen(false)}
               >
                 {link.title}
               </Link>
@@ -201,6 +203,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
             <Link
               href="/insights"
               className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2"
+              onClick={() => setOpen(false)}
             >
               Insights
             </Link>
@@ -208,10 +211,14 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
         </NavigationMenu>
         <div className="flex flex-col gap-2">
           <Button className="w-full bg-transparent" variant="outline" asChild>
-            <Link href="/login">Sign In</Link>
+            <Link href="/login" onClick={() => setOpen(false)}>
+              Sign In
+            </Link>
           </Button>
           <Button className="w-full" asChild>
-            <Link href="/contact">Collaborate</Link>
+            <Link href="/contact" onClick={() => setOpen(false)}>
+              Collaborate
+            </Link>
           </Button>
           <div className="flex justify-center">
             <ModeToggle />

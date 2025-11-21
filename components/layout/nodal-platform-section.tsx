@@ -11,16 +11,16 @@ import {
 
 export function NodalPlatformSection() {
   return (
-    <section className="min-h-screen flex flex-col bg-background text-foreground px-4 md:px-6 py-20">
+    <section className="flex flex-col bg-background text-foreground px-4 md:px-6 py-16 md:py-24">
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col">
         {/* Section Header - Top Aligned with Nodal N Logo */}
-        <div className="mb-16 md:mb-24 flex flex-col items-start gap-4">
+        <div className="mb-12 md:mb-24 flex flex-col items-start gap-4">
           <div className="flex items-start">
             {/* Nodal SVG Logo, large and spaced */}
             <img
               src="/images/services/nodal-logo.svg?v=3"
               alt="Nodal Platform"
-              className="mr-12 md:w-28 md:h-28 w-20 h-20 object-contain object-top -mt-2"
+              className="mr-6 md:mr-12 md:w-28 md:h-28 w-20 h-20 object-contain object-top -mt-2"
             />
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
