@@ -21,7 +21,7 @@ const useCases = [
   {
     title: "Asset Maintenance & Inspections",
     description:
-      "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically—orchestrating cross-team work beyond the TMS.",
+      "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically, orchestrating cross-team work beyond the TMS.",
     component: <AssetMaintenanceFlow />,
     className: "md:col-span-1",
     minHeight: "min-h-[500px] md:min-h-[800px]",

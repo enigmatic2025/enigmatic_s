@@ -2,30 +2,31 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ShieldCheck, Lightbulb, HandHeart } from "lucide-react";
 import { CTASection } from "@/components/layout/cta-section";
-import { cn } from "@/lib/utils";
 
 const team = [
   {
     name: "Sam Tran",
     role: "Founding Partner | Vision",
     image: "/images/services/about us/sam.jpeg",
-    description: "Sam shapes the strategic vision for Enigmatic’s identity, products, and services, uniting top-tier talent to fundamentally reimagine the logistics technology ecosystem.",
+    description:
+      "Sam shapes the strategic vision for Enigmatic’s identity, products, and services, uniting top-tier talent to fundamentally reimagine the logistics technology ecosystem.",
     linkedin: "https://www.linkedin.com/in/htsam22/",
   },
   {
     name: "Chris Schmitt",
     role: "Founding Partner | Sales",
     image: "/images/services/about us/chris.jpg",
-    description: "Chris spearheads operations and strategic partnerships, focusing on scaling Enigmatic's market presence and delivering value to key industry stakeholders.",
+    description:
+      "Chris spearheads operations and strategic partnerships, focusing on scaling Enigmatic's market presence and delivering value to key industry stakeholders.",
     linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/",
   },
   {
     name: "Phi Tran",
     role: "Founding Partner | Technology",
     image: "/images/services/about us/phi.jpg",
-    description: "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech.",
+    description:
+      "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech.",
     linkedin: "https://www.linkedin.com/in/phi-tran-m-s/",
   },
 ];
@@ -47,88 +48,6 @@ export default function AboutUsPage() {
               Building the future of logistics with intelligence and precision.
             </span>
           </motion.h1>
-        </div>
-      </section>
-
-      {/* Story Section */}
-      <section className="w-full flex items-center justify-center py-20 px-4 md:px-6">
-        <div className="w-full max-w-[95%] text-foreground rounded-3xl overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 w-full">
-            <div className="mb-8 md:mb-10">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-6"
-              >
-                Founded by Logistics Enthusiasts.
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
-              >
-                We met while working together and envisioned packaging our combined experiences at a billion-dollar logistics provider into technical solutions that could help the rest of the industry bring elegance to their operations.
-              </motion.p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Values Section */}
-      <section className="container mx-auto px-4 md:px-6 py-10 md:py-20">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-2xl md:text-4xl font-normal tracking-tight mb-8 md:mb-12"
-        >
-          Our Core Values
-        </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px border rounded-3xl overflow-hidden">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col space-y-4 p-8"
-          >
-            <ShieldCheck className="w-10 h-10 text-primary" />
-            <h3 className="text-xl font-medium text-foreground">Integrity</h3>
-            <p className="text-base text-secondary-foreground leading-relaxed">
-              We commit to truth in every system we uncover and every solution we build. Our work is precise, transparent, and dependable.
-            </p>
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex flex-col space-y-4 p-8"
-          >
-            <Lightbulb className="w-10 h-10 text-primary" />
-            <h3 className="text-xl font-medium text-foreground">Ingenuity</h3>
-            <p className="text-base text-secondary-foreground leading-relaxed">
-              We approach problems with curiosity and originality, creating solutions that push boundaries and elevate what is possible.
-            </p>
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-col space-y-4 p-8"
-          >
-            <HandHeart className="w-10 h-10 text-primary" />
-            <h3 className="text-xl font-medium text-foreground">Responsibility</h3>
-            <p className="text-base text-secondary-foreground leading-relaxed">
-              We take full ownership of outcomes. We stand behind our work, deliver with care, and ensure every result reflects our standards.
-            </p>
-          </motion.div>
         </div>
       </section>
 
@@ -157,8 +76,12 @@ export default function AboutUsPage() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-xl font-medium text-foreground">{member.name}</h3>
-                    <p className="text-sm text-muted-foreground">{member.role}</p>
+                    <h3 className="text-xl font-medium text-foreground">
+                      {member.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {member.role}
+                    </p>
                   </div>
                   <a
                     href={member.linkedin}
@@ -183,6 +106,34 @@ export default function AboutUsPage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Story Section */}
+      <section className="w-full flex items-center justify-center py-20 px-4 md:px-6">
+        <div className="w-full max-w-[95%] text-foreground rounded-3xl overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <div className="mb-8 md:mb-10">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-6"
+              >
+                Founded by Logistics Enthusiasts.
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
+              >
+                We are a team of logistics industry veterans with decades of hands-on experience optimizing supply chains. We combine this operational depth with serious engineering expertise to deliver strategic consulting and Nodal, our platform for standardizing and orchestrating business processes.
+              </motion.p>
+            </div>
+          </div>
         </div>
       </section>
 

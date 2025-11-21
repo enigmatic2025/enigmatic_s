@@ -33,12 +33,10 @@ export function ServicesSection() {
               {/* Left Panel */}
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
-                  Strategic Engineering
+                  Consulting & Engineering
                 </h3>
                 <p className="text-base text-secondary-foreground mb-6">
-                  Our experts embed with your team to audit your workflows and
-                  tech stack. We design and build custom solutions that solve
-                  your unique operational bottlenecks.
+                  From custom integrations to full-scale infrastructure. We help you connect your disparate systems to build a cohesive technology ecosystem that actually works together.
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 bg-muted/30 rounded-xl border border-border/50 relative overflow-hidden flex items-center justify-center">

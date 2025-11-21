@@ -43,16 +43,16 @@ export function NodalPlatformSection() {
         <BentoGrid className="max-w-7xl mx-auto md:auto-rows-[24rem]">
           {/* Card 1: Visual Canvas (Tall, Left) */}
           <BentoGridItem
-            title="Orchestrate with our visual canvas."
-            description="Build precise Action Flows for processes like driver onboarding and rate updates. Enforce the exact same sequence every time, so execution never depends on who is at the desk."
+            title="Orchestrate with Action Flows."
+            description="Design pipelines that guide users through their daily tasks. Whether it's an event trigger from your TMS or a manual start, Nodal ensures everyone follows the same standardized process."
             header={<VisualCanvasPreview />}
             className="md:col-span-1 md:row-span-2"
           />
 
           {/* Card 2: Powerful Blocks (Top Middle) */}
           <BentoGridItem
-            title="Build with logic blocks."
-            description="Define strict rules for business processes. Break down silos by orchestrating logic across your existing systems in one place."
+            title="Connect & Automate."
+            description="Facilitate business processes by connecting disparate systems. Trigger actions automatically and monitor execution across your entire stack."
             header={<PowerfulBlocksPreview />}
             className="md:col-span-1"
           />
