@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ShieldCheck, Lightbulb, HandHeart } from "lucide-react";
+import { ShieldCheck, Lightbulb, HandHeart, Download } from "lucide-react";
 import { CTASection } from "@/components/layout/cta-section";
 import { cn } from "@/lib/utils";
 
@@ -184,6 +184,54 @@ export default function AboutUsPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Investor Relations Section */}
+      <section className="container mx-auto px-4 md:px-6 py-20 border-t border-border">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-12">
+           <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl md:text-4xl font-normal tracking-tight mb-4">
+              Investor Relations
+            </h2>
+            <p className="text-xl text-muted-foreground font-light max-w-2xl">
+              Explore our vision for the future of logistics technology. View our pitch deck below or download it for later.
+            </p>
+          </motion.div>
+          <motion.div
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <a 
+              href="/resources/Pitch Deck.pdf" 
+              download="Enigmatic_Pitch_Deck.pdf"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium"
+            >
+              <Download className="w-4 h-4" />
+              Download Pitch Deck
+            </a>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full aspect-video rounded-xl overflow-hidden border border-border bg-muted"
+        >
+          <iframe 
+            src="/resources/Pitch Deck.pdf" 
+            className="w-full h-full"
+            title="Enigmatic Pitch Deck"
+          />
+        </motion.div>
       </section>
 
       {/* CTA Section */}
