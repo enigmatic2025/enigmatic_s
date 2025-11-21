@@ -40,7 +40,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-6 max-w-2xl text-xl text-foreground/80 sm:text-2xl font-light"
         >
-          We build or run the processes your core systems ignore.
+          We design, connect, and orchestrate the processes your core systems ignore.
         </motion.div>
 
         {/* CTA Buttons */}
