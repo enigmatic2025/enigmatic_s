@@ -24,7 +24,7 @@ const team = [
   {
     name: "Phi Tran",
     role: "Founding Partner | Technology",
-    image: "/images/company/team/phi.jpg",
+    image: "/images/company/team/phi.png",
     description:
       "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech.",
     linkedin: "https://www.linkedin.com/in/phi-tran-m-s/",
