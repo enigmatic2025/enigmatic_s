@@ -135,9 +135,9 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuLink asChild className="px-4">
-                <a className="rounded-md p-2 text-sm hover:bg-accent" href="#">
+                <Link className="rounded-md p-2 text-sm hover:bg-accent" href="/blog">
                   Blog
-                </a>
+                </Link>
               </NavigationMenuLink>
             </NavigationMenuList>
           </NavigationMenu>
@@ -189,12 +189,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 {link.title}
               </Link>
             ))}
-            <a
-              href="#"
+            <Link
+              href="/blog"
               className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2"
             >
               Blog
-            </a>
+            </Link>
           </div>
         </NavigationMenu>
         <div className="flex flex-col gap-2">
