@@ -7,7 +7,7 @@ export const insightPosts = [
     author: "Phi Tran",
     category: "AI & Strategy",
     readTime: "8 min read",
-    image: "/images/ai.jpg",
+    image: "/images/insights/ai.jpg",
     content: `
       <p class="mb-6 leading-relaxed text-base text-secondary-foreground">Recently I came across an article in The Conversation titled "The Doorman Fallacy: Why Careless Adoption of AI Backfires So Easily." It captured something I've seen in many businesses today: the belief that if a job can be described simply, it can be automated, and that this will automatically improve efficiency.</p>
 

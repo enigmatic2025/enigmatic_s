@@ -30,7 +30,7 @@ export function Footer() {
             <Link href="/" className="flex items-center gap-2">
               <div className="relative w-8 h-8">
                 <Image
-                  src="/images/enigmatic-logo.png"
+                  src="/images/brand/enigmatic-logo.png"
                   alt="Enigmatic Logo"
                   fill
                   className="object-contain"

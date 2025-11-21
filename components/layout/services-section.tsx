@@ -36,12 +36,14 @@ export function ServicesSection() {
                   Consulting & Engineering
                 </h3>
                 <p className="text-base text-secondary-foreground mb-6">
-                  From custom integrations to full-scale infrastructure. We help you connect your disparate systems to build a cohesive technology ecosystem that actually works together.
+                  From custom integrations to full-scale infrastructure. We help
+                  you connect your disparate systems to build a cohesive
+                  technology ecosystem that actually works together.
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 bg-muted/30 rounded-xl border border-border/50 relative overflow-hidden flex items-center justify-center">
                   <img
-                    src="/images/services/consultation-home.jpg"
+                    src="/images/home/consultation.jpg"
                     alt="Consulting Service"
                     className="object-cover w-full h-full rounded-xl"
                   />
@@ -61,7 +63,7 @@ export function ServicesSection() {
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 flex items-center justify-center p-4">
                   <img
-                    src="/images/services/nodal-logo.svg?v=3"
+                    src="/images/brand/nodal-logo.svg?v=3"
                     alt="Nodal Platform"
                     className="w-full h-full object-contain"
                   />

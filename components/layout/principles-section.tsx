@@ -32,7 +32,7 @@ export function PrinciplesSection() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/principles/principle-background.jpg"
+            src="/images/home/principles-background.jpg"
             alt="Principles Background"
             fill
             className="object-cover"

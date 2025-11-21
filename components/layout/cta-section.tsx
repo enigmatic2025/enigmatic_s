@@ -26,7 +26,7 @@ export function CTASection({
             className="relative w-20 h-20 md:w-24 md:h-24"
           >
             <Image
-              src="/images/enigmatic-logo.png"
+              src="/images/brand/enigmatic-logo.png"
               alt="Enigmatic Logo"
               fill
               className="object-contain"

@@ -18,7 +18,7 @@ export function NodalPlatformSection() {
           <div className="flex items-start">
             {/* Nodal SVG Logo, large and spaced */}
             <img
-              src="/images/services/nodal-logo.svg?v=3"
+              src="/images/brand/nodal-logo.svg?v=3"
               alt="Nodal Platform"
               className="mr-6 md:mr-12 md:w-28 md:h-28 w-20 h-20 object-contain object-top -mt-2"
             />

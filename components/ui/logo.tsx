@@ -17,7 +17,7 @@ export function Logo({
   return (
     <div className={cn("relative flex items-center gap-2", className)}>
       <Image
-        src="/images/enigmatic-logo.png"
+        src="/images/brand/enigmatic-logo.png"
         alt="Logo"
         width={width}
         height={height}

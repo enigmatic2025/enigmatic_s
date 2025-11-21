@@ -8,7 +8,7 @@ const team = [
   {
     name: "Sam Tran",
     role: "Founding Partner | Vision",
-    image: "/images/services/about us/sam.jpeg",
+    image: "/images/company/team/sam.jpg",
     description:
       "Sam shapes the strategic vision for Enigmatic’s identity, products, and services, uniting top-tier talent to fundamentally reimagine the logistics technology ecosystem.",
     linkedin: "https://www.linkedin.com/in/htsam22/",
@@ -16,7 +16,7 @@ const team = [
   {
     name: "Chris Schmitt",
     role: "Founding Partner | Sales",
-    image: "/images/services/about us/chris.jpg",
+    image: "/images/company/team/chris.jpg",
     description:
       "Chris spearheads operations and strategic partnerships, focusing on scaling Enigmatic's market presence and delivering value to key industry stakeholders.",
     linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/",
@@ -24,7 +24,7 @@ const team = [
   {
     name: "Phi Tran",
     role: "Founding Partner | Technology",
-    image: "/images/services/about us/phi.jpg",
+    image: "/images/company/team/phi.jpg",
     description:
       "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech.",
     linkedin: "https://www.linkedin.com/in/phi-tran-m-s/",
@@ -130,7 +130,11 @@ export default function AboutUsPage() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
               >
-                We are a team of logistics industry veterans with decades of hands-on experience optimizing supply chains. We combine this operational depth with serious engineering expertise to deliver strategic consulting and Nodal, our platform for standardizing and orchestrating business processes.
+                We are a team of logistics industry veterans with decades of
+                hands-on experience optimizing supply chains. We combine this
+                operational depth with serious engineering expertise to deliver
+                strategic consulting and Nodal, our platform for standardizing
+                and orchestrating business processes.
               </motion.p>
             </div>
           </div>
