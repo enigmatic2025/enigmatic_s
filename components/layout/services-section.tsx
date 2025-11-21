@@ -19,7 +19,10 @@ export function ServicesSection() {
               className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-8"
             >
               <span className="text-foreground">Take Back Control. </span>
-              <span className="text-muted-foreground">Modern logistics teams face chaos from outdated tools and disconnected processes. Enigmatic gives you control and clarity.</span>
+              <span className="text-muted-foreground">
+                Modern logistics teams face chaos from outdated tools and
+                disconnected processes. Enigmatic gives you control and clarity.
+              </span>
             </motion.h2>
           </div>
 

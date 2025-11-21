@@ -23,6 +23,7 @@ import {
 import { useScroll } from "@/hooks/use-scroll";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import { usePathname } from "next/navigation";
 
 type LinkItem = {
   title: string;
@@ -32,6 +33,9 @@ type LinkItem = {
 };
 
 export function Header({ transparent = false }: { transparent?: boolean }) {
+  const pathname = usePathname();
+  const isArticlePage = pathname?.startsWith("/insights/articles/");
+
   const [open, setOpen] = React.useState(false);
   const [scrollDirection, setScrollDirection] = React.useState<"up" | "down">(
     "up"
@@ -66,6 +70,8 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  if (isArticlePage) return null;
 
   return (
     <header
@@ -135,7 +141,10 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuLink asChild className="px-4">
-                <Link className="rounded-md p-2 text-sm hover:bg-accent" href="/insights">
+                <Link
+                  className="rounded-md p-2 text-sm hover:bg-accent"
+                  href="/insights"
+                >
                   Insights
                 </Link>
               </NavigationMenuLink>

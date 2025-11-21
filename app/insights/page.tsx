@@ -32,8 +32,7 @@ export default function InsightsPage() {
       <section className="container mx-auto px-4 md:px-6 py-12">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-2xl md:text-4xl font-normal tracking-tight mb-8 md:mb-12"
         >
@@ -44,62 +43,59 @@ export default function InsightsPage() {
             <motion.div
               key={post.slug}
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group flex flex-col h-full bg-muted/30 border border-border rounded-3xl overflow-hidden transition-colors"
+              className="group flex flex-col h-full bg-card border border-border rounded-2xl overflow-hidden transition-colors hover:border-primary/20"
             >
-              {/* Image or Placeholder */}
-              <div className="h-48 w-full relative overflow-hidden">
-                {post.image ? (
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="h-full w-full bg-linear-to-br from-muted to-muted/50 group-hover:from-primary/5 group-hover:to-primary/10 transition-colors relative">
-                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 font-bold text-6xl select-none">
-                      Enigmatic
+              <Link
+                href={`/insights/articles/${post.slug}`}
+                className="flex flex-col h-full cursor-pointer"
+              >
+                {/* Image or Placeholder */}
+                <div className="h-48 w-full relative overflow-hidden bg-muted">
+                  {post.image ? (
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-linear-to-br from-muted to-muted/50 relative">
+                      <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 font-bold text-6xl select-none">
+                        Enigmatic
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col grow p-6 md:p-8">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                    <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">
+                      {post.category}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {post.date}
                     </div>
                   </div>
-                )}
-              </div>
 
-              <div className="flex flex-col grow p-6 md:p-8">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium text-xs">
-                    {post.category}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {post.date}
+                  <h2 className="text-xl md:text-2xl font-normal mb-3 text-foreground">
+                    {post.title}
+                  </h2>
+
+                  <p className="text-base text-secondary-foreground leading-relaxed mb-6 grow">
+                    {post.excerpt}
+                  </p>
+
+                  <div className="flex items-center mt-auto pt-6 border-t border-border/50">
+                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <User className="w-4 h-4" />
+                      {post.author}
+                    </div>
                   </div>
                 </div>
-
-                <h2 className="text-2xl font-medium mb-3 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h2>
-
-                <p className="text-base text-secondary-foreground leading-relaxed mb-6 grow">
-                  {post.excerpt}
-                </p>
-
-                <div className="flex items-center justify-between mt-auto pt-6 border-t border-border/50">
-                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <User className="w-4 h-4" />
-                    {post.author}
-                  </div>
-                  <Link
-                    href={`/insights/articles/${post.slug}`}
-                    className="flex items-center gap-2 text-sm font-medium text-primary hover:translate-x-1 transition-transform"
-                  >
-                    Read Article
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -112,7 +108,7 @@ export default function InsightsPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl font-normal mb-8"
+          className="text-2xl md:text-4xl font-normal tracking-tight mb-8 md:mb-12"
         >
           All Content
         </motion.h2>
