@@ -92,7 +92,7 @@ export default function InsightsPage() {
                     {post.author}
                   </div>
                   <Link
-                    href={`/insights/${post.slug}`}
+                    href={`/insights/articles/${post.slug}`}
                     className="flex items-center gap-2 text-sm font-medium text-primary hover:translate-x-1 transition-transform"
                   >
                     Read Article
@@ -126,7 +126,7 @@ export default function InsightsPage() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Link
-                href={`/insights/${post.slug}`}
+                href={`/insights/articles/${post.slug}`}
                 className="group flex flex-col md:flex-row md:items-center justify-between gap-4 py-6 border-b border-border transition-colors"
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8 grow">
