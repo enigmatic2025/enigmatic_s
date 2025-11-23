@@ -59,16 +59,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 	
 	// Organization CRUD
 	mux.Handle("POST /admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.CreateOrganization)))
-	mux.Handle("PUT /admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
-	mux.Handle("DELETE /admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
+	mux.Handle("PUT /admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
+	mux.Handle("DELETE /admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
 	
 	// User Management
 	mux.Handle("POST /admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
-	mux.Handle("PUT /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
-	mux.Handle("DELETE /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
-	mux.Handle("POST /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
-	mux.Handle("POST /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
-	mux.Handle("POST /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
+	mux.Handle("PUT /admin/users/{id}", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
+	mux.Handle("DELETE /admin/users/{id}", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
+	mux.Handle("POST /admin/users/{id}/block", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
+	mux.Handle("POST /admin/users/{id}/reset-mfa", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
+	mux.Handle("POST /admin/users/{id}/password", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
 
 	return mux
 }
