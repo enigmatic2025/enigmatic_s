@@ -21,7 +21,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 }
 
 async function proxyRequest(request: NextRequest, path: string[]) {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8001';
     const url = `${backendUrl}/${path.join('/')}`;
 
     // Forward headers

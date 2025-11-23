@@ -6,13 +6,14 @@ services:
       context: ./apps/backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8001:8000"
     volumes:
       - ./apps/backend:/app
     env_file:
       - ./apps/backend/.env
     environment:
       - GO_ENV=development
+      - PORT=8000
   # Frontend is usually run locally with `npm run dev` for better DX, 
   # but we can add it here if needed for full stack preview.
   # web:
