@@ -39,11 +39,11 @@ export const FlowBlockNode = memo(({ data }: NodeProps) => {
 
       <div
         className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-md bg-muted",
+          "flex h-8 w-8 items-center justify-center rounded-md bg-secondary text-foreground",
           data.iconBg
         )}
       >
-        <Icon className="h-4 w-4 text-foreground" />
+        <Icon className="h-4 w-4" />
       </div>
 
       <div className="flex flex-col">

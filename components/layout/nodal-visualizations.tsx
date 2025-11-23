@@ -41,11 +41,11 @@ export const FlowBlock = ({
     >
       <div
         className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-md bg-muted",
+          "flex h-8 w-8 items-center justify-center rounded-md bg-secondary text-foreground",
           iconBg
         )}
       >
-        <Icon className="h-4 w-4 text-foreground" />
+        <Icon className="h-4 w-4" />
       </div>
 
       <div className="flex flex-col">
@@ -69,7 +69,7 @@ export const ConditionBlock = () => {
   return (
     <div className="relative rounded-lg border border-border bg-background p-1 shadow-sm w-full max-w-[250px]">
       <div className="flex items-center gap-2 p-2 border-b border-border/50">
-        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30">
           <ArrowRightLeft className="h-3 w-3 text-blue-600 dark:text-blue-400" />
         </div>
         <span className="text-sm font-medium">Is Shipment Delayed?</span>
@@ -80,12 +80,12 @@ export const ConditionBlock = () => {
           <span className="absolute -left-px -top-2 text-[10px] bg-background px-1 text-muted-foreground">
             Is true
           </span>
-          <div className="mt-2 rounded border border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-900/10 p-2 flex items-center gap-2">
-            <div className="h-5 w-5 rounded bg-blue-200 dark:bg-blue-800 flex items-center justify-center">
-              <MessageSquare className="h-3 w-3 text-blue-700 dark:text-blue-300" />
+          <div className="mt-2 rounded border border-blue-200 bg-background dark:border-blue-800 dark:bg-blue-900/10 p-2 flex items-center gap-2">
+            <div className="h-5 w-5 rounded bg-blue-50 dark:bg-blue-800 flex items-center justify-center">
+              <MessageSquare className="h-3 w-3 text-blue-600 dark:text-blue-300" />
             </div>
             <span className="text-xs font-medium">Notify Customer</span>
-            <span className="ml-auto text-[10px] bg-blue-200 dark:bg-blue-800 px-1.5 py-0.5 rounded text-blue-800 dark:text-blue-200">
+            <span className="ml-auto text-[10px] bg-blue-50 dark:bg-purple-800 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-200">
               Email
             </span>
           </div>
@@ -175,10 +175,10 @@ export const HumanInLoopBlock = () => {
               </span>
             </div>
             <div className="flex gap-2">
-              <button className="flex-1 border border-green-500/30 text-green-600 text-xs py-2 rounded font-normal">
+              <button className="flex-1 border border-green-500/30 text-green-600 dark:text-green-400 text-xs py-2 rounded font-normal">
                 Approve
               </button>
-              <button className="flex-1 border border-red-500/30 text-red-600 text-xs py-2 rounded font-normal">
+              <button className="flex-1 border border-red-500/30 text-red-600 dark:text-red-400 text-xs py-2 rounded font-normal">
                 Reject
               </button>
             </div>
@@ -202,8 +202,8 @@ export const VisualCanvasPreview = () => {
       />
 
       {/* Edge 1 */}
-      <div className="h-8 w-px bg-neutral-300 dark:bg-neutral-700 my-1 relative">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full border border-neutral-300 dark:border-neutral-700 bg-background"></div>
+      <div className="h-8 w-px bg-border my-1 relative">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full border border-border bg-background"></div>
       </div>
 
       {/* Node 2 */}
@@ -217,12 +217,12 @@ export const VisualCanvasPreview = () => {
       {/* Edge 2 (Branching) */}
       <div className="h-8 w-full max-w-[200px] relative my-1">
         {/* Vertical line from top */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-4 w-px bg-neutral-300 dark:bg-neutral-700"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-4 w-px bg-border"></div>
         {/* Horizontal branching line */}
-        <div className="absolute top-4 left-1/4 right-1/4 h-px bg-neutral-300 dark:bg-neutral-700"></div>
+        <div className="absolute top-4 left-1/4 right-1/4 h-px bg-border"></div>
         {/* Vertical lines down */}
-        <div className="absolute top-4 left-1/4 h-4 w-px bg-neutral-300 dark:bg-neutral-700"></div>
-        <div className="absolute top-4 right-1/4 h-4 w-px bg-neutral-300 dark:bg-neutral-700"></div>
+        <div className="absolute top-4 left-1/4 h-4 w-px bg-border"></div>
+        <div className="absolute top-4 right-1/4 h-4 w-px bg-border"></div>
 
         {/* Labels */}
         <span className="absolute top-2 left-[10%] text-[10px] text-muted-foreground bg-background px-1">
@@ -240,12 +240,12 @@ export const VisualCanvasPreview = () => {
         label="Dispatch Driver"
         subLabel="Samsara"
         icon={Truck}
-        iconBg="bg-blue-100 text-blue-600"
+        iconBg="bg-background border border-border"
         className="z-10 mt-2"
       />
 
       {/* Edge 3 */}
-      <div className="h-8 w-0 border-l border-dashed border-neutral-300 dark:border-neutral-700 my-1"></div>
+      <div className="h-8 w-0 border-l border-dashed border-border my-1"></div>
 
       {/* Plus Button */}
       <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center shadow-lg z-10">

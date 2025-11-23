@@ -29,25 +29,25 @@ export const DriverOnboardingPreview = () => {
       {/* Messy Inputs */}
       <div className="flex gap-4 mb-8 w-full justify-center flex-wrap">
         <div className="flex flex-col gap-2 items-center opacity-70 scale-90">
-          <div className="h-10 w-10 rounded-md bg-orange-100 flex items-center justify-center border border-orange-200">
+          <div className="h-10 w-10 rounded-md bg-orange-50 flex items-center justify-center border border-orange-200">
             <FileText className="h-5 w-5 text-orange-600" />
           </div>
           <span className="text-[10px] text-muted-foreground">Tenstreet</span>
         </div>
         <div className="flex flex-col gap-2 items-center opacity-70 scale-90">
-          <div className="h-10 w-10 rounded-md bg-blue-100 flex items-center justify-center border border-blue-200">
+          <div className="h-10 w-10 rounded-md bg-blue-50 flex items-center justify-center border border-blue-200">
             <Mail className="h-5 w-5 text-blue-600" />
           </div>
           <span className="text-[10px] text-muted-foreground">Emails</span>
         </div>
         <div className="flex flex-col gap-2 items-center opacity-70 scale-90">
-          <div className="h-10 w-10 rounded-md bg-green-100 flex items-center justify-center border border-green-200">
+          <div className="h-10 w-10 rounded-md bg-green-50 flex items-center justify-center border border-green-200">
             <Users className="h-5 w-5 text-green-600" />
           </div>
           <span className="text-[10px] text-muted-foreground">HRIS</span>
         </div>
         <div className="flex flex-col gap-2 items-center opacity-70 scale-90">
-          <div className="h-10 w-10 rounded-md bg-red-100 flex items-center justify-center border border-red-200">
+          <div className="h-10 w-10 rounded-md bg-red-50 flex items-center justify-center border border-red-200">
             <ShieldCheck className="h-5 w-5 text-red-600" />
           </div>
           <span className="text-[10px] text-muted-foreground">Safety</span>
@@ -74,7 +74,7 @@ export const DriverOnboardingPreview = () => {
               </p>
             </div>
           </div>
-          <span className="text-xs font-medium bg-green-100 text-green-700 px-2 py-1 rounded-full">
+          <span className="text-xs font-medium bg-green-50 text-green-700 px-2 py-1 rounded-full">
             In Progress
           </span>
         </div>
@@ -143,7 +143,7 @@ export const BillingClaimsPreview = () => {
           <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 md:space-y-8">
             {/* AI Message 1 */}
             <div className="flex gap-3 md:gap-4 max-w-3xl mx-auto">
-              <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 shrink-0 flex items-center justify-center border border-blue-200 dark:border-blue-800">
+              <div className="h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/30 shrink-0 flex items-center justify-center border border-blue-200 dark:border-blue-800">
                 <Bot className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="flex-1 space-y-2 min-w-0">
@@ -176,7 +176,7 @@ export const BillingClaimsPreview = () => {
                 </div>
                 {/* Attachment Card */}
                 <div className="flex items-center gap-3 p-3 border border-border rounded-xl bg-muted/20 w-full md:w-fit mt-2 max-w-full overflow-hidden">
-                  <div className="h-10 w-10 rounded-lg bg-red-100 dark:bg-red-900/20 shrink-0 flex items-center justify-center text-red-600">
+                  <div className="h-10 w-10 rounded-lg bg-red-50 dark:bg-red-900/20 shrink-0 flex items-center justify-center text-red-600">
                     <FileText className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -192,7 +192,7 @@ export const BillingClaimsPreview = () => {
 
             {/* AI Message 2 */}
             <div className="flex gap-3 md:gap-4 max-w-3xl mx-auto">
-              <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 shrink-0 flex items-center justify-center border border-blue-200 dark:border-blue-800">
+              <div className="h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/30 shrink-0 flex items-center justify-center border border-blue-200 dark:border-blue-800">
                 <Bot className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="flex-1 space-y-2 min-w-0">
@@ -204,7 +204,7 @@ export const BillingClaimsPreview = () => {
                   </p>
                   <p className="mt-2">
                     I&apos;ve updated the claim status to{" "}
-                    <span className="text-green-600 font-medium bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded text-xs inline-block mt-1 md:mt-0">
+                    <span className="text-green-600 font-medium bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded text-xs inline-block mt-1 md:mt-0">
                       Ready for Payment
                     </span>
                     .
