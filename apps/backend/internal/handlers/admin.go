@@ -83,7 +83,6 @@ func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 
 // ListOrgs lists all organizations
 func (h *AdminHandler) ListOrgs(w http.ResponseWriter, r *http.Request) {
-	log.Println("ListOrgs handler called")
 	client := database.GetClient()
 
 	var orgs []map[string]interface{}
@@ -91,7 +90,7 @@ func (h *AdminHandler) ListOrgs(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Printf("Failed to fetch orgs: %v", err)
-		http.Error(w, "Failed to fetch orgs: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to fetch orgs", http.StatusInternalServerError)
 		return
 	}
 
