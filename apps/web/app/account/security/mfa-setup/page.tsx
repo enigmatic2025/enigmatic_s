@@ -26,6 +26,28 @@ export default function MFAEnrollmentPage() {
   const enrollMFA = async () => {
     setLoading(true)
     try {
+      // First, check if there's already an unverified factor
+      const { data: existingFactors, error: listError } = await supabase.auth.mfa.listFactors()
+      
+      if (listError) throw listError
+
+      // If there's an unverified factor, we need to unenroll it first and create a new one
+      if (existingFactors?.totp && existingFactors.totp.length > 0) {
+        const existingFactor = existingFactors.totp[0]
+        
+        if (existingFactor.status === 'verified') {
+          // Already verified, redirect to dashboard
+          router.push('/nodal/admin')
+          return
+        }
+        
+        // If unverified, unenroll it
+        if (existingFactor.status === 'unverified') {
+          await supabase.auth.mfa.unenroll({ factorId: existingFactor.id })
+        }
+      }
+
+      // Now create a new enrollment
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
       })
