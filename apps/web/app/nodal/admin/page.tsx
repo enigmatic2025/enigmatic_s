@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UsersPanel } from './users-panel'
 import { OrganizationsPanel } from './organizations-panel'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function SystemAdminPage() {
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState('orgs')
   const [currentUser, setCurrentUser] = useState<any>(null)
   const router = useRouter()
 
@@ -48,19 +50,37 @@ export default function SystemAdminPage() {
           <p className="text-muted-foreground">Manage organizations, users, and system settings.</p>
         </div>
 
-        <Tabs defaultValue="orgs" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList>
             <TabsTrigger value="orgs">Organizations</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="orgs">
-            <OrganizationsPanel />
-          </TabsContent>
-
-          <TabsContent value="users">
-            <UsersPanel />
-          </TabsContent>
+          <div className="mt-4">
+            <AnimatePresence mode="wait">
+              {activeTab === 'orgs' ? (
+                <motion.div
+                  key="orgs"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <OrganizationsPanel />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="users"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <UsersPanel />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </Tabs>
       </div>
     </div>

@@ -34,7 +34,7 @@ func (h *AdminHandler) PromoteToAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 	err := client.DB.From("profiles").Select("system_role").Eq("id", callerID).Execute(&caller)
 	if err != nil || len(caller) == 0 || caller[0].SystemRole != "admin" {
-		log.Printf("Unauthorized promotion attempt by user: %s", callerID)
+		// Unauthorized promotion attempt
 		http.Error(w, "Forbidden: Only admins can promote users", http.StatusForbidden)
 		return
 	}
@@ -69,13 +69,17 @@ func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	client := database.GetClient()
 
 	var users []map[string]interface{}
-	err := client.DB.From("profiles").Select("*").Execute(&users)
+	// Fetch users with their memberships and organization details
+	// Assuming foreign keys are set up: profiles -> memberships -> organizations
+	// Note: Column is org_id, not organization_id
+	err := client.DB.From("profiles").Select("*, memberships(org_id, organizations(name))").Execute(&users)
 
 	if err != nil {
-		log.Printf("Failed to fetch users: %v", err)
+		log.Printf("DEBUG: Failed to fetch users: %v", err)
 		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
 		return
 	}
+	log.Printf("DEBUG: Successfully fetched %d users", len(users))
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
@@ -85,14 +89,22 @@ func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 func (h *AdminHandler) ListOrgs(w http.ResponseWriter, r *http.Request) {
 	client := database.GetClient()
 
+	// Fetch all organizations
+	// Note: This relies on the Service Role Key (SUPABASE_KEY) being used in the client
+	// to bypass RLS policies that might restrict visibility.
+	// Fetch all organizations
+	// Note: This relies on the Service Role Key (SUPABASE_KEY) being used in the client
+	// to bypass RLS policies that might restrict visibility.
 	var orgs []map[string]interface{}
-	err := client.DB.From("organizations").Select("*").Execute(&orgs)
+	// 'plan' column is missing in the DB. Selecting only known columns.
+	err := client.DB.From("organizations").Select("id, name, slug, created_at").Execute(&orgs)
 
 	if err != nil {
-		log.Printf("Failed to fetch orgs: %v", err)
+		log.Printf("DEBUG: Failed to fetch orgs: %v", err)
 		http.Error(w, "Failed to fetch orgs", http.StatusInternalServerError)
 		return
 	}
+	log.Printf("DEBUG: Successfully fetched %d orgs", len(orgs))
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(orgs)
@@ -129,7 +141,6 @@ func (h *AdminHandler) CreateOrganization(w http.ResponseWriter, r *http.Request
 	}).Execute(&results)
 
 	if err != nil {
-		log.Printf("Failed to create organization: %v", err)
 		http.Error(w, "Failed to create organization: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -178,7 +189,6 @@ func (h *AdminHandler) UpdateOrganization(w http.ResponseWriter, r *http.Request
 	err := client.DB.From("organizations").Update(updates).Eq("id", orgID).Execute(&results)
 
 	if err != nil {
-		log.Printf("Failed to update organization: %v", err)
 		http.Error(w, "Failed to update organization: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -217,7 +227,6 @@ func (h *AdminHandler) DeleteOrganization(w http.ResponseWriter, r *http.Request
 	err = client.DB.From("organizations").Delete().Eq("id", orgID).Execute(&results)
 
 	if err != nil {
-		log.Printf("Failed to delete organization: %v", err)
 		http.Error(w, "Failed to delete organization: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -229,11 +238,13 @@ func (h *AdminHandler) DeleteOrganization(w http.ResponseWriter, r *http.Request
 // CreateUser creates a new user account
 func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req struct {
-		Email        string `json:"email"`
-		Password     string `json:"password"`
-		FullName     string `json:"full_name"`
+		Email          string `json:"email"`
+		Password       string `json:"password"`
+		FullName       string `json:"full_name"`
+		UserType       string `json:"user_type"` // 'system' or 'standard'
 		OrganizationID string `json:"organization_id"`
-		Role         string `json:"role"`
+		Role           string `json:"role"` // Org role if standard
+
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -246,7 +257,10 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Role == "" {
+	if req.UserType == "" {
+		req.UserType = "standard"
+	}
+	if req.UserType == "standard" && req.Role == "" {
 		req.Role = "member"
 	}
 
@@ -293,7 +307,6 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	err := client.DB.From("profiles").Update(updates).Eq("id", userID).Execute(&results)
 
 	if err != nil {
-		log.Printf("Failed to update user: %v", err)
 		http.Error(w, "Failed to update user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -343,7 +356,6 @@ func (h *AdminHandler) BlockUser(w http.ResponseWriter, r *http.Request) {
 	}).Eq("id", userID).Execute(&results)
 
 	if err != nil {
-		log.Printf("Failed to block/unblock user: %v", err)
 		http.Error(w, "Failed to block/unblock user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

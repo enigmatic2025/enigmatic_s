@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export default function MFAVerifyPage() {
   const [code, setCode] = useState('')
@@ -85,12 +86,13 @@ export default function MFAVerifyPage() {
           if (profile?.system_role === 'admin') {
             router.push('/nodal/admin')
           } else {
-            alert('No organization found. Please contact an administrator.')
+            toast.error('No organization found. Please contact an administrator.')
           }
         }
       }
     } catch (err: any) {
       setError(err.message)
+      toast.error(err.message)
     } finally {
       setLoading(false)
     }

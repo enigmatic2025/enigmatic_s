@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth-provider'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 export default function SecurityPage() {
   const [mfaEnabled, setMfaEnabled] = useState(false)
@@ -29,7 +30,7 @@ export default function SecurityPage() {
       const hasMFA = data?.totp && data.totp.length > 0 && data.totp[0].status === 'verified'
       setMfaEnabled(hasMFA)
     } catch (err) {
-      console.error('Error checking MFA status:', err)
+      toast.error('Error checking MFA status')
     } finally {
       setLoading(false)
     }
@@ -46,11 +47,11 @@ export default function SecurityPage() {
         const { error } = await supabase.auth.mfa.unenroll({ factorId })
         if (error) throw error
         
-        alert('Two-factor authentication has been disabled.')
+        toast.success('Two-factor authentication has been disabled.')
         setMfaEnabled(false)
       }
     } catch (err: any) {
-      alert('Error disabling MFA: ' + err.message)
+      toast.error('Error disabling MFA: ' + err.message)
     } finally {
       setLoading(false)
     }

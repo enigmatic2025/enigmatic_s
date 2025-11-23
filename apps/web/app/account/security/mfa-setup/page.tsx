@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth-provider'
+import { toast } from 'sonner'
 
 export default function MFAEnrollmentPage() {
   const [qrCode, setQrCode] = useState('')
@@ -29,50 +30,37 @@ export default function MFAEnrollmentPage() {
     setError(null)
     
     try {
-      console.log('Starting MFA enrollment...')
-      
       // First, check if there's already an unverified factor
       const { data: existingFactors, error: listError } = await supabase.auth.mfa.listFactors()
       
       if (listError) {
-        console.error('Error listing factors:', listError)
         throw listError
       }
-
-      console.log('Existing factors:', existingFactors)
 
       // If there's ANY factor (verified or unverified), we need to handle it
       if (existingFactors?.totp && existingFactors.totp.length > 0) {
         const existingFactor = existingFactors.totp[0]
-        console.log('Found existing factor:', existingFactor)
         
         if (existingFactor.status === 'verified') {
           // Already verified, redirect to dashboard
-          console.log('MFA already verified, redirecting...')
           router.push('/nodal/admin')
           return
         }
         
         // If unverified, FORCE unenroll ALL factors
-        console.log('Unenrolling ALL existing factors...')
         for (const factor of existingFactors.totp) {
           const { error: unenrollError } = await supabase.auth.mfa.unenroll({ factorId: factor.id })
           if (unenrollError) {
-            console.error('Error unenrolling factor:', factor.id, unenrollError)
             // Continue anyway - try to unenroll others
-          } else {
-            console.log('Successfully unenrolled factor:', factor.id)
           }
         }
         
         // Wait a moment for Supabase to process the unenrollment
-        console.log('Waiting for Supabase to process unenrollment...')
         await new Promise(resolve => setTimeout(resolve, 1000))
       }
 
       // Now create a new enrollment with a unique friendly name
       const friendlyName = `Nodal-${Date.now()}`
-      console.log('Creating new MFA enrollment with name:', friendlyName)
       
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
@@ -80,17 +68,15 @@ export default function MFAEnrollmentPage() {
       })
 
       if (error) {
-        console.error('Error enrolling:', error)
         throw error
       }
 
-      console.log('Enrollment successful, setting QR code')
       setQrCode(data.totp.qr_code)
       setSecret(data.totp.secret)
       setFactorId(data.id) // Store the factor ID!
       setStep('verify')
     } catch (err: any) {
-      console.error('MFA enrollment failed:', err)
+      toast.error('MFA enrollment failed')
       setError(err.message || 'Failed to set up MFA. Please try again.')
     } finally {
       setLoading(false)
@@ -108,8 +94,6 @@ export default function MFAEnrollmentPage() {
         throw new Error('No factor ID found. Please refresh and try again.')
       }
 
-      console.log('Verifying with factor ID:', factorId)
-
       // Verify the code
       const { data, error } = await supabase.auth.mfa.challengeAndVerify({
         factorId: factorId,
@@ -118,8 +102,7 @@ export default function MFAEnrollmentPage() {
 
       if (error) throw error
 
-      console.log('MFA verification successful!')
-      alert('MFA enabled successfully!')
+      toast.success('MFA enabled successfully!')
       
       // Redirect based on user role
       const { data: { user } } = await supabase.auth.getUser()
@@ -148,7 +131,7 @@ export default function MFAEnrollmentPage() {
         }
       }
     } catch (err: any) {
-      console.error('MFA verification error:', err)
+      toast.error(err.message || 'Invalid code. Please try again.')
       setError(err.message || 'Invalid code. Please try again.')
     } finally {
       setLoading(false)

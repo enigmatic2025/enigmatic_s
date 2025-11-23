@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react'
 import { Plus, Pencil, Trash, MoreHorizontal } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
+import { Organization } from '@/types/admin'
+import { Spinner } from "@/components/ui/spinner"
 import {
   Table,
   TableBody,
@@ -38,11 +41,11 @@ import {
   } from "@/components/ui/select"
 
 export function OrganizationsPanel() {
-  const [orgs, setOrgs] = useState<any[]>([])
+  const [orgs, setOrgs] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
-  const [selectedOrg, setSelectedOrg] = useState<any>(null)
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -62,9 +65,14 @@ export function OrganizationsPanel() {
       const res = await fetch('/api/admin/orgs', {
         headers: { 'Authorization': `Bearer ${session.access_token}` }
       })
-      if (res.ok) setOrgs(await res.json())
+
+      if (!res.ok) throw new Error('Failed to fetch orgs')
+
+      const data = await res.json()
+      setOrgs(data)
     } catch (error) {
-      console.error('Error fetching orgs:', error)
+      console.error(error)
+      toast.error('Failed to fetch organizations')
     } finally {
       setLoading(false)
     }
@@ -88,9 +96,12 @@ export function OrganizationsPanel() {
 
       setIsCreateOpen(false)
       setFormData({ name: '', slug: '', plan: 'free' })
+      setIsCreateOpen(false)
+      setFormData({ name: '', slug: '', plan: 'free' })
       fetchOrgs()
+      toast.success('Organization created successfully')
     } catch (error) {
-      alert('Error creating organization')
+      toast.error('Error creating organization')
     }
   }
 
@@ -113,13 +124,16 @@ export function OrganizationsPanel() {
 
       setIsUpdateOpen(false)
       setSelectedOrg(null)
+      setIsUpdateOpen(false)
+      setSelectedOrg(null)
       fetchOrgs()
+      toast.success('Organization updated successfully')
     } catch (error) {
-      alert('Error updating organization')
+      toast.error('Error updating organization')
     }
   }
 
-  const handleDelete = async (org: any) => {
+  const handleDelete = async (org: Organization) => {
     if (!confirm(`Are you sure you want to delete ${org.name}? This cannot be undone.`)) return
 
     try {
@@ -133,19 +147,20 @@ export function OrganizationsPanel() {
 
       if (!res.ok) {
           if (res.status === 403) {
-            alert("Cannot delete this organization (Enigmatic is protected).")
+            toast.error("Cannot delete this organization (Enigmatic is protected).")
             return
           }
           throw new Error('Failed to delete org')
       }
 
       fetchOrgs()
+      toast.success('Organization deleted successfully')
     } catch (error) {
-      alert('Error deleting organization')
+      toast.error('Error deleting organization')
     }
   }
 
-  const openUpdate = (org: any) => {
+  const openUpdate = (org: Organization) => {
       setSelectedOrg(org)
       setFormData({
           name: org.name,
@@ -161,7 +176,13 @@ export function OrganizationsPanel() {
       setIsUpdateOpen(true)
   }
 
-  if (loading) return <div>Loading organizations...</div>
+  if (loading) {
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Spinner />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">

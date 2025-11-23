@@ -66,9 +66,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("POST /admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
 	mux.Handle("PUT /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
 	mux.Handle("DELETE /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
-	mux.Handle("POST /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
-	mux.Handle("POST /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
-	mux.Handle("POST /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
+	mux.Handle("POST /admin/users/{id}/block", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
+	mux.Handle("POST /admin/users/{id}/reset-mfa", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
+	mux.Handle("POST /admin/users/{id}/password", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
 
 	return mux
 }

@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react'
 import { Plus, MoreHorizontal, Pencil, Trash, RotateCw, Shield, Lock, Ban } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
+import { User, Organization } from '@/types/admin'
+import { Spinner } from "@/components/ui/spinner"
 import {
   Table,
   TableBody,
@@ -39,20 +42,21 @@ import {
 } from "@/components/ui/select"
 
 export function UsersPanel() {
-  const [users, setUsers] = useState<any[]>([])
-  const [orgs, setOrgs] = useState<any[]>([])
+  const [users, setUsers] = useState<User[]>([])
+  const [orgs, setOrgs] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   // Form states
   const [formData, setFormData] = useState({
     email: '',
     full_name: '',
     password: '',
-    role: 'member',
+    user_type: 'standard', // 'system' | 'standard'
+    role: 'member', // Org role
     organization_id: '',
   })
   const [passwordData, setPasswordData] = useState('')
@@ -72,7 +76,7 @@ export function UsersPanel() {
       })
       if (res.ok) setUsers(await res.json())
     } catch (error) {
-      console.error('Error fetching users:', error)
+      toast.error('Failed to fetch users')
     } finally {
       setLoading(false)
     }
@@ -88,7 +92,7 @@ export function UsersPanel() {
       })
       if (res.ok) setOrgs(await res.json())
     } catch (error) {
-      console.error('Error fetching orgs:', error)
+      toast.error('Failed to fetch organizations')
     }
   }
 
@@ -109,11 +113,11 @@ export function UsersPanel() {
       if (!res.ok) throw new Error('Failed to create user')
 
       setIsCreateOpen(false)
-      setFormData({ email: '', full_name: '', password: '', role: 'member', organization_id: '' })
+      setFormData({ email: '', full_name: '', password: '', user_type: 'standard', role: 'member', organization_id: '' })
       fetchUsers()
-      alert("User created successfully (Note: If backend returns success but user doesn't appear, check backend logs regarding Supabase Admin API)")
+      toast.success("User created successfully")
     } catch (error) {
-      alert('Error creating user')
+      toast.error('Error creating user')
     }
   }
 
@@ -140,12 +144,17 @@ export function UsersPanel() {
       setIsUpdateOpen(false)
       setSelectedUser(null)
       fetchUsers()
+      toast.success('User updated successfully')
     } catch (error) {
-      alert('Error updating user')
+      toast.error('Error updating user')
     }
   }
 
-  const handleDelete = async (user: any) => {
+  const handleDelete = async (user: User) => {
+    // We'll use a custom dialog or just toast confirmation in a real app, 
+    // but for now standard confirm is okay or we can skip it if we trust the user.
+    // However, to stick to "no alerts", let's just proceed or use a better UI pattern later.
+    // For this pass, I will keep confirm but replace alert errors.
     if (!confirm(`Are you sure you want to delete ${user.email}?`)) return
 
     try {
@@ -160,12 +169,13 @@ export function UsersPanel() {
       if (!res.ok) throw new Error('Failed to delete user')
 
       fetchUsers()
+      toast.success('User deleted successfully')
     } catch (error) {
-      alert('Error deleting user')
+      toast.error('Error deleting user')
     }
   }
 
-  const handlePromote = async (user: any) => {
+  const handlePromote = async (user: User) => {
     if (!confirm(`Promote ${user.email} to System Admin?`)) return
 
     try {
@@ -183,13 +193,13 @@ export function UsersPanel() {
 
         if (!res.ok) throw new Error('Failed to promote')
         fetchUsers()
-        alert('User promoted successfully')
+        toast.success('User promoted successfully')
     } catch (error) {
-        alert('Error promoting user')
+        toast.error('Error promoting user')
     }
   }
 
-  const handleBlock = async (user: any) => {
+  const handleBlock = async (user: User) => {
     const action = user.blocked ? 'unblock' : 'block'
     if (!confirm(`Are you sure you want to ${action} ${user.email}?`)) return
 
@@ -208,12 +218,13 @@ export function UsersPanel() {
 
         if (!res.ok) throw new Error(`Failed to ${action} user`)
         fetchUsers()
+        toast.success(`User ${action}ed successfully`)
     } catch (error) {
-        alert(`Error: ${error}`)
+        toast.error(`Error: ${error}`)
     }
   }
 
-  const handleResetMFA = async (user: any) => {
+  const handleResetMFA = async (user: User) => {
     if (!confirm(`Reset MFA for ${user.email}?`)) return
 
     try {
@@ -226,9 +237,9 @@ export function UsersPanel() {
         })
 
         if (!res.ok) throw new Error('Failed to reset MFA')
-        alert('MFA reset successfully')
+        toast.success('MFA reset successfully')
     } catch (error) {
-        alert('Error resetting MFA')
+        toast.error('Error resetting MFA')
     }
   }
 
@@ -251,20 +262,26 @@ export function UsersPanel() {
 
         setIsChangePasswordOpen(false)
         setPasswordData('')
-        alert('Password changed successfully')
+        toast.success('Password changed successfully')
     } catch (error) {
-        alert('Error changing password')
+        toast.error('Error changing password')
     }
   }
 
-  if (loading) return <div>Loading users...</div>
+  if (loading) {
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Spinner />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-normal">All Users</h3>
         <Button onClick={() => {
-            setFormData({ email: '', full_name: '', password: '', role: 'member', organization_id: '' })
+            setFormData({ email: '', full_name: '', password: '', user_type: 'standard', role: 'member', organization_id: '' })
             setIsCreateOpen(true)
         }}>
           <Plus className="mr-2 h-4 w-4" /> Create User
@@ -292,11 +309,20 @@ export function UsersPanel() {
                   </div>
                 </TableCell>
                 <TableCell>
-                   {/* This assumes user object has organization_id and we can map it,
-                       or backend joins it. The current backend handler just selects * from profiles.
-                       Profiles table might not have organization name directly.
-                       For now displaying ID or handling if possible. */}
-                   {orgs.find(o => o.id === user.organization_id)?.name || 'No Org'}
+                   {/* 
+                       Backend now returns memberships with organizations.
+                       We check if user has memberships and use the first one's organization name.
+                       If not found, we fallback to finding by ID in the orgs list.
+                   */}
+                   {(() => {
+                       // Check for nested memberships from backend join
+                       const userAny = user as any
+                       if (userAny.memberships && userAny.memberships.length > 0 && userAny.memberships[0].organizations) {
+                           return userAny.memberships[0].organizations.name
+                       }
+                       // Fallback to old method
+                       return orgs.find(o => o.id === user.organization_id)?.name || 'No Org'
+                   })()}
                 </TableCell>
                 <TableCell className="capitalize">{user.system_role}</TableCell>
                 <TableCell>
@@ -374,8 +400,54 @@ export function UsersPanel() {
               <Input id="password" type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
             </div>
             <div className="grid gap-2">
+              <Label>User Type</Label>
+              <div className="flex gap-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id="type-standard"
+                    name="user_type"
+                    value="standard"
+                    checked={formData.user_type === 'standard'}
+                    onChange={() => setFormData({...formData, user_type: 'standard'})}
+                    className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor="type-standard" className="font-normal">Standard User</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id="type-system"
+                    name="user_type"
+                    value="system"
+                    checked={formData.user_type === 'system'}
+                    onChange={() => {
+                        // Auto-select Enigmatic org if found
+                        const enigmaticOrg = orgs.find(o => o.name === 'Enigmatic')
+                        setFormData({
+                            ...formData, 
+                            user_type: 'system',
+                            organization_id: enigmaticOrg?.id || '',
+                            role: 'member' // Default role in the org
+                        })
+                    }}
+                    className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor="type-system" className="font-normal">System Admin</Label>
+                </div>
+              </div>
+            </div>
+
+            {/* Show Org/Role selection for Standard Users OR System Admins (read-only/disabled for system if we want to enforce Enigmatic) */}
+            {/* User requested "still need to put in their org", so let's show it for both, but maybe lock it for System Admin if we found Enigmatic */}
+            
+            <div className="grid gap-2">
               <Label htmlFor="org">Organization</Label>
-              <Select onValueChange={(val) => setFormData({...formData, organization_id: val})}>
+              <Select 
+                value={formData.organization_id}
+                onValueChange={(val) => setFormData({...formData, organization_id: val})}
+                disabled={formData.user_type === 'system' && !!orgs.find(o => o.name === 'Enigmatic')}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Organization" />
                 </SelectTrigger>
@@ -385,19 +457,26 @@ export function UsersPanel() {
                     ))}
                 </SelectContent>
               </Select>
+              {formData.user_type === 'system' && (
+                  <p className="text-xs text-muted-foreground">System Admins must belong to the Enigmatic organization.</p>
+              )}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="role">Role</Label>
-              <Select defaultValue="member" onValueChange={(val) => setFormData({...formData, role: val})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Role" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="member">Member</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
+            {formData.user_type === 'standard' && (
+                <div className="grid gap-2">
+                  <Label htmlFor="role">Organization Role</Label>
+                  <Select defaultValue="member" onValueChange={(val) => setFormData({...formData, role: val})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="owner">Owner</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="member">Member</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
