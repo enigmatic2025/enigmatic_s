@@ -32,12 +32,43 @@ export default function LoginPage() {
         alert('Account created! You can now sign in.')
         setIsSignUp(false)
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
-        if (error) throw error
-        // Redirect to Dashboard
+        
+        if (error) {
+          // Check if MFA is required
+          if (error.message.includes('MFA') || error.message.includes('factor')) {
+            setError('MFA verification required. Please check your authenticator app.')
+            // Store email for MFA challenge page
+            sessionStorage.setItem('mfa_email', email)
+            router.push('/login/mfa-verify')
+            return
+          }
+          throw error
+        }
+
+        // Check if user has MFA enabled
+        const { data: factorsData } = await supabase.auth.mfa.listFactors()
+        
+        if (factorsData?.totp && factorsData.totp.length > 0 && factorsData.totp[0].status === 'verified') {
+          // MFA is enabled, redirect to challenge
+          sessionStorage.setItem('mfa_email', email)
+          sessionStorage.setItem('mfa_password', password)
+          router.push('/login/mfa-verify')
+          return
+        }
+
+        // MFA NOT ENABLED - Force enrollment
+        if (!factorsData?.totp || factorsData.totp.length === 0 || factorsData.totp[0].status !== 'verified') {
+          // Redirect to mandatory MFA setup
+          router.push('/account/security/mfa-setup')
+          return
+        }
+
+        // This code should never be reached due to mandatory MFA
+        // But kept as fallback
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
           const { data: memberships } = await supabase
