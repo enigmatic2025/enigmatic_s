@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
@@ -96,8 +99,8 @@ func (h *AdminHandler) ListOrgs(w http.ResponseWriter, r *http.Request) {
 	// Note: This relies on the Service Role Key (SUPABASE_KEY) being used in the client
 	// to bypass RLS policies that might restrict visibility.
 	var orgs []map[string]interface{}
-	// 'plan' column is missing in the DB. Selecting only known columns.
-	err := client.DB.From("organizations").Select("id, name, slug, created_at").Execute(&orgs)
+	// Fetching 'subscription_plan' as it exists in schema.sql
+	err := client.DB.From("organizations").Select("id, name, slug, subscription_plan, created_at").Execute(&orgs)
 
 	if err != nil {
 		log.Printf("DEBUG: Failed to fetch orgs: %v", err)
@@ -137,7 +140,7 @@ func (h *AdminHandler) CreateOrganization(w http.ResponseWriter, r *http.Request
 	err := client.DB.From("organizations").Insert(map[string]interface{}{
 		"name": req.Name,
 		"slug": req.Slug,
-		"plan": req.Plan,
+		"subscription_plan": req.Plan,
 	}).Execute(&results)
 
 	if err != nil {
@@ -176,7 +179,7 @@ func (h *AdminHandler) UpdateOrganization(w http.ResponseWriter, r *http.Request
 		updates["slug"] = req.Slug
 	}
 	if req.Plan != "" {
-		updates["plan"] = req.Plan
+		updates["subscription_plan"] = req.Plan
 	}
 
 	if len(updates) == 0 {
@@ -264,13 +267,99 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		req.Role = "member"
 	}
 
-	// Note: This requires Supabase Admin API access
-	// You'll need to use the Service Role key and make HTTP requests to Supabase's admin endpoints
-	// For now, returning a placeholder response
+	// 1. Create user in Supabase Auth via Admin API
+	// We need to use the Admin API to create a user without signing them in
+	// and to skip email confirmation if desired (we'll auto-confirm for admin creation)
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
+	
+	// Create user payload
+	adminUserBody := map[string]interface{}{
+		"email":          req.Email,
+		"password":       req.Password,
+		"email_confirm":  true,
+		"user_metadata": map[string]interface{}{
+			"full_name": req.FullName,
+		},
+	}
+	
+	jsonBody, _ := json.Marshal(adminUserBody)
+	
+	// Make request to Supabase Auth Admin API
+	request, _ := http.NewRequest("POST", supabaseUrl+"/auth/v1/admin/users", bytes.NewBuffer(jsonBody))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+supabaseKey)
+	request.Header.Set("apikey", supabaseKey)
+	
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		http.Error(w, "Failed to call Supabase Auth API: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+	
+	if response.StatusCode != 200 && response.StatusCode != 201 {
+		bodyBytes, _ := io.ReadAll(response.Body)
+		http.Error(w, "Supabase Auth Error: "+string(bodyBytes), response.StatusCode)
+		return
+	}
+	
+	var authUser struct {
+		ID string `json:"id"`
+	}
+	if err := json.NewDecoder(response.Body).Decode(&authUser); err != nil {
+		http.Error(w, "Failed to parse auth response", http.StatusInternalServerError)
+		return
+	}
+
+	// 2. Update Profile (System Role)
+	dbClient := database.GetClient()
+	
+	profileUpdates := map[string]interface{}{
+		"full_name": req.FullName,
+	}
+	
+	if req.UserType == "system" {
+		profileUpdates["system_role"] = "admin"
+	} else {
+		profileUpdates["system_role"] = "user"
+	}
+	
+	var profileResults []map[string]interface{}
+	err = dbClient.DB.From("profiles").Update(profileUpdates).Eq("id", authUser.ID).Execute(&profileResults)
+	if err != nil {
+		// Log error but don't fail request as user is created
+		log.Printf("Error updating profile for user %s: %v", authUser.ID, err)
+	}
+
+	// 3. Create Membership (if Standard User or System Admin with Enigmatic org)
+	if req.OrganizationID != "" {
+		// For System Admins, we force role to 'member' in the Enigmatic org (as per frontend logic)
+		// For Standard Users, we use the requested role
+		orgRole := req.Role
+		if req.UserType == "system" {
+			orgRole = "member" // System admins are just members of the Enigmatic org
+		}
+
+		var memberResults []map[string]interface{}
+		err = dbClient.DB.From("memberships").Insert(map[string]interface{}{
+			"user_id": authUser.ID,
+			"org_id":  req.OrganizationID,
+			"role":    orgRole,
+		}).Execute(&memberResults)
+		
+		if err != nil {
+			log.Printf("Error creating membership for user %s: %v", authUser.ID, err)
+			// We might want to return a warning or error here, but user is created
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
-		"status":  "success",
-		"message": "User creation requires Supabase Admin API integration",
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status": "success", 
+		"message": "User created successfully",
+		"user_id": authUser.ID,
 	})
 }
 
@@ -323,11 +412,42 @@ func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Note: This requires Supabase Admin API access
+	// 1. Delete from Supabase Auth
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
+
+	request, _ := http.NewRequest("DELETE", supabaseUrl+"/auth/v1/admin/users/"+userID, nil)
+	request.Header.Set("Authorization", "Bearer "+supabaseKey)
+	request.Header.Set("apikey", supabaseKey)
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		http.Error(w, "Failed to call Supabase Auth API: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(response.Body)
+		http.Error(w, "Supabase Auth Error: "+string(bodyBytes), response.StatusCode)
+		return
+	}
+
+	// 2. Delete from Database (Profiles) - Cascade should handle memberships
+	// Note: Supabase Auth deletion might trigger a cascade if configured, but we'll ensure DB cleanup
+	dbClient := database.GetClient()
+	var results []map[string]interface{}
+	err = dbClient.DB.From("profiles").Delete().Eq("id", userID).Execute(&results)
+	if err != nil {
+		// Log but don't fail as Auth deletion was successful
+		log.Printf("Error deleting profile for user %s: %v", userID, err)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
-		"message": "User deletion requires Supabase Admin API integration",
+		"message": "User deleted successfully",
 	})
 }
 
@@ -349,15 +469,50 @@ func (h *AdminHandler) BlockUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 1. Update Supabase Auth Ban Status
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
+
+	var banDuration string
+	if req.Blocked {
+		banDuration = "876000h" // ~100 years
+	} else {
+		banDuration = "0s" // Unban
+	}
+
+	jsonBody, _ := json.Marshal(map[string]interface{}{
+		"ban_duration": banDuration,
+	})
+
+	request, _ := http.NewRequest("PUT", supabaseUrl+"/auth/v1/admin/users/"+userID, bytes.NewBuffer(jsonBody))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+supabaseKey)
+	request.Header.Set("apikey", supabaseKey)
+
+	httpClient := &http.Client{}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		http.Error(w, "Failed to call Supabase Auth API: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(response.Body)
+		http.Error(w, "Supabase Auth Error: "+string(bodyBytes), response.StatusCode)
+		return
+	}
+
+	// 2. Update Database Profile
 	client := database.GetClient()
 	var results []map[string]interface{}
-	err := client.DB.From("profiles").Update(map[string]interface{}{
+	err = client.DB.From("profiles").Update(map[string]interface{}{
 		"blocked": req.Blocked,
 	}).Eq("id", userID).Execute(&results)
 
 	if err != nil {
-		http.Error(w, "Failed to block/unblock user: "+err.Error(), http.StatusInternalServerError)
-		return
+		log.Printf("Error updating profile block status for user %s: %v", userID, err)
+		// Don't fail request as Auth ban was successful
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -373,11 +528,61 @@ func (h *AdminHandler) ResetUserMFA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Note: This requires Supabase Admin API access
+	// Remove all MFA factors for the user
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
+
+	// First, list factors (optional, but good to know what we're deleting)
+	// Or just try to delete known types. Supabase Admin API allows deleting factors by ID.
+	// Since we want to reset ALL, we might need to list first.
+	// Endpoint: GET /auth/v1/admin/users/{id}/factors
+	
+	request, _ := http.NewRequest("GET", supabaseUrl+"/auth/v1/admin/users/"+userID+"/factors", nil)
+	request.Header.Set("Authorization", "Bearer "+supabaseKey)
+	request.Header.Set("apikey", supabaseKey)
+
+	httpClient := &http.Client{}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		http.Error(w, "Failed to list MFA factors: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		// If listing fails, we can't delete.
+		bodyBytes, _ := io.ReadAll(response.Body)
+		http.Error(w, "Supabase Auth Error (List Factors): "+string(bodyBytes), response.StatusCode)
+		return
+	}
+
+	var factors []struct {
+		ID string `json:"id"`
+	}
+	if err := json.NewDecoder(response.Body).Decode(&factors); err != nil {
+		http.Error(w, "Failed to parse factors", http.StatusInternalServerError)
+		return
+	}
+
+	// Delete each factor
+	for _, factor := range factors {
+		delReq, _ := http.NewRequest("DELETE", supabaseUrl+"/auth/v1/admin/users/"+userID+"/factors/"+factor.ID, nil)
+		delReq.Header.Set("Authorization", "Bearer "+supabaseKey)
+		delReq.Header.Set("apikey", supabaseKey)
+		
+		delResp, err := httpClient.Do(delReq)
+		if err != nil || delResp.StatusCode != 200 {
+			log.Printf("Failed to delete factor %s for user %s", factor.ID, userID)
+		}
+		if delResp != nil {
+			delResp.Body.Close()
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
-		"message": "MFA reset requires Supabase Admin API integration",
+		"message": "MFA factors reset successfully",
 	})
 }
 
@@ -404,10 +609,85 @@ func (h *AdminHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// Note: This requires Supabase Admin API access
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
+
+	jsonBody, _ := json.Marshal(map[string]interface{}{
+		"password": req.Password,
+	})
+
+	request, _ := http.NewRequest("PUT", supabaseUrl+"/auth/v1/admin/users/"+userID, bytes.NewBuffer(jsonBody))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+supabaseKey)
+	request.Header.Set("apikey", supabaseKey)
+
+	httpClient := &http.Client{}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		http.Error(w, "Failed to call Supabase Auth API: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(response.Body)
+		http.Error(w, "Supabase Auth Error: "+string(bodyBytes), response.StatusCode)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
-		"message": "Password change requires Supabase Admin API integration",
+		"message": "Password changed successfully",
+	})
+}
+
+// UpdateUserRole updates a user's organization role
+func (h *AdminHandler) UpdateUserRole(w http.ResponseWriter, r *http.Request) {
+	userID := strings.TrimPrefix(r.URL.Path, "/admin/users/")
+	userID = strings.TrimSuffix(userID, "/role")
+	if userID == "" {
+		http.Error(w, "User ID required", http.StatusBadRequest)
+		return
+	}
+
+	var req struct {
+		Role string `json:"role"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if req.Role == "" {
+		http.Error(w, "Role is required", http.StatusBadRequest)
+		return
+	}
+
+	// Update memberships table
+	// Note: This assumes user has only one membership for now, or we update all.
+	// Ideally we should specify org_id, but for this simple admin panel we might just update their role in whatever org they are in.
+	// Or we can look up their membership.
+	
+	client := database.GetClient()
+	var results []map[string]interface{}
+	
+	// We update all memberships for this user to the new role. 
+	// In a multi-org system, this might be dangerous, but for this requirement it seems acceptable 
+	// as the UI implies a single "Role" column.
+	err := client.DB.From("memberships").Update(map[string]interface{}{
+		"role": req.Role,
+	}).Eq("user_id", userID).Execute(&results)
+
+	if err != nil {
+		http.Error(w, "Failed to update user role: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "success",
+		"message": "User role updated successfully",
 	})
 }

@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { Organization } from '@/types/admin'
 import { Spinner } from "@/components/ui/spinner"
+import { Badge } from "@/components/ui/badge"
 import {
   Table,
   TableBody,
@@ -16,29 +17,13 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select"
+import { CreateOrgDialog, UpdateOrgDialog } from "@/components/admin/org-dialogs"
 
 export function OrganizationsPanel() {
   const [orgs, setOrgs] = useState<Organization[]>([])
@@ -46,12 +31,6 @@ export function OrganizationsPanel() {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null)
-
-  const [formData, setFormData] = useState({
-    name: '',
-    slug: '',
-    plan: 'free'
-  })
 
   useEffect(() => {
     fetchOrgs()
@@ -78,7 +57,7 @@ export function OrganizationsPanel() {
     }
   }
 
-  const handleCreate = async () => {
+  const handleCreate = async (data: any) => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) return
@@ -89,15 +68,12 @@ export function OrganizationsPanel() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(data)
       })
 
       if (!res.ok) throw new Error('Failed to create org')
 
       setIsCreateOpen(false)
-      setFormData({ name: '', slug: '', plan: 'free' })
-      setIsCreateOpen(false)
-      setFormData({ name: '', slug: '', plan: 'free' })
       fetchOrgs()
       toast.success('Organization created successfully')
     } catch (error) {
@@ -105,7 +81,7 @@ export function OrganizationsPanel() {
     }
   }
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (data: any) => {
     if (!selectedOrg) return
     try {
       const { data: { session } } = await supabase.auth.getSession()
@@ -117,13 +93,11 @@ export function OrganizationsPanel() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(data)
       })
 
       if (!res.ok) throw new Error('Failed to update org')
 
-      setIsUpdateOpen(false)
-      setSelectedOrg(null)
       setIsUpdateOpen(false)
       setSelectedOrg(null)
       fetchOrgs()
@@ -162,17 +136,6 @@ export function OrganizationsPanel() {
 
   const openUpdate = (org: Organization) => {
       setSelectedOrg(org)
-      setFormData({
-          name: org.name,
-          slug: org.slug,
-          plan: org.plan || 'free' // assuming plan field might be missing or named differently? Backend used "plan", DB might use "subscription_plan" based on previous file read.
-          // Wait, previous file read `page.tsx` used `org.subscription_plan`. Backend handler uses `plan`.
-          // I will check backend handler again.
-          // Backend Create: `plan`. Backend Select: `*` from organizations.
-          // DB Schema: I should check schema.sql if available, or just map.
-      })
-      // Adjust plan if needed (backend handler `UpdateOrganization` expects `plan`)
-      // But let's check what `fetchOrgs` returns.
       setIsUpdateOpen(true)
   }
 
@@ -188,10 +151,7 @@ export function OrganizationsPanel() {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-normal">All Organizations</h3>
-        <Button onClick={() => {
-            setFormData({ name: '', slug: '', plan: 'free' })
-            setIsCreateOpen(true)
-        }}>
+        <Button onClick={() => setIsCreateOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Create Organization
         </Button>
       </div>
@@ -211,8 +171,11 @@ export function OrganizationsPanel() {
               <TableRow key={org.id}>
                 <TableCell className="font-medium">{org.name}</TableCell>
                 <TableCell className="text-muted-foreground">{org.slug}</TableCell>
-                <TableCell>{org.subscription_plan || org.plan || 'Free'}</TableCell>
-                {/* Handling both potential field names */}
+                <TableCell>
+                    <Badge variant="outline">
+                        {org.subscription_plan || org.plan || 'Free'}
+                    </Badge>
+                </TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -234,91 +197,29 @@ export function OrganizationsPanel() {
                 </TableCell>
               </TableRow>
             ))}
+            {orgs.length === 0 && (
+                <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                        No organizations found.
+                    </TableCell>
+                </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
 
-      {/* Create Org Dialog */}
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Organization</DialogTitle>
-            <DialogDescription>Add a new organization to the system.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => {
-                    const name = e.target.value;
-                    // Auto-generate slug
-                    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                    setFormData({...formData, name, slug})
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input id="slug" value={formData.slug} onChange={(e) => setFormData({...formData, slug: e.target.value})} />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="plan">Plan</Label>
-              <Select value={formData.plan} onValueChange={(val) => setFormData({...formData, plan: val})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Plan" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="free">Free</SelectItem>
-                    <SelectItem value="pro">Pro</SelectItem>
-                    <SelectItem value="enterprise">Enterprise</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
-            <Button onClick={handleCreate}>Create Organization</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CreateOrgDialog 
+        open={isCreateOpen} 
+        onOpenChange={setIsCreateOpen} 
+        onSubmit={handleCreate} 
+      />
 
-      {/* Update Org Dialog */}
-      <Dialog open={isUpdateOpen} onOpenChange={setIsUpdateOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Update Organization</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="edit-name">Name</Label>
-              <Input id="edit-name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-slug">Slug</Label>
-              <Input id="edit-slug" value={formData.slug} onChange={(e) => setFormData({...formData, slug: e.target.value})} />
-            </div>
-            <div className="grid gap-2">
-                <Label htmlFor="edit-plan">Plan</Label>
-                <Select value={formData.plan} onValueChange={(val) => setFormData({...formData, plan: val})}>
-                    <SelectTrigger>
-                    <SelectValue placeholder="Select Plan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="free">Free</SelectItem>
-                        <SelectItem value="pro">Pro</SelectItem>
-                        <SelectItem value="enterprise">Enterprise</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsUpdateOpen(false)}>Cancel</Button>
-            <Button onClick={handleUpdate}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <UpdateOrgDialog 
+        open={isUpdateOpen} 
+        onOpenChange={setIsUpdateOpen} 
+        org={selectedOrg} 
+        onSubmit={handleUpdate} 
+      />
     </div>
   )
 }

@@ -37,12 +37,17 @@ RLS is strictly enforced.
 
 ### 2. Organization Level ("Tenant Mode")
 - **Storage**: `memberships` table -> `role` column.
+- **Foreign Keys**: `user_id` (profiles.id) and `org_id` (organizations.id).
 - **Values**: `'owner'`, `'admin'`, `'member'`.
 - **Scope**: Single Organization only.
 - **Capabilities**:
     - **Owner**: Billing, deletion, full control of THAT org.
     - **Admin**: Invite members, change settings for THAT org.
     - **Member**: Standard access within THAT org.
+
+### Schema Notes
+- **Organizations Table**: Contains `subscription_plan` (default 'free') and `subscription_status`.
+- **Memberships Table**: Uses `org_id` as the foreign key to organizations.
 
 
 ## Frontend
