@@ -24,6 +24,8 @@ import { useScroll } from "@/hooks/use-scroll";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/components/auth-provider";
+import { supabase } from "@/lib/supabase";
 
 type LinkItem = {
   title: string;
@@ -35,6 +37,8 @@ type LinkItem = {
 export function Header({ transparent = false }: { transparent?: boolean }) {
   const pathname = usePathname();
   const isArticlePage = pathname?.startsWith("/insights/articles/");
+  const { user } = useAuth();
+  const [dashboardUrl, setDashboardUrl] = React.useState<string | null>(null);
 
   const [open, setOpen] = React.useState(false);
   const [scrollDirection, setScrollDirection] = React.useState<"up" | "down">(
@@ -42,6 +46,32 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   );
   const [lastScrollY, setLastScrollY] = React.useState(0);
   const scrolled = useScroll(10);
+
+  // Get user's dashboard URL
+  React.useEffect(() => {
+    const getDashboardUrl = async () => {
+      if (!user) {
+        setDashboardUrl(null);
+        return;
+      }
+
+      // Check for org membership
+      const { data: memberships } = await supabase
+        .from('memberships')
+        .select('organizations(slug)')
+        .limit(1);
+
+      if (memberships && memberships.length > 0 && memberships[0].organizations) {
+        // @ts-ignore
+        setDashboardUrl(`/nodal/${memberships[0].organizations.slug}/dashboard`);
+      } else {
+        // Fallback to admin
+        setDashboardUrl('/nodal/admin');
+      }
+    };
+
+    getDashboardUrl();
+  }, [user]);
 
   React.useEffect(() => {
     if (open) {
@@ -152,9 +182,15 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </NavigationMenu>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" asChild>
-            <Link href="/login">Sign In</Link>
-          </Button>
+          {user && dashboardUrl ? (
+            <Button variant="ghost" asChild>
+              <Link href={dashboardUrl}>Dashboard</Link>
+            </Button>
+          ) : (
+            <Button variant="ghost" asChild>
+              <Link href="/login">Sign In</Link>
+            </Button>
+          )}
           <Button asChild>
             <Link href="/contact">Collaborate</Link>
           </Button>
@@ -210,11 +246,19 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </div>
         </NavigationMenu>
         <div className="flex flex-col gap-2">
-          <Button className="w-full bg-transparent" variant="outline" asChild>
-            <Link href="/login" onClick={() => setOpen(false)}>
-              Sign In
-            </Link>
-          </Button>
+          {user && dashboardUrl ? (
+            <Button className="w-full bg-transparent" variant="outline" asChild>
+              <Link href={dashboardUrl} onClick={() => setOpen(false)}>
+                Dashboard
+              </Link>
+            </Button>
+          ) : (
+            <Button className="w-full bg-transparent" variant="outline" asChild>
+              <Link href="/login" onClick={() => setOpen(false)}>
+                Sign In
+              </Link>
+            </Button>
+          )}
           <Button className="w-full" asChild>
             <Link href="/contact" onClick={() => setOpen(false)}>
               Collaborate

@@ -8,6 +8,7 @@ import { useAuth } from '@/components/auth-provider'
 export default function MFAEnrollmentPage() {
   const [qrCode, setQrCode] = useState('')
   const [secret, setSecret] = useState('')
+  const [factorId, setFactorId] = useState('')
   const [verifyCode, setVerifyCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -25,40 +26,72 @@ export default function MFAEnrollmentPage() {
 
   const enrollMFA = async () => {
     setLoading(true)
+    setError(null)
+    
     try {
+      console.log('Starting MFA enrollment...')
+      
       // First, check if there's already an unverified factor
       const { data: existingFactors, error: listError } = await supabase.auth.mfa.listFactors()
       
-      if (listError) throw listError
+      if (listError) {
+        console.error('Error listing factors:', listError)
+        throw listError
+      }
 
-      // If there's an unverified factor, we need to unenroll it first and create a new one
+      console.log('Existing factors:', existingFactors)
+
+      // If there's ANY factor (verified or unverified), we need to handle it
       if (existingFactors?.totp && existingFactors.totp.length > 0) {
         const existingFactor = existingFactors.totp[0]
+        console.log('Found existing factor:', existingFactor)
         
         if (existingFactor.status === 'verified') {
           // Already verified, redirect to dashboard
+          console.log('MFA already verified, redirecting...')
           router.push('/nodal/admin')
           return
         }
         
-        // If unverified, unenroll it
-        if (existingFactor.status === 'unverified') {
-          await supabase.auth.mfa.unenroll({ factorId: existingFactor.id })
+        // If unverified, FORCE unenroll ALL factors
+        console.log('Unenrolling ALL existing factors...')
+        for (const factor of existingFactors.totp) {
+          const { error: unenrollError } = await supabase.auth.mfa.unenroll({ factorId: factor.id })
+          if (unenrollError) {
+            console.error('Error unenrolling factor:', factor.id, unenrollError)
+            // Continue anyway - try to unenroll others
+          } else {
+            console.log('Successfully unenrolled factor:', factor.id)
+          }
         }
+        
+        // Wait a moment for Supabase to process the unenrollment
+        console.log('Waiting for Supabase to process unenrollment...')
+        await new Promise(resolve => setTimeout(resolve, 1000))
       }
 
-      // Now create a new enrollment
+      // Now create a new enrollment with a unique friendly name
+      const friendlyName = `Nodal-${Date.now()}`
+      console.log('Creating new MFA enrollment with name:', friendlyName)
+      
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
+        friendlyName,
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('Error enrolling:', error)
+        throw error
+      }
 
+      console.log('Enrollment successful, setting QR code')
       setQrCode(data.totp.qr_code)
       setSecret(data.totp.secret)
+      setFactorId(data.id) // Store the factor ID!
       setStep('verify')
     } catch (err: any) {
-      setError(err.message)
+      console.error('MFA enrollment failed:', err)
+      setError(err.message || 'Failed to set up MFA. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -70,22 +103,53 @@ export default function MFAEnrollmentPage() {
     setError(null)
 
     try {
-      const factors = await supabase.auth.mfa.listFactors()
-      if (factors.error) throw factors.error
+      // Use the factor ID we saved during enrollment
+      if (!factorId) {
+        throw new Error('No factor ID found. Please refresh and try again.')
+      }
 
-      const factorId = factors.data.totp[0].id
+      console.log('Verifying with factor ID:', factorId)
 
+      // Verify the code
       const { data, error } = await supabase.auth.mfa.challengeAndVerify({
-        factorId,
+        factorId: factorId,
         code: verifyCode,
       })
 
       if (error) throw error
 
+      console.log('MFA verification successful!')
       alert('MFA enabled successfully!')
-      router.push('/nodal/admin')
+      
+      // Redirect based on user role
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: memberships } = await supabase
+          .from('memberships')
+          .select('organizations(slug)')
+          .limit(1)
+        
+        if (memberships && memberships.length > 0 && memberships[0].organizations) {
+          // @ts-ignore
+          router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`)
+        } else {
+          // Check if system admin
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('system_role')
+            .eq('id', user.id)
+            .single()
+          
+          if (profile?.system_role === 'admin') {
+            router.push('/nodal/admin')
+          } else {
+            router.push('/nodal/admin') // Fallback
+          }
+        }
+      }
     } catch (err: any) {
-      setError(err.message)
+      console.error('MFA verification error:', err)
+      setError(err.message || 'Invalid code. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -96,6 +160,38 @@ export default function MFAEnrollmentPage() {
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <div className="text-center">
           <p className="text-lg text-muted-foreground font-light">Setting up MFA...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error && !qrCode) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <div className="w-full max-w-md space-y-6">
+          <div className="text-center">
+            <h1 className="text-4xl font-light tracking-tight text-foreground">
+              Setup Error
+            </h1>
+            <p className="mt-2 text-lg text-muted-foreground font-light">
+              There was a problem setting up MFA
+            </p>
+          </div>
+          
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+            <p className="text-sm text-red-500">{error}</p>
+          </div>
+
+          <button
+            onClick={() => {
+              setError(null)
+              setStep('enroll')
+              enrollMFA()
+            }}
+            className="w-full rounded-md border border-transparent bg-foreground text-background px-4 py-3 text-sm font-light hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-300"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     )

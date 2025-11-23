@@ -7,11 +7,13 @@ import { CTAButtons } from "@/components/ui/cta-buttons";
 interface CTASectionProps {
   title?: string;
   description?: string;
+  hideSignIn?: boolean;
 }
 
 export function CTASection({
   title = "Ready to modernize your logistics?",
   description = "Join the forward-thinking teams building better operations with Enigmatic.",
+  hideSignIn = false,
 }: CTASectionProps) {
   return (
     <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
@@ -61,7 +63,7 @@ export function CTASection({
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <CTAButtons />
+            <CTAButtons hideSignIn={hideSignIn} />
           </motion.div>
         </div>
       </div>

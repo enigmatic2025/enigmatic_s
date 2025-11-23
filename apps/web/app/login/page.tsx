@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/components/auth-provider'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -11,6 +12,31 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isSignUp, setIsSignUp] = useState(false)
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const checkAndRedirect = async () => {
+      if (authLoading) return // Wait for auth to load
+      
+      if (user) {
+        // User is already logged in, redirect to dashboard
+        const { data: memberships } = await supabase
+          .from('memberships')
+          .select('organizations(slug)')
+          .limit(1)
+        
+        if (memberships && memberships.length > 0 && memberships[0].organizations) {
+          // @ts-ignore
+          router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`)
+        } else {
+          router.push('/nodal/admin')
+        }
+      }
+    }
+    
+    checkAndRedirect()
+  }, [user, authLoading, router])
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
