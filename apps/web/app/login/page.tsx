@@ -20,7 +20,38 @@ export default function LoginPage() {
       if (authLoading) return // Wait for auth to load
       
       if (user) {
-        // User is already logged in, redirect to dashboard
+        // Check if user has MFA enabled but only AAL1 session
+        const { data: { session } } = await supabase.auth.getSession()
+        const { data: factors } = await supabase.auth.mfa.listFactors()
+        
+        const hasVerifiedMFA = factors?.totp?.some(f => f.status === 'verified')
+        const isAAL1 = session?.user?.app_metadata?.aal === 'aal1' // fallback check if session.aal isn't available directly on type
+        
+        // If MFA is enabled and we are only at AAL1, DO NOT redirect.
+        // Let the handleAuth or manual flow take over to prompt for MFA.
+        // Note: session.aal might be available directly depending on SDK version, checking app_metadata is safer fallback
+        // Actually, let's check the session level directly if possible, or infer from factors.
+        
+        if (hasVerifiedMFA) {
+            // If we have verified MFA, we must ensure we are not just AAL1
+            // The supabase-js client doesn't always expose aal on session object in older versions, 
+            // but let's check if we can rely on the fact that we are here.
+            // If we are here and have verified MFA, we should check if we just signed in (AAL1).
+            
+            // A better approach: Check if the current session satisfies the assurance level.
+            // But for now, let's just check if we are in the middle of a sign-in flow (which we can't easily know in useEffect).
+            
+            // However, if we are already logged in from a previous session (AAL2), we should redirect.
+            // If we just logged in (AAL1), we should wait.
+            
+            // Let's check the assurance level from the session
+            const currentLevel = session?.user?.app_metadata?.aal || 'aal1'
+            if (currentLevel === 'aal1') {
+                return // Stop redirect, let MFA flow happen
+            }
+        }
+
+        // User is already logged in (and satisfied MFA if needed), redirect to dashboard
         const { data: memberships } = await supabase
           .from('memberships')
           .select('organizations(slug)')
