@@ -78,7 +78,7 @@ const FlowWrapper = ({
         zoomOnDoubleClick={false}
         minZoom={minZoom}
       >
-        <Background color="hsl(var(--muted-foreground))" gap={20} size={1} />
+        <Background color="var(--muted-foreground)" gap={20} size={1} />
       </ReactFlow>
     </div>
   );
