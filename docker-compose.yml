@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./apps/backend:/app
+    env_file:
+      - ./apps/backend/.env
+    environment:
+      - GO_ENV=development
+  # Frontend is usually run locally with `npm run dev` for better DX, 
+  # but we can add it here if needed for full stack preview.
+  # web:
+  #   build: ./apps/web
+  #   ports:
+  #     - "3000:3000"
