@@ -112,7 +112,8 @@ const onboardingNodes: Node[] = [
       subLabel: "Stacy (Recruiting)",
       icon: User,
       badge: "Human",
-      iconBg: "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+      iconBg:
+        "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
     },
   },
   // 3. Background checks approved
@@ -126,7 +127,8 @@ const onboardingNodes: Node[] = [
       subLabel: "Natalie AI Agent",
       icon: Bot,
       badge: "Automated",
-      iconBg: "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
+      iconBg:
+        "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
     },
   },
   // 4. Orientation scheduled (Left Branch)
@@ -140,7 +142,8 @@ const onboardingNodes: Node[] = [
       subLabel: "John (Ops)",
       icon: Calendar,
       badge: "Human",
-      iconBg: "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+      iconBg:
+        "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
     },
   },
   // 5. Driver added to TMS and HR systems (Right Branch)
@@ -168,7 +171,8 @@ const onboardingNodes: Node[] = [
       subLabel: "Status: Active",
       icon: Truck,
       badge: "Complete",
-      iconBg: "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+      iconBg:
+        "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
     },
   },
 ];
@@ -205,7 +209,8 @@ const maintenanceNodes: Node[] = [
       subLabel: "Technician App",
       icon: Truck,
       badge: "Mobile",
-      iconBg: "bg-slate-50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400",
+      iconBg:
+        "bg-slate-50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400",
     },
   },
   // 2. Defect Detected
@@ -219,7 +224,8 @@ const maintenanceNodes: Node[] = [
       subLabel: "Automated Trigger",
       icon: AlertTriangle,
       badge: "Alert",
-      iconBg: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+      iconBg:
+        "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
     },
   },
   // 3. Work Orchestration
@@ -247,7 +253,8 @@ const maintenanceNodes: Node[] = [
       subLabel: "ERP & TMS",
       icon: Database,
       badge: "Sync",
-      iconBg: "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+      iconBg:
+        "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
     },
   },
 ];

@@ -59,17 +59,25 @@ function DotGrid({
   return (
     <div className="absolute inset-0">
       {dots.map((dot, i) => (
-        <Dot key={i} x={dot.x} y={dot.y} mousePosition={mousePosition} />
+        <Dot key={i} index={i} x={dot.x} y={dot.y} mousePosition={mousePosition} />
       ))}
     </div>
   );
 }
 
+const COMPANY_COLORS = [
+  "#94a3b8", // Slate 400
+  "#c084fc", // Purple 400
+  "#60a5fa", // Blue 400
+];
+
 function Dot({
+  index,
   x,
   y,
   mousePosition,
 }: {
+  index: number;
   x: number;
   y: number;
   mousePosition: { x: number; y: number };
@@ -86,21 +94,27 @@ function Dot({
   // Increased opacity when hovering
   const activeOpacity = Math.max(
     baseOpacity,
-    0.6 - (distance / maxDistance) * 0.4
+    1 - (distance / maxDistance) * 0.5
   );
+
+  const targetColor = COMPANY_COLORS[index % COMPANY_COLORS.length];
 
   return (
     <motion.div
-      className="absolute h-0.5 w-0.5 rounded-full bg-foreground"
+      className="absolute h-0.5 w-0.5 rounded-full"
       style={{
         left: x,
         top: y,
+        backgroundColor: "var(--foreground)",
       }}
       animate={{
         opacity: isClose ? activeOpacity : baseOpacity,
-        scale: isClose ? 1.5 : 1,
+        backgroundColor: isClose ? targetColor : "var(--foreground)",
+        scale: isClose ? 2 : 1,
       }}
-      transition={{ duration: 0.2 }}
+      transition={{
+        duration: isClose ? 0.2 : 1.5,
+      }}
     />
   );
 }
