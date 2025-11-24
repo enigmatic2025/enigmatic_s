@@ -372,8 +372,9 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		Email    string `json:"email"`
-		FullName string `json:"full_name"`
+		Email      string `json:"email"`
+		FullName   string `json:"full_name"`
+		SystemRole string `json:"system_role"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -384,6 +385,14 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	updates := make(map[string]interface{})
 	if req.FullName != "" {
 		updates["full_name"] = req.FullName
+	}
+	if req.SystemRole != "" {
+		// Validate role
+		if req.SystemRole != "admin" && req.SystemRole != "user" {
+			http.Error(w, "Invalid system role. Must be 'admin' or 'user'", http.StatusBadRequest)
+			return
+		}
+		updates["system_role"] = req.SystemRole
 	}
 
 	if len(updates) == 0 {

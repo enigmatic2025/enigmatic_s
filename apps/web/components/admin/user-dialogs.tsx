@@ -163,6 +163,7 @@ export function UpdateUserDialog({ open, onOpenChange, user, onSubmit }: UpdateU
   const [formData, setFormData] = useState({
     email: '',
     full_name: '',
+    system_role: 'user',
   })
   const [loading, setLoading] = useState(false)
 
@@ -171,6 +172,7 @@ export function UpdateUserDialog({ open, onOpenChange, user, onSubmit }: UpdateU
       setFormData({
         email: user.email,
         full_name: user.full_name,
+        system_role: user.system_role || 'user',
       })
     }
   }, [user])
@@ -195,6 +197,35 @@ export function UpdateUserDialog({ open, onOpenChange, user, onSubmit }: UpdateU
           <div className="grid gap-2">
             <Label htmlFor="edit-fullname">Full Name</Label>
             <Input id="edit-fullname" autoComplete="off" value={formData.full_name} onChange={(e) => setFormData({...formData, full_name: e.target.value})} />
+          </div>
+          <div className="grid gap-2">
+            <Label>User Type</Label>
+            <div className="flex gap-4">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id="edit-type-standard"
+                  name="edit_user_type"
+                  value="user"
+                  checked={formData.system_role !== 'admin'}
+                  onChange={() => setFormData({...formData, system_role: 'user'})}
+                  className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                />
+                <Label htmlFor="edit-type-standard" className="font-normal">Standard User</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id="edit-type-system"
+                  name="edit_user_type"
+                  value="admin"
+                  checked={formData.system_role === 'admin'}
+                  onChange={() => setFormData({...formData, system_role: 'admin'})}
+                  className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                />
+                <Label htmlFor="edit-type-system" className="font-normal">System Admin</Label>
+              </div>
+            </div>
           </div>
         </div>
         <DialogFooter>
