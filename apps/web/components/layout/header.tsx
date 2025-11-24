@@ -192,7 +192,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
             </Button>
           )}
           <Button asChild>
-            <Link href="/contact">Collaborate</Link>
+            <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">Collaborate</Link>
           </Button>
           <ModeToggle />
         </div>
@@ -260,7 +260,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
             </Button>
           )}
           <Button className="w-full" asChild>
-            <Link href="/contact" onClick={() => setOpen(false)}>
+            <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry" onClick={() => setOpen(false)}>
               Collaborate
             </Link>
           </Button>
