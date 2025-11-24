@@ -5,27 +5,52 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { 
-  LayoutDashboard, 
   Settings, 
-  Users, 
   Workflow, 
-  LogOut,
   Menu,
-  X,
-  ChevronDown
+  Search,
+  Book,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Code2,
+  Moon,
+  Sun,
+  LogOut,
+  LayoutDashboard,
+  MessageSquare
 } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
-  const [orgs, setOrgs] = useState<any[]>([])
   const [currentOrg, setCurrentOrg] = useState<any>(null)
   const pathname = usePathname()
   const router = useRouter()
+  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     const getUser = async () => {
@@ -48,10 +73,8 @@ export default function DashboardLayout({
 
       if (memberships && memberships.length > 0) {
         const organizations = memberships.map((m: any) => m.organizations)
-        setOrgs(organizations)
         setCurrentOrg(organizations[0]) // Default to first org
       } else {
-        // No orgs, redirect to onboarding
         router.push('/onboarding')
       }
     }
@@ -64,106 +87,236 @@ export default function DashboardLayout({
     router.push('/login')
   }
 
-  const navigation = [
-    { name: 'Dashboard', href: `/nodal/${currentOrg?.slug}/dashboard`, icon: LayoutDashboard },
-    { name: 'Workflows', href: `/nodal/${currentOrg?.slug}/dashboard/workflows`, icon: Workflow },
-    { name: 'Members', href: `/nodal/${currentOrg?.slug}/dashboard/members`, icon: Users },
-    { name: 'Settings', href: `/nodal/${currentOrg?.slug}/dashboard/settings`, icon: Settings },
-  ]
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
+
+  const getPageTitle = () => {
+    if (pathname.endsWith('/dashboard')) return 'Dashboard'
+    if (pathname.includes('/action-flows')) return 'Action Flows'
+    if (pathname.includes('/flow-studio')) return 'Flow Studio'
+    if (pathname.includes('/natalie')) return 'Natalie'
+    return 'Dashboard'
+  }
+
+  const NavItem = ({ href, icon: Icon, label }: { href: string, icon: any, label: string }) => {
+    // Exact match for dashboard root, includes check for others
+    const isActive = href.endsWith('/dashboard') 
+        ? pathname === href 
+        : pathname.includes(href)
+    
+    if (!sidebarOpen) {
+        return (
+            <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                        <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className={`h-8 w-8 ${isActive ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary' : 'text-muted-foreground'}`}
+                            asChild
+                        >
+                            <Link href={href}>
+                                <Icon className="h-4 w-4" />
+                                <span className="sr-only">{label}</span>
+                            </Link>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="flex items-center gap-4">
+                        {label}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        )
+    }
+
+    return (
+        <Button 
+            variant="ghost" 
+            className={`w-full justify-start h-8 px-2 ${isActive ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary' : 'text-muted-foreground'}`}
+            asChild
+        >
+            <Link href={href}>
+                <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
+                <span className="text-sm">{label}</span>
+            </Link>
+        </Button>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Mobile sidebar backdrop */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
+    <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="flex h-16 items-center justify-center border-b border-border px-6 flex-shrink-0">
-          <span className="text-2xl font-light tracking-widest text-foreground">NODAL</span>
+      <aside 
+        className={`
+          fixed inset-y-0 left-0 z-50 bg-card border-r border-border transition-all duration-300 ease-in-out flex flex-col
+          ${sidebarOpen ? 'w-64' : 'w-16'}
+          ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+      >
+        {/* Header */}
+        <div className="h-14 flex items-center justify-between px-3">
+           {sidebarOpen ? (
+               <>
+                   <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="h-8 w-8 flex-shrink-0 flex items-center justify-center">
+                         <img src="/images/brand/nodal-logo.svg" alt="Nodal" className="h-6 w-6" />
+                      </div>
+                      <span className="font-light tracking-widest text-lg whitespace-nowrap">
+                        NODAL
+                      </span>
+                   </div>
+                   <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground" onClick={toggleSidebar}>
+                       <PanelLeftClose className="h-4 w-4" />
+                   </Button>
+               </>
+           ) : (
+               <div className="w-full flex justify-center">
+                   <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground" onClick={toggleSidebar}>
+                       <PanelLeftOpen className="h-4 w-4" />
+                   </Button>
+               </div>
+           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
-          {/* Org Switcher Placeholder */}
-          <div className="mb-6 p-3 rounded-lg bg-muted/50 border border-border flex items-center justify-between cursor-pointer hover:bg-muted transition-colors">
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">Organization</span>
-              <span className="text-sm font-medium truncate">{currentOrg?.name || 'Loading...'}</span>
+        {/* Search */}
+        <div className="p-3">
+            {sidebarOpen ? (
+                <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="Search..." className="pl-8 h-8 bg-muted/50 border-transparent shadow-none focus:bg-background text-sm" />
+                </div>
+            ) : (
+                <div className="flex justify-center">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleSidebar}>
+                        <Search className="h-4 w-4" />
+                    </Button>
+                </div>
+            )}
+        </div>
+
+        {/* Navigation */}
+        <ScrollArea className="flex-1 py-2">
+            <div className="px-3 space-y-4">
+                {/* Workspace Group */}
+                <div className={!sidebarOpen ? 'flex flex-col items-center' : ''}>
+                    {sidebarOpen && <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">Workspace</h4>}
+                    <nav className="space-y-1">
+                        <NavItem 
+                            href={`/nodal/${currentOrg?.slug}/dashboard`}
+                            icon={LayoutDashboard}
+                            label="Overview"
+                        />
+                        <NavItem 
+                            href={`/nodal/${currentOrg?.slug}/dashboard/natalie`}
+                            icon={MessageSquare}
+                            label="Chat"
+                        />
+                        <NavItem 
+                            href={`/nodal/${currentOrg?.slug}/dashboard/action-flows`}
+                            icon={Workflow}
+                            label="Action Flows"
+                        />
+                    </nav>
+                </div>
+
+                {/* Development Group */}
+                <div className={!sidebarOpen ? 'flex flex-col items-center' : ''}>
+                    {sidebarOpen && <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">Development</h4>}
+                    <nav className="space-y-1">
+                        <NavItem 
+                            href={`/nodal/${currentOrg?.slug}/dashboard/flow-studio`}
+                            icon={Code2}
+                            label="Flow Studio"
+                        />
+                    </nav>
+                </div>
             </div>
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          </div>
+        </ScrollArea>
 
-          <nav className="space-y-1">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`
-                    flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
-                    ${isActive 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'}
-                  `}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </Link>
-              )
-            })}
-          </nav>
-        </div>
-
-        <div className="p-4 border-t border-border flex-shrink-0">
-          <div className="flex items-center px-3 py-2 mb-2">
-            <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs">
-                {user?.email?.charAt(0).toUpperCase()}
-              </div>
+        {/* Footer */}
+        <div className="p-3 space-y-2">
+            <div className={!sidebarOpen ? 'flex justify-center' : ''}>
+                <NavItem 
+                    href="/docs"
+                    icon={Book}
+                    label="Docs"
+                />
             </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{user?.email}</p>
+        </div>
+      </aside>
+
+      {/* Main Content Wrapper */}
+      <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-16'}`}>
+        {/* Top Bar */}
+        <header className="h-14 border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40 px-6 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+                {/* Mobile Menu Trigger */}
+                <div className="lg:hidden">
+                    <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                        <Menu className="h-5 w-5" />
+                    </Button>
+                </div>
+
+                {/* Page Title */}
+                <h1 className="text-xl font-light tracking-tight">{getPageTitle()}</h1>
             </div>
-          </div>
-          <button
-            onClick={handleSignOut}
-            className="flex w-full items-center px-3 py-2 text-sm font-medium text-muted-foreground rounded-md hover:bg-red-500/10 hover:text-red-500 transition-colors"
-          >
-            <LogOut className="mr-3 h-5 w-5" />
-            Sign Out
-          </button>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen lg:pl-64 transition-all duration-200">
-        {/* Mobile Header */}
-        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-background/80 backdrop-blur-md border-b border-border lg:hidden">
-          <button
-            type="button"
-            className="px-4 text-muted-foreground focus:outline-none lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <span className="sr-only">Open sidebar</span>
-            <Menu className="h-6 w-6" />
-          </button>
-          <div className="flex-1 flex justify-center items-center lg:justify-start">
-             <span className="text-xl font-light tracking-widest text-foreground lg:hidden">NODAL</span>
-          </div>
-        </div>
+            {/* Right Actions */}
+            <div className="flex items-center gap-2">
+                {/* Mode Switcher */}
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                    <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <span className="sr-only">Toggle theme</span>
+                </Button>
 
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-          {children}
+                {/* Settings */}
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Settings className="h-4 w-4" />
+                </Button>
+
+                <div className="h-6 w-[1px] bg-border/50 mx-2" />
+
+                {/* User Card */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                            <Avatar className="h-8 w-8">
+                                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                                    {user?.email?.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                        <DropdownMenuLabel className="font-normal">
+                            <div className="flex flex-col space-y-1">
+                                <p className="text-sm font-medium leading-none">{user?.user_metadata?.full_name || 'User'}</p>
+                                <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                            </div>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSignOut} className="text-red-500 focus:text-red-500 cursor-pointer">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Log out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="flex-1 p-6">
+            {children}
         </main>
       </div>
+
+      {/* Mobile Backdrop */}
+      {mobileMenuOpen && (
+        <div 
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
     </div>
   )
 }
