@@ -7,7 +7,8 @@
 - **Theme**: Strict Black & White (Monochrome).
 - **Backgrounds**:
     - App Background: `bg-background` (White / Black)
-    - Sidebar/Card: `bg-card` (White / Black) - *Note: Often same as background for a flat look, distinguished by borders.*
+    - Sidebar: `bg-zinc-50` (Light) / `bg-zinc-900` (Dark) - *Subtle contrast to separate navigation.*
+    - Card: `bg-card` (White / Black)
     - Hover: `bg-primary/10` or `bg-muted`
 - **Text**:
     - Primary: `text-foreground` (Black / White)
