@@ -18,6 +18,7 @@ import {
   LogOut,
   LayoutDashboard,
   MessageSquare,
+  Blocks,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -303,6 +304,11 @@ export default function DashboardLayout({
                   href={`/nodal/${currentOrg?.slug}/dashboard/flow-studio`}
                   icon={Code2}
                   label="Flow Studio"
+                />
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard/integration`}
+                  icon={Blocks}
+                  label="Integration"
                 />
               </nav>
             </div>

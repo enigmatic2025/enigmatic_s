@@ -10,7 +10,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isSignUp, setIsSignUp] = useState(false)
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
 
@@ -25,25 +24,11 @@ export default function LoginPage() {
         const { data: factors } = await supabase.auth.mfa.listFactors()
         
         const hasVerifiedMFA = factors?.totp?.some(f => f.status === 'verified')
-        const isAAL1 = session?.user?.app_metadata?.aal === 'aal1' // fallback check if session.aal isn't available directly on type
         
         // If MFA is enabled and we are only at AAL1, DO NOT redirect.
         // Let the handleAuth or manual flow take over to prompt for MFA.
-        // Note: session.aal might be available directly depending on SDK version, checking app_metadata is safer fallback
-        // Actually, let's check the session level directly if possible, or infer from factors.
         
         if (hasVerifiedMFA) {
-            // If we have verified MFA, we must ensure we are not just AAL1
-            // The supabase-js client doesn't always expose aal on session object in older versions, 
-            // but let's check if we can rely on the fact that we are here.
-            // If we are here and have verified MFA, we should check if we just signed in (AAL1).
-            
-            // A better approach: Check if the current session satisfies the assurance level.
-            // But for now, let's just check if we are in the middle of a sign-in flow (which we can't easily know in useEffect).
-            
-            // However, if we are already logged in from a previous session (AAL2), we should redirect.
-            // If we just logged in (AAL1), we should wait.
-            
             // Let's check the assurance level from the session
             const currentLevel = session?.user?.app_metadata?.aal || 'aal1'
             if (currentLevel === 'aal1') {
@@ -75,70 +60,55 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: email.split('@')[0], // Default name
-            }
-          }
-        })
-        if (error) throw error
-        alert('Account created! You can now sign in.')
-        setIsSignUp(false)
-      } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        
-        if (error) {
-          // Check if MFA is required
-          if (error.message.includes('MFA') || error.message.includes('factor')) {
-            setError('MFA verification required. Please check your authenticator app.')
-            // Store email for MFA challenge page
-            sessionStorage.setItem('mfa_email', email)
-            router.push('/login/mfa-verify')
-            return
-          }
-          throw error
-        }
-
-        // Check if user has MFA enabled
-        const { data: factorsData } = await supabase.auth.mfa.listFactors()
-        
-        if (factorsData?.totp && factorsData.totp.length > 0 && factorsData.totp[0].status === 'verified') {
-          // MFA is enabled, redirect to challenge
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      
+      if (error) {
+        // Check if MFA is required
+        if (error.message.includes('MFA') || error.message.includes('factor')) {
+          setError('MFA verification required. Please check your authenticator app.')
+          // Store email for MFA challenge page
           sessionStorage.setItem('mfa_email', email)
-          sessionStorage.setItem('mfa_password', password)
           router.push('/login/mfa-verify')
           return
         }
+        throw error
+      }
 
-        // MFA NOT ENABLED - Force enrollment
-        if (!factorsData?.totp || factorsData.totp.length === 0 || factorsData.totp[0].status !== 'verified') {
-          // Redirect to mandatory MFA setup
-          router.push('/account/security/mfa-setup')
-          return
-        }
+      // Check if user has MFA enabled
+      const { data: factorsData } = await supabase.auth.mfa.listFactors()
+      
+      if (factorsData?.totp && factorsData.totp.length > 0 && factorsData.totp[0].status === 'verified') {
+        // MFA is enabled, redirect to challenge
+        sessionStorage.setItem('mfa_email', email)
+        sessionStorage.setItem('mfa_password', password)
+        router.push('/login/mfa-verify')
+        return
+      }
 
-        // This code should never be reached due to mandatory MFA
-        // But kept as fallback
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const { data: memberships } = await supabase
-            .from('memberships')
-            .select('organizations(slug)')
-            .limit(1)
-          
-          if (memberships && memberships.length > 0 && memberships[0].organizations) {
-            // @ts-ignore
-            router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`)
-          } else {
-            alert('No organization found. Please contact an administrator.')
-          }
+      // MFA NOT ENABLED - Force enrollment
+      if (!factorsData?.totp || factorsData.totp.length === 0 || factorsData.totp[0].status !== 'verified') {
+        // Redirect to mandatory MFA setup
+        router.push('/account/security/mfa-setup')
+        return
+      }
+
+      // This code should never be reached due to mandatory MFA
+      // But kept as fallback
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: memberships } = await supabase
+          .from('memberships')
+          .select('organizations(slug)')
+          .limit(1)
+        
+        if (memberships && memberships.length > 0 && memberships[0].organizations) {
+          // @ts-ignore
+          router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`)
+        } else {
+          alert('No organization found. Please contact an administrator.')
         }
       }
     } catch (err: any) {
@@ -174,10 +144,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-light tracking-tight text-foreground">
-            {isSignUp ? 'Create an Account' : 'Sign in to Nodal'}
+            Sign in to Nodal
           </h1>
           <p className="mt-2 text-lg text-muted-foreground font-light">
-            {isSignUp ? 'Get started with your free account' : 'Enter your credentials to access the platform'}
+            Enter your credentials to access the platform
           </p>
         </div>
 
@@ -229,32 +199,16 @@ export default function LoginPage() {
               disabled={loading}
               className="group relative flex w-full justify-center rounded-md border border-transparent bg-foreground text-background px-4 py-3 text-sm font-medium hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
-              {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign in')}
+              {loading ? 'Processing...' : 'Sign in'}
             </button>
             
-            {!isSignUp && (
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Forgot your password?
-              </button>
-            )}
-
             <button
               type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="mt-2 w-full text-center text-sm text-primary hover:text-primary/80 transition-colors"
+              onClick={handleForgotPassword}
+              className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+              Forgot your password?
             </button>
-          </div>
-          
-          <div className="text-center">
-             <p className="text-xs text-muted-foreground">
-                MFA verification will be required for organization admins.
-             </p>
           </div>
         </form>
       </div>
