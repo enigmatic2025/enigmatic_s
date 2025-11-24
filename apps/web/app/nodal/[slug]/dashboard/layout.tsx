@@ -19,6 +19,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Blocks,
+  Library,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -309,6 +310,11 @@ export default function DashboardLayout({
                   href={`/nodal/${currentOrg?.slug}/dashboard/integration`}
                   icon={Blocks}
                   label="Integration"
+                />
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard/knowledge-base`}
+                  icon={Library}
+                  label="Knowledge Base"
                 />
               </nav>
             </div>
