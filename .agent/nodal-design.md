@@ -26,20 +26,39 @@
     - **Labels/Metadata**: `text-xs` (12px).
     - **Headings**: `text-lg` or `text-xl`.
 
-## 📐 Layout & Density
-- **Sidebar**:
-    - Expanded Width: `w-64` (256px)
-    - Collapsed Width: `w-16` (64px)
-    - **Row Height (High Density)**: `h-8` (32px) for navigation items.
-    - **Icon Size**: `h-4 w-4` (16px) or `h-5 w-5` (20px).
-- **Top Bar**:
-    - Height: `h-14` (56px).
-    - Sticky, backdrop blur.
-- **Spacing**:
-    - Group Spacing: `space-y-4` (Compact).
-    - Item Spacing: `space-y-1`.
+## Layout Structure
+
+### Dashboard Layout
+- **Sidebar (Left)**: Collapsible navigation.
+    - **Width**: `w-64` (Expanded) / `w-16` (Collapsed).
+    - **Background**: `bg-zinc-50` (Light) / `bg-zinc-900` (Dark).
+    - **Header**: Contains Logo and Collapse button.
+    - **Navigation**: Grouped into "Workspace" and "Development".
+    - **Footer**: Documentation link.
+- **Top Bar (Top)**: Global actions and context.
+    - **Height**: `h-14`.
+    - **Content**: Page Title, Mobile Menu Trigger, Theme Switcher, Settings, User Profile.
+    - **Sticky**: Stays at the top of the viewport.
+- **Main Content**:
+    - **Padding**: `p-6`.
+    - **Background**: `bg-background` (White/Black).
+
+### High Density Mode
+- **Sidebar Items**: `h-8` (32px) height.
+- **Icons**: `h-4 w-4` (16px).
+- **Spacing**: Tightened to maximize information density.
+- **Typography**: `text-sm` for navigation items.
 
 ## 🧩 Components
+- **Component Usage**:
+    - **Shadcn UI**: All interactive elements must use Shadcn UI components.
+    - `Button`: Used for all clickable actions.
+    - `Input`: Used for search and forms.
+    - `ScrollArea`: Used for sidebar navigation list.
+    - `Tooltip`: Used for collapsed sidebar items.
+    - `DropdownMenu`: Used for user profile actions.
+    - `Card`: Used for grouping content (e.g., Login form).
+    - `Avatar`: Monochrome style for user profile.
 - **Buttons**:
     - Style: Flat, no shadow.
     - Variants: `ghost` (primary for nav), `outline`, `default`.

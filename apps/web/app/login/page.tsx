@@ -4,12 +4,17 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth-provider'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
 
@@ -24,9 +29,6 @@ export default function LoginPage() {
         const { data: factors } = await supabase.auth.mfa.listFactors()
         
         const hasVerifiedMFA = factors?.totp?.some(f => f.status === 'verified')
-        
-        // If MFA is enabled and we are only at AAL1, DO NOT redirect.
-        // Let the handleAuth or manual flow take over to prompt for MFA.
         
         if (hasVerifiedMFA) {
             // Let's check the assurance level from the session
@@ -57,7 +59,6 @@ export default function LoginPage() {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -68,7 +69,7 @@ export default function LoginPage() {
       if (error) {
         // Check if MFA is required
         if (error.message.includes('MFA') || error.message.includes('factor')) {
-          setError('MFA verification required. Please check your authenticator app.')
+          toast.info('MFA verification required. Please check your authenticator app.')
           // Store email for MFA challenge page
           sessionStorage.setItem('mfa_email', email)
           router.push('/login/mfa-verify')
@@ -108,11 +109,11 @@ export default function LoginPage() {
           // @ts-ignore
           router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`)
         } else {
-          alert('No organization found. Please contact an administrator.')
+          toast.error('No organization found. Please contact an administrator.')
         }
       }
     } catch (err: any) {
-      setError(err.message)
+      toast.error(err.message)
     } finally {
       setLoading(false)
     }
@@ -120,20 +121,19 @@ export default function LoginPage() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setError('Please enter your email address first.')
+      toast.error('Please enter your email address first.')
       return
     }
     setLoading(true)
-    setError(null)
     
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback?next=/account/update-password`,
       })
       if (error) throw error
-      alert('Password reset email sent! Check your inbox.')
+      toast.success('Password reset email sent! Check your inbox.')
     } catch (err: any) {
-      setError(err.message)
+      toast.error(err.message)
     } finally {
       setLoading(false)
     }
@@ -141,77 +141,56 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-light tracking-tight text-foreground">
-            Sign in to Nodal
-          </h1>
-          <p className="mt-2 text-lg text-muted-foreground font-light">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-light tracking-tight">Sign in to Nodal</CardTitle>
+          <CardDescription>
             Enter your credentials to access the platform
-          </p>
-        </div>
-
-        <form className="mt-8 space-y-6" onSubmit={handleAuth}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleAuth} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
                 id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
-                required
-                className="relative block w-full rounded-md border border-border bg-background/50 px-3 py-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                placeholder="Email address"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
               />
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Button 
+                  variant="link" 
+                  className="px-0 font-normal h-auto text-xs text-muted-foreground"
+                  onClick={handleForgotPassword}
+                  type="button"
+                  disabled={loading}
+                >
+                  Forgot password?
+                </Button>
+              </div>
+              <Input
                 id="password"
-                name="password"
                 type="password"
-                autoComplete="current-password"
-                required
-                className="relative block w-full rounded-md border border-border bg-background/50 px-3 py-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
               />
             </div>
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center bg-red-500/10 p-2 rounded">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-foreground text-background px-4 py-3 text-sm font-medium hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-            >
-              {loading ? 'Processing...' : 'Sign in'}
-            </button>
-            
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Forgot your password?
-            </button>
-          </div>
-        </form>
-      </div>
+            <Button className="w-full" type="submit" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Sign in
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }
