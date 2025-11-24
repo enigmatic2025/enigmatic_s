@@ -64,11 +64,6 @@ export function TopBar({
             <Menu className="h-5 w-5" />
           </Button>
         </div>
-
-        {/* Page Title */}
-        <h1 className="text-xl font-light tracking-tight">
-          {getPageTitle()}
-        </h1>
       </div>
 
       {/* Right Actions */}

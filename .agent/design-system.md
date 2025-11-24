@@ -1,177 +1,155 @@
-# Enigmatic Design System
+# Enigmatic & Nodal Design System
 
-## Typography
+This document outlines the design systems for both the public marketing site (**Enigmatic**) and the application platform (**Nodal**). While they share core foundations, they have distinct aesthetics and rules.
 
-### Headings
+---
+
+## 1. Global Foundations (Shared)
+
+### Typography
+
+- **Font Family**: Sans-serif (Inter/Geist/Aspekta).
+- **Weights**:
+  - Default: `font-normal` (400)
+  - Headings: `font-light` (300)
+  - **Rule**: Never use `font-bold` - keep everything thin/normal.
+
+### Colors & Theme
+
+- **Theme Awareness**: Always use theme variables.
+  - ✅ `text-foreground` / `text-muted-foreground`
+  - ✅ `bg-background` / `bg-card` / `bg-muted`
+  - ✅ `border-border`
+  - ❌ Never hardcode colors like `text-black` or `bg-white` (except on specific dark overlays).
+
+### Spacing
+
+- **Section Padding**: `px-4 md:px-6` (Horizontal)
+- **Gaps**: Use consistent spacing scales (`gap-4`, `gap-8`, `gap-12`).
+
+---
+
+## 2. Marketing Site (Enigmatic)
+
+Designed for impact, storytelling, and brand presentation.
+
+### Typography (Marketing)
 
 - **Hero Headline**: `text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light`
 - **Section Headline**: `text-2xl md:text-4xl font-normal`
-- **Video Overlay Text**: `text-xl md:text-2xl lg:text-3xl font-normal`
-- **Card/Item Title**: `text-xl md:text-2xl font-normal`
-
-### Body Text
-
 - **Hero Subheadline**: `text-xl sm:text-2xl font-light`
-- **Body/Description**: `text-base text-secondary-foreground leading-relaxed`
-- **Secondary Text**: Use `text-secondary-foreground` for high-contrast body text
-- **Muted Text**: Use `text-muted-foreground` for less important labels
+- **Body Text**: `text-base text-secondary-foreground leading-relaxed`
 
-### Font Weight
+### Layout Patterns
 
-- Default: `font-normal` (400)
-- Headings: `font-light` (300) for large text
-- Never use `font-bold` - keep everything thin/normal
+- **Full Screen Sections**: Main sections should be `min-h-screen`, content centered.
+- **Floating Sections**: Use `mx-4 md:mx-6` and `rounded-3xl` for card-like sections (e.g., Services).
+- **Video Containers**: `aspect-video`, `object-cover`, with `bg-black/40` to `bg-black/60` overlays.
 
-## Colors
+### Components (Marketing)
 
-### Text
+- **Buttons**:
+  - **Glass** (Hero): `variant="glass"` (`bg-foreground/10 border border-foreground/20`)
+  - **Ghost**: `variant="ghost"`
+  - **Rule**: **No shadows** on any buttons.
+- **Gradients**:
+  - Brand: `bg-gradient-to-r from-slate-400 via-purple-400 to-blue-400`
+  - Dark Overlay: `bg-gradient-to-t from-black/60 via-black/20 to-transparent`
 
-- Primary: `text-foreground` (theme-aware)
-- Secondary: `text-secondary-foreground` (standard body text)
-- Muted: `text-muted-foreground` (labels, timestamps, less important info)
-- On Video Overlays: `text-white` (single color)
+### Navigation
 
-### Backgrounds
+- **Header**: `h-14`, `bg-background` (solid), auto-hide on scroll.
+- **Dropdowns**: `w-[400px]`, `p-4`, no shadows.
 
-- Page: `bg-background`
-- Cards: `bg-card`
-- Muted: `bg-muted` or `bg-muted/50`
-- Overlays: `bg-black/40` to `bg-black/60`
+### Animations
 
-### Gradients
+- **Framer Motion**: Initial `opacity: 0, y: 20`, Animate `opacity: 1, y: 0`, Duration `0.6s-0.8s`.
 
-- Enigmatic Brand: `bg-gradient-to-r from-slate-400 via-purple-400 to-blue-400`
-- Dark Overlay: `bg-gradient-to-t from-black/60 via-black/20 to-transparent`
+---
 
-## Buttons
+## 3. Nodal Platform (App Dashboard)
 
-### Variants
+**"Jules" Aesthetic**: A premium, high-density, monochrome interface designed for professional power users. Prioritizes content density and a flat, "no-shadow" look.
 
-- **Glass** (Hero): `variant="glass"` - transparent with border
-- **Ghost** (Secondary): `variant="ghost"` - minimal style
-- **Default** (Primary): `variant="default"` - solid background
+### Layout Structure
 
-### Sizes
+- **Sidebar (Left)**:
+  - Width: `w-64` (Expanded) / `w-16` (Collapsed).
+  - Background: `bg-zinc-50` (Light) / `bg-zinc-900` (Dark).
+  - **High Density**: Items `h-8`, Icons `h-4 w-4`, Text `text-sm`.
+- **Top Bar**: `h-14`, Sticky, Page Title, Global Actions.
+- **Main Content**: `p-6`, `bg-background`.
 
-- Standard: Default size (no size prop)
-- No custom sizing - use default
+### Typography (App)
 
-### Styling Rules
+- **Body/Navigation**: `text-sm` (14px) - _The standard unit._
+- **Labels/Metadata**: `text-xs` (12px).
+- **Headings**: `text-lg` or `text-xl`, `font-light`, `tracking-tight`.
 
-- **No shadows** on any buttons
-- Glass buttons: `bg-foreground/10 border border-foreground/20`
-- Always theme-aware colors
+### Components (App)
 
-## Spacing
+- **Buttons**: Flat, no shadow. Variants: `ghost` (nav), `outline`, `default`.
+- **Inputs**: Flat, transparent border, `shadow-none`, `bg-muted/50`.
+- **Avatars**: Monochrome (Black circle, White text), `h-8 w-8`.
+- **Cards**: `bg-card`, `border-border`, `shadow-none`.
 
-### Section Padding
+### Page Layout Patterns
 
-- **Standard**: `px-4 md:px-6 py-20`
-- **Compact**: `px-4 md:px-6 py-12`
+#### Tabbed Page Layout (Integrations / Flow Studio)
 
-### Container Widths
+- **TabsList**: `bg-muted`, `p-1`, `rounded-lg`, `inline-flex`.
+- **TabsTrigger**: `rounded-md`, `px-4`, `py-1.5`, `text-sm`, `font-medium`.
+- **Active State**: `bg-background`, `text-foreground`, `shadow-sm`.
+- **Header**: Title `text-xl font-light tracking-tight`, Primary Action on right.
 
-- Standard: `max-w-5xl` to `max-w-6xl`
-- Wide: `max-w-7xl`
-- Full Width: `max-w-[95%]`
+#### Card Grid Layout (Discover Tab)
 
-### Gaps
+- **Toolbar**: Search (`shadow-none`, `border-input`), Filter/Sort.
+- **Grid**: `grid-cols-1 md:grid-cols-2 lg:grid-cols-4`, `gap-4`.
+- **Cards**: `shadow-none`, `border-border`, `hover:bg-muted/50`, `cursor-pointer`.
 
-- Between sections: `gap-12 lg:gap-16`
-- Compact: `gap-8 lg:gap-12`
+#### Borderless Table Layout (Active Tab)
 
-## Borders & Shadows
+- **Container**: `rounded-md`, `border-none`.
+- **Table**: Headers/Rows `border-none`, `hover:bg-muted/50`.
 
-### Borders
+### Anti-Patterns (App)
 
-- Standard: `border border-border`
-- Thick: `border-2` or `border-4`
-- Transparent: `border-transparent`
+- 🚫 **Shadows**: Avoid `shadow-sm`, `shadow-md`. Use borders for separation.
+- 🚫 **Gradients**: Keep it flat.
+- 🚫 **Large Rounded Corners**: Stick to `rounded-md` or `rounded-sm`.
+- 🚫 **Dividers in Sidebar**: Use whitespace (`space-y`) instead.
 
-### Border Radius
+---
 
-- Cards/Videos: `rounded-2xl`
-- Buttons: `rounded-md`
-- Small elements: `rounded-lg`
+## 4. Mobile Design Standards
 
-### Shadows
+### Layout & Spacing
 
-- Large elements: `shadow-2xl`
-- **No shadows on buttons**
-- Navigation: No shadow (removed)
+- **Mobile-First**: Write base styles for mobile, then use `sm:`, `md:`, `lg:` for larger screens.
+- **Section Sizing**:
+  - Hero: `min-h-[100dvh]` (accounts for mobile address bars).
+  - Content: Avoid `min-h-screen` on every section. Use `py-16` or `py-20`.
+  - Container: `w-full` with `px-4` or `px-6`.
+- **Grids**: Default `grid-cols-1`, switch to multi-column on `md`/`lg`.
+- **Flex**: Default `flex-col`, switch to `flex-row` on larger screens.
+- **Spacing**: Reduce gaps on mobile (`gap-6`/`gap-8`) vs desktop (`gap-12`/`gap-16`).
 
-## Layout Patterns
+### Typography (Mobile)
 
-### Full Screen Sections
+- **Headings**: Scale down to prevent wrapping, but preserve design intent.
+  - H1: `text-3xl` or `text-4xl` (mobile) -> Desktop size.
+  - H2: `text-2xl` (mobile) -> Desktop size.
+- **Body**: Minimum `text-base` (16px) for readability.
 
-- All main sections on the home page should take up at least the full height of the viewport (`min-h-screen`).
-- Content should generally be vertically centered within these sections (`flex items-center justify-center`).
+### Interactive Elements
 
-### Floating Sections
+- **Touch Targets**: Minimum 44x44px.
+- **Buttons**: Often `w-full` on mobile for easier access.
+- **Navigation**: Hamburger menu or simplified bar. Max height ~64px.
 
-- Use `mx-4 md:mx-6` and `rounded-3xl` for sections that should appear as "floating cards" (e.g., Services Section).
-- Ensure internal padding matches standard sections (`py-20`).
+### Media & Components
 
-### Container Widths
-
-### Full-Screen Sections
-
-- Height: `min-h-screen`
-- Centering: `flex items-center justify-center`
-
-### Video Containers
-
-- Aspect ratio: `aspect-video`
-- Positioning: `relative` with `absolute inset-0` for overlays
-- Object fit: `object-cover`
-
-### Text Overlays
-
-- Position: `absolute bottom-0 left-0`
-- Padding: `p-8 md:p-12 lg:p-16`
-- Max width: `max-w-3xl` to `max-w-4xl`
-
-## Navigation
-
-### Header
-
-- Auto-hide on scroll down, show on scroll up
-- Background: `bg-background` (solid, not transparent)
-- Height: `h-14`
-- No shadow
-
-### Dropdowns
-
-- Width: `w-[400px]`
-- Padding: `p-4`
-- Item padding: `px-4 py-3`
-- Hover: `hover:bg-accent`
-- No shadows
-
-## Animations
-
-### Framer Motion Defaults
-
-- Initial: `opacity: 0, y: 20`
-- Animate: `opacity: 1, y: 0`
-- Duration: `0.6s` to `0.8s`
-- Viewport: `once: true`
-
-### Transitions
-
-- Standard: `transition-all duration-300`
-- Navbar: `duration-300`
-
-## Theme Awareness
-
-### Always Use Theme Variables
-
-- ✅ `text-foreground` / `text-muted-foreground`
-- ✅ `bg-background` / `bg-card` / `bg-muted`
-- ✅ `border-border`
-- ❌ Never hardcode colors like `text-black` or `bg-white` (except on dark overlays)
-
-### Dark Overlays
-
-- Use `text-white` and `text-white/70` on dark video overlays
-- Background: `bg-black/40` to `bg-black/60`
+- **Images**: `w-full h-auto`, `object-cover`.
+- **Cards**: Stack vertically, remove fixed heights.
+- **Animations**: Keep subtle. Avoid large horizontal movements.
