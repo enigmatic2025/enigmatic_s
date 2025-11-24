@@ -5,14 +5,12 @@ import Image from "next/image";
 
 const footerLinks = {
   product: [
-    { label: "Features", href: "/product/features" },
+    { label: "Nodal", href: "/product/login" },
+    { label: "Documentation", href: "/documentation" },
     { label: "Use Cases", href: "/product/use-cases" },
-    { label: "Pricing", href: "/pricing" },
   ],
   company: [
-    { label: "About", href: "/about" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
+    { label: "About Us", href: "/company/about-us" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
