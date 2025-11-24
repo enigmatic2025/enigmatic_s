@@ -13,11 +13,11 @@ interface CTASectionProps {
 export function CTASection({
   title = "Ready to modernize your logistics?",
   description = "Join the forward-thinking teams building better operations with Enigmatic.",
-  hideSignIn = false,
+  hideSignIn = true,
 }: CTASectionProps) {
   return (
     <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
-      <div className="w-full max-w-[95%] bg-muted/50 rounded-3xl overflow-hidden flex flex-col items-center justify-center py-16 md:py-32">
+      <div className="w-full max-w-[95%] bg-muted/25 rounded-3xl overflow-hidden flex flex-col items-center justify-center py-16 md:py-32">
         <div className="max-w-4xl mx-auto px-4 md:px-6 text-center flex flex-col items-center gap-10">
           {/* Logo */}
           <motion.div
