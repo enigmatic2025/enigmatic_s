@@ -336,7 +336,7 @@ function ListItem({
 const productLinks: LinkItem[] = [
   {
     title: "Nodal",
-    href: "#",
+    href: "/login",
     description: "Our flagship logistics platform for modern supply chains",
     icon: GlobeIcon,
   },
