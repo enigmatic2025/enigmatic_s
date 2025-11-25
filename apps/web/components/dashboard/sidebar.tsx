@@ -187,72 +187,76 @@ export function Sidebar({
           }`}
         >
           {/* Workspace Group */}
-          <div
-            className={
-              !sidebarOpen ? "w-full flex flex-col items-center" : ""
-            }
-          >
-            {sidebarOpen && (
-              <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-                Workspace
-              </h4>
-            )}
-            <nav
-              className={`space-y-1 ${
+          {!pathname.includes("/flow-studio/design") && (
+            <div
+              className={
                 !sidebarOpen ? "w-full flex flex-col items-center" : ""
-              }`}
+              }
             >
-              <NavItem
-                href={`/nodal/${currentOrg?.slug}/dashboard`}
-                icon={LayoutDashboard}
-                label="Overview"
-              />
-              <NavItem
-                href={`/nodal/${currentOrg?.slug}/dashboard/natalie`}
-                icon={MessageSquare}
-                label="Natalie"
-              />
-              <NavItem
-                href={`/nodal/${currentOrg?.slug}/dashboard/action-flows`}
-                icon={Workflow}
-                label="Action Flows"
-              />
-            </nav>
-          </div>
+              {sidebarOpen && (
+                <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
+                  Workspace
+                </h4>
+              )}
+              <nav
+                className={`space-y-1 ${
+                  !sidebarOpen ? "w-full flex flex-col items-center" : ""
+                }`}
+              >
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard`}
+                  icon={LayoutDashboard}
+                  label="Overview"
+                />
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard/natalie`}
+                  icon={MessageSquare}
+                  label="Natalie"
+                />
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard/action-flows`}
+                  icon={Workflow}
+                  label="Action Flows"
+                />
+              </nav>
+            </div>
+          )}
 
           {/* Development Group */}
-          <div
-            className={
-              !sidebarOpen ? "w-full flex flex-col items-center" : ""
-            }
-          >
-            {sidebarOpen && (
-              <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-                Development
-              </h4>
-            )}
-            <nav
-              className={`space-y-1 ${
+          {!pathname.includes("/flow-studio/design") && (
+            <div
+              className={
                 !sidebarOpen ? "w-full flex flex-col items-center" : ""
-              }`}
+              }
             >
-              <NavItem
-                href={`/nodal/${currentOrg?.slug}/dashboard/flow-studio`}
-                icon={Code2}
-                label="Flow Studio"
-              />
-              <NavItem
-                href={`/nodal/${currentOrg?.slug}/dashboard/integration`}
-                icon={Blocks}
-                label="Integration"
-              />
-              <NavItem
-                href={`/nodal/${currentOrg?.slug}/dashboard/knowledge-base`}
-                icon={Library}
-                label="Knowledge Base"
-              />
-            </nav>
-          </div>
+              {sidebarOpen && (
+                <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
+                  Development
+                </h4>
+              )}
+              <nav
+                className={`space-y-1 ${
+                  !sidebarOpen ? "w-full flex flex-col items-center" : ""
+                }`}
+              >
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard/flow-studio`}
+                  icon={Code2}
+                  label="Flow Studio"
+                />
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard/integration`}
+                  icon={Blocks}
+                  label="Integration"
+                />
+                <NavItem
+                  href={`/nodal/${currentOrg?.slug}/dashboard/knowledge-base`}
+                  icon={Library}
+                  label="Knowledge Base"
+                />
+              </nav>
+            </div>
+          )}
         </div>
       </ScrollArea>
 

@@ -104,16 +104,24 @@ const myFlows = [
   },
 ];
 
-export default function FlowStudioPage() {
+import Link from "next/link";
+
+export default function FlowStudioPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   return (
     <div className="h-full w-full space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-medium tracking-tight">Flow Studio</h1>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Flow
-        </Button>
+        <Link href={`/nodal/${params.slug}/dashboard/flow-studio/design`}>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Flow
+          </Button>
+        </Link>
       </div>
 
       <Tabs defaultValue="templates" className="w-full space-y-6">
