@@ -4,6 +4,8 @@ import { ManualTriggerNode } from '../nodes/manual-trigger-node';
 import { HttpRequestConfig } from '../configurators/http-request-config';
 import { ManualTriggerConfig } from '../configurators/manual-trigger-config';
 
+import { ScheduleTriggerConfig } from '../configurators/schedule-trigger-config';
+
 export const NODE_TYPES = {
     schedule: ScheduleNode,
     action: ActionNode,
@@ -13,6 +15,7 @@ export const NODE_TYPES = {
 export const CONFIG_COMPONENTS: Record<string, any> = {
     'http': HttpRequestConfig,
     'manual-trigger': ManualTriggerConfig,
+    'schedule': ScheduleTriggerConfig,
     // Fallbacks
     'action': HttpRequestConfig, // Default action to HTTP for now
 };

@@ -168,36 +168,43 @@ export function NodeConfigurationModal({
             </TabsContent>
 
             <TabsContent value="test" className="mt-0 space-y-4 p-6 pb-20">
-              <div className="space-y-4">
-                <div className="p-4 border rounded-md bg-muted/20 space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Test Configuration</h4>
-                    <p className="text-xs text-muted-foreground">
-                      This will execute the action with the current settings.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Test Body (Optional)</Label>
-                    <Textarea 
-                      placeholder='Override body for testing, e.g. { "test": true }'
-                      className="font-mono text-xs bg-background"
-                      rows={4}
-                      value={testBody}
-                      onChange={(e) => setTestBody(e.target.value)}
-                    />
-                  </div>
+              {selectedNode.type === 'schedule' ? (
+                <div className="flex flex-col items-center justify-center h-40 text-center space-y-2 p-4 border rounded-md bg-muted/20">
+                  <p className="text-sm font-medium text-muted-foreground">No test available</p>
+                  <p className="text-xs text-muted-foreground">Schedule triggers cannot be manually tested here.</p>
                 </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-md bg-muted/20 space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Test Configuration</h4>
+                      <p className="text-xs text-muted-foreground">
+                        This will execute the action with the current settings.
+                      </p>
+                    </div>
 
-                {testResult && (
-                  <div className="space-y-2">
-                    <Label>Result</Label>
-                    <div className="p-4 rounded-md bg-slate-950 text-slate-50 font-mono text-xs overflow-auto max-h-[300px]">
-                      <pre>{JSON.stringify(testResult, null, 2)}</pre>
+                    <div className="space-y-2">
+                      <Label>Test Body (Optional)</Label>
+                      <Textarea 
+                        placeholder='Override body for testing, e.g. { "test": true }'
+                        className="font-mono text-xs bg-background"
+                        rows={4}
+                        value={testBody}
+                        onChange={(e) => setTestBody(e.target.value)}
+                      />
                     </div>
                   </div>
-                )}
-              </div>
+
+                  {testResult && (
+                    <div className="space-y-2">
+                      <Label>Result</Label>
+                      <div className="p-4 rounded-md bg-slate-950 text-slate-50 font-mono text-xs overflow-auto max-h-[300px]">
+                        <pre>{JSON.stringify(testResult, null, 2)}</pre>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </TabsContent>
           </div>
         </Tabs>
@@ -206,7 +213,7 @@ export function NodeConfigurationModal({
            {activeTab === 'settings' && (
              <Button onClick={handleSave}>Save Configuration</Button>
            )}
-           {activeTab === 'test' && (
+           {activeTab === 'test' && selectedNode.type !== 'schedule' && (
              <Button 
                onClick={handleTest} 
                disabled={isTesting}

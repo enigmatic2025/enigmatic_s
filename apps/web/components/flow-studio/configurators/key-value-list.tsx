@@ -18,21 +18,30 @@ interface KeyValueListProps {
 }
 
 export function KeyValueList({ initialData, onUpdate, title }: KeyValueListProps) {
-  // Initialize state once from props. We assume the parent remounts this component 
-  // (via key) when the selected node changes.
+  // Initialize state with data + one empty row
   const [items, setItems] = useState<KeyValuePair[]>(() => {
-    if (!initialData) return [];
-    return Object.entries(initialData).map(([key, value]) => ({
+    const initialItems = initialData 
+      ? Object.entries(initialData).map(([key, value]) => ({
+          id: Math.random().toString(36).substr(2, 9),
+          key,
+          value: String(value),
+        }))
+      : [];
+    
+    // Always append an empty row for adding new items
+    return [...initialItems, {
       id: Math.random().toString(36).substr(2, 9),
-      key,
-      value: String(value),
-    }));
+      key: "",
+      value: ""
+    }];
   });
 
-  // Remove the useEffect that syncs from initialData to avoid circular updates/focus loss.
-
-  const updateParent = (newItems: KeyValuePair[]) => {
-    const obj = newItems.reduce((acc, item) => {
+  const updateParent = (currentItems: KeyValuePair[]) => {
+    // Filter out empty items (no key AND no value) before sending to parent
+    // But keep items that have at least one field filled
+    const validItems = currentItems.filter(item => item.key.trim() !== "" || item.value.trim() !== "");
+    
+    const obj = validItems.reduce((acc, item) => {
       if (item.key) acc[item.key] = item.value;
       return acc;
     }, {} as Record<string, string>);
@@ -40,28 +49,45 @@ export function KeyValueList({ initialData, onUpdate, title }: KeyValueListProps
   };
 
   const handleChange = (id: string, field: 'key' | 'value', newValue: string) => {
-    const newItems = items.map(item => 
-      item.id === id ? { ...item, [field]: newValue } : item
-    );
-    setItems(newItems);
-    updateParent(newItems);
+    setItems(prevItems => {
+      const newItems = prevItems.map(item => 
+        item.id === id ? { ...item, [field]: newValue } : item
+      );
+
+      // If we modified the last item, and it's no longer empty, append a new empty item
+      const lastItem = newItems[newItems.length - 1];
+      if (lastItem.key !== "" || lastItem.value !== "") {
+        newItems.push({
+          id: Math.random().toString(36).substr(2, 9),
+          key: "",
+          value: ""
+        });
+      }
+
+      // Defer the parent update to avoid "Cannot update during render" error
+      // We can't call this directly inside the setState updater if it triggers a parent setState
+      setTimeout(() => updateParent(newItems), 0);
+      
+      return newItems;
+    });
   };
 
   const handleDelete = (id: string) => {
-    const newItems = items.filter(item => item.id !== id);
-    setItems(newItems);
-    updateParent(newItems);
-  };
-
-  const handleAdd = (field: 'key' | 'value', value: string) => {
-    const newItem = { 
-      id: Math.random().toString(36).substr(2, 9), 
-      key: field === 'key' ? value : "", 
-      value: field === 'value' ? value : "" 
-    };
-    const newItems = [...items, newItem];
-    setItems(newItems);
-    updateParent(newItems);
+    setItems(prevItems => {
+      const newItems = prevItems.filter(item => item.id !== id);
+      
+      // If we deleted everything (or the last empty row somehow), ensure there's always one empty row
+      if (newItems.length === 0) {
+        newItems.push({
+          id: Math.random().toString(36).substr(2, 9),
+          key: "",
+          value: ""
+        });
+      }
+      
+      setTimeout(() => updateParent(newItems), 0);
+      return newItems;
+    });
   };
 
   return (
@@ -75,56 +101,41 @@ export function KeyValueList({ initialData, onUpdate, title }: KeyValueListProps
         </div>
         
         <div className="divide-y">
-          {items.map((item) => (
-            <div key={item.id} className="grid grid-cols-[1fr_1fr_40px] gap-px group">
-              <div className="p-1">
-                <Input
-                  value={item.key}
-                  onChange={(e) => handleChange(item.id, 'key', e.target.value)}
-                  className="h-8 border-0 shadow-none focus-visible:ring-0 px-2"
-                  placeholder="Key"
-                />
+          {items.map((item, index) => {
+            const isLast = index === items.length - 1;
+            return (
+              <div key={item.id} className="grid grid-cols-[1fr_1fr_40px] gap-px group">
+                <div className="p-1">
+                  <Input
+                    value={item.key}
+                    onChange={(e) => handleChange(item.id, 'key', e.target.value)}
+                    className={`h-8 border-0 shadow-none focus-visible:ring-0 px-2 ${isLast ? 'text-muted-foreground' : ''}`}
+                    placeholder={isLast ? "Add Key" : "Key"}
+                  />
+                </div>
+                <div className="p-1">
+                  <Input
+                    value={item.value}
+                    onChange={(e) => handleChange(item.id, 'value', e.target.value)}
+                    className={`h-8 border-0 shadow-none focus-visible:ring-0 px-2 ${isLast ? 'text-muted-foreground' : ''}`}
+                    placeholder={isLast ? "Add Value" : "Value"}
+                  />
+                </div>
+                <div className="flex items-center justify-center">
+                  {!isLast && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
               </div>
-              <div className="p-1">
-                <Input
-                  value={item.value}
-                  onChange={(e) => handleChange(item.id, 'value', e.target.value)}
-                  className="h-8 border-0 shadow-none focus-visible:ring-0 px-2"
-                  placeholder="Value"
-                />
-              </div>
-              <div className="flex items-center justify-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => handleDelete(item.id)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            </div>
-          ))}
-          
-          {/* Empty Row for adding */}
-          <div className="grid grid-cols-[1fr_1fr_40px] gap-px">
-            <div className="p-1">
-               <Input
-                  value=""
-                  onChange={(e) => handleAdd('key', e.target.value)}
-                  className="h-8 border-0 shadow-none focus-visible:ring-0 px-2 text-muted-foreground"
-                  placeholder="Add Key"
-                />
-            </div>
-             <div className="p-1">
-               <Input
-                  value=""
-                  onChange={(e) => handleAdd('value', e.target.value)}
-                  className="h-8 border-0 shadow-none focus-visible:ring-0 px-2 text-muted-foreground"
-                  placeholder="Add Value"
-                />
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>
