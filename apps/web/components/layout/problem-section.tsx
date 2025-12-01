@@ -68,7 +68,7 @@ const items = [
   {
     title: "Manual Workflows",
     description:
-      "Your logistics teams are still glued to spreadsheets, emails, and manual EDI workarounds, so exceptions get missed, shipments delay, and everyone works from different playbooks.",
+      "Your logistics teams are still glued to spreadsheets, emails, and manual workarounds, so exceptions get missed, shipments delay, and everyone works from different playbooks.",
     icon: <FileSpreadsheet className="h-10 w-10 text-muted-foreground/80" />,
     image: "/images/home/manual-workflows.jpg",
   },
