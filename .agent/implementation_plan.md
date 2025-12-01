@@ -30,9 +30,17 @@ Implement the Flow Studio designer using React Flow, allowing users to visually 
 #### [NEW] [types/flow.ts](file:///d:/Repository/enigmatic_s/apps/web/types/flow.ts)
 -   (Completed) Define TypeScript interfaces for Flow, NodeData, and NodeConfig.
 
+#### [NEW] [apps/backend/internal/handlers/flow.go](file:///d:/Repository/enigmatic_s/apps/backend/internal/handlers/flow.go)
+-   Create `FlowHandler` struct.
+-   Implement `CreateFlow` and `UpdateFlow` methods.
+-   Use `database.GetClient()` to interact with Supabase `flows` table.
+
+#### [MODIFY] [apps/backend/internal/server/server.go](file:///d:/Repository/enigmatic_s/apps/backend/internal/server/server.go)
+-   Register `/flows` routes with `FlowHandler`.
+
 #### [MODIFY] [flow-designer.tsx](file:///d:/Repository/enigmatic_s/apps/web/components/flow-studio/flow-designer.tsx)
 -   Update to use `Node<NodeData>` from the new types.
--   Implement `onSave` to serialize the flow to the `FlowDefinition` structure.
+-   Implement `onSave` to call the Go backend API (`http://localhost:8080/flows`).
 
 ### Database
 #### [NEW] [supabase_schema.sql](file:///d:/Repository/enigmatic_s/.agent/supabase_schema.sql)

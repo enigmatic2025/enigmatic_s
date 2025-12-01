@@ -10,6 +10,7 @@ I have integrated `ReactFlow` into the `FlowDesigner` component, replacing the p
 -   **Drag and Drop**: Users can now drag nodes from the sidebar and drop them onto the canvas.
 -   **Validation**: Enforces that the first node must be a Trigger (Schedule). Shows a toast error otherwise.
 -   **Delete**: Nodes have a delete button in their header.
+-   **Save**: The "Save Flow" button now calls the Go backend API (`POST /flows` or `PUT /flows/{id}`) to persist the flow definition to Supabase.
 
 ### Sidebar Redesign
 I have modified the `Sidebar` component to support a "Designer Mode":
@@ -17,6 +18,12 @@ I have modified the `Sidebar` component to support a "Designer Mode":
 -   **Draggable Items**: Added "Schedule", "HTTP Request", and "AI Reasoning" items that can be dragged onto the canvas.
 -   **Search**: Added a search bar to filter the list of available nodes.
 -   **Visual Language**: Applied color coding (Blue for Triggers, Orange for Actions, Purple for AI) to the sidebar icons.
+
+### Backend (Go)
+I have implemented the backend logic for managing flows:
+-   **Handler**: Created `apps/backend/internal/handlers/flow.go` with `CreateFlow`, `UpdateFlow`, and `GetFlow` methods.
+-   **Routes**: Registered `/flows` endpoints in `apps/backend/internal/server/server.go`.
+-   **Database**: Uses the existing Supabase client to interact with the `flows` table.
 
 ### Database Schema
 I have created a `supabase_schema.sql` script in the root directory. This script defines the necessary tables for Nodal, including:
@@ -39,6 +46,7 @@ I have created a `supabase_schema.sql` script in the root directory. This script
 -   **Validation**: Try dropping an "Action" node on an empty canvas. It should show an error toast. Drop a "Schedule" node first, then an "Action" node. It should work.
 -   **Search**: Type "http" in the sidebar search. Only "HTTP Request" should be visible.
 -   **Delete**: Click the trash icon on a node. It should disappear.
+-   **Save**: Click "Save Flow". Check the browser console network tab to see the request to `http://localhost:8080/flows`. Note: The backend must be running for this to succeed.
 -   **Database**: The SQL script is ready to be executed in the Supabase SQL editor.
 
 ## Next Steps

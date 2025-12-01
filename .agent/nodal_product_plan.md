@@ -432,4 +432,11 @@ type ExpressionEngine interface {
 ## 7. Next Steps (Execution Phase)
 1.  **Initialize Repository**: Git, Go Module, Next.js.
 2.  **Setup Infrastructure**: Docker Compose (Postgres + Temporal).
-3.  **Backend Core**: Implement `NodeExecutor` interface and basic API.
+### 7.1. Go Backend API
+-   **Base URL**: `http://localhost:8080` (Local)
+-   **Endpoints**:
+    -   `POST /flows`: Create a new flow.
+    -   `PUT /flows/{id}`: Update an existing flow definition.
+    -   `GET /flows/{id}`: Get flow details.
+    -   `GET /flows`: List flows for an organization.
+

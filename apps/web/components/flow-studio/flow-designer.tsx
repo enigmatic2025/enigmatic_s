@@ -102,6 +102,61 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     [project, setNodes, nodes],
   );
 
+  const handleSave = async () => {
+    if (!params.slug) return;
+
+    // TODO: Get actual Org ID from context/slug
+    // For now, we'll assume we can find it or pass it in props. 
+    // Since we don't have Org ID easily here without fetching, 
+    // we might need to rely on the backend to infer it or pass it down.
+    // For this MVP, let's assume a hardcoded or prop-passed Org ID isn't available easily 
+    // without a bigger refactor, so we'll try to use a placeholder or context if available.
+    // A better approach is to pass `orgId` as a prop to `FlowDesigner`.
+    
+    // TEMPORARY: We will use a placeholder UUID for Org ID if not present, 
+    // but in a real app this comes from the auth context.
+    const orgId = "00000000-0000-0000-0000-000000000000"; // Replace with actual logic
+
+    const flowData = {
+      org_id: orgId,
+      name: flowId ? `Flow ${flowId}` : "New Flow", // You might want a name input
+      description: "Created via Flow Studio",
+      definition: { nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } },
+      variables_schema: [],
+    };
+
+    try {
+      const url = flowId 
+        ? `http://localhost:8080/flows/${flowId}`
+        : `http://localhost:8080/flows`;
+      
+      const method = flowId ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(flowData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save flow');
+      }
+
+      const result = await response.json();
+      toast.success("Flow saved successfully!");
+      
+      if (!flowId && result.id) {
+        // Redirect to the new flow ID if it was a create operation
+        router.push(`/nodal/${params.slug}/dashboard/flow-studio/design/${result.id}`);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to save flow. Is the backend running?");
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
       {/* Toolbar */}
@@ -132,7 +187,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
             <Play className="h-4 w-4" />
             Test Run
           </Button>
-          <Button size="sm" className="gap-2">
+          <Button size="sm" className="gap-2" onClick={handleSave}>
             <Save className="h-4 w-4" />
             Save Flow
           </Button>

@@ -67,10 +67,13 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
         memberships.length > 0 &&
         memberships[0].organizations
       ) {
-        // @ts-ignore
-        setDashboardUrl(
-          `/nodal/${memberships[0].organizations.slug}/dashboard`
-        );
+        const org = Array.isArray(memberships[0].organizations)
+          ? memberships[0].organizations[0]
+          : memberships[0].organizations;
+
+        if (org && org.slug) {
+          setDashboardUrl(`/nodal/${org.slug}/dashboard`);
+        }
       } else {
         // Fallback to admin
         setDashboardUrl("/nodal/admin");
