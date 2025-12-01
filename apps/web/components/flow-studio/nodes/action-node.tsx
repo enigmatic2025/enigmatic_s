@@ -33,10 +33,10 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
   };
 
   return (
-    <Card className={cn("min-w-[200px] border-2 shadow-sm transition-colors group", colorClass.split(' ').filter(c => c.startsWith('border')).join(' '))}>
+    <Card className={cn("min-w-[200px] relative border-2 shadow-sm transition-colors group", colorClass.split(' ').filter(c => c.startsWith('border')).join(' '))}>
       <Handle
         type="target"
-        position={Position.Top}
+        position={Position.Left}
         isConnectable={isConnectable}
         className={cn("w-3 h-3 border-2 border-background", handleColor)}
       />
@@ -63,7 +63,7 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
       </CardContent>
       <Handle
         type="source"
-        position={Position.Bottom}
+        position={Position.Right}
         isConnectable={isConnectable}
         className={cn("w-3 h-3 border-2 border-background", handleColor)}
       />

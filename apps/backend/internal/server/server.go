@@ -31,7 +31,7 @@ func NewServer() *http.Server {
 	// Declare Server config
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%s", s.port),
-		Handler:      s.RegisterRoutes(),
+		Handler:      middleware.CORS(s.RegisterRoutes()),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
@@ -77,6 +77,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("POST /flows", flowHandler.CreateFlow)
 	mux.HandleFunc("PUT /flows/", flowHandler.UpdateFlow)
 	mux.HandleFunc("GET /flows/", flowHandler.GetFlow)
+	mux.HandleFunc("GET /flows", flowHandler.ListFlows)
 
 	return mux
 }

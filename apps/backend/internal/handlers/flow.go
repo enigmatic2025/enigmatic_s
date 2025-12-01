@@ -19,6 +19,7 @@ func NewFlowHandler() *FlowHandler {
 func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		OrgID           string                 `json:"org_id"`
+		Slug            string                 `json:"slug"` // Add Slug field
 		Name            string                 `json:"name"`
 		Description     string                 `json:"description"`
 		Definition      map[string]interface{} `json:"definition"`
@@ -30,8 +31,21 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	client := database.GetClient()
+
+	// Resolve OrgID from Slug if OrgID is missing or invalid placeholder
+	if (req.OrgID == "" || req.OrgID == "00000000-0000-0000-0000-000000000000") && req.Slug != "" {
+		var orgs []struct {
+			ID string `json:"id"`
+		}
+		err := client.DB.From("organizations").Select("id").Eq("slug", req.Slug).Execute(&orgs)
+		if err == nil && len(orgs) > 0 {
+			req.OrgID = orgs[0].ID
+		}
+	}
+
 	if req.OrgID == "" || req.Name == "" {
-		http.Error(w, "OrgID and Name are required", http.StatusBadRequest)
+		http.Error(w, "OrgID (or valid Slug) and Name are required", http.StatusBadRequest)
 		return
 	}
 
@@ -44,7 +58,6 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	client := database.GetClient()
 	var results []map[string]interface{}
 	err := client.DB.From("flows").Insert(map[string]interface{}{
 		"org_id":           req.OrgID,
@@ -147,4 +160,48 @@ func (h *FlowHandler) GetFlow(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(results[0])
+}
+
+// ListFlows lists all flows for an organization
+func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
+	slug := r.URL.Query().Get("slug")
+	if slug == "" {
+		http.Error(w, "Slug is required", http.StatusBadRequest)
+		return
+	}
+
+	client := database.GetClient()
+
+	// 1. Resolve Org ID from Slug
+	var orgs []struct {
+		ID string `json:"id"`
+	}
+	err := client.DB.From("organizations").Select("id").Eq("slug", slug).Execute(&orgs)
+	if err != nil || len(orgs) == 0 {
+		http.Error(w, "Organization not found", http.StatusNotFound)
+		return
+	}
+	orgID := orgs[0].ID
+
+	// 2. Fetch Flows
+	var flows []map[string]interface{}
+	err = client.DB.From("flows").Select("*").Eq("org_id", orgID).Execute(&flows)
+
+	if err != nil {
+		http.Error(w, "Failed to fetch flows: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Sort in memory since Order method is causing build issues
+	// Assuming updated_at is a string (ISO8601)
+	/*
+	sort.Slice(flows, func(i, j int) bool {
+		t1, _ := flows[i]["updated_at"].(string)
+		t2, _ := flows[j]["updated_at"].(string)
+		return t1 > t2
+	})
+	*/
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(flows)
 }

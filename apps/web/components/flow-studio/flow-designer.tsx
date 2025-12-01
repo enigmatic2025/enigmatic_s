@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import ReactFlow, {
   addEdge,
   Background,
@@ -32,14 +32,7 @@ const nodeTypes = {
   action: ActionNode,
 };
 
-const initialNodes: Node[] = [
-  {
-    id: '1',
-    type: 'schedule',
-    position: { x: 250, y: 50 },
-    data: { label: 'Every Morning' },
-  },
-];
+const initialNodes: Node[] = [];
 
 function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const router = useRouter();
@@ -50,7 +43,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const { project } = useReactFlow();
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
     [setEdges],
   );
 
@@ -98,9 +91,45 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       };
 
       setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => nds.concat(newNode));
     },
     [project, setNodes, nodes],
   );
+
+  // Load flow data if flowId is present
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!flowId) {
+      setIsLoaded(true);
+      return;
+    }
+
+    const fetchFlow = async () => {
+      try {
+        const res = await fetch(`http://localhost:8001/flows/${flowId}`);
+        if (!res.ok) throw new Error("Failed to fetch flow");
+        
+        const data = await res.json();
+        
+        if (data.definition) {
+          // Restore nodes and edges from definition
+          const { nodes: savedNodes, edges: savedEdges, viewport } = data.definition;
+          
+          if (savedNodes) setNodes(savedNodes);
+          if (savedEdges) setEdges(savedEdges);
+          // We could also restore viewport if needed using useReactFlow().setViewport(viewport)
+        }
+      } catch (error) {
+        console.error("Error loading flow:", error);
+        toast.error("Failed to load flow data");
+      } finally {
+        setIsLoaded(true);
+      }
+    };
+
+    fetchFlow();
+  }, [flowId, setNodes, setEdges]);
 
   const handleSave = async () => {
     if (!params.slug) return;
@@ -119,6 +148,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
     const flowData = {
       org_id: orgId,
+      slug: params.slug, // Pass slug to backend
       name: flowId ? `Flow ${flowId}` : "New Flow", // You might want a name input
       description: "Created via Flow Studio",
       definition: { nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } },
@@ -127,8 +157,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
     try {
       const url = flowId 
-        ? `http://localhost:8080/flows/${flowId}`
-        : `http://localhost:8080/flows`;
+        ? `http://localhost:8001/flows/${flowId}`
+        : `http://localhost:8001/flows`;
       
       const method = flowId ? 'PUT' : 'POST';
 
@@ -205,6 +235,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           onDragOver={onDragOver}
           onDrop={onDrop}
           nodeTypes={nodeTypes}
+          defaultEdgeOptions={{ animated: true }}
           fitView
         >
           <Background />

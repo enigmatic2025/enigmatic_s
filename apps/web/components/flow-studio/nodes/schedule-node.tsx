@@ -12,7 +12,7 @@ export const ScheduleNode = memo(({ id, data, isConnectable }: any) => {
   };
 
   return (
-    <Card className="min-w-[200px] border-2 border-blue-500/20 shadow-sm hover:border-blue-500/50 transition-colors group">
+    <Card className="min-w-[200px] relative border-2 border-blue-500/20 shadow-sm hover:border-blue-500/50 transition-colors group">
       <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-blue-500/10 rounded-md">
@@ -36,7 +36,7 @@ export const ScheduleNode = memo(({ id, data, isConnectable }: any) => {
       </CardContent>
       <Handle
         type="source"
-        position={Position.Bottom}
+        position={Position.Right}
         isConnectable={isConnectable}
         className="w-3 h-3 bg-blue-500 border-2 border-background"
       />
