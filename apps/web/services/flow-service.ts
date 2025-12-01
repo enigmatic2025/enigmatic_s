@@ -38,5 +38,33 @@ export const flowService = {
         }
 
         return response.json();
+    },
+
+    async deleteFlow(flowId: string) {
+        const response = await fetch(`${API_BASE_URL}/flows/${flowId}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete flow');
+        }
+
+        return response.json();
+    },
+
+    async renameFlow(flowId: string, name: string) {
+        const response = await fetch(`${API_BASE_URL}/flows/${flowId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to rename flow');
+        }
+
+        return response.json();
     }
 };

@@ -44,9 +44,16 @@ export const validateFlow = (nodes: Node[], edges: Edge[]): boolean => {
 
     if (visited.size !== nodes.length) {
         const orphanCount = nodes.length - visited.size;
+        console.log("Validation Failed: Orphans found", {
+            totalNodes: nodes.length,
+            visitedNodes: visited.size,
+            nodes: nodes.map(n => n.id),
+            visited: Array.from(visited)
+        });
         toast.error(`Found ${orphanCount} orphaned node(s) not connected to the trigger.`);
         return false;
     }
 
+    console.log("Validation Passed");
     return true;
 };

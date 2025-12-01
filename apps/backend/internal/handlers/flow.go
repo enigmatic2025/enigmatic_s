@@ -198,3 +198,24 @@ func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(flows)
 }
+
+// DeleteFlow deletes a flow by ID
+func (h *FlowHandler) DeleteFlow(w http.ResponseWriter, r *http.Request) {
+	flowID := strings.TrimPrefix(r.URL.Path, "/flows/")
+	if flowID == "" {
+		http.Error(w, "Flow ID required", http.StatusBadRequest)
+		return
+	}
+
+	client := database.GetClient()
+	var results []map[string]interface{}
+	err := client.DB.From("flows").Delete().Eq("id", flowID).Execute(&results)
+
+	if err != nil {
+		http.Error(w, "Failed to delete flow: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Flow deleted successfully"})
+}

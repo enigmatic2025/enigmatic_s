@@ -18,12 +18,19 @@ import 'reactflow/dist/style.css';
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Play, Plus } from "lucide-react";
+import { ArrowLeft, Save, Play, Plus, Trash } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { ScheduleNode } from './nodes/schedule-node';
 import { ActionNode } from './nodes/action-node';
 import { validateFlow } from '@/lib/flow-validation';
 import { flowService } from '@/services/flow-service';
+import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface FlowDesignerProps {
   flowId?: string;
@@ -43,6 +50,10 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { project } = useReactFlow();
+  
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [flowName, setFlowName] = useState("New Flow");
+  const [isEditingName, setIsEditingName] = useState(false);
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -109,7 +120,6 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       };
 
       setNodes((nds) => nds.concat(newNode));
-      setNodes((nds) => nds.concat(newNode));
     },
     [project, setNodes, nodes],
   );
@@ -133,6 +143,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           
           if (savedNodes) setNodes(savedNodes);
           if (savedEdges) setEdges(savedEdges);
+          if (data.name) setFlowName(data.name);
           // We could also restore viewport if needed using useReactFlow().setViewport(viewport)
         }
       } catch (error) {
@@ -147,6 +158,30 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   }, [flowId, setNodes, setEdges]);
 
 
+
+  const handleDelete = async () => {
+    if (!flowId) return;
+    try {
+      await flowService.deleteFlow(flowId);
+      toast.success("Flow deleted successfully");
+      router.push(`/nodal/${params.slug}/dashboard/flow-studio`);
+    } catch (error) {
+      toast.error("Failed to delete flow");
+    }
+  };
+
+  const handleNameBlur = () => {
+    setIsEditingName(false);
+    if (flowName.trim() === "") {
+      setFlowName("New Flow");
+    }
+  };
+
+  const handleNameKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      setIsEditingName(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!params.slug) return;
@@ -170,7 +205,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     const flowData = {
       org_id: orgId,
       slug: params.slug as string, // Pass slug to backend
-      name: flowId ? `Flow ${flowId}` : "New Flow", // You might want a name input
+      name: flowName, // Use current name state
       description: "Created via Flow Studio",
       definition: { nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } },
       variables_schema: [],
@@ -206,24 +241,73 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex flex-col">
-            <h2 className="text-sm font-semibold">
-              {flowId ? `Flow #${flowId}` : "New Flow"}
-            </h2>
+            {isEditingName ? (
+              <input
+                type="text"
+                value={flowName}
+                onChange={(e) => setFlowName(e.target.value)}
+                onBlur={handleNameBlur}
+                onKeyDown={handleNameKeyDown}
+                autoFocus
+                className="text-sm font-semibold bg-transparent border-b border-primary outline-none px-1 w-[300px]"
+              />
+            ) : (
+              <h2 
+                className="text-sm font-semibold cursor-text hover:underline decoration-dashed underline-offset-4 w-[300px] truncate"
+                onDoubleClick={() => setIsEditingName(true)}
+                title="Double-click to rename"
+              >
+                {flowName}
+              </h2>
+            )}
             <span className="text-xs text-muted-foreground">
               {flowId ? "Last saved 2 mins ago" : "Unsaved changes"}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Play className="h-4 w-4" />
-            Test Run
-          </Button>
-          <Button size="sm" className="gap-2" onClick={handleSave}>
-            <Save className="h-4 w-4" />
-            Save Flow
-          </Button>
+        <div className="flex items-center gap-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                  <Play className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Test Run</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleSave}>
+                  <Save className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Save Flow</p>
+              </TooltipContent>
+            </Tooltip>
+          
+            {flowId && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
+                    onClick={() => setIsDeleteModalOpen(true)}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete Flow</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </TooltipProvider>
         </div>
       </div>
 
@@ -245,6 +329,13 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           <Controls />
         </ReactFlow>
       </div>
+
+      <DeleteFlowModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        flowName={flowName}
+      />
     </div>
   );
 }

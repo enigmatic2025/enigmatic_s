@@ -106,6 +106,8 @@ const myFlows = [
 
 import Link from "next/link";
 
+import { FlowTable } from "@/components/flow-studio/flow-table";
+
 export default async function FlowStudioPage({
   params,
 }: {
@@ -233,69 +235,7 @@ export default async function FlowStudioPage({
             </Select>
           </div>
 
-          <div className="rounded-md border-none">
-            <Table>
-              <TableHeader className="border-none">
-                <TableRow className="border-none hover:bg-transparent">
-                  <TableHead className="w-[300px] pl-0">Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Trigger</TableHead>
-                  <TableHead>Last Run</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {flows && flows.length > 0 ? (
-                  flows.map((flow: any) => (
-                    <TableRow
-                      key={flow.id}
-                      className="border-none hover:bg-muted/50"
-                    >
-                      <TableCell className="font-medium pl-0">
-                        <Link href={`/nodal/${slug}/dashboard/flow-studio/design/${flow.id}`} className="flex items-center gap-3 hover:underline">
-                          <div className="h-8 w-8 rounded-md border bg-background p-1.5 flex items-center justify-center text-muted-foreground">
-                            <PlayCircle className="h-4 w-4" />
-                          </div>
-                          {flow.name}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={
-                            flow.is_active
-                              ? "text-green-600 border-green-600/20 bg-green-50 dark:bg-green-900/20 dark:text-green-400"
-                              : "text-orange-600 border-orange-600/20 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-400"
-                          }
-                        >
-                          {flow.is_active ? "Active" : "Draft"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {/* Extract trigger from definition if possible, else generic */}
-                        {flow.definition?.nodes?.find((n: any) => n.type === 'schedule') ? 'Schedule' : 'Manual'}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {/* Placeholder for Last Run */}
-                        Never
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                      No flows found. Create one to get started!
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <FlowTable initialFlows={flows} slug={slug} />
         </TabsContent>
       </Tabs>
     </div>

@@ -78,6 +78,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("PUT /flows/", flowHandler.UpdateFlow)
 	mux.HandleFunc("GET /flows/", flowHandler.GetFlow)
 	mux.HandleFunc("GET /flows", flowHandler.ListFlows)
+	mux.HandleFunc("DELETE /flows/", flowHandler.DeleteFlow)
 
 	return mux
 }
