@@ -153,3 +153,52 @@ Designed for impact, storytelling, and brand presentation.
 - **Images**: `w-full h-auto`, `object-cover`.
 - **Cards**: Stack vertically, remove fixed heights.
 - **Animations**: Keep subtle. Avoid large horizontal movements.
+
+---
+
+## 5. Flow Studio Design
+
+Standardized design for flow nodes (Triggers, Actions).
+
+### Node Dimensions & Layout
+
+- **Width**: Fixed `w-[250px]`.
+- **Card Style**: `relative border-2 shadow-sm transition-colors group`.
+- **Padding**: `p-4` for header/content.
+
+### Node Header
+
+- **Icon**:
+  - Size: `h-4 w-4` (16px).
+  - Container: `p-2 rounded-md` with subtype color background (e.g., `bg-purple-500/10`).
+- **Labels**:
+  - **Type Label**: `text-[10px] uppercase tracking-wider text-muted-foreground font-semibold`.
+  - **Title**: `text-sm font-medium leading-none truncate`.
+
+### Node Interaction
+
+- **Delete Button**:
+  - Style: `variant="ghost"`, `size="icon"`, `h-6 w-6`.
+  - Visibility: `opacity-0 group-hover:opacity-100`.
+  - **Critical Rule**: Must implement `e.stopPropagation()` on both `onClick` and `onMouseDown` to prevent opening the configuration modal.
+
+### Node Content
+- **Content**:
+  - **Description**: A brief summary of the node's configuration (e.g., "Runs every day at 9:00 AM" or "GET https://api.example.com").
+  - **Status**: A visual indicator (e.g., "Ready" with a green dot) or a call to action (e.g., "Click to configure" in orange).
+  - **No Duplicate Titles**: The node title should NOT be repeated in the body.
+
+### Configuration Modal
+
+Standardized modal for node settings.
+
+- **Layout**:
+  - `DialogContent`: Fixed height `h-[85vh]`, max width `sm:max-w-[600px]`.
+  - **Header/Footer**: Fixed (sticky), `p-6`.
+  - **Body**: Scrollable (`overflow-y-auto`), `p-6 pb-20`.
+- **Typography**:
+  - Section Headers: `text-sm font-medium`.
+  - Labels: `text-sm font-medium`.
+- **Components**:
+  - Inputs/Textareas: Standard shadcn components.
+  - Key-Value Lists: For headers/params.

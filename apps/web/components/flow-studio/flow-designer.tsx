@@ -2,29 +2,19 @@
 
 import { useCallback, useRef, useState, useEffect } from 'react';
 import ReactFlow, {
-  addEdge,
   Background,
   Controls,
-  Connection,
-  Edge,
-  Node,
-  useNodesState,
-  useEdgesState,
-  Panel,
   ReactFlowProvider,
-  useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Play, Plus, Trash } from "lucide-react";
+import { ArrowLeft, Save, Play, Trash } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
-import { ScheduleNode } from './nodes/schedule-node';
-import { ActionNode } from './nodes/action-node';
-import { validateFlow } from '@/lib/flow-validation';
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
+import { NodeConfigurationModal } from "@/components/flow-studio/node-configuration-modal";
 import {
   Tooltip,
   TooltipContent,
@@ -32,93 +22,59 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { NODE_TYPES } from './constants/node-registry';
+import { useFlowState } from './hooks/use-flow-state';
+import { useFlowOperations } from './hooks/use-flow-operations';
+
 interface FlowDesignerProps {
   flowId?: string;
 }
-
-const nodeTypes = {
-  schedule: ScheduleNode,
-  action: ActionNode,
-};
-
-const initialNodes: Node[] = [];
 
 function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const router = useRouter();
   const params = useParams();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { project } = useReactFlow();
   
+  // State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [flowName, setFlowName] = useState("New Flow");
+  const [flowName, setFlowName] = useState("Untitled");
   const [isEditingName, setIsEditingName] = useState(false);
-
-  const onConnect = useCallback(
-    (params: Connection) => {
-      setEdges((eds) => addEdge({ ...params, animated: true }, eds));
-    },
-    [setEdges],
-  );
-
-  const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  }, []);
-
-  const onDrop = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-
-      const type = event.dataTransfer.getData('application/reactflow');
-
-      // check if the dropped element is valid
-      if (typeof type === 'undefined' || !type) {
-        return;
-      }
-
-      const position = reactFlowWrapper.current?.getBoundingClientRect();
-      
-      if (!position) return;
-
-      const positionInstance = project({
-        x: event.clientX - position.left,
-        y: event.clientY - position.top,
-      });
-
-      const [nodeType, subtype] = type.split(':');
-
-      // Validation: Must start with a Trigger (Schedule)
-      if (nodes.length === 0 && nodeType !== 'schedule') {
-        toast.error("You must start with a Trigger (e.g., Schedule)!");
-        return;
-      }
-
-      // Validation: Only one Trigger allowed
-      if (nodeType === 'schedule' && nodes.some(n => n.type === 'schedule')) {
-        toast.error("Only one Trigger is allowed per flow!");
-        return;
-      }
-
-      const newNode: Node = {
-        id: Math.random().toString(),
-        type: nodeType,
-        position: positionInstance,
-        data: { 
-          label: subtype === 'http' ? 'HTTP Request' : subtype === 'ai' ? 'AI Reasoning' : 'New Schedule',
-          subtype: subtype 
-        },
-      };
-
-      setNodes((nds) => nds.concat(newNode));
-    },
-    [project, setNodes, nodes],
-  );
-
-  // Load flow data if flowId is present
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // Custom Hooks
+  const {
+    nodes,
+    setNodes,
+    onNodesChange,
+    edges,
+    setEdges,
+    onEdgesChange,
+    onConnect,
+  } = useFlowState();
+
+  const {
+    onDragOver,
+    onDrop,
+    onUpdateNode,
+    handleSave,
+    handleDelete,
+  } = useFlowOperations({
+    nodes,
+    setNodes,
+    edges,
+    setEdges,
+    flowId,
+    flowName,
+    setFlowName,
+    slug: params.slug as string,
+    router,
+    reactFlowWrapper,
+    setSelectedNode,
+  });
+
+  // Load Flow Data
   useEffect(() => {
     if (!flowId) {
       setIsLoaded(true);
@@ -130,13 +86,10 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         const data = await flowService.getFlow(flowId);
         
         if (data.definition) {
-          // Restore nodes and edges from definition
-          const { nodes: savedNodes, edges: savedEdges, viewport } = data.definition;
-          
+          const { nodes: savedNodes, edges: savedEdges } = data.definition;
           if (savedNodes) setNodes(savedNodes);
           if (savedEdges) setEdges(savedEdges);
           if (data.name) setFlowName(data.name);
-          // We could also restore viewport if needed using useReactFlow().setViewport(viewport)
         }
       } catch (error) {
         console.error("Error loading flow:", error);
@@ -149,71 +102,21 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     fetchFlow();
   }, [flowId, setNodes, setEdges]);
 
-
-
-  const handleDelete = async () => {
-    if (!flowId) return;
-    try {
-      await flowService.deleteFlow(flowId);
-      toast.success("Flow deleted successfully");
-      router.push(`/nodal/${params.slug}/dashboard/flow-studio`);
-    } catch (error) {
-      toast.error("Failed to delete flow");
-    }
-  };
+  const onNodeClick = useCallback((event: React.MouseEvent, node: any) => {
+    setSelectedNode(node);
+    setIsSheetOpen(true);
+  }, []);
 
   const handleNameBlur = () => {
     setIsEditingName(false);
     if (flowName.trim() === "") {
-      setFlowName("New Flow");
+      setFlowName("Untitled");
     }
   };
 
   const handleNameKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       setIsEditingName(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!params.slug) return;
-
-    if (!validateFlow(nodes, edges)) {
-      return;
-    }
-
-    // TODO: Get actual Org ID from context/slug
-    // For now, we'll assume we can find it or pass it in props. 
-    // Since we don't have Org ID easily here without fetching, 
-    // we might need to rely on the backend to infer it or pass it down.
-    // For this MVP, let's assume a hardcoded or prop-passed Org ID isn't available easily 
-    // without a bigger refactor, so we'll try to use a placeholder or context if available.
-    // A better approach is to pass `orgId` as a prop to `FlowDesigner`.
-    
-    // TEMPORARY: We will use a placeholder UUID for Org ID if not present, 
-    // but in a real app this comes from the auth context.
-    const orgId = "00000000-0000-0000-0000-000000000000"; // Replace with actual logic
-
-    const flowData = {
-      org_id: orgId,
-      slug: params.slug as string, // Pass slug to backend
-      name: flowName, // Use current name state
-      description: "Created via Flow Studio",
-      definition: { nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } },
-      variables_schema: [],
-    };
-
-    try {
-      const result = await flowService.saveFlow(flowId, flowData);
-      toast.success("Flow saved successfully!");
-      
-      if (!flowId && result.id) {
-        // Redirect to the new flow ID if it was a create operation
-        router.push(`/nodal/${params.slug}/dashboard/flow-studio/design/${result.id}`);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to save flow. Is the backend running?");
     }
   };
 
@@ -313,7 +216,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           onConnect={onConnect}
           onDragOver={onDragOver}
           onDrop={onDrop}
-          nodeTypes={nodeTypes}
+          onNodeClick={onNodeClick}
+          nodeTypes={NODE_TYPES}
           defaultEdgeOptions={{ animated: true }}
           fitView
         >
@@ -327,6 +231,15 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDelete}
         flowName={flowName}
+      />
+
+      <NodeConfigurationModal
+        isOpen={isSheetOpen}
+        onClose={() => setIsSheetOpen(false)}
+        selectedNode={selectedNode}
+        onUpdate={onUpdateNode}
+        onTest={flowService.testAction}
+        nodes={nodes}
       />
     </div>
   );

@@ -58,6 +58,16 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Check for duplicate name
+	var existing []struct {
+		ID string `json:"id"`
+	}
+	err := client.DB.From("flows").Select("id").Eq("org_id", req.OrgID).Eq("name", req.Name).Execute(&existing)
+	if err == nil && len(existing) > 0 {
+		http.Error(w, "A flow with this name already exists", http.StatusConflict)
+		return
+	}
+
 	var results []map[string]interface{}
 	err := client.DB.From("flows").Insert(map[string]interface{}{
 		"org_id":           req.OrgID,
@@ -117,6 +127,28 @@ func (h *FlowHandler) UpdateFlow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updates["updated_at"] = time.Now()
+
+	// Check for duplicate name if name is being updated
+	if req.Name != "" {
+		// First get the org_id of the current flow
+		var currentFlow []struct {
+			OrgID string `json:"org_id"`
+		}
+		err := database.GetClient().DB.From("flows").Select("org_id").Eq("id", flowID).Execute(&currentFlow)
+		if err != nil || len(currentFlow) == 0 {
+			http.Error(w, "Flow not found", http.StatusNotFound)
+			return
+		}
+
+		var existing []struct {
+			ID string `json:"id"`
+		}
+		err = database.GetClient().DB.From("flows").Select("id").Eq("org_id", currentFlow[0].OrgID).Eq("name", req.Name).Neq("id", flowID).Execute(&existing)
+		if err == nil && len(existing) > 0 {
+			http.Error(w, "A flow with this name already exists", http.StatusConflict)
+			return
+		}
+	}
 
 	if len(updates) == 0 {
 		http.Error(w, "No fields to update", http.StatusBadRequest)

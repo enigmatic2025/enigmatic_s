@@ -12,6 +12,13 @@ const icons = {
   default: Zap,
 };
 
+const ACTION_NAMES: Record<string, string> = {
+  http: "HTTP Request",
+  email: "Send Email",
+  ai: "AI Reasoning",
+  default: "Action",
+};
+
 const colors = {
   http: "text-orange-500 bg-orange-500/10 border-orange-500/20 hover:border-orange-500/50",
   email: "text-orange-500 bg-orange-500/10 border-orange-500/20 hover:border-orange-500/50",
@@ -28,12 +35,13 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
   // Extract border color for the handle
   const handleColor = subtype === 'ai' ? 'bg-purple-500' : subtype === 'http' || subtype === 'email' ? 'bg-orange-500' : 'bg-slate-500';
 
-  const onDelete = () => {
+  const onDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
   };
 
   return (
-    <Card className={cn("min-w-[200px] relative border-2 shadow-sm transition-colors group", colorClass.split(' ').filter(c => c.startsWith('border')).join(' '))}>
+    <Card className={cn("w-[250px] relative border-2 shadow-sm transition-colors group", colorClass.split(' ').filter(c => c.startsWith('border')).join(' '))}>
       <Handle
         type="target"
         position={Position.Left}
@@ -41,25 +49,45 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
         className={cn("w-3 h-3 border-2 border-background", handleColor)}
       />
       <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <div className={cn("p-2 rounded-md", colorClass.split(' ').filter(c => c.startsWith('bg')).join(' '))}>
             <Icon className={cn("h-4 w-4", colorClass.split(' ').filter(c => c.startsWith('text')).join(' '))} />
           </div>
-          <CardTitle className="text-sm font-medium">{data.label}</CardTitle>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              {ACTION_NAMES[subtype] || ACTION_NAMES.default}
+            </span>
+            <CardTitle className="text-sm font-medium leading-none truncate" title={data.label}>{data.label}</CardTitle>
+          </div>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive shrink-0"
           onClick={onDelete}
+          onMouseDown={(e) => e.stopPropagation()}
         >
           <Trash2 className="h-3 w-3" />
         </Button>
       </CardHeader>
       <CardContent className="p-4 pt-2">
-        <div className="text-xs text-muted-foreground">
-          {data.description || 'Configure this action'}
-        </div>
+        {(() => {
+          const isConfigured = subtype === 'http' ? !!data.url : true; // Add more checks for other types
+          
+          return (
+            <div className="flex flex-col gap-1">
+              <div className={cn("text-xs", isConfigured ? "text-muted-foreground" : "text-orange-500 font-medium")}>
+                {isConfigured ? (data.description || 'Action configured') : 'Click to configure'}
+              </div>
+              {isConfigured && (
+                <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                  Ready
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </CardContent>
       <Handle
         type="source"

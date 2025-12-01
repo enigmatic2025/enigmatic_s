@@ -66,5 +66,24 @@ export const flowService = {
         }
 
         return response.json();
+    },
+
+    async testAction(nodeData: any) {
+        // Mock implementation for now
+        // In a real app, this would call a backend endpoint like POST /flows/test-action
+        console.log("Testing action with data:", nodeData);
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({
+                    status: 200,
+                    data: {
+                        message: "Action executed successfully",
+                        received_config: nodeData
+                    },
+                    timestamp: new Date().toISOString()
+                });
+            }, 1000);
+        });
     }
 };
