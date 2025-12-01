@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Search,
@@ -38,6 +39,7 @@ export function Sidebar({
   currentOrg,
 }: SidebarProps) {
   const pathname = usePathname();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const NavItem = ({
     href,
@@ -163,8 +165,10 @@ export function Sidebar({
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder="Search nodes..."
               className="pl-8 h-8 bg-muted/50 border-transparent shadow-none focus:bg-background text-sm"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         ) : (
@@ -255,6 +259,73 @@ export function Sidebar({
                   label="Knowledge Base"
                 />
               </nav>
+            </div>
+          )}
+
+          {/* Designer Mode - Draggable Nodes */}
+          {pathname.includes("/flow-studio/design") && sidebarOpen && (
+            <div className="px-3 space-y-6">
+              {(!searchQuery || "schedule".includes(searchQuery.toLowerCase())) && (
+                <div>
+                  <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
+                    Triggers
+                  </h4>
+                  <div className="grid gap-2">
+                    <div
+                      draggable
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData('application/reactflow', 'schedule');
+                        event.dataTransfer.effectAllowed = 'move';
+                      }}
+                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
+                    >
+                      <div className="p-1.5 bg-blue-500/10 rounded">
+                        <Workflow className="h-4 w-4 text-blue-500" />
+                      </div>
+                      <div className="text-sm font-medium">Schedule</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
+                  Actions
+                </h4>
+                <div className="grid gap-2">
+                  {(!searchQuery || "http request".includes(searchQuery.toLowerCase())) && (
+                    <div
+                      draggable
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData('application/reactflow', 'action:http');
+                        event.dataTransfer.effectAllowed = 'move';
+                      }}
+                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
+                    >
+                      <div className="p-1.5 bg-orange-500/10 rounded">
+                        <Blocks className="h-4 w-4 text-orange-500" />
+                      </div>
+                      <div className="text-sm font-medium">HTTP Request</div>
+                    </div>
+                  )}
+
+                  {(!searchQuery || "ai reasoning".includes(searchQuery.toLowerCase())) && (
+                    <div
+                      draggable
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData('application/reactflow', 'action:ai');
+                        event.dataTransfer.effectAllowed = 'move';
+                      }}
+                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
+                    >
+                      <div className="p-1.5 bg-purple-500/10 rounded">
+                        <Library className="h-4 w-4 text-purple-500" />
+                      </div>
+                      <div className="text-sm font-medium">AI Reasoning</div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>

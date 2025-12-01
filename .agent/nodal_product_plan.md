@@ -21,6 +21,12 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 
 ### 3.1. The Designer (Builder Experience)
 -   **Interface**: A canvas-based UI (likely built with **React Flow**) for dragging and dropping nodes.
+-   **Visual Language (Color Coding)**:
+    -   **Triggers**: **Blue** (e.g., Schedule, Webhook) - The start of every flow.
+    -   **Actions**: **Orange** (e.g., HTTP Request, Email) - External side effects.
+    -   **AI**: **Purple** (e.g., Reasoning, Generation) - Intelligence steps.
+    -   **Human**: **Green** (e.g., Approval, Form) - User interaction.
+    -   **Logic**: **Gray** (e.g., If/Else, Loop) - Control flow.
 -   **Node Types**:
     -   **Triggers**: Events that start a process (Form submission, Webhook, Schedule).
     -   **Actions (Automation)**: API calls, Database operations (SQL insert), Email sending.
