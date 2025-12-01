@@ -5,6 +5,7 @@ import {
   LayersIcon,
   type LucideIcon,
   Users,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -37,7 +38,7 @@ type LinkItem = {
 export function Header({ transparent = false }: { transparent?: boolean }) {
   const pathname = usePathname();
   const isArticlePage = pathname?.startsWith("/insights/articles/");
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [dashboardUrl, setDashboardUrl] = React.useState<string | null>(null);
 
   const [open, setOpen] = React.useState(false);
@@ -57,16 +58,22 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
 
       // Check for org membership
       const { data: memberships } = await supabase
-        .from('memberships')
-        .select('organizations(slug)')
+        .from("memberships")
+        .select("organizations(slug)")
         .limit(1);
 
-      if (memberships && memberships.length > 0 && memberships[0].organizations) {
+      if (
+        memberships &&
+        memberships.length > 0 &&
+        memberships[0].organizations
+      ) {
         // @ts-ignore
-        setDashboardUrl(`/nodal/${memberships[0].organizations.slug}/dashboard`);
+        setDashboardUrl(
+          `/nodal/${memberships[0].organizations.slug}/dashboard`
+        );
       } else {
         // Fallback to admin
-        setDashboardUrl('/nodal/admin');
+        setDashboardUrl("/nodal/admin");
       }
     };
 
@@ -182,7 +189,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </NavigationMenu>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          {user && dashboardUrl ? (
+          {loading ? (
+            <Button variant="ghost" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Loading...
+            </Button>
+          ) : user && dashboardUrl ? (
             <Button variant="ghost" asChild>
               <Link href={dashboardUrl}>Dashboard</Link>
             </Button>
@@ -192,7 +204,9 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
             </Button>
           )}
           <Button asChild>
-            <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">Collaborate</Link>
+            <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
+              Collaborate
+            </Link>
           </Button>
           <ModeToggle />
         </div>
@@ -246,7 +260,16 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </div>
         </NavigationMenu>
         <div className="flex flex-col gap-2">
-          {user && dashboardUrl ? (
+          {loading ? (
+            <Button
+              className="w-full bg-transparent"
+              variant="outline"
+              disabled
+            >
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Loading...
+            </Button>
+          ) : user && dashboardUrl ? (
             <Button className="w-full bg-transparent" variant="outline" asChild>
               <Link href={dashboardUrl} onClick={() => setOpen(false)}>
                 Dashboard
@@ -260,7 +283,10 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
             </Button>
           )}
           <Button className="w-full" asChild>
-            <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry" onClick={() => setOpen(false)}>
+            <Link
+              href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry"
+              onClick={() => setOpen(false)}
+            >
               Collaborate
             </Link>
           </Button>
