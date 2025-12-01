@@ -192,7 +192,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </NavigationMenu>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          {loading ? (
+          {loading || (user && !dashboardUrl) ? (
             <Button variant="ghost" disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Loading...
@@ -263,7 +263,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </div>
         </NavigationMenu>
         <div className="flex flex-col gap-2">
-          {loading ? (
+          {loading || (user && !dashboardUrl) ? (
             <Button
               className="w-full bg-transparent"
               variant="outline"
