@@ -22,6 +22,8 @@ import { ArrowLeft, Save, Play, Plus } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { ScheduleNode } from './nodes/schedule-node';
 import { ActionNode } from './nodes/action-node';
+import { validateFlow } from '@/lib/flow-validation';
+import { flowService } from '@/services/flow-service';
 
 interface FlowDesignerProps {
   flowId?: string;
@@ -43,8 +45,18 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const { project } = useReactFlow();
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
-    [setEdges],
+    (params: Connection) => {
+      // Restriction: Single Input Rule
+      // Check if the target node already has an incoming connection
+      const hasInput = edges.some(edge => edge.target === params.target);
+      if (hasInput) {
+        toast.error("This node already has an input connection. Only one input is allowed.");
+        return;
+      }
+
+      setEdges((eds) => addEdge({ ...params, animated: true }, eds));
+    },
+    [setEdges, edges],
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -113,10 +125,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
     const fetchFlow = async () => {
       try {
-        const res = await fetch(`http://localhost:8001/flows/${flowId}`);
-        if (!res.ok) throw new Error("Failed to fetch flow");
-        
-        const data = await res.json();
+        const data = await flowService.getFlow(flowId);
         
         if (data.definition) {
           // Restore nodes and edges from definition
@@ -137,53 +146,12 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     fetchFlow();
   }, [flowId, setNodes, setEdges]);
 
-  const validateFlow = (): boolean => {
-    const triggerNodes = nodes.filter(n => n.type === 'schedule');
-    const actionNodes = nodes.filter(n => n.type !== 'schedule');
 
-    // 1. Check Trigger Count
-    if (triggerNodes.length !== 1) {
-      toast.error("Flow must have exactly one Trigger (Schedule).");
-      return false;
-    }
-
-    // 2. Check Action Count
-    if (actionNodes.length < 1) {
-      toast.error("Flow must have at least one Action.");
-      return false;
-    }
-
-    // 3. Check for Orphans (Reachability BFS)
-    const startNodeId = triggerNodes[0].id;
-    const visited = new Set<string>([startNodeId]);
-    const queue = [startNodeId];
-
-    while (queue.length > 0) {
-      const currentId = queue.shift()!;
-      // Find all outgoing edges from current node
-      const outgoingEdges = edges.filter(e => e.source === currentId);
-      
-      for (const edge of outgoingEdges) {
-        if (!visited.has(edge.target)) {
-          visited.add(edge.target);
-          queue.push(edge.target);
-        }
-      }
-    }
-
-    if (visited.size !== nodes.length) {
-      const orphanCount = nodes.length - visited.size;
-      toast.error(`Found ${orphanCount} orphaned node(s) not connected to the trigger.`);
-      return false;
-    }
-
-    return true;
-  };
 
   const handleSave = async () => {
     if (!params.slug) return;
 
-    if (!validateFlow()) {
+    if (!validateFlow(nodes, edges)) {
       return;
     }
 
@@ -201,7 +169,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
     const flowData = {
       org_id: orgId,
-      slug: params.slug, // Pass slug to backend
+      slug: params.slug as string, // Pass slug to backend
       name: flowId ? `Flow ${flowId}` : "New Flow", // You might want a name input
       description: "Created via Flow Studio",
       definition: { nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } },
@@ -209,25 +177,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     };
 
     try {
-      const url = flowId 
-        ? `http://localhost:8001/flows/${flowId}`
-        : `http://localhost:8001/flows`;
-      
-      const method = flowId ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(flowData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save flow');
-      }
-
-      const result = await response.json();
+      const result = await flowService.saveFlow(flowId, flowData);
       toast.success("Flow saved successfully!");
       
       if (!flowId && result.id) {

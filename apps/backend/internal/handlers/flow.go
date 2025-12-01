@@ -192,15 +192,8 @@ func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Sort in memory since Order method is causing build issues
-	// Assuming updated_at is a string (ISO8601)
-	/*
-	sort.Slice(flows, func(i, j int) bool {
-		t1, _ := flows[i]["updated_at"].(string)
-		t2, _ := flows[j]["updated_at"].(string)
-		return t1 > t2
-	})
-	*/
+	// Note: Sorting is currently handled by the database query order or default insertion order.
+	// If explicit sorting by updated_at is needed, ensure the PostgREST library supports .Order() correctly.
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(flows)
