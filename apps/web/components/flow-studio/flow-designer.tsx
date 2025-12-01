@@ -80,6 +80,12 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         return;
       }
 
+      // Validation: Only one Trigger allowed
+      if (nodeType === 'schedule' && nodes.some(n => n.type === 'schedule')) {
+        toast.error("Only one Trigger is allowed per flow!");
+        return;
+      }
+
       const newNode: Node = {
         id: Math.random().toString(),
         type: nodeType,
@@ -131,8 +137,55 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     fetchFlow();
   }, [flowId, setNodes, setEdges]);
 
+  const validateFlow = (): boolean => {
+    const triggerNodes = nodes.filter(n => n.type === 'schedule');
+    const actionNodes = nodes.filter(n => n.type !== 'schedule');
+
+    // 1. Check Trigger Count
+    if (triggerNodes.length !== 1) {
+      toast.error("Flow must have exactly one Trigger (Schedule).");
+      return false;
+    }
+
+    // 2. Check Action Count
+    if (actionNodes.length < 1) {
+      toast.error("Flow must have at least one Action.");
+      return false;
+    }
+
+    // 3. Check for Orphans (Reachability BFS)
+    const startNodeId = triggerNodes[0].id;
+    const visited = new Set<string>([startNodeId]);
+    const queue = [startNodeId];
+
+    while (queue.length > 0) {
+      const currentId = queue.shift()!;
+      // Find all outgoing edges from current node
+      const outgoingEdges = edges.filter(e => e.source === currentId);
+      
+      for (const edge of outgoingEdges) {
+        if (!visited.has(edge.target)) {
+          visited.add(edge.target);
+          queue.push(edge.target);
+        }
+      }
+    }
+
+    if (visited.size !== nodes.length) {
+      const orphanCount = nodes.length - visited.size;
+      toast.error(`Found ${orphanCount} orphaned node(s) not connected to the trigger.`);
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSave = async () => {
     if (!params.slug) return;
+
+    if (!validateFlow()) {
+      return;
+    }
 
     // TODO: Get actual Org ID from context/slug
     // For now, we'll assume we can find it or pass it in props. 
