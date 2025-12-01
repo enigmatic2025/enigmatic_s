@@ -57,17 +57,9 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
   const onConnect = useCallback(
     (params: Connection) => {
-      // Restriction: Single Input Rule
-      // Check if the target node already has an incoming connection
-      const hasInput = edges.some(edge => edge.target === params.target);
-      if (hasInput) {
-        toast.error("This node already has an input connection. Only one input is allowed.");
-        return;
-      }
-
       setEdges((eds) => addEdge({ ...params, animated: true }, eds));
     },
-    [setEdges, edges],
+    [setEdges],
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
