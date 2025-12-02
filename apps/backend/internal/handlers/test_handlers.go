@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"crypto/rand"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/nodes"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
@@ -48,6 +51,7 @@ func TestNodeHandler(w http.ResponseWriter, r *http.Request) {
 	// Execute
 	result, err := executor.Execute(r.Context(), nodeCtx)
 	if err != nil {
+		fmt.Printf("Node execution failed: %v\n", err)
 		http.Error(w, "Execution failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -96,6 +100,10 @@ func TestFlowHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func generateID() string {
-	// Simple timestamp for now
-	return "gen-id" 
+	b := make([]byte, 8)
+	_, err := rand.Read(b)
+	if err != nil {
+		return fmt.Sprintf("gen-%d", time.Now().UnixNano())
+	}
+	return fmt.Sprintf("gen-%x", b)
 }

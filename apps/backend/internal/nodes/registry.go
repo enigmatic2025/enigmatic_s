@@ -3,6 +3,7 @@ package nodes
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 // NodeContext contains all the data available to the node during execution.
@@ -32,11 +33,13 @@ var Registry = map[string]NodeExecutor{
 	"SET":       &SetNode{},
 	"CONDITION": &ConditionNode{},
 	"MAP":       &MapNode{},
+	"HTTP":      &HttpNode{},
 }
 
 // GetExecutor returns the executor for a given node type.
 // It returns an error if the node type is not found in the Registry.
 func GetExecutor(nodeType string) (NodeExecutor, error) {
+	nodeType = strings.ToUpper(nodeType)
 	executor, ok := Registry[nodeType]
 	if !ok {
 		return nil, fmt.Errorf("unknown node type: %s", nodeType)
