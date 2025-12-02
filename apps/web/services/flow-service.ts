@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:8001';
+// Use local proxy to avoid CORS and hide backend URL
+const API_BASE_URL = '/api/proxy';
 
 export interface FlowData {
     org_id: string;
@@ -71,7 +72,7 @@ export const flowService = {
     async testAction(nodeData: any) {
         // nodeData usually comes from the React Flow node object
         // We need to transform it into what the backend expects: { type, config, input }
-        
+
         const payload = {
             type: nodeData.data?.subtype || nodeData.data?.type || nodeData.type,
             config: nodeData.data || {},

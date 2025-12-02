@@ -107,6 +107,10 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 -   **Framework**: React.
 -   **Library**: **React Flow** for the canvas.
 -   **State**: Robust local state management (Zustand/Redux) synced with backend.
+-   **API Proxy**: All backend calls are routed through a Next.js API Proxy (`/api/proxy`) to:
+    -   Avoid CORS issues.
+    -   Hide the backend URL and internal secrets.
+    -   Centralize authentication handling.
 
 ### 4.2. Backend
 -   **Language**: **Go (Golang)**.
