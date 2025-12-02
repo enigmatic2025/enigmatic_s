@@ -12,9 +12,50 @@ services:
     environment:
       - GO_ENV=development
       - PORT=8000
-  # Frontend is usually run locally with `npm run dev` for better DX, 
-  # but we can add it here if needed for full stack preview.
-  # web:
-  #   build: ./apps/web
-  #   ports:
-  #     - "3000:3000"
+      - TEMPORAL_HOST_PORT=temporal:7233
+    depends_on:
+      - temporal
+
+  # Temporal Dependencies
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+
+  postgresql:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=temporal
+      - POSTGRES_PASSWORD=temporal
+    ports:
+      - "5432:5432"
+
+  temporal:
+    image: temporalio/auto-setup:1.20.0
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - ENABLE_ES=true
+      - ES_SEEDS=elasticsearch
+      - ES_VERSION=v7
+    ports:
+      - "7233:7233"
+    depends_on:
+      - postgresql
+      - elasticsearch
+
+  temporal-ui:
+    image: temporalio/ui:2.13.0
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - temporal

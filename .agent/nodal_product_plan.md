@@ -110,19 +110,21 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 
 ### 4.2. Backend
 -   **Language**: **Go (Golang)**.
-    -   Chosen for concurrency, performance, and strong typing.
 -   **Workflow Engine**: **Temporal.io** (Go SDK).
-    -   **Why Temporal?**: In Python/FastAPI, you use Celery for async tasks. In Go, for *complex workflows*, Temporal is the industry standard successor.
-    -   It handles "durable execution" — if the server crashes while waiting 3 days for a human approval, Temporal remembers exactly where it was and resumes automatically.
-    -   It replaces the need for a complex state machine in our own database.
+    -   **Implemented**: The backend is fully integrated with Temporal for durable execution.
+    -   **Infrastructure**: Runs via Docker Compose, including:
+        -   **Temporal Server**: The core engine.
+        -   **PostgreSQL**: Stores Temporal's internal state (Tasks, Workflow History).
+        -   **Elasticsearch**: Powers Temporal's advanced visibility features.
 -   **Node Execution**:
-    -   **Sandboxing**: AI agents and JS code execution isolated.
-    -   **Modularity**: "Node Registry" pattern where each node type is a separate module.
+    -   **Registry Pattern**: All nodes are registered in `internal/nodes/registry.go`.
+    -   **Dynamic Loading**: The `NodeExecutionActivity` dynamically looks up the correct executor based on the node type.
 
 ### 4.3. Modularity Strategy
--   **Node Registry**: Dynamic registry for node definitions.
--   **Plugin System**: Core engine is light; integrations are plugins.
--   **Testing**: Unit tests for individual nodes; Integration tests for full flows.
+-   **Node Registry**: To add a new node, simply implement the `NodeExecutor` interface and add it to the `Registry` map.
+-   **Testing**:
+    -   **Unit Tests**: `POST /api/test/node` allows testing individual node logic without running a full workflow.
+    -   **Integration Tests**: `POST /api/test/flow` triggers a real Temporal workflow for end-to-end verification.
 
 ---
 
@@ -313,7 +315,7 @@ Stored in `flows.definition.nodes[].data`:
 All nodes in Nodal implement the `NodeExecutor` interface. This ensures the Temporal workflow can execute them uniformly.
 
 ```go
-package nodal
+package nodes
 
 import (
 	"context"

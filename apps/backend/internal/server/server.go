@@ -80,6 +80,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /flows", flowHandler.ListFlows)
 	mux.HandleFunc("DELETE /flows/", flowHandler.DeleteFlow)
 
+	// Test Routes (Dev only, but useful for frontend dev)
+	mux.HandleFunc("POST /api/test/node", handlers.TestNodeHandler)
+	mux.HandleFunc("POST /api/test/flow", handlers.TestFlowHandler)
+
 	return mux
 }
 

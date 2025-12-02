@@ -6,6 +6,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/server"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
 )
 
 func main() {
@@ -13,6 +14,9 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
+
+	// Start Temporal Worker
+	go workflow.StartWorker()
 
 	server := server.NewServer()
 
