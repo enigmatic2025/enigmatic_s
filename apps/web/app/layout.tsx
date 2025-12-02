@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   description:
     "Modern supply chains are breaking under the weight of outdated tools and disconnected systems. Manual workflows, disconnected TMS modules, and fragmented processes quietly eat margins and create bottlenecks. Discover how Enigmatic helps solve logistics fragmentation.",
   icons: {
-    icon: "/favicon.png",
+    icon: "/images/brand/enigmatic-logo.png",
   },
 };
 
