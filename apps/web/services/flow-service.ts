@@ -69,21 +69,51 @@ export const flowService = {
     },
 
     async testAction(nodeData: any) {
-        // Mock implementation for now
-        // In a real app, this would call a backend endpoint like POST /flows/test-action
-        console.log("Testing action with data:", nodeData);
+        // nodeData usually comes from the React Flow node object
+        // We need to transform it into what the backend expects: { type, config, input }
+        
+        const payload = {
+            type: nodeData.data?.subtype || nodeData.data?.type || nodeData.type,
+            config: nodeData.data || {},
+            input: {
+                // For testing, we can pass some mock input or the body from the test tab
+                ...nodeData.data,
+                ...nodeData.input // If we have input simulation later
+            }
+        };
 
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve({
-                    status: 200,
-                    data: {
-                        message: "Action executed successfully",
-                        received_config: nodeData
-                    },
-                    timestamp: new Date().toISOString()
-                });
-            }, 1000);
+        const response = await fetch(`${API_BASE_URL}/api/test/node`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
         });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Test failed: ${errorText}`);
+        }
+
+        return response.json();
+    },
+
+    async testFlow(flowDefinition: any) {
+        const response = await fetch(`${API_BASE_URL}/api/test/flow`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                flow_definition: flowDefinition
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Flow test failed: ${errorText}`);
+        }
+
+        return response.json();
     }
 };

@@ -120,6 +120,24 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     }
   };
 
+  const handleTestRun = async () => {
+    try {
+      toast.info("Starting flow test...");
+      const flowDefinition = {
+        nodes,
+        edges,
+        viewport: { x: 0, y: 0, zoom: 1 } // You might want to get actual viewport if needed
+      };
+      
+      const result = await flowService.testFlow(flowDefinition);
+      toast.success(`Flow started! ID: ${result.workflow_id}`);
+      console.log("Flow Test Result:", result);
+    } catch (error) {
+      console.error("Flow test error:", error);
+      toast.error("Failed to start flow test");
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
       {/* Toolbar */}
@@ -165,7 +183,12 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  onClick={handleTestRun}
+                >
                   <Play className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
