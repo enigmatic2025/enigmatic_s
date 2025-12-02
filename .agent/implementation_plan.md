@@ -1,4 +1,7 @@
-# Flow Studio Implementation Plan
+# Flow Studio Implementation Plan (v1 - Initial Release)
+> **Status**: Completed
+> **Date**: Dec 2025
+
 
 ## Goal Description
 Implement the Flow Studio designer using React Flow, allowing users to visually design workflows. This includes setting up the canvas, adding a "Schedule" trigger node, and defining the necessary database schema in Supabase.

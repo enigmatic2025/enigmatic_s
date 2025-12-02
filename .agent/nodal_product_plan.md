@@ -15,7 +15,7 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 -   **Action**: A single job within an Action Flow. Can be:
     -   **Human Action**: A task requiring user input (Approval, Form).
     -   **Automation Action**: A system task (HTTP Request, DB Insert).
-    -   **AI Action**: An agentic task (Reasoning, Document Analysis).
+    -   **Automation Action**: A system task (HTTP Request, DB Insert).
 
 ## 3. Key Features
 
@@ -24,14 +24,15 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 -   **Visual Language (Color Coding)**:
     -   **Triggers**: **Blue** (e.g., Schedule, Webhook) - The start of every flow.
     -   **Actions**: **Orange** (e.g., HTTP Request, Email) - External side effects.
-    -   **AI**: **Purple** (e.g., Reasoning, Generation) - Intelligence steps.
+
     -   **Human**: **Green** (e.g., Approval, Form) - User interaction.
     -   **Logic**: **Gray** (e.g., If/Else, Loop) - Control flow.
 -   **Node Types**:
     -   **Triggers**: Events that start a process (Form submission, Webhook, Schedule).
+        -   *Schedule*: Supports Cron expressions, specific intervals, and timezone-aware execution (US Timezones + UTC).
     -   **Actions (Automation)**: API calls, Database operations (SQL insert), Email sending.
     -   **Human-in-the-Loop**: Approval steps, Form filling tasks. The workflow *pauses* here.
-    -   **AI Agents**: Nodes that perform reasoning, document scanning, or complex decision making.
+
     -   **Logic**: Conditionals, Loops, Parallel branches (Fork/Join).
 -   **Variables**: Global and local scope variables to pass data between nodes.
 -   **Authentication**: Integrated OAuth management for third-party services (Google, Microsoft, etc.).
@@ -201,7 +202,7 @@ CREATE TABLE actions (
     
     -- Definition Links
     node_id TEXT NOT NULL, -- "step_1" from JSON definition
-    type TEXT NOT NULL, -- 'HUMAN', 'AUTOMATION', 'AI'
+    type TEXT NOT NULL, -- 'HUMAN', 'AUTOMATION'
     
     -- Execution State
     status TEXT NOT NULL, -- 'PENDING', 'RUNNING', 'COMPLETED', 'FAILED'
@@ -301,22 +302,7 @@ Stored in `flows.definition.nodes[].data`:
 }
 ```
 
-#### AI Action (Reasoning)
-```json
-{
-  "type": "AI",
-  "subtype": "REASONING",
-  "config": {
-    "model": "gpt-4",
-    "prompt": "Analyze this email: {{ steps.email.body }}",
-    "rag_knowledge_base_ids": ["kb_global_1", "kb_org_5"],
-    "output_schema": {
-      "sentiment": "string",
-      "urgency": "number"
-    }
-  }
-}
-```
+
 
 ---
 

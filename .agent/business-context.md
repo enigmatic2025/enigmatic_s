@@ -20,7 +20,6 @@ Nodal is the proprietary business process platform built by Enigmatic. It is des
 - **Orchestration**: Connects disparate systems (TMS, EDI, HRIS, etc.) and automates tasks outside of the core TMS.
 - **Action Types**:
   - **Workflow Action**: Automated steps executed by the system.
-  - **AI Action**: Tasks performed by AI agents (e.g., document parsing, decision making).
   - **Human Action**: Tasks requiring human-in-the-loop intervention (e.g., review, approval, exception handling).
 - **Designer Interface**: A visual tool resembling a mix of Lucidchart and automation platforms like n8n or Sim.ai.
 

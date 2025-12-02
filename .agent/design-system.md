@@ -202,3 +202,5 @@ Standardized modal for node settings.
 - **Components**:
   - Inputs/Textareas: Standard shadcn components.
   - Key-Value Lists: For headers/params.
+  - **Complex Selectors**: Use `Command` + `Popover` for searchable lists (e.g., Timezones).
+```
