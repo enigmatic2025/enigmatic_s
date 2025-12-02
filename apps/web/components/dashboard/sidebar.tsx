@@ -309,21 +309,7 @@ export function Sidebar({
                     </div>
                   )}
 
-                  {(!searchQuery || "ai reasoning".includes(searchQuery.toLowerCase())) && (
-                    <div
-                      draggable
-                      onDragStart={(event) => {
-                        event.dataTransfer.setData('application/reactflow', 'action:ai');
-                        event.dataTransfer.effectAllowed = 'move';
-                      }}
-                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
-                    >
-                      <div className="p-1.5 bg-purple-500/10 rounded">
-                        <Library className="h-4 w-4 text-purple-500" />
-                      </div>
-                      <div className="text-sm font-medium">AI Reasoning</div>
-                    </div>
-                  )}
+
                 </div>
               </div>
             </div>

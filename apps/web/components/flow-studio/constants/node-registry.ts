@@ -23,7 +23,7 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
 export const ACTION_NAMES: Record<string, string> = {
     http: "HTTP Request",
     email: "Send Email",
-    ai: "AI Reasoning",
+
     default: "Action",
     'manual-trigger': "Manual Trigger",
     schedule: "Schedule"

@@ -10,6 +10,23 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 interface ScheduleTriggerConfigProps {
   data: any;
   onUpdate: (data: any) => void;
@@ -34,16 +51,15 @@ const WEEKDAYS = [
   { value: '0', label: 'Sunday' },
 ];
 
-// Common timezones
+// Common timezones with offsets
 const TIMEZONES = [
-  "UTC",
-  "America/New_York",
-  "America/Los_Angeles",
-  "America/Chicago",
-  "Europe/London",
-  "Europe/Paris",
-  "Asia/Tokyo",
-  "Australia/Sydney",
+  { value: "UTC", label: "UTC (Coordinated Universal Time) +00:00" },
+  { value: "America/New_York", label: "America/New_York (Eastern Time) -05:00" },
+  { value: "America/Chicago", label: "America/Chicago (Central Time) -06:00" },
+  { value: "America/Denver", label: "America/Denver (Mountain Time) -07:00" },
+  { value: "America/Los_Angeles", label: "America/Los_Angeles (Pacific Time) -08:00" },
+  { value: "America/Anchorage", label: "America/Anchorage (Alaska Time) -09:00" },
+  { value: "America/Honolulu", label: "America/Honolulu (Hawaii Time) -10:00" },
 ];
 
 export function ScheduleTriggerConfig({ data, onUpdate }: ScheduleTriggerConfigProps) {
@@ -54,6 +70,7 @@ export function ScheduleTriggerConfig({ data, onUpdate }: ScheduleTriggerConfigP
   const [dayOfMonth, setDayOfMonth] = useState(data.dayOfMonth || 1);
   const [timezone, setTimezone] = useState(data.timezone || 'UTC');
   const [cronExpression, setCronExpression] = useState(data.cronExpression || '* * * * *');
+  const [open, setOpen] = useState(false);
 
   // Update parent when local state changes
   useEffect(() => {
@@ -194,16 +211,49 @@ export function ScheduleTriggerConfig({ data, onUpdate }: ScheduleTriggerConfigP
       {frequency !== 'cron' && (
         <div className="space-y-2">
           <Label>Timezone</Label>
-          <Select value={timezone} onValueChange={setTimezone}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select timezone" />
-            </SelectTrigger>
-            <SelectContent>
-              {TIMEZONES.map(tz => (
-                <SelectItem key={tz} value={tz}>{tz}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-full justify-between font-normal"
+              >
+                {timezone
+                  ? TIMEZONES.find((t) => t.value === timezone)?.label
+                  : "Select timezone..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[400px] p-0">
+              <Command>
+                <CommandInput placeholder="Search timezone..." />
+                <CommandList>
+                  <CommandEmpty>No timezone found.</CommandEmpty>
+                  <CommandGroup>
+                    {TIMEZONES.map((t) => (
+                      <CommandItem
+                        key={t.value}
+                        value={t.label}
+                        onSelect={() => {
+                          setTimezone(t.value === timezone ? "" : t.value);
+                          setOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            timezone === t.value ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {t.label}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       )}
     </div>
