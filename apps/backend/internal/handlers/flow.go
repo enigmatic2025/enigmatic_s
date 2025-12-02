@@ -69,7 +69,7 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var results []map[string]interface{}
-	err := client.DB.From("flows").Insert(map[string]interface{}{
+	err = client.DB.From("flows").Insert(map[string]interface{}{
 		"org_id":           req.OrgID,
 		"name":             req.Name,
 		"description":      req.Description,
