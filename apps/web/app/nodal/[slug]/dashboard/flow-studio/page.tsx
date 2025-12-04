@@ -118,8 +118,9 @@ export default async function FlowStudioPage({
   // Fetch flows from backend
   let flows = [];
   try {
-    const res = await fetch(`http://localhost:8001/flows?slug=${slug}`, {
-      cache: 'no-store',
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:8001";
+    const res = await fetch(`${backendUrl}/flows?slug=${slug}`, {
+      cache: "no-store",
     });
     if (res.ok) {
       flows = await res.json();
