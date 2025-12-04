@@ -309,6 +309,38 @@ export function Sidebar({
                     </div>
                   )}
 
+                  {(!searchQuery || "parse data".includes(searchQuery.toLowerCase())) && (
+                    <div
+                      draggable
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData('application/reactflow', 'action:parse');
+                        event.dataTransfer.effectAllowed = 'move';
+                      }}
+                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
+                    >
+                      <div className="p-1.5 bg-purple-500/10 rounded">
+                        <Code2 className="h-4 w-4 text-purple-500" />
+                      </div>
+                      <div className="text-sm font-medium">Parse Data</div>
+                    </div>
+                  )}
+
+                  {(!searchQuery || "map data".includes(searchQuery.toLowerCase())) && (
+                    <div
+                      draggable
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData('application/reactflow', 'action:map');
+                        event.dataTransfer.effectAllowed = 'move';
+                      }}
+                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
+                    >
+                      <div className="p-1.5 bg-indigo-500/10 rounded">
+                        <Workflow className="h-4 w-4 text-indigo-500" />
+                      </div>
+                      <div className="text-sm font-medium">Map Data</div>
+                    </div>
+                  )}
+
 
                 </div>
               </div>

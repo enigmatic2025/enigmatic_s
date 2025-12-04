@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8001';
 
-async function proxy(request: NextRequest, { params }: { params: { path: string[] } }) {
-    const path = params.path.join('/');
+async function proxy(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+    const { path: pathArray } = await params;
+    const path = pathArray.join('/');
     const url = `${BACKEND_URL}/${path}`;
 
     const body = request.method !== 'GET' && request.method !== 'HEAD'

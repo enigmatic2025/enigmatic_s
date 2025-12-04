@@ -34,6 +34,7 @@ var Registry = map[string]NodeExecutor{
 	"CONDITION": &ConditionNode{},
 	"MAP":       &MapNode{},
 	"HTTP":      &HttpNode{},
+	"PARSE":     &ParseNode{},
 }
 
 // GetExecutor returns the executor for a given node type.

@@ -4,7 +4,7 @@ services:
       context: ./apps/backend
       dockerfile: Dockerfile
     ports:
-      - "8001:8000"
+      - "8080:8000"
     volumes:
       - ./apps/backend:/app
     env_file:
@@ -56,6 +56,6 @@ services:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
     ports:
-      - "8080:8080"
+      - "8082:8080"
     depends_on:
       - temporal
