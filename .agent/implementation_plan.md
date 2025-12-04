@@ -14,10 +14,12 @@ Implement the Flow Studio designer using React Flow, allowing users to visually 
 
 ### Frontend (Flow Studio)
 #### [MODIFY] [sidebar.tsx](file:///d:/Repository/enigmatic_s/apps/web/components/dashboard/sidebar.tsx)
--   Add conditional rendering for "Designer Mode" when path includes `/flow-studio/design`.
--   Hide standard navigation links in this mode.
--   Render "Triggers" and "Actions" groups with draggable items.
--   Use HTML5 `draggable` attribute and `onDragStart` to pass node type data.
+-   [x] Add conditional rendering for "Designer Mode" when path includes `/flow-studio/design`.
+-   [x] Hide standard navigation links in this mode.
+-   [x] Render "Triggers" and "Actions" groups with draggable items.
+-   [x] Use HTML5 `draggable` attribute and `onDragStart` to pass node type data.
+-   [x] Refactored into reusable components (`SidebarSection`, `SidebarDraggableItem`).
+-   [x] Implemented Tabbed interface (Nodes, Variables, Console).
 
 #### [MODIFY] [flow-designer.tsx](file:///d:/Repository/enigmatic_s/apps/web/components/flow-studio/flow-designer.tsx)
 -   Add `onDrop` and `onDragOver` handlers to the React Flow wrapper.

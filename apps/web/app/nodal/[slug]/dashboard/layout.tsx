@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { TopBar } from "@/components/dashboard/top-bar";
@@ -64,7 +64,9 @@ export default function DashboardLayout({
       {/* Main Content Wrapper */}
       <div
         className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
-          sidebarOpen ? "lg:ml-64" : "lg:ml-16"
+          sidebarOpen 
+            ? (usePathname().includes("/flow-studio/design") ? "lg:ml-[400px]" : "lg:ml-64")
+            : "lg:ml-16"
         }`}
       >
         <TopBar

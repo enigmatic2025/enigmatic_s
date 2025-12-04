@@ -38,6 +38,20 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 -   **Authentication**: Integrated OAuth management for third-party services (Google, Microsoft, etc.).
 -   **Environments**: Support for Dev/Staging/Prod values for variables (e.g., Stripe Test Key vs Live Key).
 
+### 3.1.1. Sidebar Design Standards
+-   **Layout**:
+    -   **Width**: `400px` (Expanded in Designer), `64px` (Collapsed).
+    -   **Tabs**: Organized into "Nodes", "Variables", and "Console".
+    -   **Search**: Persistent search bar at the top.
+-   **Nodes Tab Structure**:
+    1.  **Triggers**: Top-level section (e.g., Schedule).
+    2.  **Built-in Tools**: Core actions (Data Ops, Network).
+    3.  **Connectors**: External integrations.
+    4.  **Human in Loop**: Approval/Form steps.
+-   **Visual Style**:
+    -   **Compact Mode**: 2-column grid for action items.
+    -   **Spacing**: Minimal padding (`p-1.5`), small fonts (`text-xs`), and clear separation between headers and content.
+
 ### 3.2. The User View (Participant Experience)
 -   **Action Center**:
     -   Users see the process map visualized, but with a focus on *their* **Actions**.

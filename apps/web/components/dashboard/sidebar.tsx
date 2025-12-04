@@ -14,6 +14,10 @@ import {
   Blocks,
   Library,
   Workflow,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +28,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SidebarDraggableItem, SidebarSection } from "./sidebar-items";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -40,6 +46,10 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
+  const [triggersOpen, setTriggersOpen] = useState(true);
+  const [builtInToolsOpen, setBuiltInToolsOpen] = useState(true);
+  const [connectorsOpen, setConnectorsOpen] = useState(false);
+  const [humanInLoopOpen, setHumanInLoopOpen] = useState(false);
 
   const NavItem = ({
     href,
@@ -108,7 +118,7 @@ export function Sidebar({
     <aside
       className={`
         fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-zinc-900 border-r border-border transition-all duration-300 ease-in-out flex flex-col
-        ${sidebarOpen ? "w-64" : "w-16"}
+        ${sidebarOpen ? (pathname.includes("/flow-studio/design") ? "w-[400px]" : "w-64") : "w-16"}
         ${
           mobileMenuOpen
             ? "translate-x-0"
@@ -264,87 +274,127 @@ export function Sidebar({
 
           {/* Designer Mode - Draggable Nodes */}
           {pathname.includes("/flow-studio/design") && sidebarOpen && (
-            <div className="px-3 space-y-6">
-              {(!searchQuery || "schedule".includes(searchQuery.toLowerCase())) && (
-                <div>
-                  <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
-                    Triggers
-                  </h4>
-                  <div className="grid gap-2">
-                    <div
-                      draggable
-                      onDragStart={(event) => {
-                        event.dataTransfer.setData('application/reactflow', 'schedule');
-                        event.dataTransfer.effectAllowed = 'move';
-                      }}
-                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
-                    >
-                      <div className="p-1.5 bg-blue-500/10 rounded">
-                        <Workflow className="h-4 w-4 text-blue-500" />
-                      </div>
-                      <div className="text-sm font-medium">Schedule</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
-                  Actions
-                </h4>
-                <div className="grid gap-2">
-                  {(!searchQuery || "http request".includes(searchQuery.toLowerCase())) && (
-                    <div
-                      draggable
-                      onDragStart={(event) => {
-                        event.dataTransfer.setData('application/reactflow', 'action:http');
-                        event.dataTransfer.effectAllowed = 'move';
-                      }}
-                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
-                    >
-                      <div className="p-1.5 bg-orange-500/10 rounded">
-                        <Blocks className="h-4 w-4 text-orange-500" />
-                      </div>
-                      <div className="text-sm font-medium">HTTP Request</div>
-                    </div>
-                  )}
-
-                  {(!searchQuery || "parse data".includes(searchQuery.toLowerCase())) && (
-                    <div
-                      draggable
-                      onDragStart={(event) => {
-                        event.dataTransfer.setData('application/reactflow', 'action:parse');
-                        event.dataTransfer.effectAllowed = 'move';
-                      }}
-                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
-                    >
-                      <div className="p-1.5 bg-purple-500/10 rounded">
-                        <Code2 className="h-4 w-4 text-purple-500" />
-                      </div>
-                      <div className="text-sm font-medium">Parse Data</div>
-                    </div>
-                  )}
-
-                  {(!searchQuery || "map data".includes(searchQuery.toLowerCase())) && (
-                    <div
-                      draggable
-                      onDragStart={(event) => {
-                        event.dataTransfer.setData('application/reactflow', 'action:map');
-                        event.dataTransfer.effectAllowed = 'move';
-                      }}
-                      className="flex items-center gap-3 p-2 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
-                    >
-                      <div className="p-1.5 bg-indigo-500/10 rounded">
-                        <Workflow className="h-4 w-4 text-indigo-500" />
-                      </div>
-                      <div className="text-sm font-medium">Map Data</div>
-                    </div>
-                  )}
-
-
-                </div>
+            <Tabs defaultValue="nodes" className="w-full">
+              <div className="px-3 mb-2">
+                <TabsList className="w-full grid grid-cols-3">
+                  <TabsTrigger value="nodes">Nodes</TabsTrigger>
+                  <TabsTrigger value="variables">Variables</TabsTrigger>
+                  <TabsTrigger value="console">Console</TabsTrigger>
+                </TabsList>
               </div>
-            </div>
+
+              <TabsContent value="nodes" className="mt-0">
+                <div className="flex flex-col">
+                  {/* Triggers Section */}
+                  <SidebarSection
+                    title="Triggers"
+                    isOpen={triggersOpen}
+                    onToggle={() => setTriggersOpen(!triggersOpen)}
+                  >
+                    {(!searchQuery || "schedule".includes(searchQuery.toLowerCase())) && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <SidebarDraggableItem
+                          label="Schedule"
+                          icon={Workflow}
+                          iconColorClass="text-blue-500"
+                          bgColorClass="bg-blue-500/10"
+                          dataTransferType="schedule"
+                        />
+                      </div>
+                    )}
+                  </SidebarSection>
+
+                  {/* Built-in tools */}
+                  <SidebarSection
+                    title="Built-in tools"
+                    isOpen={builtInToolsOpen}
+                    onToggle={() => setBuiltInToolsOpen(!builtInToolsOpen)}
+                  >
+                    {/* Data Operation Group */}
+                    {(!searchQuery || "parse data map data".includes(searchQuery.toLowerCase())) && (
+                      <div>
+                        <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
+                          <Code2 className="h-3 w-3" /> Data Operation
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {(!searchQuery || "parse data".includes(searchQuery.toLowerCase())) && (
+                            <SidebarDraggableItem
+                              label="Parse Data"
+                              icon={Code2}
+                              iconColorClass="text-purple-500"
+                              bgColorClass="bg-purple-500/10"
+                              dataTransferType="action:parse"
+                            />
+                          )}
+
+                          {(!searchQuery || "map data".includes(searchQuery.toLowerCase())) && (
+                            <SidebarDraggableItem
+                              label="Map Data"
+                              icon={Workflow}
+                              iconColorClass="text-indigo-500"
+                              bgColorClass="bg-indigo-500/10"
+                              dataTransferType="action:map"
+                            />
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Network Group */}
+                    {(!searchQuery || "http request".includes(searchQuery.toLowerCase())) && (
+                      <div>
+                        <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
+                          <Globe className="h-3 w-3" /> Network
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <SidebarDraggableItem
+                            label="HTTP Request"
+                            icon={Globe}
+                            iconColorClass="text-orange-500"
+                            bgColorClass="bg-orange-500/10"
+                            dataTransferType="action:http"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </SidebarSection>
+
+                  {/* Connectors */}
+                  <SidebarSection
+                    title="Connectors"
+                    isOpen={connectorsOpen}
+                    onToggle={() => setConnectorsOpen(!connectorsOpen)}
+                  >
+                    <div className="text-xs text-muted-foreground">
+                      No connectors configured.
+                    </div>
+                  </SidebarSection>
+
+                  {/* Human in loop */}
+                  <SidebarSection
+                    title="Human in loop"
+                    isOpen={humanInLoopOpen}
+                    onToggle={() => setHumanInLoopOpen(!humanInLoopOpen)}
+                  >
+                    <div className="text-xs text-muted-foreground">
+                      Approval steps coming soon.
+                    </div>
+                  </SidebarSection>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="variables" className="mt-0 p-4">
+                <div className="text-sm text-muted-foreground text-center py-8">
+                  Variables will appear here
+                </div>
+              </TabsContent>
+
+              <TabsContent value="console" className="mt-0 p-4">
+                <div className="text-sm text-muted-foreground text-center py-8">
+                  Console output will appear here
+                </div>
+              </TabsContent>
+            </Tabs>
           )}
         </div>
       </ScrollArea>
