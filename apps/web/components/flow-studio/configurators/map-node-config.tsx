@@ -25,6 +25,12 @@ export function MapNodeConfig({ data, onUpdate }: { data: any; onUpdate: (data: 
 
   return (
     <div className="space-y-4">
+      <div className="space-y-2">
+        <p className="text-xs text-muted-foreground">
+          This node transforms data from the previous step into a new structure.
+        </p>
+      </div>
+
       <div className="flex items-center justify-between">
         <Label>Mappings</Label>
         <Button variant="outline" size="sm" onClick={addMapping} className="h-7 text-xs gap-1">

@@ -51,7 +51,7 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
   };
 
   return (
-    <Card className={cn("w-[250px] relative border-2 shadow-sm transition-colors group", colorClass.split(' ').filter(c => c.startsWith('border')).join(' '))}>
+    <Card className={cn("w-[250px] h-[120px] relative border-2 shadow-sm transition-colors group", colorClass.split(' ').filter(c => c.startsWith('border')).join(' '))}>
       <Handle
         type="target"
         position={Position.Left}

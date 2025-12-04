@@ -163,6 +163,7 @@ Standardized design for flow nodes (Triggers, Actions).
 ### Node Dimensions & Layout
 
 - **Width**: Fixed `w-[250px]`.
+- **Height**: Fixed `h-[120px]`.
 - **Card Style**: `relative border-2 shadow-sm transition-colors group`.
 - **Padding**: `p-4` for header/content.
 
