@@ -86,7 +86,7 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
           
           return (
             <div className="flex flex-col gap-1">
-              <div className={cn("text-xs", isConfigured ? "text-muted-foreground" : "text-orange-500 font-medium")}>
+              <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "text-orange-500 font-medium")}>
                 {isConfigured ? (data.description || 'Action configured') : 'Click to configure'}
               </div>
               {isConfigured && (

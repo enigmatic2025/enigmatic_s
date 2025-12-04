@@ -74,7 +74,7 @@ export function NodeConfigurationModal({
 
       onUpdate(selectedNode.id, formData);
       toast.success("Node configuration saved");
-      onClose();
+      // onClose(); // Keep modal open after save
     }
   };
 
@@ -104,7 +104,10 @@ export function NodeConfigurationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="flex flex-col h-[85vh] sm:max-w-[600px] p-0 gap-0 overflow-hidden">
+      <DialogContent 
+        className="flex flex-col h-[85vh] sm:max-w-[600px] p-0 gap-0 overflow-hidden"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader className="p-6 pb-4 border-b flex-none">
           <DialogTitle className="flex items-center gap-2">
             {selectedNode.data?.label || selectedNode.type}

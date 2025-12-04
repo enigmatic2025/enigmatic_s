@@ -40,7 +40,7 @@ export const ScheduleNode = memo(({ id, data, isConnectable }: any) => {
       </CardHeader>
       <CardContent className="p-4 pt-2">
         <div className="flex flex-col gap-1">
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground truncate">
             {data.description || 'Runs every day at 9:00 AM'}
           </div>
           <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
