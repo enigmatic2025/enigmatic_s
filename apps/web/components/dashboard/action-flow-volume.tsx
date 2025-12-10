@@ -23,7 +23,7 @@ export function ActionFlowVolume() {
       <CardHeader>
         <CardTitle>Weekly Volume</CardTitle>
         <CardDescription>
-          Actions completed vs. New requests received.
+          Actions completed vs. new Actions received.
         </CardDescription>
       </CardHeader>
       <CardContent className="pl-2 select-none pointer-events-none">

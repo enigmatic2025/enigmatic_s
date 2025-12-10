@@ -34,9 +34,9 @@ export function NewActionFlow({ className }: { className?: string }) {
   return (
     <Card className={cn("shadow-none", className)}>
       <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
+        <CardTitle>Quick Action Flow</CardTitle>
         <CardDescription>
-          Frequently used requests you can start immediately.
+          Frequently used Action Flows you can trigger immediately.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 grid-cols-1">
