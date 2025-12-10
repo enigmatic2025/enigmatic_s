@@ -4,7 +4,7 @@ import { Sparkles, Search } from "lucide-react";
 
 export function AskNatalieHeader() {
     return (
-        <Card className="shadow-none bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border-none">
+        <Card className="shadow-none bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-500/25 dark:via-purple-500/25 dark:to-pink-500/25 border-none">
             <div className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex flex-row justify-center items-center space-x-5">
                     <div className="h-10 w-10 aspect-square rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-sm">
