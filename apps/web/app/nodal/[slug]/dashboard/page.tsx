@@ -1,7 +1,7 @@
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { LiveFlows } from "@/components/dashboard/live-flows";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
-import { QuickActions } from "@/components/dashboard/quick-actions";
+import { NewActionFlow } from "@/components/dashboard/new-action-flow";
 import { ActionFlowVolume } from "@/components/dashboard/action-flow-volume";
 import { NatalieChat } from "@/components/dashboard/natalie-chat";
 
@@ -21,7 +21,7 @@ export default function DashboardPage() {
         </div>
         <div className="col-span-3 space-y-4">
           <NatalieChat />
-          <QuickActions />
+          <NewActionFlow />
           <LiveFlows />
         </div>
       </div>

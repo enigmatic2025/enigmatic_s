@@ -1,6 +1,6 @@
 "use client"
 
-import { Bar, ResponsiveContainer, XAxis, YAxis, Legend, BarChart } from "recharts"
+import { Line, ResponsiveContainer, XAxis, YAxis, Legend, LineChart } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTheme } from "next-themes"
 
@@ -28,7 +28,7 @@ export function ActionFlowVolume() {
       </CardHeader>
       <CardContent className="pl-2 select-none pointer-events-none">
         <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
+          <LineChart data={data}>
             <XAxis
               dataKey="name"
               stroke="#888888"
@@ -44,21 +44,23 @@ export function ActionFlowVolume() {
               tickFormatter={(value) => `${value}`}
             />
             <Legend iconType="circle" iconSize={8} />
-            <Bar 
+            <Line 
+                type="basis"
                 dataKey="requests" 
                 name="New Requests" 
-                stackId="a"
-                fill="#3b82f6" 
-                radius={[0, 0, 4, 4]}
+                stroke="#3b82f6" 
+                strokeWidth={2}
+                dot={false}
             />
-            <Bar 
+            <Line 
+                type="basis"
                 dataKey="completed" 
                 name="Completed" 
-                stackId="a"
-                fill={isDark ? "#3f3f46" : "#000000"}
-                radius={[4, 4, 0, 0]} 
+                stroke={isDark ? "#3f3f46" : "#000000"}
+                strokeWidth={2}
+                dot={false}
             />
-          </BarChart>
+          </LineChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>

@@ -1,23 +1,17 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FileText, Plane, AlertCircle } from "lucide-react";
+import { UserPlus, Calendar, AlertCircle, Car } from "lucide-react";
 
 const actions = [
   {
-    label: "New Request",
-    icon: PlusCircle,
-    description: "Start a general approval workflow",
+    label: "Position Request",
+    icon: UserPlus,
+    description: "Submit a new hiring request",
     variant: "default" as const,
   },
   {
-    label: "Submit Expense",
-    icon: FileText,
-    description: "Upload receipts for reimbursement",
-    variant: "secondary" as const,
-  },
-  {
-    label: "Time Off",
-    icon: Plane,
+    label: "PTO",
+    icon: Calendar,
     description: "Request vacation or sick leave",
     variant: "secondary" as const,
   },
@@ -25,17 +19,23 @@ const actions = [
     label: "Report Incident",
     icon: AlertCircle,
     description: "Log a security or system issue",
-    variant: "destructive" as const, // Highlight this one
+    variant: "destructive" as const,
+  },
+  {
+    label: "Driver At Risk",
+    icon: Car,
+    description: "Initiate an at-risk driver case",
+    variant: "destructive" as const,
   },
 ];
 
-export function QuickActions() {
+export function NewActionFlow() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
+        <CardTitle>New Action Flow</CardTitle>
         <CardDescription>
-          Frequently used workflows you can start immediately.
+          Frequently used Action Flows you can start immediately.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 grid-cols-2">
@@ -45,11 +45,8 @@ export function QuickActions() {
             variant="outline"
             className="h-auto flex-col items-start p-4 space-y-2 hover:bg-muted/50 hover:border-primary/50 transition-all"
           >
-            <div className={`p-2 rounded-full ${
-                action.variant === 'destructive' ? 'bg-red-100 text-red-600' : 
-                action.variant === 'default' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-            }`}>
-                <action.icon className="h-5 w-5" />
+            <div className="p-2 rounded-full bg-primary/10 text-primary">
+              <action.icon className="h-5 w-5" />
             </div>
             <div className="space-y-1 text-left">
               <span className="font-semibold">{action.label}</span>
