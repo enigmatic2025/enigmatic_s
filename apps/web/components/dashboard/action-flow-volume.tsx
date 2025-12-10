@@ -5,13 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useTheme } from "next-themes"
 
 const data = [
-  { name: "Mon", completed: 12, requests: 15 },
-  { name: "Tue", completed: 18, requests: 22 },
-  { name: "Wed", completed: 15, requests: 12 },
-  { name: "Thu", completed: 25, requests: 20 },
-  { name: "Fri", completed: 22, requests: 18 },
-  { name: "Sat", completed: 8, requests: 5 },
-  { name: "Sun", completed: 5, requests: 3 },
+  { name: "Mon", completed: 12, new: 15 },
+  { name: "Tue", completed: 18, new: 22 },
+  { name: "Wed", completed: 15, new: 12 },
+  { name: "Thu", completed: 25, new: 20 },
+  { name: "Fri", completed: 22, new: 18 },
+  { name: "Sat", completed: 8, new: 5 },
+  { name: "Sun", completed: 5, new: 3 },
 ]
 
 export function ActionFlowVolume() {
@@ -53,8 +53,8 @@ export function ActionFlowVolume() {
             />
             <Line 
                 type="basis"
-                dataKey="requests" 
-                name="New Requests" 
+                dataKey="new" 
+                name="New" 
                 stroke="#3b82f6" 
                 strokeWidth={2}
                 dot={false}
