@@ -4,6 +4,8 @@ import { Line, ResponsiveContainer, XAxis, YAxis, Legend, LineChart } from "rech
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTheme } from "next-themes"
 
+import { cn } from "@/lib/utils"
+
 const data = [
   { name: "Mon", completed: 12, new: 15 },
   { name: "Tue", completed: 18, new: 22 },
@@ -14,12 +16,12 @@ const data = [
   { name: "Sun", completed: 5, new: 3 },
 ]
 
-export function ActionFlowVolume() {
+export function ActionFlowVolume({ className }: { className?: string }) {
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
 
   return (
-    <Card className="shadow-none">
+    <Card className={cn("shadow-none", className)}>
       <CardHeader>
         <CardTitle>Weekly Volume</CardTitle>
         <CardDescription>
