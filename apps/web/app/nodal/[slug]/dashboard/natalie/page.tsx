@@ -15,11 +15,11 @@ interface Message {
   timestamp: string;
 }
 
-const suggestions = [
-  "Create a new hiring workflow",
-  "Analyze last month's incidents",
-  "Draft a PTO policy update",
-  "Check status of pending approvals"
+const SUGGESTIONS = [
+  "Start a new hiring request",
+  "Check status of recent actions",
+  "Show my overdue tasks",
+  "Show my active requests"
 ];
 
 export default function NataliePage() {
@@ -55,7 +55,7 @@ export default function NataliePage() {
       const responseMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "I can help you with that. Let me analyze your current workflows...",
+        content: "I can help you with that. Let me check your active tasks...",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, responseMessage]);

@@ -19,7 +19,7 @@ export function NatalieChat() {
                 </div>
                 <div>
                     <CardTitle className="text-base">Ask Natalie</CardTitle>
-                    <CardDescription className="text-xs">Your AI Workflow Assistant</CardDescription>
+                    <CardDescription className="text-xs">Your AI Action Flow Assistant</CardDescription>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@ export function NatalieChat() {
           <Input 
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="How do I create a new flow?" 
+              placeholder="How do I submit a request?" 
               className="bg-background/50 border-primary/10 focus-visible:ring-0 shadow-none"
           />
           <Button size="icon" variant="ghost" className="shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10">

@@ -122,7 +122,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
   const handleTestRun = async () => {
     try {
-      toast.info("Starting flow test...");
+      toast.info("Starting action flow test...");
       const flowDefinition = {
         nodes,
         edges,
@@ -130,11 +130,11 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       };
       
       const result = await flowService.testFlow(flowDefinition);
-      toast.success(`Flow started! ID: ${result.workflow_id}`);
-      console.log("Flow Test Result:", result);
+      toast.success(`Action Flow started! ID: ${result.workflow_id}`);
+      console.log("Action Flow Test Result:", result);
     } catch (error) {
-      console.error("Flow test error:", error);
-      toast.error("Failed to start flow test");
+      console.error("Action Flow test error:", error);
+      toast.error("Failed to start action flow test");
     }
   };
 

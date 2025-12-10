@@ -22,6 +22,14 @@ This document outlines the design systems for both the public marketing site (**
   - ✅ `border-border`
   - ❌ Never hardcode colors like `text-black` or `bg-white` (except on specific dark overlays).
 
+### Content & Terminology
+
+- **Nodal Semantics**:
+  - ❌ **Never use**: "Workflow", "Pipeline", "Automation" (as a noun for the flow).
+  - ✅ **Always use**: "Action Flow" (for the whole process) or "Action" (for individual steps).
+  - **Reasoning**: Nodal is about *doing*, not just moving data.
+- **Tone**: Professional, precise, "Jules" persona (efficient, high-agency).
+
 ### Spacing
 
 - **Section Padding**: `px-4 md:px-6` (Horizontal)
@@ -82,14 +90,17 @@ Designed for impact, storytelling, and brand presentation.
 
 ### Typography (App)
 
-- **Body/Navigation**: `text-sm` (14px) - _The standard unit._
-- **Labels/Metadata**: `text-xs` (12px).
-- **Headings**: `text-lg` or `text-xl`, `font-light`, `tracking-tight`.
+- **Standard Content**: `text-sm` (14px).
+  - Applies to: Inputs, Labels, Body text, Navigation, Table data.
+  - **Rule**: This is the default size for all functional UI elements.
+- **Secondary/Metadata**: `text-xs` (12px).
+- **Headings/Promotional**: `text-lg` or `text-xl` (or larger for major headers).
+  - **Rule**: Use `text-base` (md) or larger ONLY for headers, promotional text, or emphasized subtext.
 
 ### Components (App)
 
 - **Buttons**: Flat, no shadow. Variants: `ghost` (nav), `outline`, `default`.
-- **Inputs**: Flat, transparent border, `shadow-none`, `bg-muted/50`.
+- **Inputs**: Flat, transparent border, `shadow-none`, `bg-muted/50`. **No focus ring** (`focus-visible:ring-0`). Border remains visible on focus.
 - **Avatars**: Monochrome (Black circle, White text), `h-8 w-8`.
 - **Cards**: `bg-card`, `border-border`, `shadow-none`.
 

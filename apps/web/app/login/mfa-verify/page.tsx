@@ -121,7 +121,7 @@ export default function MFAVerifyPage() {
               maxLength={6}
               required
               autoFocus
-              className="relative block w-full rounded-md border border-border bg-background/50 px-3 py-4 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-center text-3xl tracking-widest font-light"
+              className="relative block w-full rounded-md border border-border bg-background/50 px-3 py-4 text-foreground placeholder-muted-foreground focus:z-10 focus:outline-none focus:ring-0 text-center text-3xl tracking-widest font-light shadow-none"
               placeholder="000000"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}

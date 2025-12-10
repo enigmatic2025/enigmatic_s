@@ -224,7 +224,7 @@ export const BillingClaimsPreview = () => {
                 <input
                   type="text"
                   placeholder="Message Nodal AI..."
-                  className="w-full bg-muted/30 border border-border rounded-2xl py-3.5 pl-10 pr-12 text-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
+                  className="w-full bg-muted/30 border border-border rounded-2xl py-3.5 pl-10 pr-12 text-sm focus:outline-none focus:ring-0 shadow-none"
                   disabled
                 />
                 <button className="absolute right-2 p-1.5 rounded-lg bg-primary text-primary-foreground">

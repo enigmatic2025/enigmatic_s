@@ -1,28 +1,24 @@
-import { StatsCards } from "@/components/dashboard/stats-cards";
+import { AskNatalieHeader } from "@/components/dashboard/ask-natalie-header";
 import { LiveFlows } from "@/components/dashboard/live-flows";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { NewActionFlow } from "@/components/dashboard/new-action-flow";
 import { ActionFlowVolume } from "@/components/dashboard/action-flow-volume";
-import { NatalieChat } from "@/components/dashboard/natalie-chat";
 
 export default function DashboardPage() {
   return (
-    <div className="h-full w-full space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-medium tracking-tight">Overview</h1>
-      </div>
+    <div className="flex-1 space-y-6">
+      <AskNatalieHeader />
 
-      <StatsCards />
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-4 flex flex-col gap-4">
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="col-span-2 flex flex-col gap-4">
           <ActionFlowVolume />
-          <RecentActivity className="flex-1" />
+          <div className="grid lg:grid-cols-2 gap-4">
+            <LiveFlows className="h-full" />
+            <NewActionFlow className="h-full" />
+          </div>
         </div>
-        <div className="col-span-3 space-y-4">
-          <NatalieChat />
-          <NewActionFlow />
-          <LiveFlows />
+        <div className="col-span-2 xl:col-span-1 flex flex-col">
+          <RecentActivity className="h-full" />
         </div>
       </div>
     </div>

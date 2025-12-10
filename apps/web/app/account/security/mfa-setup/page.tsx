@@ -233,7 +233,7 @@ export default function MFAEnrollmentPage() {
                   pattern="[0-9]{6}"
                   maxLength={6}
                   required
-                  className="relative block w-full rounded-md border border-border bg-background/50 px-3 py-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm text-center text-2xl tracking-widest"
+                  className="relative block w-full rounded-md border border-border bg-background/50 px-3 py-3 text-foreground placeholder-muted-foreground focus:z-10 focus:outline-none focus:ring-0 sm:text-sm text-center text-2xl tracking-widest shadow-none"
                   placeholder="000000"
                   value={verifyCode}
                   onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, ''))}

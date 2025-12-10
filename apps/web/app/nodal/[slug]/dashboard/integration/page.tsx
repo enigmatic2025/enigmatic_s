@@ -54,7 +54,7 @@ const integrations = [
   {
     id: "notion",
     name: "Notion",
-    description: "Sync databases and pages with your workflows.",
+    description: "Sync databases and pages with your action flows.",
     icon: "https://cdn.simpleicons.org/notion",
     status: "active",
     category: "Productivity",
@@ -62,7 +62,7 @@ const integrations = [
   {
     id: "zapier",
     name: "Zapier",
-    description: "Trigger Zaps from your Nodal workflows.",
+    description: "Trigger Zaps from your Nodal action flows.",
     icon: "https://cdn.simpleicons.org/zapier",
     status: "active",
     category: "Automation",

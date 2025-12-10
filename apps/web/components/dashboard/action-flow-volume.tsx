@@ -27,7 +27,7 @@ export function ActionFlowVolume() {
         </CardDescription>
       </CardHeader>
       <CardContent className="pl-2 select-none pointer-events-none">
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={250}>
           <LineChart data={data}>
             <XAxis
               dataKey="name"

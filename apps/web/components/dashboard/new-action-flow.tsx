@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UserPlus, Calendar, AlertCircle, Car } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const actions = [
   {
@@ -29,23 +30,23 @@ const actions = [
   },
 ];
 
-export function NewActionFlow() {
+export function NewActionFlow({ className }: { className?: string }) {
   return (
-    <Card className="shadow-none">
+    <Card className={cn("shadow-none", className)}>
       <CardHeader>
-        <CardTitle>New Action Flow</CardTitle>
+        <CardTitle>Quick Actions</CardTitle>
         <CardDescription>
-          Frequently used Action Flows you can start immediately.
+          Frequently used requests you can start immediately.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4 grid-cols-2">
+      <CardContent className="grid gap-4 grid-cols-1">
         {actions.map((action) => (
           <Button
             key={action.label}
             variant="outline"
-            className="h-auto flex-col items-start p-4 space-y-2 hover:bg-muted/50 transition-all"
+            className="h-auto flex-row items-center justify-start p-4 gap-4 hover:bg-muted/50 transition-all"
           >
-            <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
               <action.icon className="h-5 w-5" />
             </div>
             <div className="space-y-1 text-left">
