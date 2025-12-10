@@ -43,7 +43,7 @@ export function NewActionFlow() {
           <Button
             key={action.label}
             variant="outline"
-            className="h-auto flex-col items-start p-4 space-y-2 hover:bg-muted/50 hover:border-primary/50 transition-all"
+            className="h-auto flex-col items-start p-4 space-y-2 hover:bg-muted/50 transition-all"
           >
             <div className="p-2 rounded-full bg-primary/10 text-primary">
               <action.icon className="h-5 w-5" />
