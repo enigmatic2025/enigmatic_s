@@ -15,7 +15,7 @@ interface Message {
   timestamp: string;
 }
 
-const SUGGESTIONS = [
+const suggestions = [
   "Start a new hiring request",
   "Check status of recent actions",
   "Show my overdue tasks",

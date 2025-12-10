@@ -21,7 +21,7 @@ export function AskNatalieHeader() {
                     <div className="relative w-full">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input
-                            placeholder="Ask anything about your action flows..."
+                            placeholder="Ask anything about your Action Flows..."
                             className="h-12 pl-10 text-sm bg-background/50 border-0 shadow-none focus-visible:ring-0"
                         />
                     </div>
