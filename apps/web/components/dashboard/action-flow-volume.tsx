@@ -43,7 +43,14 @@ export function ActionFlowVolume() {
               axisLine={false}
               tickFormatter={(value) => `${value}`}
             />
-            <Legend iconType="circle" iconSize={8} />
+            <Legend 
+              verticalAlign="top" 
+              align="right"
+              height={36}
+              iconType="circle" 
+              iconSize={6}
+              wrapperStyle={{ fontSize: '10px', letterSpacing: '0.05em', opacity: 0.7 }}
+            />
             <Line 
                 type="basis"
                 dataKey="requests" 
@@ -56,7 +63,7 @@ export function ActionFlowVolume() {
                 type="basis"
                 dataKey="completed" 
                 name="Completed" 
-                stroke={isDark ? "#3f3f46" : "#000000"}
+                stroke={isDark ? "#e4e4e7" : "#000000"}
                 strokeWidth={2}
                 dot={false}
             />

@@ -16,6 +16,7 @@ export default function DashboardLayout({
   const [user, setUser] = useState<any>(null);
   const [currentOrg, setCurrentOrg] = useState<any>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const getUser = async () => {
@@ -76,7 +77,9 @@ export default function DashboardLayout({
         />
 
         {/* Page Content */}
-        <main className="flex-1 p-6">{children}</main>
+        <main className={`flex-1 ${pathname?.includes('/natalie') ? 'h-[calc(100vh-3.5rem)]' : 'p-6'}`}>
+          {children}
+        </main>
       </div>
 
       {/* Mobile Backdrop */}
