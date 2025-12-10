@@ -23,7 +23,7 @@ export function ActionFlowVolume() {
       <CardHeader>
         <CardTitle>Weekly Volume</CardTitle>
         <CardDescription>
-          Actions completed vs. new Actions received.
+          Actions completed (Black/White) vs. new Actions received (Blue).
         </CardDescription>
       </CardHeader>
       <CardContent className="pl-2 select-none pointer-events-none">
@@ -42,14 +42,6 @@ export function ActionFlowVolume() {
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => `${value}`}
-            />
-            <Legend 
-              verticalAlign="top" 
-              align="right"
-              height={36}
-              iconType="circle" 
-              iconSize={6}
-              wrapperStyle={{ fontSize: '10px', letterSpacing: '0.05em', opacity: 0.7 }}
             />
             <Line 
                 type="basis"
