@@ -17,9 +17,9 @@ interface Message {
 
 const suggestions = [
   "Start a new hiring request",
-  "Check status of recent actions",
-  "Show my overdue tasks",
-  "Show my active requests"
+  "Check status of recent Actions",
+  "Show my overdue Actions",
+  "Show my active Action Flows"
 ];
 
 export default function NataliePage() {
@@ -76,7 +76,7 @@ export default function NataliePage() {
                   Hi {userName}, how can I help?
                 </h2>
                 <p className="text-muted-foreground">
-                  I can help you design flows, analyze data, or manage your tasks.
+                  I can help you search resources, analyze data, or manage your tasks.
                 </p>
               </div>
               
