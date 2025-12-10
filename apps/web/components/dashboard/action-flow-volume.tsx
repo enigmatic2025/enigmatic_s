@@ -19,7 +19,7 @@ export function ActionFlowVolume() {
   const isDark = resolvedTheme === "dark"
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader>
         <CardTitle>Weekly Volume</CardTitle>
         <CardDescription>

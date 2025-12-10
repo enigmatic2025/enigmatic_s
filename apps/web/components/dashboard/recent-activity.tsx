@@ -71,9 +71,9 @@ interface RecentActivityProps {
   className?: string;
 }
 
-export function RecentActivity({ className }: RecentActivityProps) {
+export function RecentActivity({ className }: { className?: string }) {
   return (
-    <Card className={className}>
+    <Card className={`shadow-none ${className}`}>
       <CardHeader>
         <CardTitle>Recent Activity</CardTitle>
         <CardDescription>

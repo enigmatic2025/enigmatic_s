@@ -31,7 +31,7 @@ const actions = [
 
 export function NewActionFlow() {
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader>
         <CardTitle>New Action Flow</CardTitle>
         <CardDescription>

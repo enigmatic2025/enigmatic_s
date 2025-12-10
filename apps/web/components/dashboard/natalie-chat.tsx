@@ -10,11 +10,11 @@ export function NatalieChat() {
   const [query, setQuery] = useState("");
 
   return (
-    <Card className="bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 border-primary/10 shadow-sm">
+    <Card className="bg-linear-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 border-primary/10 shadow-none">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-sm">
+                <div className="h-8 w-8 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-sm">
                     <Sparkles className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -30,13 +30,10 @@ export function NatalieChat() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="How do I create a new flow?" 
-              className="bg-background/50 border-primary/10 focus-visible:ring-primary/20"
+              className="bg-background/50 border-primary/10 focus-visible:ring-0 shadow-none"
           />
           <Button size="icon" variant="ghost" className="shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10">
             <Mic className="h-4 w-4" />
-          </Button>
-          <Button size="icon" className="shrink-0 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 border-0 shadow-sm">
-            <Send className="h-4 w-4 text-white" />
           </Button>
         </div>
       </CardContent>

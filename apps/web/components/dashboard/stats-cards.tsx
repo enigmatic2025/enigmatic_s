@@ -4,7 +4,7 @@ import { Activity, CheckCircle, Clock, ListTodo, ArrowUpRight, ArrowDownRight } 
 export function StatsCards() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Actions Waiting</CardTitle>
           <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-full">
@@ -22,7 +22,7 @@ export function StatsCards() {
           </p>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Actions Completed</CardTitle>
           <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-full">
@@ -40,7 +40,7 @@ export function StatsCards() {
           </p>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Avg. Completion Time</CardTitle>
           <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-full">
@@ -58,7 +58,7 @@ export function StatsCards() {
           </p>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Active Action Flows</CardTitle>
           <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-full">

@@ -32,7 +32,7 @@ const mockLiveFlows = [
 
 export function LiveFlows() {
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader>
         <CardTitle>My Action Flows</CardTitle>
         <CardDescription>
