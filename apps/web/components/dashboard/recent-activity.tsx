@@ -67,9 +67,13 @@ const mockActivity = [
   },
 ];
 
-export function RecentActivity() {
+interface RecentActivityProps {
+  className?: string;
+}
+
+export function RecentActivity({ className }: RecentActivityProps) {
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle>Recent Activity</CardTitle>
         <CardDescription>

@@ -3,6 +3,7 @@ import { LiveFlows } from "@/components/dashboard/live-flows";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { ActionFlowVolume } from "@/components/dashboard/action-flow-volume";
+import { NatalieChat } from "@/components/dashboard/natalie-chat";
 
 export default function DashboardPage() {
   return (
@@ -14,11 +15,12 @@ export default function DashboardPage() {
       <StatsCards />
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-4 space-y-4">
+        <div className="col-span-4 flex flex-col gap-4">
           <ActionFlowVolume />
-          <RecentActivity />
+          <RecentActivity className="flex-1" />
         </div>
         <div className="col-span-3 space-y-4">
+          <NatalieChat />
           <QuickActions />
           <LiveFlows />
         </div>
