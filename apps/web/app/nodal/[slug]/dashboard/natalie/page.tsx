@@ -68,9 +68,11 @@ export default function NataliePage() {
         <div className="space-y-4 max-w-3xl mx-auto w-full h-full flex flex-col">
           {messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center space-y-8 text-center p-8">
-              <div className="h-16 w-16 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 flex items-center justify-center mb-4">
-                <Sparkles className="h-8 w-8 text-white" />
-              </div>
+              <Avatar className="h-15 w-15 aspect-square">
+                <AvatarFallback>                
+                  <Sparkles className="h-8 w-8 aspect-square text-foreground" />
+                </AvatarFallback>
+              </Avatar>
               <div className="space-y-2">
                 <h2 className="text-2xl font-semibold tracking-tight">
                   Hi {userName}, how can I help?
@@ -79,7 +81,7 @@ export default function NataliePage() {
                   I can help you search resources, analyze data, or manage your tasks.
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl mt-8">
                 {suggestions.map((suggestion) => (
                   <Button
@@ -98,30 +100,27 @@ export default function NataliePage() {
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex gap-3 ${
-                  message.role === "user" ? "flex-row-reverse" : "flex-row"
-                }`}
+                className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : "flex-row"
+                  }`}
               >
-                <Avatar className={`h-8 w-8 ${
-                    message.role === "assistant" 
-                    ? "bg-linear-to-tr from-indigo-500 to-purple-500" 
+                <Avatar className={`h-8 w-8 ${message.role === "assistant"
+                    ? "bg-linear-to-tr from-indigo-500 to-purple-500"
                     : "bg-muted"
-                }`}>
+                  }`}>
                   {message.role === "assistant" ? (
                     <div className="flex items-center justify-center w-full h-full">
-                        <Sparkles className="h-4 w-4 text-white" />
+                      <Sparkles className="h-4 w-4 text-white" />
                     </div>
                   ) : (
                     <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
                   )}
                 </Avatar>
-                
+
                 <div
-                  className={`rounded-lg p-3 max-w-[80%] text-sm ${
-                    message.role === "user"
+                  className={`rounded-lg p-3 max-w-[80%] text-sm ${message.role === "user"
                       ? "bg-primary text-primary-foreground dark:bg-zinc-800 dark:text-white"
                       : "bg-background"
-                  }`}
+                    }`}
                 >
                   {message.content}
                 </div>
@@ -146,10 +145,10 @@ export default function NataliePage() {
             className="bg-background border-primary/10 focus-visible:ring-0 focus-visible:border-primary/10 min-h-20 resize-none"
           />
           <div className="flex gap-2 pb-1">
-            <Button 
-                size="icon" 
-                variant="ghost" 
-                className="shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
+            <Button
+              size="icon"
+              variant="ghost"
+              className="shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
             >
               <Mic className="h-4 w-4" />
             </Button>
