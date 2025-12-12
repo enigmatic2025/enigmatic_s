@@ -28,7 +28,7 @@ export function QuickActionsPanel() {
           <div className="flex-1 relative">
             <Input 
               placeholder="Ask Natalie or start a workflow..." 
-              className="h-10 bg-muted/30 border-muted-foreground/20 hover:bg-muted/50 transition-colors rounded-full px-4"
+              className="h-10 rounded-full px-4"
             />
             <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           </div>
