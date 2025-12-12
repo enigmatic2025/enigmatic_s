@@ -1,28 +1,26 @@
-import { AskNatalieHeader } from "@/components/dashboard/ask-natalie-header";
-import { LiveFlows } from "@/components/dashboard/live-flows";
-import { RecentActivity } from "@/components/dashboard/recent-activity";
-import { NewActionFlow } from "@/components/dashboard/new-action-flow";
-import { ActionFlowVolume } from "@/components/dashboard/action-flow-volume";
-import { SystemStatus } from "@/components/dashboard/system-status";
+import { QuickActionsPanel } from "@/components/dashboard/quick-actions-panel";
+import { ActivityFeed } from "@/components/dashboard/activity-feed";
+import { MyActionFlowsPanel } from "@/components/dashboard/my-action-flows-panel";
 
 export default function DashboardPage() {
   return (
-    <div className="flex-1 space-y-6">
-      <AskNatalieHeader />
-
-      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        <div className="col-span-2 flex flex-col gap-4">
-          <div className="grid lg:grid-cols-5 gap-4">
-            <SystemStatus className="col-span-4 lg:col-span-2 h-full" />
-            <ActionFlowVolume className="col-span-4 lg:col-span-3 h-full" />
+    <div className="grid grid-cols-12 gap-6">
+      {/* Main Feed Area (Center/Left) - Includes Quick Actions */}
+      <div className="col-span-12 xl:col-span-9 space-y-6 pb-6">
+        <QuickActionsPanel />
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold tracking-tight">Latest Activity</h2>
           </div>
-          <div className="grid lg:grid-cols-2 gap-4">
-            <LiveFlows className="h-full" />
-            <NewActionFlow className="h-full" />
-          </div>
+          <ActivityFeed />
         </div>
-        <div className="col-span-2 xl:col-span-1 flex flex-col">
-          <RecentActivity className="h-full" />
+      </div>
+
+      {/* Right Sidebar: My Action Flows */}
+      <div className="hidden xl:block xl:col-span-3 border-l border-border/50 pl-6">
+        <div className="sticky top-20">
+          <MyActionFlowsPanel />
         </div>
       </div>
     </div>
