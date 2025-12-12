@@ -1,6 +1,6 @@
-import { QuickActionsPanel } from "@/components/dashboard/quick-actions-panel";
-import { ActivityFeed } from "@/components/dashboard/activity-feed";
-import { MyActionFlowsPanel } from "@/components/dashboard/my-action-flows-panel";
+import { QuickActionsPanel } from "@/components/dashboard/overview/quick-actions-panel";
+import { ActivityFeed } from "@/components/dashboard/overview/activity-feed";
+import { MyActionFlowsPanel } from "@/components/dashboard/overview/my-action-flows-panel";
 
 export default function DashboardPage() {
   return (

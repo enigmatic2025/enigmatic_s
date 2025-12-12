@@ -29,7 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SidebarDraggableItem, SidebarSection } from "./sidebar-items";
+import { SidebarDraggableItem, SidebarSection } from "./overview/sidebar-items";
 
 interface SidebarProps {
   sidebarOpen: boolean;

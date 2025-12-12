@@ -132,11 +132,6 @@ export function MyActionFlowsPanel() {
             </CardContent>
           </Card>
         ))}
-        
-        <Button variant="outline" className="w-full text-xs h-9 border-dashed text-muted-foreground">
-          <Plus className="h-3.5 w-3.5 mr-1.5" />
-          Create New Flow
-        </Button>
       </div>
     </div>
   );

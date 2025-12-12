@@ -5,13 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
   Sparkles, 
-  Plus, 
   FileText, 
   Users, 
   BarChart3, 
-  Settings, 
   Zap,
-  MessageSquare
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -27,7 +24,7 @@ export function QuickActionsPanel() {
           </Avatar>
           <div className="flex-1 relative">
             <Input 
-              placeholder="Ask Natalie or start a workflow..." 
+              placeholder="Ask Natalie anything..." 
               className="h-10 rounded-full px-4"
             />
             <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
