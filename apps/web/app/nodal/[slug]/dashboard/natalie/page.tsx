@@ -104,12 +104,12 @@ export default function NataliePage() {
                   }`}
               >
                 <Avatar className={`h-8 w-8 ${message.role === "assistant"
-                    ? "bg-linear-to-tr from-indigo-500 to-purple-500"
+                    ? "bg-muted"
                     : "bg-muted"
                   }`}>
                   {message.role === "assistant" ? (
                     <div className="flex items-center justify-center w-full h-full">
-                      <Sparkles className="h-4 w-4 text-white" />
+                      <Sparkles className="h-4 w-4 text-foreground" />
                     </div>
                   ) : (
                     <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
