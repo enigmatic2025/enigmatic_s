@@ -3,7 +3,7 @@
 import React from "react";
 import { FileSpreadsheet, Unplug, TrendingDown } from "lucide-react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { DottedIcon } from "@/components/ui/dotted-icon";
 
 export function ProblemSection() {
   return (
@@ -28,7 +28,7 @@ export function ProblemSection() {
             </motion.h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-8 md:gap-y-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-8 md:gap-y-12">
             {items.map((item, i) => (
               <motion.div
                 key={i}
@@ -38,15 +38,12 @@ export function ProblemSection() {
                 transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
                 className="flex flex-col h-full"
               >
-                <div className="relative w-full aspect-4/3 mb-4 rounded-xl overflow-hidden bg-muted/50 min-h-[180px] md:min-h-[220px]">
-                  {item.image && (
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
-                  )}
+                <div className="relative w-full h-full mb-10 rounded-xl overflow-hidden flex items-center justify-center p-8 border">
+                  <DottedIcon 
+                    pattern={item.pattern} 
+                    className="w-full h-full max-w-[180px] max-h-[180px]"
+                    dotColor="bg-foreground"
+                  />
                 </div>
 
                 <h3 className="text-xl md:text-2xl font-normal text-foreground mb-3">
@@ -64,26 +61,70 @@ export function ProblemSection() {
   );
 }
 
+const manualWorkflowsPattern = [
+  [0,0,1,0,0,0,0,0,0,0,0,0],
+  [0,0,1,1,0,0,0,0,0,0,0,0],
+  [0,0,1,1,1,0,0,0,0,0,0,0],
+  [0,0,1,1,1,1,0,0,0,0,0,0],
+  [0,0,1,1,1,1,1,0,0,0,0,0],
+  [0,0,1,1,1,1,1,1,0,0,0,0],
+  [0,0,1,1,1,1,1,1,1,0,0,0],
+  [0,0,1,1,1,1,1,1,1,1,0,0],
+  [0,0,1,1,1,1,1,0,0,0,0,0],
+  [0,0,1,1,0,1,1,1,0,0,0,0],
+  [0,0,1,0,0,0,1,1,1,0,0,0],
+  [0,0,0,0,0,0,0,1,1,0,0,0],
+];
+
+const disconnectedPattern = [
+  [1,1,1,0,0,0,0,0,0,1,1,1],
+  [1,1,1,0,0,0,0,0,0,1,1,1],
+  [1,1,1,0,0,0,0,0,0,1,1,1],
+  [0,0,0,1,0,0,0,0,1,0,0,0],
+  [0,0,0,0,1,0,0,1,0,0,0,0],
+  [0,0,0,0,0,1,1,0,0,0,0,0],
+  [0,0,0,0,0,1,1,0,0,0,0,0],
+  [0,0,0,0,1,0,0,1,0,0,0,0],
+  [0,0,0,1,0,0,0,0,1,0,0,0],
+  [1,1,1,0,0,0,0,0,0,1,1,1],
+  [1,1,1,0,0,0,0,0,0,1,1,1],
+  [1,1,1,0,0,0,0,0,0,1,1,1],
+];
+
+const hiddenCostsPattern = [
+  [0,0,0,0,0,1,1,0,0,0,0,0],
+  [0,0,0,0,0,1,1,0,0,0,0,0],
+  [0,0,0,1,1,1,1,1,1,0,0,0],
+  [0,0,1,1,0,1,1,0,1,1,0,0],
+  [0,0,1,1,0,1,1,0,0,0,0,0],
+  [0,0,1,1,0,1,1,0,0,0,0,0],
+  [0,0,0,1,1,1,1,1,1,0,0,0],
+  [0,0,0,0,0,1,1,0,1,1,0,0],
+  [0,0,0,0,0,1,1,0,1,1,0,0],
+  [0,0,1,1,0,1,1,0,1,1,0,0],
+  [0,0,0,1,1,1,1,1,1,0,0,0],
+  [0,0,0,0,0,1,1,0,0,0,0,0],
+  [0,0,0,0,0,1,1,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0],
+];
+
 const items = [
   {
     title: "Manual Workflows",
     description:
       "Your logistics teams are still glued to spreadsheets, emails, and manual workarounds, so exceptions get missed, shipments delay, and everyone works from different playbooks.",
-    icon: <FileSpreadsheet className="h-10 w-10 text-muted-foreground/80" />,
-    image: "/images/home/manual-workflows.jpg",
+    pattern: manualWorkflowsPattern,
   },
   {
     title: "Disconnected Systems",
     description:
       "Disconnected TMS modules, carrier portals, ELD systems, and random AI tools each person picks create data silos, double-entry headaches, and constant workflow bottlenecks.",
-    icon: <Unplug className="h-10 w-10 text-muted-foreground/80" />,
-    image: "/images/home/disconnected-systems.jpg",
+    pattern: disconnectedPattern,
   },
   {
     title: "Hidden Costs",
     description:
       "All these fragmented processes and “everyone does it their own way” habits are quietly eating your margins, fueling demurrage fees, and costing your operation way more than you think.",
-    icon: <TrendingDown className="h-10 w-10 text-muted-foreground/80" />,
-    image: "/images/home/hidden-costs.jpg",
+    pattern: hiddenCostsPattern,
   },
 ];

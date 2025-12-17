@@ -115,11 +115,10 @@ export function MissionQuote() {
               className="flex flex-col gap-2"
             >
               <span className="text-4xl md:text-5xl font-light tracking-tight text-foreground">
-                70%+
+                80%+
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                of logistics teams use 5 or more disconnected systems to run daily
-                operations
+                of logistics organizations operate across 8–15 disconnected systems
               </p>
             </motion.div>
 
@@ -131,11 +130,11 @@ export function MissionQuote() {
               className="flex flex-col gap-2"
             >
               <span className="text-4xl md:text-5xl font-light tracking-tight text-foreground">
-                40–60%
+                Up to 50%
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                of operational work in logistics is still coordinated via email,
-                spreadsheets, or messaging tools
+                of daily logistics work is still coordinated through email,
+                spreadsheets, and messaging
               </p>
             </motion.div>
 
@@ -147,11 +146,11 @@ export function MissionQuote() {
               className="flex flex-col gap-2"
             >
               <span className="text-4xl md:text-5xl font-light tracking-tight text-foreground">
-                8–12
+                30–40%
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                software platforms used by the average carrier across dispatch,
-                safety, maintenance, billing, and HR
+                of operations capacity in complex supply chains is consumed by
+                exceptions and rework
               </p>
             </motion.div>
           </div>
