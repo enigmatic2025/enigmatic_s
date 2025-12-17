@@ -29,7 +29,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
-            Map. Automate. Own.
+            Map. Build. Own.
           </h1>
         </motion.div>
 

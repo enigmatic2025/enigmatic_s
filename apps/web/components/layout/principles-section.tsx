@@ -28,24 +28,18 @@ const principles = [
 export function PrinciplesSection() {
   return (
     <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
-      <div className="relative w-full max-w-[95%] rounded-3xl overflow-hidden">
+      <div className="relative w-full max-w-7xl rounded-3xl overflow-hidden">
         {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/home/principles-background.jpg"
-            alt="Principles Background"
-            fill
-            className="object-cover"
-            priority
-          />
-          {/* Dark Overlay for B&W Theme & Readability */}
-          <div className="absolute inset-0 bg-black/80" />
-        </div>
 
         <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-stretch gap-0 relative z-10 py-20 px-4 md:px-6">
           {/* Left Column: Title & Intro */}
           <div className="flex-1 flex flex-col justify-center lg:pr-0 mb-12 lg:mb-0">
-            <div className="flex flex-col gap-6 max-w-xl lg:ml-auto lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col gap-6 lg:ml-auto lg:text-left bg-white dark:bg-transparent rounded-md">
               <motion.h2
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -53,25 +47,14 @@ export function PrinciplesSection() {
                 transition={{ duration: 0.5 }}
                 className="text-2xl md:text-4xl font-normal tracking-tight leading-[1.15]"
               >
-                <span className="text-white">
+                <span className="text-foreground">
                   Most logistics platforms promise to do everything.{" "}
                 </span>
-                <span className="text-gray-400">
-                  Real operations are far more nuanced than that.
+                <span className="text-muted-foreground">
+                  Real operations are far more nuanced than that. We follow three principles.
                 </span>
               </motion.h2>
-
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <p className="text-xl md:text-2xl font-light text-white">
-                  We take a different approach, guided by three principles.
-                </p>
-              </motion.div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Middle Column: Animated SVG Lines (Desktop) */}
@@ -88,7 +71,7 @@ export function PrinciplesSection() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="0.5"
-                  className="text-white/40"
+                  className="dark:text-white/40"
                   strokeDasharray="4 4"
                   initial={{ pathLength: 0, opacity: 0 }}
                   whileInView={{ pathLength: 1, opacity: 1 }}
@@ -102,7 +85,7 @@ export function PrinciplesSection() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="0.5"
-                  className="text-white/40"
+                  className="dark:text-white/40"
                   strokeDasharray="4 4"
                   initial={{ pathLength: 0, opacity: 0 }}
                   whileInView={{ pathLength: 1, opacity: 1 }}
@@ -116,7 +99,7 @@ export function PrinciplesSection() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="0.5"
-                  className="text-white/40"
+                  className="dark:text-white/40"
                   strokeDasharray="4 4"
                   initial={{ pathLength: 0, opacity: 0 }}
                   whileInView={{ pathLength: 1, opacity: 1 }}
@@ -138,14 +121,14 @@ export function PrinciplesSection() {
                 transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
                 className="flex-1 flex items-center"
               >
-                <div className="w-full p-6 rounded-xl border border-white/20 bg-black/40 backdrop-blur-sm">
+                <div className="w-full p-6 rounded-xl bg-transparent border shadow-sm">
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="text-white shrink-0">{principle.icon}</div>
-                    <h3 className="text-xl md:text-2xl font-normal text-white">
+                    <div className="text-current shrink-0 border p-1 rounded-sm">{principle.icon}</div>
+                    <h3 className="font-medium text-foreground text-lg">
                       {principle.title}
                     </h3>
                   </div>
-                  <p className="text-base text-gray-300 leading-relaxed pl-10">
+                  <p className="text-md text-muted-foreground leading-relaxed pl-10">
                     {principle.description}
                   </p>
                 </div>

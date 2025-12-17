@@ -36,7 +36,7 @@ export function ProblemSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-                className="flex flex-col h-full p-6 rounded-3xl border border-border/50 bg-card text-card-foreground"
+                className="flex flex-col h-full"
               >
                 <div className="relative w-full aspect-4/3 mb-4 rounded-xl overflow-hidden bg-muted/50 min-h-[180px] md:min-h-[220px]">
                   {item.image && (
