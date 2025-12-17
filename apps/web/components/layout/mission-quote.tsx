@@ -92,7 +92,7 @@ export function MissionQuote() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="p-6 rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col gap-4"
+                className="p-6 rounded-xl border bg-card text-card-foreground flex flex-col gap-4"
               >
                 <div className="p-2 w-fit rounded-lg bg-black dark:bg-white">
                   <item.icon className="w-5 h-5 text-background" />
@@ -103,6 +103,57 @@ export function MissionQuote() {
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12 border-t border-border/40">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex flex-col gap-2"
+            >
+              <span className="text-4xl md:text-5xl font-light tracking-tight text-foreground">
+                70%+
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                of logistics teams use 5 or more disconnected systems to run daily
+                operations
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col gap-2"
+            >
+              <span className="text-4xl md:text-5xl font-light tracking-tight text-foreground">
+                40–60%
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                of operational work in logistics is still coordinated via email,
+                spreadsheets, or messaging tools
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex flex-col gap-2"
+            >
+              <span className="text-4xl md:text-5xl font-light tracking-tight text-foreground">
+                8–12
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                software platforms used by the average carrier across dispatch,
+                safety, maintenance, billing, and HR
+              </p>
+            </motion.div>
           </div>
         </div>
       </div>

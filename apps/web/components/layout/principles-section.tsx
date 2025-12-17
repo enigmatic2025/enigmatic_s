@@ -121,7 +121,7 @@ export function PrinciplesSection() {
                 transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
                 className="flex-1 flex items-center"
               >
-                <div className="w-full p-6 rounded-xl bg-transparent border shadow-sm">
+                <div className="w-full p-6 rounded-xl bg-transparent border">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="text-current shrink-0 border p-1 rounded-sm">{principle.icon}</div>
                     <h3 className="font-medium text-foreground text-lg">
