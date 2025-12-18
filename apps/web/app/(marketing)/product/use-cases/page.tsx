@@ -91,7 +91,6 @@ export default function UseCasesPage() {
       <CTASection
         title="Have a unique challenge?"
         description="Our team of engineers can build custom workflows tailored to your specific operational needs."
-        hideSignIn={true}
       />
     </main>
   );
