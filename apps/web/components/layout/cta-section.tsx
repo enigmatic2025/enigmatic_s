@@ -16,9 +16,9 @@ interface CTASectionProps {
 }
 
 export function CTASection({
-  title = "Modernize what moves the world",
+  title = "Modernize what moves the world.",
   description = "Help us untangle the world’s most complex systems. If you’re driven by real problems and real impact, Enigmatic is where your work matters.",
-  label = "Get IN TOUCH",
+  label = "Get in Touch",
   buttonText = "Collaborate",
   buttonLink = "/careers",
 }: CTASectionProps) {
@@ -30,7 +30,7 @@ export function CTASection({
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-sm font-medium tracking-wider text-neutral-400 uppercase"
+            className="text-lg tracking-tight leading-[1.15] text-neutral-400"
           >
             {label}
           </motion.span>
@@ -40,7 +40,7 @@ export function CTASection({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-medium tracking-tight leading-[1.1]"
+            className="text-4xl md:text-6xl tracking-tight leading-[1.15]"
           >
             {title}
           </motion.h2>
