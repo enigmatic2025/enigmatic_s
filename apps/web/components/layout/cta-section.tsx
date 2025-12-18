@@ -1,72 +1,75 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { CTAButtons } from "@/components/ui/cta-buttons";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 interface CTASectionProps {
   title?: string;
   description?: string;
-  hideSignIn?: boolean;
+  label?: string;
+  buttonText?: string;
+  buttonLink?: string;
 }
 
 export function CTASection({
-  title = "Ready to modernize your logistics?",
-  description = "Join the forward-thinking teams building better operations with Enigmatic.",
-  hideSignIn = true,
+  title = "Modernize what moves the world",
+  description = "Help us untangle the world’s most complex systems. If you’re driven by real problems and real impact, Enigmatic is where your work matters.",
+  label = "Get IN TOUCH",
+  buttonText = "Collaborate",
+  buttonLink = "/careers",
 }: CTASectionProps) {
   return (
-    <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
-      <div className="w-full max-w-[95%] bg-muted/25 rounded-3xl overflow-hidden flex flex-col items-center justify-center py-16 md:py-32">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 text-center flex flex-col items-center gap-10">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+    <section className="w-full bg-black text-white py-24 md:py-32 overflow-hidden relative min-h-[600px] flex items-center">
+      <div className="w-full max-w-7xl mx-auto px-6 relative z-10">
+        <div className="max-w-2xl flex flex-col gap-8">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="relative w-20 h-20 md:w-24 md:h-24"
+            className="text-sm font-medium tracking-wider text-neutral-400 uppercase"
           >
-            <Image
-              src="/images/brand/enigmatic-logo.png"
-              alt="Enigmatic Logo"
-              fill
-              className="object-contain"
-            />
-          </motion.div>
+            {label}
+          </motion.span>
 
-          <div className="flex flex-col gap-6">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-3xl md:text-5xl font-light tracking-tight text-foreground"
-            >
-              {title}
-            </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-medium tracking-tight leading-[1.1]"
+          >
+            {title}
+          </motion.h2>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-xl text-secondary-foreground max-w-2xl mx-auto font-light leading-relaxed"
-            >
-              {description}
-            </motion.p>
-          </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-neutral-400 max-w-xl leading-relaxed"
+          >
+            {description}
+          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ delay: 0.3 }}
           >
-            <CTAButtons hideSignIn={hideSignIn} />
+            <Button size="lg" className="text-lg px-8 h-14 w-full sm:w-auto bg-white text-black hover:bg-white" asChild>
+              <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
+                Collaborate
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Link>
+            </Button>
           </motion.div>
         </div>
       </div>
     </section>
   );
 }
+

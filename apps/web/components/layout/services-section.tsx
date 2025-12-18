@@ -35,7 +35,7 @@ export function ServicesSection() {
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
                   Consulting & Engineering
                 </h3>
-                <p className="text-base text-secondary-foreground mb-6">
+                <p className="text-base text-muted-foreground mb-6">
                   From custom integrations to full-scale infrastructure. We help
                   you connect your disparate systems to build a cohesive
                   technology ecosystem that actually works together.
@@ -55,7 +55,7 @@ export function ServicesSection() {
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
                   The Nodal Platform
                 </h3>
-                <p className="text-base text-secondary-foreground mb-6">
+                <p className="text-base text-muted-foreground mb-6">
                   The business process platform where technical engineers design
                   Action Flows that blend AI, automation, and human expertise
                   into one consistent operation.
@@ -81,7 +81,7 @@ export function ServicesSection() {
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
                   Event-Driven Triggers
                 </h3>
-                <p className="text-base text-secondary-foreground leading-relaxed">
+                <p className="text-base text-muted-foreground leading-relaxed">
                   Kick off workflows automatically based on email receipts, TMS
                   status changes, or API webhooks.
                 </p>
@@ -95,7 +95,7 @@ export function ServicesSection() {
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
                   Human-in-the-Loop
                 </h3>
-                <p className="text-base text-secondary-foreground leading-relaxed">
+                <p className="text-base text-muted-foreground leading-relaxed">
                   Ensure consistency with native validation steps. When
                   confidence is low, Nodal loops in a human to review and
                   approve.
@@ -110,7 +110,7 @@ export function ServicesSection() {
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
                   Universal Connectivity
                 </h3>
-                <p className="text-base text-secondary-foreground leading-relaxed">
+                <p className="text-base text-muted-foreground leading-relaxed">
                   Seamlessly connect with any TMS, WMS, ELD, or EDI partner.
                   Break down data silos across your stack.
                 </p>
