@@ -16,16 +16,29 @@ import { actionFlows } from "./data";
 import { DescriptionCell } from "./description-cell";
 import { StatusBadge } from "./status-badge";
 import { PriorityBadge } from "./priority-badge";
+import { useRouter, useParams } from "next/navigation";
 
 interface ActionFlowGridProps {
   data?: typeof actionFlows;
 }
 
 export function ActionFlowGrid({ data = actionFlows }: ActionFlowGridProps) {
+  const router = useRouter();
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const handleViewDetails = (flowId: string) => {
+    router.push(`/nodal/${slug}/dashboard/action-flows/${flowId}`);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {data.map((flow) => (
-        <Card key={flow.id} className="shadow-sm">
+        <Card 
+          key={flow.id} 
+          className="shadow-sm cursor-pointer hover:shadow-md transition-all"
+          onClick={() => handleViewDetails(flow.id)}
+        >
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
@@ -34,23 +47,24 @@ export function ActionFlowGrid({ data = actionFlows }: ActionFlowGridProps) {
                 </CardTitle>
                 <p className="text-xs text-muted-foreground">{flow.id}</p>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0 -mr-2 -mt-2">
-                    <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem>View Details</DropdownMenuItem>
-                  <DropdownMenuItem>View History</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive">
-                    Cancel Flow
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div onClick={(e) => e.stopPropagation()}>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0 -mr-2 -mt-2">
+                      <span className="sr-only">Open menu</span>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>View History</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive">
+                      Cancel Flow
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="pb-2">

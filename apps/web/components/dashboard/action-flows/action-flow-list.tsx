@@ -24,12 +24,21 @@ import { actionFlows } from "./data";
 import { DescriptionCell } from "./description-cell";
 import { StatusBadge } from "./status-badge";
 import { PriorityBadge } from "./priority-badge";
+import { useRouter, useParams } from "next/navigation";
 
 interface ActionFlowListProps {
   data?: typeof actionFlows;
 }
 
 export function ActionFlowList({ data = actionFlows }: ActionFlowListProps) {
+  const router = useRouter();
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const handleViewDetails = (flowId: string) => {
+    router.push(`/nodal/${slug}/dashboard/action-flows/${flowId}`);
+  };
+
   return (
     <div className="rounded-md border bg-card">
       <Table>
@@ -48,7 +57,11 @@ export function ActionFlowList({ data = actionFlows }: ActionFlowListProps) {
         </TableHeader>
         <TableBody>
           {data.map((flow) => (
-            <TableRow key={flow.id}>
+            <TableRow 
+              key={flow.id} 
+              className="cursor-pointer hover:bg-muted/50"
+              onClick={() => handleViewDetails(flow.id)}
+            >
               <TableCell className="font-medium text-muted-foreground text-xs">
                 {flow.id}
               </TableCell>
@@ -88,7 +101,7 @@ export function ActionFlowList({ data = actionFlows }: ActionFlowListProps) {
               <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                 {new Date(flow.startedAt).toLocaleDateString()}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -98,7 +111,6 @@ export function ActionFlowList({ data = actionFlows }: ActionFlowListProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>View Details</DropdownMenuItem>
                     <DropdownMenuItem>View History</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-destructive">
