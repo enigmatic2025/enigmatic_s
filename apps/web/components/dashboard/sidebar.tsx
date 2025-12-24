@@ -107,7 +107,7 @@ export function Sidebar({
         asChild
       >
         <Link href={href}>
-          <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
+          <Icon className="h-4 w-4 mr-3 shrink-0" />
           <span className="text-sm">{label}</span>
         </Link>
       </Button>
@@ -135,15 +135,15 @@ export function Sidebar({
         {sidebarOpen ? (
           <>
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="h-8 w-8 flex-shrink-0 flex items-center justify-center">
+              <div className="h-8 w-8 shrink-0 flex items-center justify-center">
                 <img
                   src="/images/brand/nodal-logo.svg"
                   alt="Nodal"
-                  className="h-6 w-6"
+                  className="h-10 w-10"
                 />
               </div>
-              <span className="font-light tracking-widest text-lg whitespace-nowrap">
-                NODAL
+              <span className="text-lg whitespace-nowrap">
+                Nodal
               </span>
             </div>
             <Button
