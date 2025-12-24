@@ -17,7 +17,11 @@ import {
     Plus,
     MousePointerClick,
     Bot,
-    Zap
+    Zap,
+    Settings,
+    Users,
+    Download,
+    XCircle
 } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { TimelineItem, TimelineStep } from "./timeline-item";
@@ -32,6 +36,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { getFlowData, MOCK_FILES } from "./flow-data";
 
@@ -123,13 +128,17 @@ export function FlowDetailView() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem>
-                                            <Play className="mr-2 h-3.5 w-3.5" /> Run Now
+                                            <Settings className="mr-2 h-3.5 w-3.5" /> Edit Configuration
                                         </DropdownMenuItem>
                                         <DropdownMenuItem>
-                                            <Pause className="mr-2 h-3.5 w-3.5" /> Pause Flow
+                                            <Users className="mr-2 h-3.5 w-3.5" /> Reassign Ownership
                                         </DropdownMenuItem>
                                         <DropdownMenuItem>
-                                            <RotateCcw className="mr-2 h-3.5 w-3.5" /> View History
+                                            <Download className="mr-2 h-3.5 w-3.5" /> Export Audit Log
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                                            <XCircle className="mr-2 h-3.5 w-3.5" /> Cancel Execution
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -160,7 +169,7 @@ export function FlowDetailView() {
                                             <tbody className="divide-y">
                                                 <tr>
                                                     {dataVisual.map((col, i) => (
-                                                        <td key={i} className={`px-3 py-2 ${col.status === 'positive' ? 'text-emerald-600 font-medium' : col.status === 'warning' ? 'text-amber-600 font-medium' : ''}`}>
+                                                        <td key={i} className="px-3 py-2">
                                                             {col.value}
                                                         </td>
                                                     ))}
