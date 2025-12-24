@@ -9,7 +9,7 @@ import { Comment, CommentSection } from "./comment-section";
 
 export interface TimelineStep {
   id: string;
-  type: 'schedule' | 'action' | 'ai' | 'human' | 'logic';
+  type: 'schedule' | 'action' | 'ai' | 'human' | 'logic' | 'alarm';
   label: string;
   description?: string;
   status: 'completed' | 'running' | 'pending' | 'failed';
@@ -33,11 +33,11 @@ interface TimelineItemProps {
 const getStatusConfig = (status: TimelineStep['status']) => {
   switch (status) {
     case 'completed':
-      return { label: 'Complete', color: 'text-green-700', icon: CheckCircle2 };
+      return { label: 'Complete', color: 'text-emerald-600 dark:text-emerald-500', icon: CheckCircle2 };
     case 'running':
-      return { label: 'In Progress', color: 'text-blue-700', icon: Clock };
+      return { label: 'In Progress', color: 'text-blue-600 dark:text-blue-500', icon: Clock };
     case 'failed':
-      return { label: 'Failed', color: 'text-red-700', icon: AlertCircle };
+      return { label: 'Failed', color: 'text-red-600 dark:text-red-500', icon: AlertCircle };
     case 'pending':
       return { label: 'Pending', color: 'text-muted-foreground', icon: Clock };
     default:

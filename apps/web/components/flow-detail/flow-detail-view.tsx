@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -13,140 +13,68 @@ import {
     Pause,
     RotateCcw,
     FileText,
-    Filter
+    Filter,
+    Plus,
+    MousePointerClick,
+    Bot,
+    Zap
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { TimelineItem, TimelineStep } from "./timeline-item";
 import { ActionExecutionPanel } from "./action-execution-panel";
 import { CommentSection } from "./comment-section";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PriorityBadge } from "@/components/dashboard/action-flows/priority-badge";
 import { StatusBadge } from "@/components/dashboard/action-flows/status-badge";
+import { actionFlows } from "@/components/dashboard/action-flows/data";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-// Mock Data
-const MOCK_FLOW_INFO = {
-    id: "AF-2024-001",
-    name: "New Employee Onboarding",
-    description: "Automates the process of setting up accounts, sending welcome emails, and scheduling orientation for new hires.",
-    status: "In Progress" as const,
-    priority: "High",
-    lastRun: "2 hours ago",
-    successRate: 98,
-    totalRuns: 142,
-    avgDuration: "45s",
-    currentAction: "Manager Approval",
-    progress: 60,
-    assignees: [
-        { name: "Alice Smith", initials: "AS" },
-        { name: "Bob Jones", initials: "BJ" },
-        { name: "Sarah Connor", initials: "SC" },
-    ],
-    startedAt: "2024-12-20T09:00:00",
-};
-
-const MOCK_STEPS: TimelineStep[] = [
-    {
-        id: "1",
-        type: "schedule",
-        label: "Review New Hire",
-        description: "Listens for new entries in the HR system.",
-        status: "completed",
-        timestamp: "10:00 AM",
-        duration: "0s",
-        comments: [
-            {
-                id: "c1",
-                author: { name: "System", initials: "SYS" },
-                content: "Triggered by webhook ID: wh_12345",
-                timestamp: "10:00 AM"
-            }
-        ],
-        isAutomated: true,
-    },
-    {
-        id: "2",
-        type: "action",
-        label: "Create Slack Account",
-        description: "Provisions a new user in the corporate Slack workspace.",
-        status: "completed",
-        timestamp: "10:00 AM",
-        duration: "2s",
-        comments: [],
-        isAutomated: true,
-    },
-    {
-        id: "3",
-        type: "ai",
-        label: "Generate Welcome Email",
-        description: "Uses GPT-4 to personalize the welcome message based on department.",
-        status: "completed",
-        timestamp: "10:00 AM",
-        duration: "5s",
-        comments: [
-            {
-                id: "c2",
-                author: { name: "Sarah Connor", initials: "SC" },
-                content: "The tone seems a bit too formal. Can we adjust the prompt?",
-                timestamp: "10:05 AM"
-            },
-            {
-                id: "c3",
-                author: { name: "Bob Jones", initials: "BJ" },
-                content: "Agreed, let's make it friendlier.",
-                timestamp: "10:12 AM"
-            }
-        ],
-        isAutomated: true,
-    },
-    {
-        id: "4",
-        type: "human",
-        label: "Manager Approval",
-        description: "Wait for the hiring manager to approve the equipment request.",
-        status: "running",
-        timestamp: "10:01 AM",
-        duration: "Pending...",
-        comments: [
-            {
-                id: "c4",
-                author: { name: "Alice Smith", initials: "AS" },
-                content: "Waiting on budget approval before I can sign off.",
-                timestamp: "10:30 AM"
-            }
-        ],
-        assignee: { name: "Alice Smith", initials: "AS" },
-    },
-    {
-        id: "5",
-        type: "action",
-        label: "Send Welcome Packet",
-        description: "Emails the final packet to the new employee.",
-        status: "pending",
-        comments: [],
-        isAutomated: true,
-    },
-];
-
-const MOCK_FILES = [
-    { id: "f1", name: "Offer_Letter_Draft.pdf", size: "2.4 MB", uploadedBy: "Sarah Connor", date: "2024-12-20", actionId: "3" },
-    { id: "f2", name: "Equipment_Request_Form.docx", size: "1.1 MB", uploadedBy: "Alice Smith", date: "2024-12-20", actionId: "4" },
-    { id: "f3", name: "New_Hire_Checklist.xlsx", size: "45 KB", uploadedBy: "System", date: "2024-12-20", actionId: "1" },
-];
+import { getFlowData, MOCK_FILES } from "./flow-data";
 
 export function FlowDetailView() {
     const router = useRouter();
-    const [steps, setSteps] = useState<TimelineStep[]>(MOCK_STEPS);
-    const [selectedStepId, setSelectedStepId] = useState<string>(MOCK_STEPS[0]?.id || "");
+    const params = useParams();
+    // Handle both 'id' and 'flowId' depending on route config, fallback to first flow
+    const flowId = (params.flowId as string) || (params.id as string) || "AF-2024-001";
+    
+    const [steps, setSteps] = useState<TimelineStep[]>([]);
+    const [flowInfo, setFlowInfo] = useState<any>(null);
+    const [dataVisual, setDataVisual] = useState<any[]>([]);
+    const [selectedStepId, setSelectedStepId] = useState<string | null>(null);
     const [fileFilter, setFileFilter] = useState<string>("all");
     const currentUser = { name: "Sam Tran", initials: "ST" };
 
-    const selectedStep = steps.find(s => s.id === selectedStepId) || steps[0];
+    useEffect(() => {
+        // Load data based on ID
+        const flow = actionFlows.find(f => f.id === flowId) || actionFlows[0];
+        
+        // Enhance flow info with detail-view specific stats
+        const enhancedInfo = {
+            ...flow,
+            lastRun: "2 hours ago",
+            successRate: 98,
+            totalRuns: 142,
+            avgDuration: "45s",
+        };
+        setFlowInfo(enhancedInfo);
+
+        // Determine Steps & Visuals based on Flow Type
+        const { steps: newSteps, dataVisual: newDataVisual } = getFlowData(flow.id, flow.name);
+        setSteps(newSteps);
+        setDataVisual(newDataVisual);
+        
+        // Reset selection on flow change
+        setSelectedStepId(null);
+
+    }, [flowId]);
+
+    if (!flowInfo) return null;
+
+    const selectedStep = steps.find(s => s.id === selectedStepId);
 
     const handleAddComment = (stepId: string, content: string) => {
         const newComment = {
@@ -185,8 +113,8 @@ export function FlowDetailView() {
                                 Back
                             </Button>
                             <div className="flex items-center gap-2">
-                                <StatusBadge status={MOCK_FLOW_INFO.status} />
-                                <PriorityBadge priority={MOCK_FLOW_INFO.priority} />
+                                <StatusBadge status={flowInfo.status} />
+                                <PriorityBadge priority={flowInfo.priority} />
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-7 w-7">
@@ -210,31 +138,50 @@ export function FlowDetailView() {
 
                         <div className="space-y-4">
                             <div>
-                                <h1 className="text-lg font-semibold">{MOCK_FLOW_INFO.name}</h1>
-                                <p className="text-xs text-muted-foreground mt-0.5">{MOCK_FLOW_INFO.id}</p>
+                                <h1 className="text-lg font-semibold">{flowInfo.name}</h1>
+                                <p className="text-xs text-muted-foreground mt-0.5">{flowInfo.id}</p>
                             </div>
 
                             <div className="space-y-3 text-sm">
                                 <div>
                                     <div className="text-muted-foreground mb-1">Description</div>
-                                    <p className="text-foreground">{MOCK_FLOW_INFO.description}</p>
+                                    <p className="text-foreground">{flowInfo.description}</p>
+                                    
+                                    {/* Data Visual Table */}
+                                    <div className="mt-3 border rounded-md overflow-hidden">
+                                        <table className="w-full text-xs text-left">
+                                            <thead className="bg-muted/50 text-muted-foreground font-medium">
+                                                <tr>
+                                                    {dataVisual.map((col, i) => (
+                                                        <th key={i} className="px-3 py-2 font-medium">{col.label}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y">
+                                                <tr>
+                                                    {dataVisual.map((col, i) => (
+                                                        <td key={i} className={`px-3 py-2 ${col.status === 'positive' ? 'text-emerald-600 font-medium' : col.status === 'warning' ? 'text-amber-600 font-medium' : ''}`}>
+                                                            {col.value}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <div>
-                                    <div className="text-muted-foreground mb-1.5">Assignees</div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center -space-x-2">
-                                            {MOCK_FLOW_INFO.assignees.map((assignee, i) => (
-                                                <Avatar key={i} className="h-6 w-6 border-2 border-background">
-                                                    <AvatarFallback className="text-[10px]">
-                                                        {assignee.initials}
-                                                    </AvatarFallback>
+                                    <div className="text-muted-foreground mb-2">Assignees</div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {flowInfo.assignees.map((assignee: any, i: number) => (
+                                            <div key={i} className="flex items-center gap-2 p-1 pr-3 rounded-full border bg-card hover:bg-accent transition-colors cursor-pointer group">
+                                                <Avatar className="h-6 w-6">
+                                                    <AvatarImage src={assignee.image} />
+                                                    <AvatarFallback className="text-[10px]">{assignee.initials}</AvatarFallback>
                                                 </Avatar>
-                                            ))}
-                                        </div>
-                                        <span className="text-muted-foreground">
-                                            {MOCK_FLOW_INFO.assignees.map(a => a.name).join(', ')}
-                                        </span>
+                                                <span className="text-xs font-medium group-hover:text-accent-foreground">{assignee.name}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -246,21 +193,21 @@ export function FlowDetailView() {
                         <div className="p-4 grid grid-cols-2 gap-3 text-sm">
                             <div>
                                 <div className="text-muted-foreground">Current Action</div>
-                                <div className="font-medium text-foreground mt-0.5">{MOCK_FLOW_INFO.currentAction}</div>
+                                <div className="font-medium text-foreground mt-0.5">{flowInfo.currentAction}</div>
                             </div>
                             <div>
                                 <div className="text-muted-foreground">Progress</div>
-                                <div className="font-medium text-foreground mt-0.5">{MOCK_FLOW_INFO.progress}%</div>
+                                <div className="font-medium text-foreground mt-0.5">{flowInfo.progress}%</div>
                             </div>
                             <div>
                                 <div className="text-muted-foreground">Started</div>
                                 <div className="font-medium text-foreground mt-0.5">
-                                    {new Date(MOCK_FLOW_INFO.startedAt).toLocaleDateString()}
+                                    {new Date(flowInfo.startedAt).toLocaleDateString()}
                                 </div>
                             </div>
                             <div>
-                                <div className="text-muted-foreground">Last Run</div>
-                                <div className="font-medium text-foreground mt-0.5">{MOCK_FLOW_INFO.lastRun}</div>
+                                <div className="text-muted-foreground">Last Update</div>
+                                <div className="font-medium text-foreground mt-0.5">{flowInfo.lastRun}</div>
                             </div>
                         </div>
                     </div>
@@ -288,9 +235,15 @@ export function FlowDetailView() {
                     <TabsContent value="actions" className="flex-1 flex overflow-hidden mt-0 border-0 data-[state=inactive]:hidden">
                         {/* Timeline List */}
                         <div className="w-1/2 overflow-y-auto p-4 border-r [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-                            <h3 className="text-sm font-medium mb-3 text-foreground tracking-wide">
-                                Actions
-                            </h3>
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-sm font-medium text-foreground tracking-wide">
+                                    Actions
+                                </h3>
+                                <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+                                    <Plus className="h-3.5 w-3.5" />
+                                    Quick Action
+                                </Button>
+                            </div>
                             <div className="space-y-0">
                                 {steps.map((step, index) => (
                                     <div
@@ -328,8 +281,9 @@ export function FlowDetailView() {
                                     />
                                 </div>
                             ) : (
-                                <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-                                    Select a step to view comments
+                                <div className="h-full flex flex-col items-center justify-center text-muted-foreground text-sm gap-2">
+                                    <MousePointerClick className="h-8 w-8 opacity-20" />
+                                    <p>Select an action to view comments</p>
                                 </div>
                             )}
                         </div>
@@ -389,34 +343,41 @@ export function FlowDetailView() {
             {/* Right Column: Action Execution Panel */}
             <div className="w-1/2 flex flex-col bg-background overflow-hidden">
                 {selectedStep ? (
-                    (!selectedStep.assignee || selectedStep.assignee.name === currentUser.name) ? (
-                        <ActionExecutionPanel
-                            key={selectedStep.id} // Force re-mount on step change
-                            actionName={selectedStep.label}
-                            actionType={selectedStep.type}
-                            actionDescription={selectedStep.description}
-                            requiresExternal={selectedStep.type === 'action' && selectedStep.label.includes("Slack")} // Mock logic for external link
-                        />
-                    ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8 text-center">
-                            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                                <AlertCircle className="h-6 w-6 opacity-50" />
+                    (selectedStep.isAutomated || selectedStep.type === 'alarm') ? (
+                        <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3">
+                            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
+                                <Zap className="h-6 w-6 opacity-50" />
                             </div>
-                            <h3 className="font-medium text-lg text-foreground mb-1">Access Denied</h3>
-                            <p className="text-sm max-w-xs">
-                                You do not have access to this Action. It is assigned to {selectedStep.assignee.name}.
-                            </p>
+                            <div className="text-center">
+                                <p className="font-medium text-foreground">Action Details</p>
+                                <p className="text-sm mt-1">No execution is required for this Action.</p>
+                            </div>
                         </div>
+                    ) : (
+                        (!selectedStep.assignee || selectedStep.assignee.name === currentUser.name) ? (
+                            <ActionExecutionPanel
+                                key={selectedStep.id} // Force re-mount on step change
+                                actionName={selectedStep.label}
+                                actionType={selectedStep.type}
+                                actionDescription={selectedStep.description}
+                                requiresExternal={selectedStep.type === 'action' && selectedStep.label.includes("Slack")} // Mock logic for external link
+                            />
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3">
+                                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
+                                    <span className="text-lg font-semibold">{selectedStep.assignee.initials}</span>
+                                </div>
+                                <div className="text-center">
+                                    <p className="font-medium text-foreground">Access Restricted</p>
+                                    <p className="text-sm mt-1">This action is assigned to {selectedStep.assignee.name}</p>
+                                </div>
+                            </div>
+                        )
                     )
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8 text-center">
-                        <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                            <MoreHorizontal className="h-6 w-6 opacity-50" />
-                        </div>
-                        <h3 className="font-medium text-lg text-foreground mb-1">Select an Action</h3>
-                        <p className="text-sm max-w-xs">
-                            Select an action from the timeline on the left to view details, execute tasks, or collaborate with your team.
-                        </p>
+                    <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3">
+                        <MousePointerClick className="h-10 w-10 opacity-20" />
+                        <p>Select an action to view details</p>
                     </div>
                 )}
             </div>

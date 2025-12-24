@@ -106,4 +106,26 @@ export const actionFlows = [
     currentAction: "Technician Dispatch",
     progress: 10,
   },
+  {
+    id: "AF-2024-007",
+    name: "Drivers at Risk",
+    description: "Retention Workflow: Driver #8821 (John Smith) - Risk Level: High",
+    status: "In Progress",
+    priority: "High",
+    assignees: [
+      {
+        name: "Retention Team",
+        initials: "RT",
+        image: "/avatars/08.png",
+      },
+      {
+        name: "Sam Tran",
+        initials: "ST",
+        image: "/avatars/09.png",
+      }
+    ],
+    startedAt: "2024-12-24T08:30:00",
+    currentAction: "Initial Outreach Call",
+    progress: 35,
+  },
 ];
