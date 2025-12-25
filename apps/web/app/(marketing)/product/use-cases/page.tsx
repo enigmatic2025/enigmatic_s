@@ -7,6 +7,7 @@ import {
   AssetMaintenanceFlow,
 } from "@/components/layout/use-case-flows";
 import { BillingClaimsPreview } from "@/components/layout/use-case-visualizations";
+import { DriversAtRiskDemo } from "@/components/layout/drivers-at-risk-demo";
 import { CTASection } from "@/components/layout/cta-section";
 
 const useCases = [
@@ -33,6 +34,14 @@ const useCases = [
     component: <BillingClaimsPreview />,
     className: "md:col-span-3",
     minHeight: "min-h-[500px] md:min-h-[600px]",
+  },
+  {
+    title: "Drivers at Risk (Retention)",
+    description:
+      "Proactively identify and retain at-risk drivers. This flow demonstrates how Nodal combines AI sentiment analysis with human intervention to address driver concerns before they leave.",
+    component: <DriversAtRiskDemo />,
+    className: "md:col-span-3",
+    minHeight: "min-h-[600px] md:min-h-[800px]",
   },
 ];
 

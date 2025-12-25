@@ -19,6 +19,9 @@ import {
   Bot,
   User,
   Plus,
+  Sparkles,
+  Mic,
+  Paperclip,
 } from "lucide-react";
 import { FlowBlock } from "@/components/layout/nodal-visualizations";
 
@@ -140,96 +143,85 @@ export const BillingClaimsPreview = () => {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 md:space-y-8">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
             {/* AI Message 1 */}
-            <div className="flex gap-3 md:gap-4 max-w-3xl mx-auto">
-              <div className="h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/30 shrink-0 flex items-center justify-center border border-blue-200 dark:border-blue-800">
-                <Bot className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className="flex gap-3 flex-row">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                <Sparkles className="h-4 w-4 text-foreground" />
               </div>
-              <div className="flex-1 space-y-2 min-w-0">
-                <div className="text-sm font-medium">Nodal AI</div>
-                <div className="text-sm leading-relaxed text-muted-foreground wrap-break-word">
-                  <p>
-                    I&apos;ve analyzed the documents for{" "}
-                    <span className="text-foreground font-medium">
-                      Invoice #4021
-                    </span>
-                    . The rate matches the contract, but I detected a
-                    discrepancy in the detention time claimed.
-                  </p>
-                </div>
+              <div className="rounded-lg p-3 max-w-[80%] text-sm bg-background">
+                <p>
+                  I&apos;ve analyzed the documents for{" "}
+                  <span className="font-medium">Invoice #4021</span>. The rate
+                  matches the contract, but I detected a discrepancy in the
+                  detention time claimed.
+                </p>
               </div>
             </div>
 
             {/* User Message */}
-            <div className="flex gap-3 md:gap-4 max-w-3xl mx-auto">
-              <div className="h-8 w-8 rounded-full bg-muted shrink-0 flex items-center justify-center">
-                <User className="h-5 w-5 text-muted-foreground" />
+            <div className="flex gap-3 flex-row-reverse">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                <User className="h-4 w-4" />
               </div>
-              <div className="flex-1 space-y-2 min-w-0">
-                <div className="text-sm font-medium">Operations Manager</div>
-                <div className="text-sm leading-relaxed text-foreground wrap-break-word">
-                  <p>
-                    Okay, I have the signed POD showing the arrival and
-                    departure times. Uploading it now.
-                  </p>
-                </div>
+              <div className="rounded-lg p-3 max-w-[80%] text-sm bg-primary text-primary-foreground dark:bg-zinc-800 dark:text-white">
+                <p className="mb-2">
+                  Okay, I have the signed POD showing the arrival and departure
+                  times. Uploading it now.
+                </p>
                 {/* Attachment Card */}
-                <div className="flex items-center gap-3 p-3 border border-border rounded-xl bg-muted/20 w-full md:w-fit mt-2 max-w-full overflow-hidden">
-                  <div className="h-10 w-10 rounded-lg bg-red-50 dark:bg-red-900/20 shrink-0 flex items-center justify-center text-red-600">
-                    <FileText className="h-5 w-5" />
+                <div className="flex items-center gap-3 p-2 rounded-md bg-background/10 border border-background/20">
+                  <div className="h-8 w-8 rounded bg-background/20 flex items-center justify-center">
+                    <FileText className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">
+                    <p className="text-xs font-medium truncate">
                       Signed_POD.pdf
                     </p>
-                    <p className="text-xs text-muted-foreground">840 KB</p>
+                    <p className="text-[10px] opacity-70">840 KB</p>
                   </div>
-                  <CheckCircle className="h-4 w-4 text-green-500 ml-2 shrink-0" />
+                  <CheckCircle className="h-3 w-3 text-white/70 ml-2 shrink-0" />
                 </div>
               </div>
             </div>
 
             {/* AI Message 2 */}
-            <div className="flex gap-3 md:gap-4 max-w-3xl mx-auto">
-              <div className="h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/30 shrink-0 flex items-center justify-center border border-blue-200 dark:border-blue-800">
-                <Bot className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className="flex gap-3 flex-row">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                <Sparkles className="h-4 w-4 text-foreground" />
               </div>
-              <div className="flex-1 space-y-2 min-w-0">
-                <div className="text-sm font-medium">Nodal AI</div>
-                <div className="text-sm leading-relaxed text-muted-foreground wrap-break-word">
-                  <p>
-                    Received. I&apos;ve verified the timestamps. The detention
-                    charge is valid.
-                  </p>
-                  <p className="mt-2">
-                    I&apos;ve updated the claim status to{" "}
-                    <span className="text-green-600 font-medium bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded text-xs inline-block mt-1 md:mt-0">
-                      Ready for Payment
-                    </span>
-                    .
-                  </p>
-                </div>
+              <div className="rounded-lg p-3 max-w-[80%] text-sm bg-background">
+                <p>
+                  Received. I&apos;ve verified the timestamps. The detention
+                  charge is valid.
+                </p>
+                <p className="mt-2">
+                  I&apos;ve updated the claim status to{" "}
+                  <span className="text-green-600 font-medium bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded text-xs">
+                    Ready for Payment
+                  </span>
+                  .
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="p-4 md:p-6 pt-2">
-            <div className="max-w-3xl mx-auto relative">
-              <div className="relative flex items-center">
-                <div className="absolute left-3 text-muted-foreground">
-                  <Plus className="h-5 w-5" />
+          {/* Input Area - Natalie Style */}
+          <div className="p-4 border-t bg-background/50">
+            <div className="max-w-3xl mx-auto w-full relative">
+              <div className="bg-background border border-primary/10 rounded-md min-h-20 p-3 text-sm text-muted-foreground relative">
+                Message Nodal AI...
+                <div className="absolute bottom-2 right-2 flex gap-2">
+                  <button className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground">
+                    <Paperclip className="h-4 w-4" />
+                  </button>
+                  <button className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground">
+                    <Mic className="h-4 w-4" />
+                  </button>
+                  <button className="h-8 w-8 flex items-center justify-center rounded-md bg-primary text-primary-foreground">
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Message Nodal AI..."
-                  className="w-full bg-muted/30 border border-border rounded-2xl py-3.5 pl-10 pr-12 text-sm focus:outline-none focus:ring-0 shadow-none"
-                  disabled
-                />
-                <button className="absolute right-2 p-1.5 rounded-lg bg-primary text-primary-foreground">
-                  <ArrowRight className="h-4 w-4" />
-                </button>
               </div>
               <div className="text-center mt-2">
                 <p className="text-[10px] text-muted-foreground">
