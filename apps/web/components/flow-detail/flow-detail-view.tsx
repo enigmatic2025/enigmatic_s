@@ -28,8 +28,8 @@ import { TimelineItem, TimelineStep } from "./timeline-item";
 import { ActionExecutionPanel } from "./action-execution-panel";
 import { CommentSection } from "./comment-section";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PriorityBadge } from "@/components/dashboard/action-flows/priority-badge";
-import { StatusBadge } from "@/components/dashboard/action-flows/status-badge";
+import { PriorityBadge } from "@/components/shared/priority-badge";
+import { StatusBadge } from "@/components/shared/status-badge";
 import { actionFlows } from "@/components/dashboard/action-flows/data";
 import {
     DropdownMenu,

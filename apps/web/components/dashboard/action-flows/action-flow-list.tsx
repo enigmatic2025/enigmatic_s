@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { actionFlows } from "./data";
 import { DescriptionCell } from "./description-cell";
-import { StatusBadge } from "./status-badge";
-import { PriorityBadge } from "./priority-badge";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { PriorityBadge } from "@/components/shared/priority-badge";
 import { useRouter, useParams } from "next/navigation";
 
 interface ActionFlowListProps {

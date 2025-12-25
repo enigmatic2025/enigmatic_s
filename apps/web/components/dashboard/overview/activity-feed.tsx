@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useParams, useRouter } from "next/navigation";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { PriorityBadge } from "@/components/shared/priority-badge";
 import { 
   MoreHorizontal, 
   ArrowRight, 
@@ -43,63 +46,62 @@ const feedData: FeedItem[] = [
       role: "Automated"
     },
     action: "detected an anomaly in",
-    target: "Reefer Unit #402",
-    targetId: "FLOW-2024-889",
-    content: "Temperature deviation detected. Current reading 4.2°C (Threshold: 2.0°C - 4.0°C). Automated diagnostic sequence initiated.",
+    target: "Reefer Alert",
+    targetId: "AF-2024-004",
+    content: "High pressure discharge detected in Reefer TK-882. Automated diagnostic sequence initiated.",
     timestamp: "12 mins ago",
     meta: {
-      priority: "High",
-      value: "4.2°C"
+      priority: "Critical",
+      value: "High Pressure"
     }
   },
   {
     id: "2",
     type: "update",
     user: {
-      name: "Sarah Chen",
-      initials: "SC",
-      avatar: "/images/avatars/sarah.jpg",
-      role: "Logistics Manager"
+      name: "Charlie Day",
+      initials: "CD",
+      role: "Vendor Manager"
     },
-    action: "updated the manifest for",
-    target: "Shipment #AX-992",
-    targetId: "FLOW-2024-885",
-    content: "Added 3 pallets of high-priority medical supplies to the manifest. Rerouting approved for expedited delivery to Seattle distribution center.",
+    action: "updated the contract for",
+    target: "Vendor Contract Renewal",
+    targetId: "AF-2024-003",
+    content: "Updated renewal terms based on legal review. Sent for final signature.",
     timestamp: "45 mins ago",
     meta: {
-      status: "In Transit"
+      status: "Legal Review"
     }
   },
   {
     id: "3",
     type: "completion",
     user: {
-      name: "Mike Ross",
-      initials: "MR",
-      role: "Warehouse Lead"
+      name: "Bob Jones",
+      initials: "BJ",
+      role: "HR Manager"
     },
-    action: "completed inspection for",
-    target: "Inbound Container C-202",
-    targetId: "FLOW-2024-870",
-    content: "All customs documentation verified. Seal integrity confirmed. Released for cross-docking.",
+    action: "completed onboarding for",
+    target: "Employee Onboarding",
+    targetId: "AF-2024-002",
+    content: "All onboarding tasks for John Doe have been completed. Welcome packet sent.",
     timestamp: "2 hours ago",
     meta: {
-      status: "Cleared"
+      status: "Complete"
     }
   },
   {
     id: "4",
     type: "creation",
     user: {
-      name: "Natalie",
-      initials: "AI",
-      role: "AI Assistant"
+      name: "Alice Smith",
+      initials: "AS",
+      role: "Marketing Director"
     },
-    action: "generated a new optimization flow for",
-    target: "Route Planning - Q4",
-    targetId: "FLOW-2024-901",
-    content: "Based on current traffic patterns and weather alerts in the Midwest, I've proposed an alternative route for the Chicago-Denver corridor that could save 4.5 hours.",
-    timestamp: "3 hours ago",
+    action: "submitted a new request for",
+    target: "Budget Approval",
+    targetId: "AF-2024-001",
+    content: "Q4 Marketing Budget Request - $50k allocation for digital campaigns.",
+    timestamp: "4 hours ago",
     meta: {
       priority: "Medium"
     }
@@ -120,10 +122,105 @@ const feedData: FeedItem[] = [
     meta: {
       status: "Delivered"
     }
+  },
+  {
+    id: "6",
+    type: "alert",
+    user: {
+      name: "System Monitor",
+      initials: "SYS",
+      role: "Automated"
+    },
+    action: "flagged a delay in",
+    target: "Route Optimization",
+    targetId: "FLOW-2024-910",
+    content: "Traffic congestion on I-95 is causing a 45-minute delay. Rerouting options generated.",
+    timestamp: "6 hours ago",
+    meta: {
+      priority: "Medium",
+      value: "+45m"
+    }
+  },
+  {
+    id: "7",
+    type: "completion",
+    user: {
+      name: "Sarah Connor",
+      initials: "SC",
+      role: "Logistics Manager"
+    },
+    action: "approved the budget for",
+    target: "Q4 Marketing Campaign",
+    targetId: "AF-2024-001",
+    content: "Budget approved. Proceeding with vendor selection.",
+    timestamp: "Yesterday",
+    meta: {
+      status: "Approved"
+    }
+  },
+  {
+    id: "8",
+    type: "creation",
+    user: {
+      name: "Mike Ross",
+      initials: "MR",
+      role: "Warehouse Lead"
+    },
+    action: "initiated a safety audit for",
+    target: "Warehouse Zone B",
+    targetId: "FLOW-2024-912",
+    content: "Scheduled safety inspection for Zone B following new protocols.",
+    timestamp: "Yesterday",
+    meta: {
+      priority: "High"
+    }
+  },
+  {
+    id: "9",
+    type: "update",
+    user: {
+      name: "Natalie",
+      initials: "AI",
+      role: "AI Assistant"
+    },
+    action: "updated the risk score for",
+    target: "Driver: John Smith",
+    targetId: "FLOW-2024-905",
+    content: "Risk score decreased to 45 based on recent safe driving metrics.",
+    timestamp: "2 days ago",
+    meta: {
+      value: "45/100"
+    }
+  },
+  {
+    id: "10",
+    type: "alert",
+    user: {
+      name: "System Monitor",
+      initials: "SYS",
+      role: "Automated"
+    },
+    action: "detected low inventory for",
+    target: "SKU-9921",
+    targetId: "FLOW-2024-920",
+    content: "Inventory levels dropped below threshold (50 units). Reorder triggered.",
+    timestamp: "2 days ago",
+    meta: {
+      priority: "High",
+      value: "48 units"
+    }
   }
 ];
 
 export function ActivityFeed() {
+  const params = useParams();
+  const router = useRouter();
+  const slug = params.slug as string;
+
+  const handleFlowClick = (flowId: string) => {
+    router.push(`/nodal/${slug}/dashboard/action-flows/${flowId}`);
+  };
+
   return (
     <div className="space-y-4">
       {feedData.map((item) => (
@@ -160,7 +257,10 @@ export function ActivityFeed() {
             </p>
             
             {/* Context Card / Attachment */}
-            <div className="bg-muted/30 rounded-md border border-border/50 p-3 flex items-center justify-between group cursor-pointer hover:bg-muted/50 transition-colors">
+            <div 
+              className="bg-muted/30 rounded-md border border-border/50 p-3 flex items-center justify-between group cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => handleFlowClick(item.targetId)}
+            >
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded bg-background border flex items-center justify-center">
                   <Workflow className="h-5 w-5 text-muted-foreground" />
@@ -169,16 +269,10 @@ export function ActivityFeed() {
                   <div className="text-sm font-medium flex items-center gap-2">
                     {item.targetId}
                     {item.meta?.priority && (
-                      <Badge variant="outline" className={
-                        item.meta.priority === 'High' ? "text-red-600 bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-900" : ""
-                      }>
-                        {item.meta.priority}
-                      </Badge>
+                      <PriorityBadge priority={item.meta.priority} />
                     )}
                     {item.meta?.status && (
-                      <Badge variant="secondary" className="text-xs">
-                        {item.meta.status}
-                      </Badge>
+                      <StatusBadge status={item.meta.status} />
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">

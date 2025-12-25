@@ -116,8 +116,8 @@ export function ActionExecutionPanel({
                   >
                     <Avatar className="h-8 w-8 shrink-0">
                       {message.role === "assistant" ? (
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          <Sparkles className="h-4 w-4" />
+                        <AvatarFallback className="bg-muted">
+                          <Sparkles className="h-4 w-4 text-foreground" />
                         </AvatarFallback>
                       ) : (
                         <AvatarFallback className="bg-muted">
@@ -126,15 +126,12 @@ export function ActionExecutionPanel({
                       )}
                     </Avatar>
                     <div className={cn(
-                      "rounded p-2.5",
+                      "rounded-lg p-3",
                       message.role === "user" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "bg-muted"
+                        ? "bg-primary text-primary-foreground dark:bg-zinc-800 dark:text-white" 
+                        : "bg-background"
                     )}>
                       <p className="text-sm">{message.content}</p>
-                      <span className="text-[10px] opacity-60 mt-1 block">
-                        {message.timestamp}
-                      </span>
                     </div>
                   </div>
                 ))
