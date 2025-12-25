@@ -72,7 +72,7 @@ export default function UseCasesPage() {
                 <h2 className="text-xl md:text-2xl font-normal tracking-tight text-foreground mb-4">
                   {useCase.title}
                 </h2>
-                <p className="text-base text-secondary-foreground leading-relaxed">
+                <p className="text-base text-muted-foreground leading-relaxed">
                   {useCase.description}
                 </p>
               </div>

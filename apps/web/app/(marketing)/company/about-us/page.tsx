@@ -88,7 +88,7 @@ export default function AboutUsPage() {
                     href={member.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#0077b5] hover:text-[#0077b5]/80 transition-colors"
+                    className="text-[#000000]"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +101,7 @@ export default function AboutUsPage() {
                     <span className="sr-only">LinkedIn</span>
                   </a>
                 </div>
-                <p className="text-base text-secondary-foreground leading-relaxed">
+                <p className="text-base text-muted-foreground leading-relaxed">
                   {member.description}
                 </p>
               </div>
