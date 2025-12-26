@@ -81,6 +81,11 @@ export function FlowDetailView() {
 
     const selectedStep = steps.find(s => s.id === selectedStepId);
 
+    const isExternalAction = (step: any) => {
+        if (!step) return false;
+        return step.type === 'action' && (step.label.includes("Slack") || step.label.includes("Tenstreet") || step.label.includes("ERP"));
+    };
+
     const handleAddComment = (stepId: string, content: string) => {
         const newComment = {
             id: Math.random().toString(36).substr(2, 9),
@@ -352,7 +357,7 @@ export function FlowDetailView() {
             {/* Right Column: Action Execution Panel */}
             <div className="w-1/2 flex flex-col bg-background overflow-hidden">
                 {selectedStep ? (
-                    (selectedStep.isAutomated || selectedStep.type === 'alarm') ? (
+                    ((selectedStep.isAutomated || selectedStep.type === 'alarm') && !isExternalAction(selectedStep)) ? (
                         <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3">
                             <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
                                 <Zap className="h-6 w-6 opacity-50" />
@@ -363,13 +368,13 @@ export function FlowDetailView() {
                             </div>
                         </div>
                     ) : (
-                        (!selectedStep.assignee || selectedStep.assignee.name === currentUser.name) ? (
+                        (!selectedStep.assignee || selectedStep.assignee.name === currentUser.name || isExternalAction(selectedStep)) ? (
                             <ActionExecutionPanel
                                 key={selectedStep.id} // Force re-mount on step change
                                 actionName={selectedStep.label}
                                 actionType={selectedStep.type}
                                 actionDescription={selectedStep.description}
-                                requiresExternal={selectedStep.type === 'action' && selectedStep.label.includes("Slack")} // Mock logic for external link
+                                requiresExternal={isExternalAction(selectedStep)} // Mock logic for external link
                             />
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3">

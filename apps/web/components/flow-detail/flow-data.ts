@@ -205,7 +205,7 @@ export function getFlowData(flowId: string, flowName: string) {
                 timestamp: "08:35 AM", 
                 duration: "2s", 
                 comments: [], 
-                isAutomated: true 
+                isAutomated: false 
             },
             { 
                 id: "3", 
@@ -273,7 +273,7 @@ export function getFlowData(flowId: string, flowName: string) {
     } else if (flowName === "Budget Approval") {
          steps = [
             { id: "1", type: "human", label: "Manager Review", description: "Review budget allocation request.", status: "running", timestamp: "09:45 AM", duration: "Pending...", comments: [], assignee: { name: "Alice Smith", initials: "AS" } },
-            { id: "2", type: "action", label: "Update ERP", description: "Sync approved budget to SAP.", status: "pending", timestamp: "-", duration: "-", comments: [], isAutomated: true }
+            { id: "2", type: "action", label: "Update ERP", description: "Sync approved budget to SAP.", status: "pending", timestamp: "-", duration: "-", comments: [], isAutomated: false }
          ];
          dataVisual = [
              { label: "Requested", value: "$50,000", status: "neutral" },
