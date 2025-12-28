@@ -1,7 +1,6 @@
-"use client";
-
-import { FlowDetailView } from "@/components/flow-detail/flow-detail-view";
-
 export default function FlowDetailPage() {
-  return <FlowDetailView />;
+  return (
+    <div className="h-full w-full p-6">
+    </div>
+  );
 }
