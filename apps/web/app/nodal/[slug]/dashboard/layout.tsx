@@ -40,6 +40,15 @@ export default function DashboardLayout({
         return;
       }
 
+      // Check for MFA factors
+      // @ts-ignore - Supabase type definitions might be slightly outdated on listFactors directly on auth
+      const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+      if (!factorsError && (!factorsData?.totp || factorsData.totp.length === 0 || factorsData.totp[0].status !== 'verified')) {
+         // No Verified MFA found -> Redirect to Setup
+         router.push("/account/security/mfa-setup");
+         return;
+      }
+
       if (memberships && memberships.length > 0) {
         const organizations = memberships.map((m: any) => m.organizations);
         setCurrentOrg(organizations[0]); // Default to first org

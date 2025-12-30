@@ -588,10 +588,29 @@ func (h *AdminHandler) ResetUserMFA(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// 2. Revoke all sessions (Logout)
+	// Endpoint: POST /auth/v1/admin/users/{id}/logout
+	logoutReq, _ := http.NewRequest("POST", supabaseUrl+"/auth/v1/admin/users/"+userID+"/logout", nil)
+	logoutReq.Header.Set("Authorization", "Bearer "+supabaseKey)
+	logoutReq.Header.Set("apikey", supabaseKey)
+	
+	logoutResp, err := httpClient.Do(logoutReq)
+	if err != nil {
+		log.Printf("Failed to logout user %s: %v", userID, err)
+		// We don't fail the written response because MFA is already reset, but we log it.
+	}
+	if logoutResp != nil {
+		if logoutResp.StatusCode != 204 && logoutResp.StatusCode != 200 {
+			body, _ := io.ReadAll(logoutResp.Body)
+			log.Printf("Failed to logout user %s. Status: %d, Body: %s", userID, logoutResp.StatusCode, string(body))
+		}
+		logoutResp.Body.Close()
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
-		"message": "MFA factors reset successfully",
+		"message": "MFA factors reset and user logged out successfully",
 	})
 }
 
