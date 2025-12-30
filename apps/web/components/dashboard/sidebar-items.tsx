@@ -23,12 +23,12 @@ export function SidebarDraggableItem({
         event.dataTransfer.setData("application/reactflow", dataTransferType);
         event.dataTransfer.effectAllowed = "move";
       }}
-      className="flex items-center gap-2 p-1.5 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
+      className="flex items-center gap-3 p-3 rounded-md border bg-card hover:bg-accent/50 cursor-grab active:cursor-grabbing transition-colors"
     >
-      <div className={`p-1 rounded ${bgColorClass}`}>
-        <Icon className={`h-3.5 w-3.5 ${iconColorClass}`} />
+      <div className={`p-2 rounded ${bgColorClass}`}>
+        <Icon className={`h-5 w-5 ${iconColorClass}`} />
       </div>
-      <div className="text-xs font-medium">{label}</div>
+      <div className="text-sm font-medium">{label}</div>
     </div>
   );
 }

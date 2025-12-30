@@ -292,7 +292,7 @@ export function Sidebar({
                     onToggle={() => setTriggersOpen(!triggersOpen)}
                   >
                     {(!searchQuery || "schedule".includes(searchQuery.toLowerCase())) && (
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 gap-2">
                         <SidebarDraggableItem
                           label="Schedule"
                           icon={Workflow}
@@ -316,7 +316,7 @@ export function Sidebar({
                         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
                           <Code2 className="h-3 w-3" /> Data Operation
                         </h4>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 gap-2">
                           {(!searchQuery || "parse data".includes(searchQuery.toLowerCase())) && (
                             <SidebarDraggableItem
                               label="Parse Data"
@@ -346,7 +346,7 @@ export function Sidebar({
                         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
                           <Globe className="h-3 w-3" /> Network
                         </h4>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 gap-2">
                           <SidebarDraggableItem
                             label="HTTP Request"
                             icon={Globe}
