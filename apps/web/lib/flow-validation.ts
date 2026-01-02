@@ -29,13 +29,16 @@ export const validateFlow = (nodes: Node[], edges: Edge[]): boolean => {
     const visited = new Set<string>([startNodeId]);
     const queue = [startNodeId];
 
+    const validNodeIds = new Set(nodes.map(n => n.id));
+
     while (queue.length > 0) {
         const currentId = queue.shift()!;
         // Find all outgoing edges from current node
         const outgoingEdges = edges.filter(e => e.source === currentId);
 
         for (const edge of outgoingEdges) {
-            if (!visited.has(edge.target)) {
+            // Only follow edges that point to existing nodes
+            if (validNodeIds.has(edge.target) && !visited.has(edge.target)) {
                 visited.add(edge.target);
                 queue.push(edge.target);
             }
