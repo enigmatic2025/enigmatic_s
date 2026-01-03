@@ -1,8 +1,9 @@
 import React, { memo } from 'react';
 import { Handle, Position, useReactFlow } from 'reactflow';
 import { Play, Trash2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { NodeCard } from './node-card';
 
 export const ManualTriggerNode = memo(({ id, data, isConnectable }: any) => {
   const { setNodes } = useReactFlow();
@@ -13,7 +14,7 @@ export const ManualTriggerNode = memo(({ id, data, isConnectable }: any) => {
   };
 
   return (
-    <Card className="w-[250px] h-[120px] relative border-2 border-purple-500/20 shadow-sm hover:border-purple-500/50 transition-colors group">
+    <NodeCard borderColorClass="border-purple-500/20 hover:border-purple-500">
       <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className="p-2 bg-purple-500/10 rounded-md">
@@ -36,6 +37,7 @@ export const ManualTriggerNode = memo(({ id, data, isConnectable }: any) => {
           <Trash2 className="h-3 w-3" />
         </Button>
       </CardHeader>
+      
       <CardContent className="p-4 pt-2">
         <div className="flex flex-col gap-1">
           <div className="text-xs text-muted-foreground truncate">
@@ -47,13 +49,14 @@ export const ManualTriggerNode = memo(({ id, data, isConnectable }: any) => {
           </div>
         </div>
       </CardContent>
+
       <Handle
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
-        className="w-3 h-3 bg-purple-500 border-2 border-background"
+        className="w-3 h-3 bg-purple-500 border-2 border-background z-50"
       />
-    </Card>
+    </NodeCard>
   );
 });
 

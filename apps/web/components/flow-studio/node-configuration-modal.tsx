@@ -9,15 +9,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Play } from "lucide-react";
+import { Play, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { CONFIG_COMPONENTS } from "./constants/node-registry";
-import { NodeTestTab } from "./node-test-tab";
+import { NodeExecutionConsole } from "./node-execution-console";
 
 interface NodeConfigurationModalProps {
   isOpen: boolean;
@@ -36,21 +35,31 @@ export function NodeConfigurationModal({
   onTest,
   nodes,
 }: NodeConfigurationModalProps) {
-  const [activeTab, setActiveTab] = useState("settings");
   const [formData, setFormData] = useState<any>({});
   const [testResult, setTestResult] = useState<any>(null);
-  const [isTesting, setIsTesting] = useState(false);
-  const [testBody, setTestBody] = useState("");
-  const [isTestBodyOpen, setIsTestBodyOpen] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [showOutput, setShowOutput] = useState(false);
+  const [prevNodeId, setPrevNodeId] = useState<string | null>(null);
 
   // Reset form when node changes
   useEffect(() => {
     if (selectedNode) {
       setFormData(selectedNode.data || {});
-      setTestResult(null);
-      setTestBody("");
+      
+      // Only reset UI state if we switched to a different node
+      if (selectedNode.id !== prevNodeId) {
+          setPrevNodeId(selectedNode.id);
+          
+          if (selectedNode.data?.lastRunResult) {
+              setTestResult({ Output: selectedNode.data.lastRunResult });
+              setShowOutput(true); // Default to uncollapsed if result exists
+          } else {
+              setTestResult(null);
+              setShowOutput(false);
+          }
+      }
     }
-  }, [selectedNode]);
+  }, [selectedNode, prevNodeId]);
 
   const handleSave = () => {
     if (selectedNode) {
@@ -74,33 +83,50 @@ export function NodeConfigurationModal({
 
       onUpdate(selectedNode.id, formData);
       toast.success("Node configuration saved");
-      // onClose(); // Keep modal open after save
+      onClose(); 
     }
   };
 
-  const handleTest = async () => {
-    setIsTesting(true);
+  const handleRunStep = async () => {
+    setIsExecuting(true);
+    setShowOutput(true); // Auto-expand output area
     try {
-      // Merge test body if provided, otherwise use configured body
+      // 1. Auto-save current config to state/node before running
+      // This allows the user to run without explicitly clicking "Save" first
       const dataToTest = {
         ...selectedNode,
         data: {
-          ...formData,
-          body: testBody || formData.body
+          ...formData, // Use current form state
         }
       };
+      
       const result = await onTest(dataToTest);
+      
+      // 2. Persist the result to the node (Schema by Example)
+      const resultData = result.Output || result;
+      const updatedData = {
+        ...formData,
+        lastRunResult: resultData
+      };
+      
+      setFormData(updatedData);
+      onUpdate(selectedNode.id, updatedData);
+      
       setTestResult(result);
-      toast.success("Test executed successfully");
+      toast.success("Step executed successfully");
     } catch (error) {
-      toast.error("Test failed");
-      setTestResult({ error: "Failed to execute test" });
+      console.error(error);
+      toast.error("Step execution failed");
+      setTestResult({ Error: "Failed to execute step" });
     } finally {
-      setIsTesting(false);
+      setIsExecuting(false);
     }
   };
 
   if (!selectedNode) return null;
+
+  const isTrigger = selectedNode.type === 'schedule';
+  const isRunnable = !isTrigger && selectedNode.data?.subtype !== 'map'; // Triggers usually can't be "Run" manually in this context easily yet
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -108,99 +134,124 @@ export function NodeConfigurationModal({
         className="flex flex-col h-[85vh] sm:max-w-[600px] p-0 gap-0 overflow-hidden"
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader className="p-6 pb-4 border-b flex-none">
+        {/* Header */}
+        <DialogHeader className="p-6 pb-4 border-b flex-none bg-background z-10">
           <DialogTitle className="flex items-center gap-2">
-            {selectedNode.data?.label || selectedNode.type}
+            <span className="truncate max-w-[400px]">
+                {formData.label || selectedNode.type}
+            </span>
+            <span className="text-[10px] font-normal uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded-full border">
+                {selectedNode.type}
+            </span>
           </DialogTitle>
           <DialogDescription>
-            Configure the settings for this node.
+            Configure and execute this step.
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
-          <div className="px-6 pt-4 flex-none">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="settings">Settings</TabsTrigger>
-              <TabsTrigger value="test">Test</TabsTrigger>
-            </TabsList>
-          </div>
+        {/* Main Split Content */}
+        <div className="flex-1 flex flex-col min-h-0">
+            
+            {/* Top Panel: Settings (Scrollable) */}
+            <div className="flex-1 overflow-y-auto min-h-0">
+                <div className="p-6 space-y-8">
+                    {/* 1. General Settings */}
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-1 gap-4">
+                            <div className="space-y-2">
+                                <Label>Label</Label>
+                                <Input
+                                    value={formData.label || ""}
+                                    onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+                                    placeholder="Step Name"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Description</Label>
+                                <Textarea
+                                    value={formData.description || ""}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    placeholder="What does this step do?"
+                                    rows={2}
+                                    className="resize-none"
+                                />
+                            </div>
+                        </div>
+                    </div>
 
-          <div className="flex-1 overflow-y-auto">
-            <TabsContent value="settings" className="mt-0 space-y-4 p-6 pb-20">
-              <div className="space-y-4 border-b pb-4">
-                <h4 className="text-sm font-medium">General Information</h4>
-                <div className="space-y-2">
-                  <Label>Title</Label>
-                  <Input
-                    value={formData.label || ""}
-                    onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                    placeholder="Node Title"
-                  />
+                    {/* 2. Component Configuration */}
+                    <div className="space-y-4">
+                        <h4 className="text-sm font-medium border-b pb-2">Configuration</h4>
+                        {(() => {
+                            const type = selectedNode.data?.subtype || selectedNode.data?.type || selectedNode.type;
+                            const ConfigComponent = CONFIG_COMPONENTS[type];
+
+                            if (ConfigComponent) {
+                                return (
+                                    <ConfigComponent 
+                                        key={selectedNode.id}
+                                        data={formData} 
+                                        onUpdate={(newData: any) => setFormData({ ...formData, ...newData })} 
+                                    />
+                                );
+                            }
+
+                            return (
+                                <div className="p-4 border border-dashed rounded-md text-center text-sm text-muted-foreground">
+                                    No additional configuration needed for this step.
+                                </div>
+                            );
+                        })()}
+                    </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Textarea
-                    value={formData.description || ""}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Describe what this step does..."
-                    rows={2}
-                  />
-                </div>
-              </div>
+            </div>
 
-              {(() => {
-                // Determine component based on subtype or type
-                const type = selectedNode.data?.subtype || selectedNode.data?.type || selectedNode.type;
-                const ConfigComponent = CONFIG_COMPONENTS[type];
+            {/* Bottom Panel: Output Console (Fixed/Sticky) */}
+            <NodeExecutionConsole 
+                testResult={testResult} 
+                isVisible={showOutput} 
+                onClose={() => setShowOutput(false)} 
+            />
+            
+            {/* Collapsed Console Result Bar (When output exists but panel is hidden, or just a small notification)
+                Actually, if showOutput is false, we might want to show a little bar at the bottom saying "Step Output Available ^"
+                But for simplicity per plan, we just hide it or show the button in the footer.
+                Let's stick to the "Run Step makes it show" logic. 
+                But wait, if I close it, how do I open it back? 
+                I need a trigger. 
+            */}
+        </div>
 
-                if (ConfigComponent) {
-                  return (
-                    // Add key to force remount when node changes
-                    <ConfigComponent 
-                      key={selectedNode.id}
-                      data={formData} 
-                      onUpdate={(newData: any) => setFormData({ ...formData, ...newData })} 
-                    />
-                  );
-                }
+        {/* Footer Actions */}
+        <DialogFooter className="p-4 border-t bg-muted/40 flex-none flex items-center justify-between sm:justify-between">
+           <Button variant="ghost" onClick={handleSave}>
+             Save & Close
+           </Button>
+           
+           <div className="flex gap-2">
+                {testResult && !showOutput && (
+                    <Button 
+                        variant="outline"
+                        onClick={() => setShowOutput(true)}
+                        className="gap-2"
+                        title="Show previous output"
+                    >
+                        <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                        Show Output
+                    </Button>
+                )}
 
-                return (
-                  <div className="p-4 border rounded-md bg-muted/20 text-sm text-muted-foreground">
-                    No configuration available for this node type ({type}).
-                  </div>
-                );
-              })()}
-            </TabsContent>
-
-            <TabsContent value="test" className="mt-0 space-y-4 p-6 pb-20">
-              <NodeTestTab
-                selectedNode={selectedNode}
-                testBody={testBody}
-                setTestBody={setTestBody}
-                testResult={testResult}
-                isTesting={isTesting}
-              />
-            </TabsContent>
-          </div>
-        </Tabs>
-
-        <DialogFooter className="p-6 pt-4 border-t flex-none bg-background">
-           {activeTab === 'settings' && (
-             <Button onClick={handleSave}>Save Configuration</Button>
-           )}
-           {activeTab === 'test' && 
-            selectedNode.type !== 'schedule' && 
-            selectedNode.data?.subtype !== 'parse' && 
-            selectedNode.data?.subtype !== 'map' && (
-             <Button 
-               onClick={handleTest} 
-               disabled={isTesting}
-               className="gap-2"
-             >
-               <Play className="h-4 w-4" />
-               {isTesting ? "Running..." : "Test Action"}
-             </Button>
-           )}
+                {isRunnable && (
+                    <Button 
+                        onClick={handleRunStep} 
+                        disabled={isExecuting}
+                        className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                    >
+                        {isExecuting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+                        {isExecuting ? "Executing..." : "Run Step"}
+                    </Button>
+                )}
+           </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

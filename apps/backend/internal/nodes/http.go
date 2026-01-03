@@ -13,9 +13,15 @@ import (
 type HttpNode struct{}
 
 func (n *HttpNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
-	// 1. Parse Config
-	method, _ := input.Config["method"].(string)
-	url, _ := input.Config["url"].(string)
+	// 1. Resolve Config using Expression Engine
+	engine := NewExpressionEngine()
+	resolvedConfig, err := engine.EvaluateMap(input.Config, input)
+	if err != nil {
+		return nil, fmt.Errorf("failed to evaluate config expressions: %w", err)
+	}
+
+	method, _ := resolvedConfig["method"].(string)
+	url, _ := resolvedConfig["url"].(string)
 	if method == "" {
 		method = "GET"
 	}

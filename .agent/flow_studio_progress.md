@@ -13,12 +13,14 @@
     - [x] **Smart Features**: "Generate Schema from Sample" for Parse Node.
 
 ## In Progress / Next Steps
-- [ ] **Variable Picker**: UI to easily select variables from previous steps (using generated schemas).
-- [ ] **Expression Engine**: Backend support for complex expressions (e.g. `{{ steps.foo.bar }}`).
+- [x] **Variable Picker**: UI to select variables. Implemented as a JSON Tree Explorer using "Schema by Example" (last run data).
+- [x] **Sidebar Search**: Search filter for variables.
+- [x] **Expression Engine**: Backend support for complex expressions (e.g. `{{ steps.foo.bar[0] }}`).
+- [x] **Modal Redesign**: Split-View layout with "Run Step" and independent scrolling console.
 - [ ] **Workflow Engine**: Full implementation of the Temporal workflow execution logic.
-- [ ] **Save/Load**: Persisting flow definitions to the database.
+- [x] **Save/Load**: Persisting flow definitions to the database (Basic implementation).
 
 ## Technical Notes
 - **Frontend**: Next.js 15 (App Router), React Flow, Shadcn UI, Tailwind CSS.
 - **Backend**: Go, Temporal, PostgreSQL.
-- **Communication**: Frontend -> Next.js Proxy -> Go Backend (Port 8001).
+- **Communication**: Frontend -> Next.js Proxy -> Go Backend (Port 8080).

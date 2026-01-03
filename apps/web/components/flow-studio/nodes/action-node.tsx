@@ -1,9 +1,10 @@
 import React, { memo } from 'react';
 import { Handle, Position, useReactFlow } from 'reactflow';
 import { Zap, Globe, Mail, Trash2, Code2, Workflow } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { NodeCard } from './node-card';
 
 const icons = {
   http: Globe,
@@ -50,14 +51,21 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
   };
 
+  // Get just the border classes for the NodeCard prop
+  const borderClasses = colorClass.split(' ').filter(c => c.startsWith('border') || c.startsWith('hover:border')).join(' ');
+
   return (
-    <Card className={cn("w-[250px] h-[120px] relative border-2 shadow-sm transition-colors group", colorClass.split(' ').filter(c => c.startsWith('border')).join(' '))}>
+    <NodeCard 
+      borderColorClass={borderClasses}
+      testId={`action-node-${subtype}`}
+    >
       <Handle
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
-        className={cn("w-3 h-3 border-2 border-background", handleColor)}
+        className={cn("w-3 h-3 border-2 border-background z-50", handleColor)}
       />
+      
       <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className={cn("p-2 rounded-md", colorClass.split(' ').filter(c => c.startsWith('bg')).join(' '))}>
@@ -80,6 +88,7 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
           <Trash2 className="h-3 w-3" />
         </Button>
       </CardHeader>
+      
       <CardContent className="p-4 pt-2">
         {(() => {
           const isConfigured = subtype === 'http' ? !!data.url : true; // Add more checks for other types
@@ -99,13 +108,14 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
           );
         })()}
       </CardContent>
+
       <Handle
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
-        className={cn("w-3 h-3 border-2 border-background", handleColor)}
+        className={cn("w-3 h-3 border-2 border-background z-50", handleColor)}
       />
-    </Card>
+    </NodeCard>
   );
 });
 

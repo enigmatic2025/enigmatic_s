@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SidebarDraggableItem, SidebarSection } from "./sidebar-items";
+import { SidebarNavigation } from "./sidebar-navigation";
+import { SidebarVariables } from "./sidebar-variables";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -200,76 +202,9 @@ export function Sidebar({
             sidebarOpen ? "px-3" : "w-full flex flex-col items-center"
           }`}
         >
-          {/* Workspace Group */}
+          {/* Navigation */}
           {!pathname.includes("/flow-studio/design") && (
-            <div
-              className={
-                !sidebarOpen ? "w-full flex flex-col items-center" : ""
-              }
-            >
-              {sidebarOpen && (
-                <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-                  Workspace
-                </h4>
-              )}
-              <nav
-                className={`space-y-1 ${
-                  !sidebarOpen ? "w-full flex flex-col items-center" : ""
-                }`}
-              >
-                <NavItem
-                  href={`/nodal/${currentOrg?.slug}/dashboard`}
-                  icon={LayoutDashboard}
-                  label="Overview"
-                />
-                <NavItem
-                  href={`/nodal/${currentOrg?.slug}/dashboard/natalie`}
-                  icon={MessageSquare}
-                  label="Natalie"
-                />
-                <NavItem
-                  href={`/nodal/${currentOrg?.slug}/dashboard/action-flows`}
-                  icon={Workflow}
-                  label="Action Flows"
-                />
-              </nav>
-            </div>
-          )}
-
-          {/* Development Group */}
-          {!pathname.includes("/flow-studio/design") && (
-            <div
-              className={
-                !sidebarOpen ? "w-full flex flex-col items-center" : ""
-              }
-            >
-              {sidebarOpen && (
-                <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-                  Development
-                </h4>
-              )}
-              <nav
-                className={`space-y-1 ${
-                  !sidebarOpen ? "w-full flex flex-col items-center" : ""
-                }`}
-              >
-                <NavItem
-                  href={`/nodal/${currentOrg?.slug}/dashboard/flow-studio`}
-                  icon={Code2}
-                  label="Flow Studio"
-                />
-                <NavItem
-                  href={`/nodal/${currentOrg?.slug}/dashboard/integration`}
-                  icon={Blocks}
-                  label="Integration"
-                />
-                <NavItem
-                  href={`/nodal/${currentOrg?.slug}/dashboard/knowledge-base`}
-                  icon={Library}
-                  label="Knowledge Base"
-                />
-              </nav>
-            </div>
+            <SidebarNavigation sidebarOpen={sidebarOpen} currentOrg={currentOrg} />
           )}
 
           {/* Designer Mode - Draggable Nodes */}
@@ -384,8 +319,15 @@ export function Sidebar({
               </TabsContent>
 
               <TabsContent value="variables" className="mt-0 p-4">
-                <div className="text-sm text-muted-foreground text-center py-8">
-                  Variables will appear here
+                <div className="space-y-4">
+                  <div className="text-xs text-muted-foreground mb-4">
+                    Drag variables into node inputs to use data from previous steps.
+                  </div>
+                  
+                  {/* We need to fetch nodes from the store, but Sidebar doesn't have direct access to the store hooks inside this component structure easily if not careful.
+                      However, we are in a client component so we can use the hook.
+                   */}
+                  <SidebarVariables />
                 </div>
               </TabsContent>
 

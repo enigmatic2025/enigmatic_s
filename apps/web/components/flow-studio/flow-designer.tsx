@@ -25,6 +25,7 @@ import {
 import { NODE_TYPES } from './constants/node-registry';
 import { useFlowState } from './hooks/use-flow-state';
 import { useFlowOperations } from './hooks/use-flow-operations';
+import { useFlowStore } from '@/lib/stores/flow-store';
 
 interface FlowDesignerProps {
   flowId?: string;
@@ -100,7 +101,15 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     };
 
     fetchFlow();
+    fetchFlow();
   }, [flowId, setNodes, setEdges]);
+
+  // Sync with global store for Sidebar
+  const { syncNodes, syncEdges } = useFlowStore();
+  useEffect(() => {
+    syncNodes(nodes);
+    syncEdges(edges);
+  }, [nodes, edges, syncNodes, syncEdges]);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: any) => {
     setSelectedNode(node);

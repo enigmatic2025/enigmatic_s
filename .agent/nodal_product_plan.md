@@ -21,6 +21,7 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 
 ### 3.1. The Designer (Builder Experience)
 -   **Interface**: A canvas-based UI (likely built with **React Flow**) for dragging and dropping nodes.
+-   **Configuration**: Split-pane layout (Settings vs Output) for better usability.
 -   **Visual Language (Color Coding)**:
     -   **Triggers**: **Blue** (e.g., Schedule, Webhook) - The start of every flow.
     -   **Actions**: **Orange** (e.g., HTTP Request, Email) - External side effects.
@@ -42,6 +43,7 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
 -   **Layout**:
     -   **Width**: `400px` (Expanded in Designer), `64px` (Collapsed).
     -   **Tabs**: Organized into "Nodes", "Variables", and "Console".
+    -   **Variable Explorer**: A JSON Tree View allowing deep access to nested properties (e.g., `headers.Date[0]`) using "Schema by Example" from the last run.
     -   **Search**: Persistent search bar at the top.
 -   **Nodes Tab Structure**:
     1.  **Triggers**: Top-level section (e.g., Schedule).
@@ -429,6 +431,7 @@ This is the helper that evaluates `{{ variable }}` strings.
 ```go
 type ExpressionEngine interface {
 	// Evaluate resolves a string expression against the given context data.
+	// Supports dot notation (`steps.foo.data`) and array indexing (`items[0]`).
 	Evaluate(expression string, data map[string]interface{}) (interface{}, error)
 }
 ```
