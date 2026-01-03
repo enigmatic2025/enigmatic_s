@@ -245,32 +245,20 @@ export function Sidebar({
                     isOpen={builtInToolsOpen}
                     onToggle={() => setBuiltInToolsOpen(!builtInToolsOpen)}
                   >
-                    {/* Data Operation Group */}
-                    {(!searchQuery || "parse data map data".includes(searchQuery.toLowerCase())) && (
+                    {/* Logic Group */}
+                    {(!searchQuery || "condition if else logic".includes(searchQuery.toLowerCase())) && (
                       <div>
                         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
-                          <Code2 className="h-3 w-3" /> Data Operation
+                           Logic
                         </h4>
                         <div className="grid grid-cols-1 gap-2">
-                          {(!searchQuery || "parse data".includes(searchQuery.toLowerCase())) && (
-                            <SidebarDraggableItem
-                              label="Parse Data"
-                              icon={Code2}
-                              iconColorClass="text-purple-500"
-                              bgColorClass="bg-purple-500/10"
-                              dataTransferType="action:parse"
-                            />
-                          )}
-
-                          {(!searchQuery || "map data".includes(searchQuery.toLowerCase())) && (
-                            <SidebarDraggableItem
-                              label="Map Data"
-                              icon={Workflow}
-                              iconColorClass="text-indigo-500"
-                              bgColorClass="bg-indigo-500/10"
-                              dataTransferType="action:map"
-                            />
-                          )}
+                          <SidebarDraggableItem
+                            label="If / Else"
+                            icon={Workflow} // Using Workflow icon or Split if available
+                            iconColorClass="text-slate-500"
+                            bgColorClass="bg-slate-500/10"
+                            dataTransferType="condition"
+                          />
                         </div>
                       </div>
                     )}

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Handle, Position, useReactFlow } from 'reactflow';
-import { Zap, Globe, Mail, Trash2, Code2, Workflow } from 'lucide-react';
+import { Zap, Globe, Mail, Trash2 } from 'lucide-react';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -9,8 +9,6 @@ import { NodeCard } from './node-card';
 const icons = {
   http: Globe,
   email: Mail,
-  parse: Code2,
-  map: Workflow,
 
   default: Zap,
 };
@@ -18,8 +16,6 @@ const icons = {
 const ACTION_NAMES: Record<string, string> = {
   http: "HTTP Request",
   email: "Send Email",
-  parse: "Parse Data",
-  map: "Map Data",
 
   default: "Action",
 };
@@ -27,8 +23,6 @@ const ACTION_NAMES: Record<string, string> = {
 const colors = {
   http: "text-orange-500 bg-orange-500/10 border-orange-500/20 hover:border-orange-500/50",
   email: "text-orange-500 bg-orange-500/10 border-orange-500/20 hover:border-orange-500/50",
-  parse: "text-purple-500 bg-purple-500/10 border-purple-500/20 hover:border-purple-500/50",
-  map: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20 hover:border-indigo-500/50",
 
   default: "text-slate-500 bg-slate-500/10 border-slate-500/20 hover:border-slate-500/50",
 };
@@ -42,8 +36,6 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
   // Extract border color for the handle
   const handleColor = 
     subtype === 'http' || subtype === 'email' ? 'bg-orange-500' : 
-    subtype === 'parse' ? 'bg-purple-500' :
-    subtype === 'map' ? 'bg-indigo-500' :
     'bg-slate-500';
 
   const onDelete = (e: React.MouseEvent) => {

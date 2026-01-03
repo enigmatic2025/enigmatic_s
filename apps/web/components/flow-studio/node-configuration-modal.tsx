@@ -126,7 +126,7 @@ export function NodeConfigurationModal({
   if (!selectedNode) return null;
 
   const isTrigger = selectedNode.type === 'schedule';
-  const isRunnable = !isTrigger && selectedNode.data?.subtype !== 'map'; // Triggers usually can't be "Run" manually in this context easily yet
+  const isRunnable = selectedNode.data?.subtype === 'http';
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -223,34 +223,46 @@ export function NodeConfigurationModal({
         </div>
 
         {/* Footer Actions */}
-        <DialogFooter className="p-4 border-t bg-muted/40 flex-none flex items-center justify-between sm:justify-between">
-           <Button variant="ghost" onClick={handleSave}>
-             Save & Close
+        <DialogFooter className="p-4 border-t bg-muted/40 flex-none flex items-center justify-between sm:justify-between gap-2">
+           {/* Left: Close without saving */}
+           <Button variant="ghost" onClick={onClose} className="text-muted-foreground hover:text-foreground">
+             Close
            </Button>
            
-           <div className="flex gap-2">
-                {testResult && !showOutput && (
-                    <Button 
-                        variant="outline"
-                        onClick={() => setShowOutput(true)}
-                        className="gap-2"
-                        title="Show previous output"
-                    >
-                        <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-                        Show Output
-                    </Button>
+           {/* Right: Actions */}
+           <div className="flex items-center gap-2">
+                {/* Test Run: Only for HTTP nodes for now */}
+                {isRunnable && (
+                    <div className="flex items-center gap-2 mr-2 border-r pr-4">
+                         {/* Show Output Toggle (if results exist) */}
+                         {testResult && !showOutput && (
+                            <Button 
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setShowOutput(true)}
+                                className="h-8 text-muted-foreground"
+                                title="Show previous output"
+                            >
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Output
+                            </Button>
+                        )}
+                        
+                        <Button 
+                            variant="secondary" 
+                            onClick={handleRunStep} 
+                            disabled={isExecuting}
+                            className="gap-2 border bg-background hover:bg-muted"
+                        >
+                            {isExecuting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
+                            {isExecuting ? "Running..." : "Test Run"}
+                        </Button>
+                    </div>
                 )}
 
-                {isRunnable && (
-                    <Button 
-                        onClick={handleRunStep} 
-                        disabled={isExecuting}
-                        className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-                    >
-                        {isExecuting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-                        {isExecuting ? "Executing..." : "Run Step"}
-                    </Button>
-                )}
+               <Button onClick={handleSave} className="min-w-[100px]">
+                 Save & Close
+               </Button>
            </div>
         </DialogFooter>
       </DialogContent>
