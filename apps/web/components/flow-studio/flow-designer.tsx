@@ -272,6 +272,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onUpdate={onUpdateNode}
         onTest={flowService.testAction}
         nodes={nodes}
+        edges={edges}
       />
     </div>
   );

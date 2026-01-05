@@ -15,7 +15,8 @@
 - [x] **Sidebar Search**: Search filter for variables.
 - [x] **Expression Engine**: Backend support for complex expressions (e.g. `{{ steps.foo.bar[0] }}`).
 - [x] **Modal Refactor**: Test Run limited to HTTP, added Close action.
-- [x] **Logic Nodes**: Condition Node (If/Else) with visual branching.
+- [x] **Logic Nodes**: Condition (Visual Branching) and Loop (Item/Done Iterator).
+- [x] **Variable System**: Global Variables (Set/Get) and Sidebar Manager.
 - [ ] **Workflow Engine**: Full implementation of the Temporal workflow execution logic.
 - [x] **Save/Load**: Persisting flow definitions to the database (Basic implementation).
 

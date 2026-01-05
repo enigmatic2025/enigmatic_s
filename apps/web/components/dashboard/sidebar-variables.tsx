@@ -2,7 +2,7 @@
 
 import { useFlowStore } from "@/lib/stores/flow-store";
 import { toast } from "sonner";
-import { ChevronRight, ChevronDown, Copy, Search } from "lucide-react";
+import { ChevronRight, ChevronDown, Copy, Search, Braces, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 
@@ -155,44 +155,105 @@ function JsonRow({ label, value, path, isPrimitive }: { label: string; value: an
 }
 
 
-export function SidebarVariables() {
-  const { nodes } = useFlowStore();
-  const [searchTerm, setSearchTerm] = useState("");
+export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
+  const { nodes, variables, setVariable, deleteVariable } = useFlowStore();
+  const [newVarName, setNewVarName] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
   
   const filteredNodes = nodes.filter(n => {
-       const term = searchTerm.toLowerCase();
+       const term = searchQuery.toLowerCase();
        const matchesName = n.data.label?.toLowerCase().includes(term);
        const matchesId = n.id.toLowerCase().includes(term);
-       // We usually want to include all nodes, but filtering happens here
        return matchesName || matchesId;
   });
 
+  const handleAddVariable = () => {
+      if (!newVarName.trim()) return;
+      // Default to empty string or null
+      setVariable(newVarName.trim(), null);
+      setNewVarName("");
+      setIsAdding(false);
+      toast.success(`Variable "${newVarName}" created`);
+  };
+
   return (
     <div className="h-full flex flex-col">
-       {/* Search Bar */}
-       <div className="p-2 border-b flex items-center gap-2 bg-background sticky top-0 z-10">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search nodes..." 
-                className="h-8 text-xs border-0 focus-visible:ring-0 bg-transparent px-0 placeholder:text-muted-foreground/50"
-            />
-            {searchTerm && (
-                <button 
-                    onClick={() => setSearchTerm("")}
-                    className="text-[10px] text-muted-foreground hover:text-foreground"
-                >
-                    Clear
-                </button>
-            )}
-       </div>
-
-       {/* List of Nodes */}
        <div className="flex-1 overflow-y-auto space-y-4 p-2">
+            
+            {/* --- Global Variables Section --- */}
+            <div className="border rounded-md bg-card overflow-hidden mb-4">
+                <div className="flex items-center justify-between p-2 bg-purple-500/10 border-b border-purple-500/20">
+                    <div className="font-medium text-xs text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                        <Braces className="h-3 w-3" /> Global Variables
+                    </div>
+                    <button 
+                        onClick={() => setIsAdding(!isAdding)}
+                        className="text-[10px] bg-background border px-1.5 py-0.5 rounded hover:bg-muted"
+                    >
+                        + New
+                    </button>
+                </div>
+                
+                {isAdding && (
+                    <div className="p-2 border-b bg-muted/30 flex gap-2">
+                        <Input 
+                            className="h-7 text-xs" 
+                            placeholder="Variable Name"
+                            value={newVarName}
+                            onChange={(e) => setNewVarName(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAddVariable()}
+                        />
+                        <button 
+                            onClick={handleAddVariable}
+                            className="bg-purple-600 text-white text-[10px] px-2 rounded hover:bg-purple-700"
+                        >
+                            Add
+                        </button>
+                    </div>
+                )}
+
+                <div className="p-2 bg-background">
+                    {Object.keys(variables).length === 0 ? (
+                        <div className="text-xs text-muted-foreground italic p-1">No global variables defined.</div>
+                    ) : (
+                        <div className="space-y-1">
+                            {Object.entries(variables).map(([key, value]) => (
+                                <div key={key} className="flex items-center justify-between group hover:bg-muted/50 p-1 rounded">
+                                    <div className="flex items-center gap-2 overflow-hidden">
+                                        <span className="text-xs font-mono font-medium text-purple-600 truncate max-w-[120px]">{key}</span>
+                                        <span className="text-[10px] text-muted-foreground">=</span>
+                                        <span className="text-[10px] font-mono truncate text-green-600 max-w-[80px]">
+                                            {value === null ? 'null' : JSON.stringify(value)}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                         <button 
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(`{{ variables.${key} }}`);
+                                                toast.success("Copied to clipboard");
+                                            }}
+                                            title="Copy Reference"
+                                         >
+                                            <Copy className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                                         </button>
+                                         <button 
+                                            onClick={() => deleteVariable(key)}
+                                            title="Delete Variable"
+                                         >
+                                            <Trash2 className="h-3 w-3 text-red-400 hover:text-red-600" />
+                                         </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* --- Node Variables Section --- */}
             {filteredNodes.length === 0 && (
                 <div className="text-center py-8 text-xs text-muted-foreground">
-                    No nodes found matching "{searchTerm}"
+                    No nodes found matching "{searchQuery}"
                 </div>
             )}
             

@@ -25,6 +25,7 @@ interface NodeConfigurationModalProps {
   onUpdate: (nodeId: string, newData: any) => void;
   onTest: (nodeData: any) => Promise<any>;
   nodes: any[];
+  edges: any[];
 }
 
 export function NodeConfigurationModal({
@@ -34,6 +35,7 @@ export function NodeConfigurationModal({
   onUpdate,
   onTest,
   nodes,
+  edges,
 }: NodeConfigurationModalProps) {
   const [formData, setFormData] = useState<any>({});
   const [testResult, setTestResult] = useState<any>(null);
@@ -80,6 +82,56 @@ export function NodeConfigurationModal({
         toast.error("A node with this title already exists");
         return;
       }
+
+      // --- Dependency Validation ---
+      
+      // 1. Find all valid ancestor nodes (upstream)
+      const validAncestorIds = new Set<string>();
+      const queue = [selectedNode.id];
+      const visited = new Set<string>();
+
+      // Work backwards from current node: find all edges pointing TO the queue items
+      // Note: React Flow edges are unidirectional Source -> Target
+      // We want to find X where X -> Current
+      while (queue.length > 0) {
+          const currentId = queue.shift()!;
+          if (visited.has(currentId)) continue;
+          visited.add(currentId);
+
+          // Find edges where target is currentId
+          const incomingEdges = edges.filter(e => e.target === currentId);
+          
+          for (const edge of incomingEdges) {
+              if (edge.source) {
+                  validAncestorIds.add(edge.source);
+                  queue.push(edge.source);
+              }
+          }
+      }
+
+      // 2. Scan formData for variable references {{ steps.foo... }}
+      const jsonString = JSON.stringify(formData);
+      // Regex to capture "steps.node_id"
+      const regex = /steps\.([a-zA-Z0-9_-]+)/g;
+      let match;
+      const invalidDependencies: string[] = [];
+
+      while ((match = regex.exec(jsonString)) !== null) {
+          const referencedNodeId = match[1];
+          // It's invalid if it's NOT in ancestors AND it's NOT the current node (recursion/self-ref is arguably ok or bad, but usually bad for DAGs)
+          // Actually, referencing self is usually invalid for input data unless it's a loop. Let's start strict: Must be ancestor.
+          if (!validAncestorIds.has(referencedNodeId) && referencedNodeId !== selectedNode.id) {
+              invalidDependencies.push(referencedNodeId);
+          }
+      }
+
+      if (invalidDependencies.length > 0) {
+          const uniqueInvalid = Array.from(new Set(invalidDependencies));
+          toast.error(`Invalid Variable Reference: You are trying to use data from future or unconnected nodes: ${uniqueInvalid.join(', ')}`);
+          return;
+      }
+
+      // -----------------------------
 
       onUpdate(selectedNode.id, formData);
       toast.success("Node configuration saved");

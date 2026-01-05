@@ -52,35 +52,37 @@ export const ConditionNode = memo(({ id, data, isConnectable }: any) => {
         </Button>
       </CardHeader>
       
-      <CardContent className="p-4 pt-2">
+      <CardContent className="p-4 pt-2 pb-8">
         <div className="flex flex-col gap-1">
-          <div className="text-xs font-mono text-muted-foreground truncate bg-muted/50 p-1 rounded px-2">
+          <div className="text-xs font-mono text-muted-foreground truncate bg-muted/50 p-1 rounded px-2 mb-4">
             {conditionPreview}
-          </div>
-          <div className="flex justify-between items-center text-[10px] font-medium pt-1">
-            <span className="text-green-600">TRUE</span>
-            <span className="text-red-500">FALSE</span>
           </div>
         </div>
       </CardContent>
 
-      {/* True Path Output */}
+      {/* True Path - Fixed Position relative to Top */}
+      <div className="absolute right-3 top-[5.5rem] flex items-center transform -translate-y-1/2 pointer-events-none">
+        <span className="text-[10px] font-medium text-green-600 mr-2">TRUE</span>
+      </div>
       <Handle
         type="source"
         position={Position.Right}
         id="true"
         isConnectable={isConnectable}
-        className="w-3 h-3 bg-green-500 border-2 border-background z-50 !top-[30%]"
+        className="w-3 h-3 bg-green-500 border-2 border-background z-50 !top-[5.5rem]"
         title="True Path"
       />
 
-      {/* False Path Output */}
+      {/* False Path - Fixed Position relative to Top */}
+      <div className="absolute right-3 top-[7.5rem] flex items-center transform -translate-y-1/2 pointer-events-none">
+        <span className="text-[10px] font-medium text-red-500 mr-2">FALSE</span>
+      </div>
       <Handle
         type="source"
         position={Position.Right}
         id="false"
         isConnectable={isConnectable}
-        className="w-3 h-3 bg-red-500 border-2 border-background z-50 !top-[70%]"
+        className="w-3 h-3 bg-red-500 border-2 border-background z-50 !top-[7.5rem]"
         title="False Path"
       />
     </NodeCard>

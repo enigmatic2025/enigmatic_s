@@ -18,6 +18,12 @@ import {
   ChevronRight,
   Clock,
   Globe,
+  Zap,
+  GitBranch,
+  Split,
+  ListFilter,
+  Repeat,
+  Braces
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -245,6 +251,31 @@ export function Sidebar({
                     isOpen={builtInToolsOpen}
                     onToggle={() => setBuiltInToolsOpen(!builtInToolsOpen)}
                   >
+                    {/* Data Operation Group */}
+                    {(!searchQuery || "filter data".includes(searchQuery.toLowerCase())) && (
+                      <div>
+                        <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
+                          <ListFilter className="h-3 w-3" /> Data Operation
+                        </h4>
+                        <div className="grid grid-cols-1 gap-2">
+                          <SidebarDraggableItem
+                            label="Filter Data"
+                            icon={ListFilter}
+                            iconColorClass="text-purple-500"
+                            bgColorClass="bg-purple-500/10"
+                            dataTransferType="action:filter"
+                          />
+                          <SidebarDraggableItem
+                            label="Set Variable"
+                            icon={Braces}
+                            iconColorClass="text-teal-500"
+                            bgColorClass="bg-teal-500/10"
+                            dataTransferType="variable"
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     {/* Logic Group */}
                     {(!searchQuery || "condition if else logic".includes(searchQuery.toLowerCase())) && (
                       <div>
@@ -258,6 +289,13 @@ export function Sidebar({
                             iconColorClass="text-slate-500"
                             bgColorClass="bg-slate-500/10"
                             dataTransferType="condition"
+                          />
+                          <SidebarDraggableItem
+                            label="Loop"
+                            icon={Repeat}
+                            iconColorClass="text-blue-500"
+                            bgColorClass="bg-blue-500/10"
+                            dataTransferType="loop"
                           />
                         </div>
                       </div>
@@ -315,7 +353,7 @@ export function Sidebar({
                   {/* We need to fetch nodes from the store, but Sidebar doesn't have direct access to the store hooks inside this component structure easily if not careful.
                       However, we are in a client component so we can use the hook.
                    */}
-                  <SidebarVariables />
+                  <SidebarVariables searchQuery={searchQuery} />
                 </div>
               </TabsContent>
 
