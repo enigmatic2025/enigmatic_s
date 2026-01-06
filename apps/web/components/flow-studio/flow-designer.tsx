@@ -194,6 +194,22 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         <div className="flex items-center gap-1">
           <TooltipProvider>
             <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        onClick={() => onLayout('LR')}
+                    >
+                        <Wand2 className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Magic Organize</p>
+                </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   variant="ghost" 
@@ -239,23 +255,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
             )}
           </TooltipProvider>
 
-          <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-amber-500 hover:text-amber-600 hover:bg-amber-100 transition-colors"
-                        onClick={() => onLayout('LR')}
-                    >
-                        <Wand2 className="h-4 w-4" />
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Magic Organize</p>
-                </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+
         </div>
       </div>
 
