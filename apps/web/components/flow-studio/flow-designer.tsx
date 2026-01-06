@@ -10,7 +10,7 @@ import 'reactflow/dist/style.css';
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Play, Trash } from "lucide-react";
+import { ArrowLeft, Save, Play, Trash, Wand2 } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
@@ -26,6 +26,7 @@ import { NODE_TYPES } from './constants/node-registry';
 import { useFlowState } from './hooks/use-flow-state';
 import { useFlowOperations } from './hooks/use-flow-operations';
 import { useFlowStore } from '@/lib/stores/flow-store';
+import { useAutoLayout } from './hooks/use-auto-layout';
 
 interface FlowDesignerProps {
   flowId?: string;
@@ -54,6 +55,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     onEdgesChange,
     onConnect,
   } = useFlowState();
+
+  const { onLayout } = useAutoLayout();
 
   const {
     onDragOver,
@@ -234,6 +237,24 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 </TooltipContent>
               </Tooltip>
             )}
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-amber-500 hover:text-amber-600 hover:bg-amber-100 transition-colors"
+                        onClick={() => onLayout('LR')}
+                    >
+                        <Wand2 className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Magic Organize</p>
+                </TooltipContent>
+            </Tooltip>
           </TooltipProvider>
         </div>
       </div>

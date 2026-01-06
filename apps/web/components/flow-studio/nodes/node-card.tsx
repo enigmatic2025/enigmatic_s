@@ -33,7 +33,7 @@ export const NodeCard = ({
   return (
     <Card 
       className={cn(
-        "w-[250px] h-[120px] relative border-0 shadow-none bg-card group",
+        "w-[250px] min-h-[120px] h-auto relative border-0 shadow-none bg-card group",
         className
       )}
       data-testid={testId}

@@ -277,7 +277,7 @@ export function Sidebar({
                     )}
 
                     {/* Logic Group */}
-                    {(!searchQuery || "condition if else logic".includes(searchQuery.toLowerCase())) && (
+                    {(!searchQuery || "condition if else logic switch".includes(searchQuery.toLowerCase())) && (
                       <div>
                         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
                            Logic
@@ -296,6 +296,13 @@ export function Sidebar({
                             iconColorClass="text-blue-500"
                             bgColorClass="bg-blue-500/10"
                             dataTransferType="loop"
+                          />
+                          <SidebarDraggableItem
+                            label="Switch"
+                            icon={Split}
+                            iconColorClass="text-amber-500"
+                            bgColorClass="bg-amber-500/10"
+                            dataTransferType="switch"
                           />
                         </div>
                       </div>

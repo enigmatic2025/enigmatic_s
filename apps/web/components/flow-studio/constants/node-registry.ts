@@ -11,6 +11,8 @@ import { LoopNode } from '../nodes/loop-node';
 import { LoopConfig } from '../configurators/loop-config';
 import { VariableNode } from '../nodes/variable-node';
 import { VariableConfig } from '../configurators/variable-config';
+import { SwitchNode } from '../nodes/switch-node';
+import { SwitchConfig } from '../configurators/switch-config';
 
 export const NODE_TYPES = {
     schedule: ScheduleNode,
@@ -19,6 +21,7 @@ export const NODE_TYPES = {
     condition: ConditionNode,
     loop: LoopNode,
     variable: VariableNode,
+    switch: SwitchNode,
 };
 
 export const CONFIG_COMPONENTS: Record<string, any> = {
@@ -29,6 +32,7 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
     'filter': FilterConfig,
     'loop': LoopConfig,
     'variable': VariableConfig,
+    'switch': SwitchConfig,
     // Fallbacks
     'action': HttpRequestConfig, // Default action to HTTP for now
 };
@@ -40,6 +44,7 @@ export const ACTION_NAMES: Record<string, string> = {
     filter: "Filter Data",
     loop: "Loop (For Each)",
     variable: "Set Variable",
+    switch: "Switch (Case)",
 
     default: "Action",
     'manual-trigger': "Manual Trigger",
