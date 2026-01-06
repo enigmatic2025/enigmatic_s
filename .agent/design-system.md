@@ -174,9 +174,12 @@ Standardized design for flow nodes (Triggers, Actions).
 ### Node Dimensions & Layout
 
 - **Width**: Fixed `w-[250px]`.
-- **Height**: Fixed `h-[120px]`.
+- **Height**: Dynamic `min-h-[120px]` (expands for content/handles).
 - **Card Style**: `relative border-2 shadow-sm transition-colors group`.
 - **Padding**: `p-4` for header/content.
+- **Handles**:
+  - **Standard**: Standard React Flow handles.
+  - **Dynamic**: Absolute positioned handles (`right-0` or specific offset) for list-based outputs (Switch, Condition handles within card body).
 
 ### Node Header
 

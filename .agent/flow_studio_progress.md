@@ -15,10 +15,11 @@
 - [x] **Sidebar Search**: Search filter for variables.
 - [x] **Expression Engine**: Backend support for complex expressions (e.g. `{{ steps.foo.bar[0] }}`).
 - [x] **Modal Refactor**: Test Run limited to HTTP, added Close action.
-- [x] **Logic Nodes**: Condition (Visual Branching) and Loop (Item/Done Iterator).
+- [x] **Logic Nodes**: Condition (Visual Branching), Loop (Item/Done Iterator), Switch (Multi-path).
 - [x] **Variable System**: Global Variables (Set/Get) and Sidebar Manager.
-- [ ] **Workflow Engine**: Full implementation of the Temporal workflow execution logic.
+- [x] **Auto Layout**: "Magic Organize" using Dagre (Left-to-Right).
 - [x] **Save/Load**: Persisting flow definitions to the database (Basic implementation).
+- [ ] **Workflow Engine**: Full implementation of the Temporal workflow execution logic.
 
 ## Technical Notes
 - **Frontend**: Next.js 15 (App Router), React Flow, Shadcn UI, Tailwind CSS.
