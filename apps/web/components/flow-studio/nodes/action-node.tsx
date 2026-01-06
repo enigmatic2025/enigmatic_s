@@ -36,7 +36,6 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
   const Icon = icons[subtype] || icons.default;
   const colorClass = colors[subtype] || colors.default;
 
-  // Extract border color for the handle
   const handleColor = 
     subtype === 'http' || subtype === 'email' ? 'bg-orange-500' : 
     subtype === 'filter' ? 'bg-purple-500' :
@@ -47,7 +46,6 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
   };
 
-  // Get just the border classes for the NodeCard prop
   const borderClasses = colorClass.split(' ').filter(c => c.startsWith('border') || c.startsWith('hover:border')).join(' ');
 
   return (
@@ -87,7 +85,7 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
       
       <CardContent className="p-4 pt-2">
         {(() => {
-          const isConfigured = subtype === 'http' ? !!data.url : true; // Add more checks for other types
+          const isConfigured = subtype === 'http' ? !!data.url : true;
           
           return (
             <div className="flex flex-col gap-1">

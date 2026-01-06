@@ -46,9 +46,6 @@ export const LoopNode = memo(({ id, data, isConnectable }: any) => {
         </div>
       </CardContent>
 
-      {/* Output Handles */}
-      
-      {/* 1. Item Output */}
       <div className="absolute right-3 top-[5.5rem] flex items-center transform -translate-y-1/2 pointer-events-none">
         <span className="text-[10px] font-medium text-blue-600 uppercase tracking-wider mr-2">Item</span>
       </div>
@@ -60,7 +57,6 @@ export const LoopNode = memo(({ id, data, isConnectable }: any) => {
         className="w-3 h-3 border-2 border-background bg-blue-500 z-50 !top-[5.5rem]"
       />
 
-      {/* 2. Done Output */}
       <div className="absolute right-3 top-[7.5rem] flex items-center transform -translate-y-1/2 pointer-events-none">
         <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mr-2">Done</span>
       </div>

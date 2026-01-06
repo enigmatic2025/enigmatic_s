@@ -6,7 +6,6 @@ import { ChevronRight, ChevronDown, Copy, Search, Braces, Trash2 } from "lucide-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 
-// Recursive component to display JSON tree
 function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: number }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -20,7 +19,6 @@ function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: 
     e.dataTransfer.setData("text/plain", text);
   };
 
-  // 1. Handle Null/Undefined
   if (data === null || data === undefined) {
     return (
       <div className="pl-4 py-1 text-xs text-muted-foreground flex items-center gap-2 font-mono">
@@ -29,7 +27,6 @@ function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: 
     );
   }
 
-  // 2. Handle Primitives (String, Number, Boolean)
   if (typeof data !== "object") {
     // If it's a leaf node, allow copying the path
     return (
@@ -50,7 +47,6 @@ function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: 
     );
   }
 
-  // 3. Handle Arrays and Objects
   const isArray = Array.isArray(data);
   const keys = Object.keys(data);
   const isEmpty = keys.length === 0;
@@ -258,8 +254,7 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
             )}
             
             {filteredNodes.map((node) => {
-                // Schema by Example: Use real run data if available, otherwise just basic structure
-                const runResult = node.data?.lastRunResult; // We assume this is where we store it
+                const runResult = node.data?.lastRunResult;
                 const hasRunData = runResult !== undefined;
                 
                 return (
@@ -281,7 +276,6 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                             }
                         </div>
                         
-                        {/* Always show at least ID and Data root */}
                         <JsonTree 
                             data={hasRunData ? runResult : { id: node.id, ...node.data }} 
                             path={`steps.${node.id}`} 

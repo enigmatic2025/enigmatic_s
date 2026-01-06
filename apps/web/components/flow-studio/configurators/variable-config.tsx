@@ -26,7 +26,6 @@ export function VariableConfig({ data, onUpdate }: { data: any; onUpdate: (data:
       </div>
 
       <div className="space-y-4">
-        {/* Variable Selection */}
         <div className="space-y-2">
             <Label>Variable Name</Label>
             <Select 
@@ -51,7 +50,6 @@ export function VariableConfig({ data, onUpdate }: { data: any; onUpdate: (data:
             </p>
         </div>
 
-        {/* Value Input */}
         <div className="space-y-2">
             <Label>Set To Value</Label>
             <Input 
