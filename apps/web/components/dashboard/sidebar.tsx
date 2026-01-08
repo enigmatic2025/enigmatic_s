@@ -39,7 +39,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SidebarDraggableItem, SidebarSection } from "./sidebar-items";
 import { SidebarNavigation } from "./sidebar-navigation";
 import { SidebarVariables } from "./sidebar-variables";
-
 interface SidebarProps {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
@@ -218,11 +217,10 @@ export function Sidebar({
           {pathname.includes("/flow-studio/design") && sidebarOpen && (
             <Tabs defaultValue="nodes" className="w-full">
               <div className="px-3 mb-2">
-                <TabsList className="w-full grid grid-cols-3">
-                  <TabsTrigger value="nodes">Nodes</TabsTrigger>
-                  <TabsTrigger value="variables">Variables</TabsTrigger>
-                  <TabsTrigger value="console">Console</TabsTrigger>
-                </TabsList>
+                  <TabsList className="w-full grid grid-cols-2">
+                    <TabsTrigger value="nodes">Nodes</TabsTrigger>
+                    <TabsTrigger value="variables">Variables</TabsTrigger>
+                  </TabsList>
               </div>
 
               <TabsContent value="nodes" className="mt-0">
@@ -372,12 +370,7 @@ export function Sidebar({
                 </div>
               </TabsContent>
 
-              <TabsContent value="console" className="mt-0 p-4">
-                <div className="text-sm text-muted-foreground text-center py-8">
-                  Console output will appear here
-                </div>
-              </TabsContent>
-            </Tabs>
+              </Tabs>
           )}
         </div>
       </ScrollArea>

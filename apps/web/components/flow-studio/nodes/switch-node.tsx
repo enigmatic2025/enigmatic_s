@@ -20,6 +20,7 @@ export const SwitchNode = memo(({ id, data, isConnectable }: any) => {
 
   return (
     <NodeCard 
+      nodeId={id}
       borderColorClass="border-amber-500/20 hover:border-amber-500/50"
       testId="switch-node"
     >

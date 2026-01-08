@@ -15,8 +15,16 @@ func (n *DebugNode) Execute(ctx context.Context, input NodeContext) (*NodeResult
 	fmt.Printf("[DEBUG NODE] Input: %+v\n", input.InputData)
 	fmt.Printf("[DEBUG NODE] Config: %+v\n", input.Config)
 
+	// Define 'message' based on the original behavior of passing input data
+	// If the intent was to change the output to a fixed message, this would need to be adjusted.
+	// For now, we'll make 'message' reflect the input data to maintain some original functionality.
+	message := fmt.Sprintf("DebugNode processed input: %+v", input.InputData)
+
 	return &NodeResult{
-		Status: "SUCCESS",
-		Output: input.InputData, // Pass through input as output
+		Status: StatusSuccess,
+		Output: map[string]interface{}{
+			"message": message,
+		},
+		Error: "",
 	}, nil
 }

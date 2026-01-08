@@ -10,11 +10,12 @@ import 'reactflow/dist/style.css';
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Play, Trash, Wand2 } from "lucide-react";
+import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
 import { NodeConfigurationModal } from "@/components/flow-studio/node-configuration-modal";
+import { ConsoleModal } from "@/components/flow-studio/modals/console-modal";
 import {
   Tooltip,
   TooltipContent,
@@ -104,11 +105,23 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     };
 
     fetchFlow();
-    fetchFlow();
   }, [flowId, setNodes, setEdges]);
+  
+  const handlePublish = async () => {
+      if (!flowId) return;
+      try {
+          toast.info("Publishing flow...");
+          await flowService.publishFlow(flowId);
+          toast.success("Flow published successfully! It is now live.");
+      } catch (error) {
+          console.error("Publish error:", error);
+          toast.error("Failed to publish flow");
+      }
+  };
 
   // Sync with global store for Sidebar
-  const { syncNodes, syncEdges } = useFlowStore();
+  const { syncNodes, syncEdges, setExecutionTrace, clearExecutionTrace } = useFlowStore();
+  
   useEffect(() => {
     syncNodes(nodes);
     syncEdges(edges);
@@ -132,23 +145,138 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     }
   };
 
+  // CONSTANT TOAST ID for Test Runs
+  const TEST_TOAST_ID = "test-run-status";
+  const { addLog } = useFlowStore();
+
   const handleTestRun = async () => {
+    toast.loading("Starting action flow test...", { id: TEST_TOAST_ID });
+    addLog({ message: "Starting action flow test...", type: "info" });
+    
     try {
-      toast.info("Starting action flow test...");
+      clearExecutionTrace(); // Clear previous results
+      
       const flowDefinition = {
-        nodes,
+        nodes: nodes.map(node => {
+            let type = node.type;
+            
+            // Map frontend types to backend types
+            if (node.type === 'action') {
+                type = node.data?.subtype || 'http';
+            } else if (node.type === 'variable') {
+                type = 'set';
+            } else if (node.type === 'manual-trigger') {
+                // Backend treats manual triggers as just entry points, 
+                // but if we need a specific type:
+                type = 'trigger'; 
+            }
+            // Loop, Switch, Condition likely map 1:1 if casing matches (backend handles casing)
+            
+            return {
+                ...node,
+                type
+            };
+        }),
         edges,
-        viewport: { x: 0, y: 0, zoom: 1 } // You might want to get actual viewport if needed
+        viewport: { x: 0, y: 0, zoom: 1 } 
       };
       
-      const result = await flowService.testFlow(flowDefinition);
-      toast.success(`Action Flow started! ID: ${result.workflow_id}`);
-      console.log("Action Flow Test Result:", result);
-    } catch (error) {
+      console.log("Transformed Flow Definition:", flowDefinition); // Debug log to verify type transformation
+      
+      const result = await flowService.testFlow(flowDefinition, flowId);
+      
+      toast.success(`Action Flow started!`, { id: TEST_TOAST_ID });
+      addLog({ message: `Action Flow started with Workflow ID: ${result.workflow_id}`, type: "success", details: result });
+      console.log("Action Flow Started:", result);
+
+      // Start Polling
+      setIsPolling(true);
+      setCurrentRun({ workflowId: result.workflow_id, runId: result.run_id });
+      
+    } catch (error: any) {
       console.error("Action Flow test error:", error);
-      toast.error("Failed to start action flow test");
+      addLog({ message: "Failed to start action flow test", type: "error", details: error });
+      
+      if (error.message?.includes("409")) {
+          toast.warning("Test run already in progress. Please stop the current run first.", { id: TEST_TOAST_ID });
+      } else {
+          toast.error("Failed to start action flow test", { id: TEST_TOAST_ID });
+      }
     }
   };
+
+  // POLLING EFFECT
+  const [isPolling, setIsPolling] = useState(false);
+  const [currentRun, setCurrentRun] = useState<{workflowId: string, runId: string} | null>(null);
+
+  useEffect(() => {
+      let intervalId: NodeJS.Timeout;
+
+      if (isPolling && currentRun) {
+          intervalId = setInterval(async () => {
+              try {
+                  const data = await flowService.getFlowResult(currentRun.workflowId, currentRun.runId);
+                  
+                  if (data && data.status === "COMPLETED") {
+                      // DONE!
+                      setIsPolling(false);
+                      toast.success("Workflow Completed Successfully!", { id: TEST_TOAST_ID });
+                      addLog({ message: "Workflow Completed Successfully", type: "success", details: data.output });
+                      
+                      const traceData: Record<string, any> = {};
+                      const rawOutput = data.output || {};
+                      
+                      Object.entries(rawOutput).forEach(([nodeId, nodeOut]) => {
+                          traceData[nodeId] = {
+                              nodeId: nodeId,
+                              status: 'success',
+                              output: nodeOut,
+                              timestamp: Date.now()
+                          };
+                      });
+                      
+                      setExecutionTrace(traceData);
+                  } else if (data && (data.status === "FAILED" || data.status === "CANCELED")) {
+                       setIsPolling(false);
+                       if (data.status === "CANCELED") {
+                           toast.info("Workflow Canceled", { id: TEST_TOAST_ID });
+                           addLog({ message: "Workflow Canceled by user", type: "warning" });
+                       } else {
+                           const errorMsg = data.output?.error || "Workflow Failed";
+                           toast.error(errorMsg, { id: TEST_TOAST_ID });
+                           addLog({ message: `Workflow Failed: ${errorMsg}`, type: "error", details: data.output });
+                       }
+                  } else {
+                      // Still running
+                      // Optional: addLog({ message: "Workflow running...", type: "info" });
+                  }
+                  
+              } catch (e) {
+                  console.error("Polling error", e);
+              }
+          }, 2000); // Poll every 2 seconds
+      }
+
+      return () => clearInterval(intervalId);
+  }, [isPolling, currentRun, setExecutionTrace, addLog]); // Added addLog dependency
+
+  const handleStop = async () => {
+    if (!currentRun) return;
+    toast.loading("Stopping workflow...", { id: TEST_TOAST_ID });
+    
+    try {
+      await flowService.cancelFlow(currentRun.workflowId, currentRun.runId);
+      setIsPolling(false);
+      toast.success("Workflow stopped.", { id: TEST_TOAST_ID });
+      addLog({ message: "Stop signal sent successfully", type: "info" });
+    } catch (error) {
+      console.error("Stop error:", error);
+      toast.error("Failed to stop workflow", { id: TEST_TOAST_ID });
+      addLog({ message: "Failed to send stop signal", type: "error", details: error });
+    }
+  };
+
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
   return (
     <div className="h-full flex flex-col">
@@ -209,19 +337,35 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 </TooltipContent>
             </Tooltip>
 
+             <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={`h-8 w-8 transition-colors ${isConsoleOpen ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}`}
+                        onClick={() => setIsConsoleOpen(true)}
+                    >
+                        <Terminal className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Open Console</p>
+                </TooltipContent>
+            </Tooltip>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                  onClick={handleTestRun}
+                  className={`h-8 w-8 transition-colors ${isPolling ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : 'text-muted-foreground hover:text-foreground'}`}
+                  onClick={isPolling ? handleStop : handleTestRun}
                 >
-                  <Play className="h-4 w-4" />
+                  {isPolling ? <Square className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4" />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Test Run</p>
+                <p>{isPolling ? "Stop Run" : "Test Run"}</p>
               </TooltipContent>
             </Tooltip>
 
@@ -232,9 +376,27 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Save Flow</p>
+                <p>Save Draft</p>
               </TooltipContent>
             </Tooltip>
+
+            {flowId && (
+                <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10 transition-colors"
+                    onClick={handlePublish}
+                    >
+                    <Rocket className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Publish to Production</p>
+                </TooltipContent>
+                </Tooltip>
+            )}
           
             {flowId && (
               <Tooltip>
@@ -294,6 +456,11 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onTest={flowService.testAction}
         nodes={nodes}
         edges={edges}
+      />
+      
+      <ConsoleModal 
+        isOpen={isConsoleOpen} 
+        onClose={() => setIsConsoleOpen(false)} 
       />
     </div>
   );

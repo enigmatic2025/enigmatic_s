@@ -9,31 +9,29 @@ import (
 
 // NodeExecutionActivity executes a single node by looking up its executor in the registry.
 func NodeExecutionActivity(ctx context.Context, input nodes.NodeContext) (*nodes.NodeResult, error) {
-	// 1. Get the executor for this node type
-	// The node type should be passed in the input or config. 
-	// For now, let's assume it's in the Config map under "type".
-	nodeType, ok := input.Config["type"].(string)
-	if !ok {
-		return &nodes.NodeResult{
-			Status: "FAILED",
-			Error:  fmt.Errorf("node type not specified in config"),
-		}, nil
-	}
-
-	executor, err := nodes.GetExecutor(nodeType)
+	// 1. Get Executor
+	executor, err := nodes.GetExecutor(input.Config["type"].(string))
 	if err != nil {
 		return &nodes.NodeResult{
-			Status: "FAILED",
-			Error:  err,
+			Status: nodes.StatusFailed,
+			Error:  fmt.Sprintf("node type not specified or unknown: %v", err),
 		}, nil
 	}
 
-	// 2. Execute the node
+	// 2. Execute
 	result, err := executor.Execute(ctx, input)
 	if err != nil {
 		return &nodes.NodeResult{
-			Status: "FAILED",
-			Error:  err,
+			Status: nodes.StatusFailed,
+			Error:  err.Error(),
+		}, nil
+	}
+
+	// 3. Return result
+	if result == nil {
+		return &nodes.NodeResult{
+			Status: nodes.StatusFailed,
+			Error:  "node execution returned null result",
 		}, nil
 	}
 

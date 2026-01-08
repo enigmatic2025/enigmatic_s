@@ -73,7 +73,7 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 		"org_id":           req.OrgID,
 		"name":             req.Name,
 		"description":      req.Description,
-		"definition":       req.Definition,
+		"draft_definition": req.Definition, // API 'definition' maps to DB 'draft_definition'
 		"variables_schema": req.VariablesSchema,
 		"is_active":        false, // Draft by default
 		"version":          1,
@@ -117,7 +117,7 @@ func (h *FlowHandler) UpdateFlow(w http.ResponseWriter, r *http.Request) {
 		updates["description"] = req.Description
 	}
 	if req.Definition != nil {
-		updates["definition"] = req.Definition
+		updates["draft_definition"] = req.Definition
 	}
 	if req.VariablesSchema != nil {
 		updates["variables_schema"] = req.VariablesSchema
@@ -250,4 +250,57 @@ func (h *FlowHandler) DeleteFlow(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Flow deleted successfully"})
+}
+
+// PublishFlow promotes draft to published
+func (h *FlowHandler) PublishFlow(w http.ResponseWriter, r *http.Request) {
+	// URL path: /flows/{id}/publish
+	// Need to extract ID carefully
+	pathParts := strings.Split(r.URL.Path, "/")
+	if len(pathParts) < 3 {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	// parts: ["", "flows", "ID", "publish"]
+	flowID := pathParts[2]
+
+	client := database.GetClient()
+
+	// 1. Get current draft
+	var current []struct {
+		DraftDefinition map[string]interface{} `json:"draft_definition"`
+	}
+	err := client.DB.From("flows").Select("draft_definition").Eq("id", flowID).Execute(&current)
+	if err != nil || len(current) == 0 {
+		http.Error(w, "Flow not found", http.StatusNotFound)
+		return
+	}
+
+	if current[0].DraftDefinition == nil {
+		http.Error(w, "Draft is empty", http.StatusBadRequest)
+		return
+	}
+
+	// 2. Promote to Published
+	// Note: Supabase/PostgREST doesn't support "SET col = other_col" easily in one Update call via client usually (unless using RPC).
+	// So we fetch (done) and update.
+
+	var results []map[string]interface{}
+	err = client.DB.From("flows").Update(map[string]interface{}{
+		"published_definition": current[0].DraftDefinition,
+		"published_at":         time.Now(),
+	}).Eq("id", flowID).Execute(&results)
+
+	if err != nil {
+		http.Error(w, "Failed to publish flow: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// TODO: Update Temporal Schedule here
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message":      "Flow published successfully",
+		"published_at": time.Now(),
+	})
 }

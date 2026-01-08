@@ -17,6 +17,7 @@ import { Play, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { CONFIG_COMPONENTS } from "./constants/node-registry";
 import { NodeExecutionConsole } from "./node-execution-console";
+import { useFlowStore } from "@/lib/stores/flow-store";
 
 interface NodeConfigurationModalProps {
   isOpen: boolean;
@@ -43,6 +44,8 @@ export function NodeConfigurationModal({
   const [showOutput, setShowOutput] = useState(false);
   const [prevNodeId, setPrevNodeId] = useState<string | null>(null);
 
+  const executionTrace = useFlowStore((state) => state.executionTrace);
+
   // Reset form when node changes
   useEffect(() => {
     if (selectedNode) {
@@ -52,16 +55,28 @@ export function NodeConfigurationModal({
       if (selectedNode.id !== prevNodeId) {
           setPrevNodeId(selectedNode.id);
           
-          if (selectedNode.data?.lastRunResult) {
+          // Check for Global Execution Trace first (from Run Flow)
+          const trace = executionTrace[selectedNode.id];
+          if (trace) {
+              setTestResult({ 
+                  Output: trace.output, 
+                  Input: trace.input,
+                  Status: trace.status,
+                  Duration: trace.duration 
+              });
+              setShowOutput(true);
+          } 
+          // Fallback to local node storage (from "Test Step")
+          else if (selectedNode.data?.lastRunResult) {
               setTestResult({ Output: selectedNode.data.lastRunResult });
-              setShowOutput(true); // Default to uncollapsed if result exists
+              setShowOutput(true); 
           } else {
               setTestResult(null);
               setShowOutput(false);
           }
       }
     }
-  }, [selectedNode, prevNodeId]);
+  }, [selectedNode, prevNodeId, executionTrace]);
 
   const handleSave = () => {
     if (selectedNode) {

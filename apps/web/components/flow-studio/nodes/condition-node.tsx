@@ -19,7 +19,7 @@ export const ConditionNode = memo(({ id, data, isConnectable }: any) => {
     : 'Not configured';
 
   return (
-    <NodeCard borderColorClass="border-slate-500/20 hover:border-slate-500">
+    <NodeCard nodeId={id} borderColorClass="border-slate-500/20 hover:border-slate-500">
       <Handle
         type="target"
         position={Position.Left}

@@ -15,8 +15,9 @@ func (n *SetNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, 
 	if !ok {
 		// If no variables defined, just return empty success
 		return &NodeResult{
-			Status: "SUCCESS",
-			Output: map[string]interface{}{},
+			Status: "SUCCESS",                // Assuming StatusSuccess is not defined, keeping original string literal for syntactic correctness.
+			Output: map[string]interface{}{}, // Removed 'key: value' as they are undefined and would cause a compilation error.
+			Error:  "",
 		}, nil
 	}
 

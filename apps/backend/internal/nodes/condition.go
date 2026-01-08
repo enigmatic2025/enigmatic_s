@@ -13,16 +13,17 @@ func (n *ConditionNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 	// Config should contain "expression" or "conditions"
 	// For this MVP, we'll check a simple boolean field in config "result"
 	// In reality, this would use an expression engine.
-	
+
 	result := true // Default to true
 	if val, ok := input.Config["result"].(bool); ok {
 		result = val
 	}
 
 	return &NodeResult{
-		Status: "SUCCESS",
+		Status: StatusSuccess,
 		Output: map[string]interface{}{
 			"result": result,
 		},
+		Error: "",
 	}, nil
 }

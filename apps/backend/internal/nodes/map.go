@@ -39,9 +39,10 @@ func (n *MapNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, 
 			result[target] = source
 		}
 	}
-	
+
 	return &NodeResult{
-		Status: "SUCCESS",
+		Status: StatusSuccess,
 		Output: result,
+		Error:  "",
 	}, nil
 }

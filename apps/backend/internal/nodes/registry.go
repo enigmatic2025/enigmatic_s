@@ -18,8 +18,14 @@ type NodeContext struct {
 type NodeResult struct {
 	Status string                 // "SUCCESS", "FAILED", "PAUSED"
 	Output map[string]interface{} // The data produced by this node
-	Error  error
+	Error  string                 // Serialized error message
 }
+
+const (
+	StatusSuccess = "SUCCESS"
+	StatusFailed  = "FAILED"
+	StatusPaused  = "PAUSED"
+)
 
 // NodeExecutor is the interface that all node types must implement.
 type NodeExecutor interface {
@@ -35,6 +41,14 @@ var Registry = map[string]NodeExecutor{
 	"MAP":       &MapNode{},
 	"HTTP":      &HttpNode{},
 	"PARSE":     &ParseNode{},
+	"APPROVAL":  &ApprovalNode{},
+	"SCHEDULE":  &ScheduleNode{},
+	"LOOP":      &LoopNode{},
+	"SWITCH":    &SwitchNode{},
+	"FILTER":    &FilterNode{},
+	"EMAIL":     &EmailNode{},
+	"TRIGGER":   &TriggerNode{},
+	"ACTION":    &HttpNode{}, // Alias for generic Action nodes (defaults to HTTP)
 }
 
 // GetExecutor returns the executor for a given node type.

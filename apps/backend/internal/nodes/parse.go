@@ -9,7 +9,7 @@ import (
 type ParseNode struct{}
 
 func (n *ParseNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
-	// We enforce JSON only now, so we don't even check format really, 
+	// We enforce JSON only now, so we don't even check format really,
 	// but let's keep it clean.
 	source, _ := input.Config["source"].(string)
 
@@ -38,8 +38,18 @@ func (n *ParseNode) Execute(ctx context.Context, input NodeContext) (*NodeResult
 		}, nil
 	}
 
+	// Wrap output in a map if it's not one, or strict check
+	var outputMap map[string]interface{}
+
+	if m, ok := output.(map[string]interface{}); ok {
+		outputMap = m
+	} else {
+		outputMap = map[string]interface{}{"data": output}
+	}
+
 	return &NodeResult{
-		Status: "SUCCESS",
-		Output: map[string]interface{}{"data": output},
+		Status: StatusSuccess,
+		Output: outputMap,
+		Error:  "",
 	}, nil
 }

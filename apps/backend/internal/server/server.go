@@ -52,16 +52,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Protected Admin Routes (Require Auth Middleware)
 	// User promotion
 	mux.Handle("POST /admin/promote", middleware.Auth(http.HandlerFunc(adminHandler.PromoteToAdmin)))
-	
+
 	// List endpoints
 	mux.Handle("GET /admin/users", middleware.Auth(http.HandlerFunc(adminHandler.ListUsers)))
 	mux.Handle("GET /admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.ListOrgs)))
-	
+
 	// Organization CRUD
 	mux.Handle("POST /admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.CreateOrganization)))
 	mux.Handle("PUT /admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
 	mux.Handle("DELETE /admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
-	
+
 	// User Management
 	mux.Handle("POST /admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
 	mux.Handle("PUT /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
@@ -83,6 +83,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Test Routes (Dev only, but useful for frontend dev)
 	mux.HandleFunc("POST /api/test/node", handlers.TestNodeHandler)
 	mux.HandleFunc("POST /api/test/flow", handlers.TestFlowHandler)
+	mux.HandleFunc("GET /api/test/flow/", handlers.GetFlowResultHandler)
+	mux.HandleFunc("POST /api/test/flow/cancel", handlers.CancelFlowHandler)
+
+	// Publish Route
+	mux.HandleFunc("POST /flows/{id}/publish", flowHandler.PublishFlow)
 
 	return mux
 }

@@ -5,7 +5,8 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
 async function proxy(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
     const { path: pathArray } = await params;
     const path = pathArray.join('/');
-    const url = `${BACKEND_URL}/${path}`;
+    const searchParams = request.nextUrl.search; // Includes '?'
+    const url = `${BACKEND_URL}/${path}${searchParams}`;
 
     const body = request.method !== 'GET' && request.method !== 'HEAD'
         ? await request.blob()

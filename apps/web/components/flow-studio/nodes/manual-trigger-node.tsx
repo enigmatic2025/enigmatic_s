@@ -14,7 +14,7 @@ export const ManualTriggerNode = memo(({ id, data, isConnectable }: any) => {
   };
 
   return (
-    <NodeCard borderColorClass="border-purple-500/20 hover:border-purple-500">
+    <NodeCard nodeId={id} borderColorClass="border-purple-500/20 hover:border-purple-500">
       <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className="p-2 bg-purple-500/10 rounded-md">

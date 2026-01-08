@@ -99,14 +99,15 @@ export const flowService = {
         return response.json();
     },
 
-    async testFlow(flowDefinition: any) {
+    async testFlow(flowDefinition: any, flowId?: string) {
         const response = await fetch(`${API_BASE_URL}/api/test/flow`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                flow_definition: flowDefinition
+                flow_definition: flowDefinition,
+                flow_id: flowId
             }),
         });
 
@@ -115,6 +116,42 @@ export const flowService = {
             throw new Error(`Flow test failed: ${errorText}`);
         }
 
+        return response.json();
+    },
+
+    async getFlowResult(workflowId: string, runId: string) {
+        const response = await fetch(`${API_BASE_URL}/api/test/flow/${runId}?workflow_id=${workflowId}`);
+        if (!response.ok) {
+            // verification: avoid throwing if it's just not found yet (race condition), but 404 usually means not found.
+            // Let's just return null or throw.
+            return null;
+        }
+        return response.json();
+    },
+
+    async cancelFlow(workflowId: string, runId: string) {
+        const response = await fetch(`${API_BASE_URL}/api/test/flow/cancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ workflow_id: workflowId, run_id: runId }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to cancel flow');
+        }
+        return response.json();
+    },
+
+    async publishFlow(flowId: string) {
+        const response = await fetch(`${API_BASE_URL}/flows/${flowId}/publish`, {
+            method: 'POST',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to publish flow');
+        }
         return response.json();
     }
 };

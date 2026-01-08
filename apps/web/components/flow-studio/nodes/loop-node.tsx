@@ -16,6 +16,7 @@ export const LoopNode = memo(({ id, data, isConnectable }: any) => {
 
   return (
     <NodeCard 
+      nodeId={id}
       borderColorClass="border-blue-500/20 hover:border-blue-500/50"
       testId="loop-node"
     >

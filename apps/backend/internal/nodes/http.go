@@ -70,6 +70,7 @@ func (n *HttpNode) Execute(ctx context.Context, input NodeContext) (*NodeResult,
 			Output: map[string]interface{}{
 				"error": err.Error(),
 			},
+			Error: err.Error(),
 		}, nil
 	}
 	defer resp.Body.Close()
@@ -82,6 +83,7 @@ func (n *HttpNode) Execute(ctx context.Context, input NodeContext) (*NodeResult,
 			Output: map[string]interface{}{
 				"error": fmt.Sprintf("failed to read body: %v", err),
 			},
+			Error: fmt.Sprintf("failed to read body: %v", err),
 		}, nil
 	}
 

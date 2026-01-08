@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Handle, Position } from 'reactflow';
+import { useFlowStore } from '@/lib/stores/flow-store';
 
 interface NodeCardProps {
   children: React.ReactNode;
@@ -27,9 +28,37 @@ export const NodeCard = ({
   borderColorClass = "border-slate-500", // Default border color path
   handleColorClass = "bg-slate-500",
   isConnectable = true,
-  testId
-}: NodeCardProps) => {
-  
+  testId,
+  nodeId
+}: NodeCardProps & { nodeId?: string }) => {
+  const executionTrace = useFlowStore((state) => state.executionTrace);
+  const result = nodeId ? executionTrace[nodeId] : null;
+
+  let statusBorder = borderColorClass;
+  let StatusBadge = null;
+
+  if (result) {
+    if (result.status === 'success') {
+      statusBorder = "border-green-500 ring-2 ring-green-500/20";
+      StatusBadge = (
+        <div className="absolute -top-3 right-2 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-[9px] px-1.5 py-0.5 rounded-full font-mono font-medium shadow-sm z-50 flex items-center gap-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          {result.duration ? `${result.duration}ms` : 'Success'}
+        </div>
+      );
+    } else if (result.status === 'error') {
+      statusBorder = "border-red-500 ring-2 ring-red-500/20";
+      StatusBadge = (
+        <div className="absolute -top-3 right-2 bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-[9px] px-1.5 py-0.5 rounded-full font-mono font-medium shadow-sm z-50 flex items-center gap-1">
+           <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+           Error
+        </div>
+      );
+    } else if (result.status === 'running') {
+       statusBorder = "border-blue-500 ring-2 ring-blue-500/20 animate-pulse";
+    }
+  }
+
   return (
     <Card 
       className={cn(
@@ -38,6 +67,7 @@ export const NodeCard = ({
       )}
       data-testid={testId}
     >
+      {StatusBadge}
       {/* 
         SAFARI RENDER FIX:
         Isolated border layer to prevent layout thrashing and text blur on hover.
@@ -45,9 +75,9 @@ export const NodeCard = ({
       */}
       <div 
         className={cn(
-          "absolute inset-0 rounded-xl border-2 pointer-events-none transition-colors duration-300",
+          "absolute inset-0 rounded-xl border-2 pointer-events-none transition-all duration-300",
           "shadow-sm group-hover:shadow-md",
-          borderColorClass
+          statusBorder
         )} 
       />
 

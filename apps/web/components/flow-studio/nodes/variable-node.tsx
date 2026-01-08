@@ -15,6 +15,7 @@ export const VariableNode = memo(({ id, data, isConnectable }: any) => {
 
   return (
     <NodeCard 
+      nodeId={id}
       borderColorClass="border-teal-500/20 hover:border-teal-500/50"
       testId="variable-node"
     >

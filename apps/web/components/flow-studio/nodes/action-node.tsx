@@ -54,6 +54,7 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
 
   return (
     <NodeCard 
+      nodeId={id}
       borderColorClass={borderClasses}
       testId={`action-node-${subtype}`}
     >
