@@ -18,6 +18,7 @@
 - [x] **Logic Nodes**: Condition (Visual Branching), Loop (Item/Done Iterator), Switch (Multi-path).
 - [x] **Variable System**: Global Variables (Set/Get) and Sidebar Manager.
 - [x] **Auto Layout**: "Magic Organize" using Dagre (Left-to-Right).
+- [x] **Map Data Node**: Object Transformation and Array Mapping ("Select").
 - [x] **Save/Load**: Persisting flow definitions to the database (Basic implementation).
 - [ ] **Workflow Engine**: Full implementation of the Temporal workflow execution logic.
 

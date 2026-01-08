@@ -23,7 +23,8 @@ import {
   Split,
   ListFilter,
   Repeat,
-  Braces
+  Braces,
+  Table
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -271,6 +272,13 @@ export function Sidebar({
                             iconColorClass="text-teal-500"
                             bgColorClass="bg-teal-500/10"
                             dataTransferType="variable"
+                          />
+                          <SidebarDraggableItem
+                            label="Map Data"
+                            icon={Table}
+                            iconColorClass="text-indigo-500"
+                            bgColorClass="bg-indigo-500/10"
+                            dataTransferType="action:map"
                           />
                         </div>
                       </div>

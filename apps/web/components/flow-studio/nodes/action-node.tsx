@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Handle, Position, useReactFlow } from 'reactflow';
-import { Zap, Globe, Mail, Trash2, ListFilter } from 'lucide-react';
+import { Zap, Globe, Mail, Trash2, ListFilter, Table } from 'lucide-react';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ const icons = {
   http: Globe,
   email: Mail,
   filter: ListFilter,
+  map: Table,
 
   default: Zap,
 };
@@ -18,6 +19,7 @@ const ACTION_NAMES: Record<string, string> = {
   http: "HTTP Request",
   email: "Send Email",
   filter: "Filter Data",
+  map: "Map Data",
 
   default: "Action",
 };
@@ -26,6 +28,7 @@ const colors = {
   http: "text-orange-500 bg-orange-500/10 border-orange-500/20 hover:border-orange-500/50",
   email: "text-orange-500 bg-orange-500/10 border-orange-500/20 hover:border-orange-500/50",
   filter: "text-purple-500 bg-purple-500/10 border-purple-500/20 hover:border-purple-500/50",
+  map: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20 hover:border-indigo-500/50",
 
   default: "text-slate-500 bg-slate-500/10 border-slate-500/20 hover:border-slate-500/50",
 };
@@ -39,6 +42,7 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
   const handleColor = 
     subtype === 'http' || subtype === 'email' ? 'bg-orange-500' : 
     subtype === 'filter' ? 'bg-purple-500' :
+    subtype === 'map' ? 'bg-indigo-500' :
     'bg-slate-500';
 
   const onDelete = (e: React.MouseEvent) => {

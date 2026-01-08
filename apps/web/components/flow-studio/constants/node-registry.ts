@@ -13,6 +13,7 @@ import { VariableNode } from '../nodes/variable-node';
 import { VariableConfig } from '../configurators/variable-config';
 import { SwitchNode } from '../nodes/switch-node';
 import { SwitchConfig } from '../configurators/switch-config';
+import { MapConfig } from '../configurators/map-config';
 
 export const NODE_TYPES = {
     schedule: ScheduleNode,
@@ -33,6 +34,7 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
     'loop': LoopConfig,
     'variable': VariableConfig,
     'switch': SwitchConfig,
+    'map': MapConfig,
     // Fallbacks
     'action': HttpRequestConfig, // Default action to HTTP for now
 };
@@ -45,6 +47,7 @@ export const ACTION_NAMES: Record<string, string> = {
     loop: "Loop (For Each)",
     variable: "Set Variable",
     switch: "Switch (Case)",
+    map: "Map Data (Transform)",
 
     default: "Action",
     'manual-trigger': "Manual Trigger",
