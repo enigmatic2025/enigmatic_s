@@ -18,12 +18,7 @@ export function VariableConfig({ data, onUpdate }: { data: any; onUpdate: (data:
 
   return (
     <div className="space-y-6">
-      <div className="bg-teal-50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900 rounded-md p-3 flex gap-3 text-sm text-teal-700 dark:text-teal-300">
-        <Info className="h-5 w-5 shrink-0" />
-        <div>
-            This node updates a global variable. You can verify the value in later steps using <code>{`{{ variables.name }}`}</code>.
-        </div>
-      </div>
+
 
       <div className="space-y-4">
         <div className="space-y-2">

@@ -2,7 +2,9 @@ import { ChevronDown, CheckCircle2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { vscDarkPlus, ghcolors } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 
 interface NodeExecutionConsoleProps {
   testResult: any;
@@ -15,6 +17,15 @@ export function NodeExecutionConsole({
   isVisible, 
   onClose 
 }: NodeExecutionConsoleProps) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const syntaxTheme = mounted && resolvedTheme === 'light' ? ghcolors : vscDarkPlus;
+
   if (!testResult || !isVisible) return null;
 
   return (
@@ -53,17 +64,18 @@ export function NodeExecutionConsole({
       </div>
                      
       {/* Independent Scrollable Console Area */}
-      <div className="flex-1 overflow-auto bg-slate-950 w-full relative group">
+      <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-950 w-full relative group">
         <SyntaxHighlighter
           language="json"
-          style={vscDarkPlus}
+          style={syntaxTheme}
           customStyle={{
             margin: 0,
             padding: '1rem',
-            fontSize: '11px',
+            fontSize: '13px',
             lineHeight: '1.5',
             background: 'transparent', 
             minHeight: '100%',
+            overflow: 'visible', // Ensure parent handles scrolling
           }}
           wrapLongLines={false}
           codeTagProps={{

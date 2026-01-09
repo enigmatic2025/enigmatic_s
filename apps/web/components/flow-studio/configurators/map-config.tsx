@@ -39,16 +39,7 @@ export function MapConfig({ data, onUpdate }: MapConfigProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 rounded-md p-3 flex gap-3 text-sm text-indigo-700 dark:text-indigo-300">
-        <Info className="h-5 w-5 shrink-0" />
-        <div>
-           <strong>Transformation mode:</strong>
-           <ul className="list-disc list-inside mt-1 space-y-1 text-xs opacity-90">
-             <li><strong>Single Object: </strong> Leave "From Array" empty. Creates one object.</li>
-             <li><strong>List of Objects: </strong> Provide a "From Array". Creates a list of objects.</li>
-           </ul>
-        </div>
-      </div>
+
 
       <div className="space-y-4">
         {/* Source Array Input */}

@@ -13,12 +13,7 @@ export function LoopConfig({ data, onUpdate }: { data: any; onUpdate: (data: any
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md p-3 flex gap-3 text-sm text-blue-700 dark:text-blue-300">
-        <Info className="h-5 w-5 shrink-0" />
-        <div>
-            <strong>How it works:</strong> This node runs the "Item" path for every element in the array. When the list is finished, it runs the "Done" path once.
-        </div>
-      </div>
+
 
       <div className="space-y-4">
         <div className="space-y-2">

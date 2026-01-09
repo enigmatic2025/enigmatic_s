@@ -23,12 +23,7 @@ export function FilterConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md p-3 flex gap-3 text-sm text-blue-700 dark:text-blue-300">
-        <Info className="h-5 w-5 shrink-0" />
-        <div>
-            This node filters an array of items. Only items matching the condition will typically be passed to the output.
-        </div>
-      </div>
+
 
       <div className="space-y-4">
         <div className="space-y-2">

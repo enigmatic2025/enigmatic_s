@@ -41,12 +41,7 @@ export function SwitchConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
 
   return (
     <div className="space-y-6">
-      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 rounded-md p-3 flex gap-3 text-sm text-amber-700 dark:text-amber-300">
-        <Info className="h-5 w-5 shrink-0" />
-        <div>
-            The flow will follow the path of the <strong>first case</strong> that matches the variable's value. If none match, it follows <strong>Default</strong>.
-        </div>
-      </div>
+
 
       <div className="space-y-4">
         <div className="space-y-2">
