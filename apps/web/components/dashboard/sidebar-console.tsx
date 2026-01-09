@@ -1,7 +1,32 @@
 import { useFlowStore } from "@/lib/stores/flow-store";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Terminal, AlertCircle, CheckCircle, Info } from "lucide-react";
+import { Terminal, AlertCircle, CheckCircle, Info, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { toast } from "sonner";
+
+function LogCopyButton({ content }: { content: string }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(content);
+        setCopied(true);
+        toast.success("Copied to clipboard");
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-white/10 shadow-sm"
+            onClick={handleCopy}
+            title="Copy output"
+        >
+            {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
+        </Button>
+    );
+}
 
 export function SidebarConsole() {
     const logs = useFlowStore((state) => state.logs);
@@ -36,11 +61,16 @@ export function SidebarConsole() {
                                     </span>
                                 </div>
                                 {log.details && (
-                                    <pre className="mt-2 text-sm text-slate-300 bg-black/40 p-3 rounded-md overflow-x-hidden whitespace-pre-wrap break-all border border-white/5">
-                                        {typeof log.details === 'string' 
-                                            ? log.details 
-                                            : JSON.stringify(log.details, null, 2)}
-                                    </pre>
+                                    <div className="relative group mt-2">
+                                        <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <LogCopyButton content={typeof log.details === 'string' ? log.details : JSON.stringify(log.details, null, 2)} />
+                                        </div>
+                                        <pre className="text-sm text-slate-300 bg-black/40 p-3 rounded-md overflow-x-hidden whitespace-pre-wrap break-all border border-white/5 font-mono">
+                                            {typeof log.details === 'string' 
+                                                ? log.details 
+                                                : JSON.stringify(log.details, null, 2)}
+                                        </pre>
+                                    </div>
                                 )}
                             </div>
                         </div>
