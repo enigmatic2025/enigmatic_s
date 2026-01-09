@@ -53,8 +53,21 @@ var Registry = map[string]NodeExecutor{
 
 // GetExecutor returns the executor for a given node type.
 // It returns an error if the node type is not found in the Registry.
-func GetExecutor(nodeType string) (NodeExecutor, error) {
+// GetExecutor returns the executor for a given node type.
+// It returns an error if the node type is not found in the Registry.
+func GetExecutor(nodeType string, config map[string]interface{}) (NodeExecutor, error) {
 	nodeType = strings.ToUpper(nodeType)
+
+	// Dispatch Generic ACTION type based on subtype
+	if nodeType == "ACTION" {
+		if subtype, ok := config["subtype"].(string); ok && subtype != "" {
+			nodeType = strings.ToUpper(subtype)
+		} else {
+			// Default to HTTP if no subtype (legacy/base action)
+			nodeType = "HTTP"
+		}
+	}
+
 	executor, ok := Registry[nodeType]
 	if !ok {
 		return nil, fmt.Errorf("unknown node type: %s", nodeType)

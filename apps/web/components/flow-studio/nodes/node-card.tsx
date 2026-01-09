@@ -47,7 +47,7 @@ export const NodeCard = ({
         </div>
       );
     } else if (result.status === 'error') {
-      statusBorder = "border-red-500 ring-2 ring-red-500/20";
+      statusBorder = "border-red-500 ring-2 ring-red-500/20 bg-red-50 dark:bg-red-950/20";
       StatusBadge = (
         <div className="absolute -top-3 right-2 bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-[9px] px-1.5 py-0.5 rounded-full font-mono font-medium shadow-sm z-50 flex items-center gap-1">
            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />

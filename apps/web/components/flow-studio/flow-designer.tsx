@@ -45,6 +45,11 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  // Console/Logs State
+  const [unreadLogs, setUnreadLogs] = useState(false);
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const logs = useFlowStore((state) => state.logs);
+  const prevLogsLength = useRef(0);
 
   // Custom Hooks
   const {
@@ -90,12 +95,14 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       try {
         const data = await flowService.getFlow(flowId);
         
-        if (data.definition) {
-          const { nodes: savedNodes, edges: savedEdges } = data.definition;
+        const loadedDefinition = data.draft_definition || data.definition; // Prioritize draft, fallback to legacy
+        
+        if (loadedDefinition) {
+          const { nodes: savedNodes, edges: savedEdges } = loadedDefinition;
           if (savedNodes) setNodes(savedNodes);
           if (savedEdges) setEdges(savedEdges);
-          if (data.name) setFlowName(data.name);
         }
+        if (data.name) setFlowName(data.name);
       } catch (error) {
         console.error("Error loading flow:", error);
         toast.error("Failed to load flow data");
@@ -105,6 +112,18 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     };
 
     fetchFlow();
+
+    // Cleanup / Reset on Mount
+    // ensuring we don't show stale data from a previous flow or session
+    const { clearLogs, clearExecutionTrace } = useFlowStore.getState();
+    clearLogs();
+    clearExecutionTrace();
+
+    // Optional: Cleanup on unmount too if desired
+    return () => {
+        clearLogs();
+        clearExecutionTrace();
+    };
   }, [flowId, setNodes, setEdges]);
   
   const handlePublish = async () => {
@@ -147,10 +166,11 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
   // CONSTANT TOAST ID for Test Runs
   const TEST_TOAST_ID = "test-run-status";
-  const { addLog } = useFlowStore();
+  const { addLog, clearLogs } = useFlowStore();
 
   const handleTestRun = async () => {
     toast.loading("Starting action flow test...", { id: TEST_TOAST_ID });
+    clearLogs(); // Clear logs before starting
     addLog({ message: "Starting action flow test...", type: "info" });
     
     try {
@@ -220,19 +240,41 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                   if (data && data.status === "COMPLETED") {
                       // DONE!
                       setIsPolling(false);
-                      toast.success("Workflow Completed Successfully!", { id: TEST_TOAST_ID });
-                      addLog({ message: "Workflow Completed Successfully", type: "success", details: data.output });
                       
-                      const traceData: Record<string, any> = {};
                       const rawOutput = data.output || {};
-                      
+                      const traceData: Record<string, any> = {};
+                       
+                      // 1. Process Trace Data first to get timestamps/ordering if possible (or just map keys)
                       Object.entries(rawOutput).forEach(([nodeId, nodeOut]) => {
                           traceData[nodeId] = {
                               nodeId: nodeId,
-                              status: 'success',
+                              status: 'success', // Backend doesn't give granular status per node in output map yet, assume success if in output
                               output: nodeOut,
                               timestamp: Date.now()
                           };
+                      });
+
+                      // 2. Add granular logs
+                      // Try to sort by some logical order if possible? 
+                      // For now, we iterate. Ideally we'd match with 'nodes' array order or top-sort, 
+                      // but keys iteration is okay for now.
+                      
+                      // We can use the 'nodes' array to look up names
+                      const nodesMap = new Map(nodes.map(n => [n.id, n]));
+
+                      addLog({ message: "Workflow Completed Successfully", type: "success" });
+
+                      Object.entries(traceData).forEach(([nodeId, result]: [string, any]) => {
+                          const node = nodesMap.get(nodeId);
+                          const nodeName = node?.data?.label || node?.type || nodeId;
+                          
+                          // Convert output to string if it's an object to avoid giant JSON blobs in the 'message'
+                          // actually 'details' property is best for the JSON.
+                          addLog({ 
+                              message: `Step '${nodeName}' executed`, 
+                              type: "info", 
+                              details: result.output 
+                          });
                       });
                       
                       setExecutionTrace(traceData);
@@ -258,7 +300,27 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       }
 
       return () => clearInterval(intervalId);
-  }, [isPolling, currentRun, setExecutionTrace, addLog]); // Added addLog dependency
+  }, [isPolling, currentRun, setExecutionTrace, addLog, nodes]); // Added 'nodes' dependency
+
+  // Unread Logs Logic
+
+
+  // Effect to watch logs and set unread if console is closed
+  useEffect(() => {
+    if (logs.length > prevLogsLength.current) {
+        if (!isConsoleOpen) {
+            setUnreadLogs(true);
+        }
+    }
+    prevLogsLength.current = logs.length;
+  }, [logs.length, isConsoleOpen]);
+
+  // Clear unread when console opens
+  useEffect(() => {
+    if (isConsoleOpen) {
+      setUnreadLogs(false);
+    }
+  }, [isConsoleOpen]);
 
   const handleStop = async () => {
     if (!currentRun) return;
@@ -275,8 +337,6 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       addLog({ message: "Failed to send stop signal", type: "error", details: error });
     }
   };
-
-  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
   return (
     <div className="h-full flex flex-col">
@@ -342,14 +402,23 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     <Button 
                         variant="ghost" 
                         size="icon" 
-                        className={`h-8 w-8 transition-colors ${isConsoleOpen ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}`}
+                        className={`h-8 w-8 transition-all duration-300 relative ${
+                          isConsoleOpen 
+                            ? 'text-primary bg-primary/10' 
+                            : unreadLogs 
+                              ? 'text-green-500 bg-green-500/10 animate-pulse' 
+                              : 'text-muted-foreground hover:text-foreground'
+                        }`}
                         onClick={() => setIsConsoleOpen(true)}
                     >
                         <Terminal className="h-4 w-4" />
+                        {unreadLogs && (
+                          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-green-500 rounded-full border border-background" />
+                        )}
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Open Console</p>
+                    <p>{unreadLogs ? "New logs available" : "Open Console"}</p>
                 </TooltipContent>
             </Tooltip>
 
@@ -447,8 +516,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onConfirm={handleDelete}
         flowName={flowName}
       />
-
-// ...
+      
       <NodeConfigurationSheet
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}

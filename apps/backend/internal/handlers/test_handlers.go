@@ -44,7 +44,7 @@ func TestNodeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get Executor
-	executor, err := nodes.GetExecutor(req.Type)
+	executor, err := nodes.GetExecutor(req.Type, req.Config)
 	if err != nil {
 		http.Error(w, "Unknown node type: "+err.Error(), http.StatusBadRequest)
 		return

@@ -16,7 +16,7 @@ export function SidebarConsole() {
                         </div>
                     )}
                     {logs.map((log, i) => (
-                        <div key={i} className="flex gap-4 font-mono">
+                        <div key={i} className="flex gap-4 font-mono border-b border-white/5 pb-4 last:border-0">
                             <span className="text-slate-500 shrink-0 select-none w-24 pt-0.5 text-sm"> {/* Keep timestamp slightly smaller/cleaner */}
                                 {log.timestamp && new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                             </span>
@@ -26,7 +26,7 @@ export function SidebarConsole() {
                                     {log.type === 'success' && <CheckCircle className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />}
                                     {log.type === 'info' && <Info className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />}
                                     <span className={`
-                                        text-xs font-mono break-words whitespace-pre-wrap leading-relaxed
+                                        text-sm font-mono break-words whitespace-pre-wrap leading-relaxed
                                         ${log.type === 'error' ? 'text-red-300' : ''}
                                         ${log.type === 'success' ? 'text-green-300' : ''}
                                         ${log.type === 'warning' ? 'text-amber-300' : ''}
@@ -36,7 +36,7 @@ export function SidebarConsole() {
                                     </span>
                                 </div>
                                 {log.details && (
-                                    <pre className="mt-2 text-sm text-slate-300 bg-black/40 p-3 rounded-md overflow-x-auto border border-white/5">
+                                    <pre className="mt-2 text-sm text-slate-300 bg-black/40 p-3 rounded-md overflow-x-hidden whitespace-pre-wrap break-all border border-white/5">
                                         {typeof log.details === 'string' 
                                             ? log.details 
                                             : JSON.stringify(log.details, null, 2)}

@@ -10,9 +10,15 @@ type MapNode struct{}
 
 // Execute performs the data transformation.
 func (n *MapNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
+	// 1. Resolve Config using Expression Engine
+	// This ensures {{ steps.foo }} references work correctly
+	engine := NewExpressionEngine()
+
 	mappings, ok := input.Config["mappings"].([]interface{})
 	if !ok {
-		// If no mappings, pass through
+		// If no mappings, pass through input
+		// Or strictly, return empty? Usually pass-through or error.
+		// Let's pass through input data for now.
 		return &NodeResult{
 			Status: "SUCCESS",
 			Output: input.InputData,
@@ -29,14 +35,22 @@ func (n *MapNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, 
 		target, _ := mapping["target"].(string)
 		source, _ := mapping["source"].(string)
 
-		// Simple variable substitution (MVP)
-		// In a real engine, this would use the ExpressionEngine
-		// Here we just check if source exists in InputData
-		if val, exists := input.InputData[source]; exists {
-			result[target] = val
-		} else {
-			// Literal value or missing
+		if target == "" {
+			continue
+		}
+
+		// Evaluate the source expression
+		// If source is like "{{ steps.foo.data }}", engine handles it.
+		// If it's a static string, engine returns it as is.
+		val, err := engine.Evaluate(source, input)
+		if err != nil {
+			// If eval fails, maybe treat as literal or error?
+			// For Map node, we might want to return nil or empty string.
+			// Let's log/continue or just set as is.
+			// But for reliability, let's treat it as the value itself if eval failed (fallback)
 			result[target] = source
+		} else {
+			result[target] = val
 		}
 	}
 

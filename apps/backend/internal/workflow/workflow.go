@@ -34,8 +34,10 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition) (interfa
 		nodeCtx := nodes.NodeContext{
 			WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 			StepID:     node.ID,
-			InputData:  executionState[node.ID], // This needs to be resolved from edges!
-			Config:     node.Data,
+			InputData: map[string]interface{}{
+				"steps": executionState,
+			},
+			Config: node.Data,
 		}
 
 		// TODO: Map inputs from previous steps based on Edges.

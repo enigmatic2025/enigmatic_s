@@ -10,7 +10,7 @@ import (
 // NodeExecutionActivity executes a single node by looking up its executor in the registry.
 func NodeExecutionActivity(ctx context.Context, input nodes.NodeContext) (*nodes.NodeResult, error) {
 	// 1. Get Executor
-	executor, err := nodes.GetExecutor(input.Config["type"].(string))
+	executor, err := nodes.GetExecutor(input.Config["type"].(string), input.Config)
 	if err != nil {
 		return &nodes.NodeResult{
 			Status: nodes.StatusFailed,
