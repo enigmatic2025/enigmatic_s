@@ -11,13 +11,33 @@ interface MapConfigProps {
 export function MapConfig({ data, onUpdate }: MapConfigProps) {
   const mappings = data.mappings || [];
 
+  const updateData = (updates: any) => {
+      // Calculate derived schema based on the *future* state
+      const nextMappings = updates.mappings !== undefined ? updates.mappings : mappings;
+      const nextFromArray = updates.fromArray !== undefined ? updates.fromArray : data.fromArray;
+      
+      const sample: Record<string, string> = {};
+      nextMappings.forEach((m: any) => {
+        if (m.target) sample[m.target] = "string"; 
+      });
+      
+      const schema = nextFromArray 
+         ? { data: [sample], count: 0 } 
+         : sample;
+
+      onUpdate({
+          ...updates,
+          lastRunResult: schema
+      });
+  };
+
   const updateField = (field: string, value: any) => {
-    onUpdate({ [field]: value });
+    updateData({ [field]: value });
   };
 
   const addMapping = () => {
     const newMappings = [...mappings, { target: "", source: "" }];
-    onUpdate({
+    updateData({
         mappings: newMappings,
         description: `Mapping ${newMappings.length} fields`
     });
@@ -25,7 +45,7 @@ export function MapConfig({ data, onUpdate }: MapConfigProps) {
 
   const removeMapping = (index: number) => {
     const newMappings = mappings.filter((_: any, i: number) => i !== index);
-    onUpdate({
+    updateData({
         mappings: newMappings,
         description: `Mapping ${newMappings.length} fields`
     });
@@ -34,7 +54,10 @@ export function MapConfig({ data, onUpdate }: MapConfigProps) {
   const updateMapping = (index: number, field: string, value: string) => {
     const newMappings = [...mappings];
     newMappings[index] = { ...newMappings[index], [field]: value };
-    updateField("mappings", newMappings);
+    // updateField calls updateData via recursive logic if I'm not careful.
+    // updateField uses updateData.
+    // Here we want to update mappings directly.
+    updateData({ mappings: newMappings });
   };
 
   return (
@@ -44,7 +67,7 @@ export function MapConfig({ data, onUpdate }: MapConfigProps) {
       <div className="space-y-4">
         {/* Source Array Input */}
         <div className="space-y-2">
-            <Label>Array to Process</Label>
+            <Label>Input Array (Optional)</Label>
             <div className="flex gap-2">
                 <Input 
                     value={data.fromArray || ""}
@@ -54,7 +77,7 @@ export function MapConfig({ data, onUpdate }: MapConfigProps) {
                 />
             </div>
             <p className="text-[10px] text-muted-foreground">
-                If provided, the mapping below will run for <strong>each item</strong> in this list. Use <code>{"{{ item }}"}</code> to reference the current item.
+                Select an array to process multiple items. Leave empty to process a single object. Use <code>{"{{ item }}"}</code> to reference the current item in array mode.
             </p>
         </div>
 

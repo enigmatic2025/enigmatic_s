@@ -1,12 +1,11 @@
-"use client";
-
 import { useFlowStore } from "@/lib/stores/flow-store";
 import { toast } from "sonner";
-import { ChevronRight, ChevronDown, Copy, Search, Braces, Trash2 } from "lucide-react";
+import { ChevronRight, ChevronDown, Copy, Search, Braces, Trash2, Settings2 } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: number }) {
+function JsonTree({ data, path, level = 0, contextLoopSource }: { data: any; path: string; level?: number; contextLoopSource?: string | null }) {
   const [expanded, setExpanded] = useState(false);
 
   const handleCopy = (text: string) => {
@@ -55,16 +54,42 @@ function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: 
      return <div className="pl-4 py-1 text-xs text-muted-foreground italic">Empty {isArray ? "Array" : "Object"}</div>;
   }
 
+  // Schema View for Arrays: Collapse items into a single representative structure
+  if (isArray) {
+      const value = data[0];
+      const isPrimitive = value === null || typeof value !== "object";
+      
+      // SMART CONTEXT LOGIC:
+      // If this array matches the one actively configured in the loop settings, use 'item' reference.
+      // Otherwise, default to '[0]' (absolute reference).
+      const isLoopTarget = contextLoopSource === path;
+      const newPath = isLoopTarget ? "item" : `${path}[0]`;
+      const label = isLoopTarget ? "[Structure] (Loop Item)" : "[Structure] (First Item)";
+      const highlightClass = isLoopTarget ? "text-purple-600 dark:text-purple-400 font-medium" : "text-muted-foreground";
+
+      return (
+         <div className="pl-2">
+            <div className="border-l border-border/40 ml-1">
+                <div className="flex flex-col">
+                   <div className={`flex items-center gap-1 py-1 px-1 rounded hover:bg-muted/50 cursor-pointer ${highlightClass}`}>
+                     <JsonRow 
+                       label={label} 
+                       value={value} 
+                       path={newPath}
+                       isPrimitive={isPrimitive}
+                       contextLoopSource={contextLoopSource}
+                     />
+                   </div>
+                </div>
+            </div>
+         </div>
+      );
+  }
+
   return (
     <div className="pl-2">
       {keys.map((key) => {
-        // Construct new path: 
-        // if array: path[0] 
-        // if object: path.key (handling special characters if needed)
-        const isArrayKey = /^\d+$/.test(key);
-        const newPath = isArray 
-          ? `${path}[${key}]` 
-          : /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) 
+        const newPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) 
              ? `${path}.${key}` 
              : `${path}["${key}"]`;
         
@@ -80,8 +105,6 @@ function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: 
                     // Only toggle expansion for objects/arrays. Primitives are draggable leaves.
                     if (!isPrimitive) {
                         e.stopPropagation();
-                        // We need a local state for each key row to expand/collapse
-                        // Since we are mapping, we might need a sub-component for the Row if we want individual state
                     }
                  }}
                >
@@ -91,6 +114,7 @@ function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: 
                    value={value} 
                    path={newPath}
                    isPrimitive={isPrimitive}
+                   contextLoopSource={contextLoopSource}
                  />
                </div>
              </div>
@@ -101,8 +125,8 @@ function JsonTree({ data, path, level = 0 }: { data: any; path: string; level?: 
   );
 }
 
-// Sub-component for individual rows to manage their own expansion state
-function JsonRow({ label, value, path, isPrimitive }: { label: string; value: any; path: string; isPrimitive: boolean }) {
+// Sub-component for individual rows
+function JsonRow({ label, value, path, isPrimitive, contextLoopSource }: { label: string; value: any; path: string; isPrimitive: boolean; contextLoopSource?: string | null }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleCopy = (text: string) => {
@@ -125,8 +149,8 @@ function JsonRow({ label, value, path, isPrimitive }: { label: string; value: an
             >
                 <div className="w-1 h-1 rounded-full bg-muted-foreground/30 mr-1" />
                 <span className="text-xs font-mono text-muted-foreground group-hover:text-primary transition-colors">{label}:</span>
-                <span className="text-xs font-mono text-green-600 dark:text-green-400 truncate max-w-[150px]">
-                    {value === null ? "null" : (typeof value === 'string' ? `"${value}"` : String(value))}
+                <span className="text-[10px] font-mono font-semibold text-orange-600/70 dark:text-orange-400/80 truncate max-w-[150px]">
+                    {value === null ? "Null" : (typeof value).charAt(0).toUpperCase() + (typeof value).slice(1)}
                 </span>
                 <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 ml-auto" />
             </div>
@@ -162,17 +186,59 @@ function JsonRow({ label, value, path, isPrimitive }: { label: string; value: an
                     </button>
                 </div>
             </div>
-            {isOpen && <JsonTree data={value} path={path} />}
+            {isOpen && <JsonTree data={value} path={path} contextLoopSource={contextLoopSource} />}
         </div>
     );
 }
 
 
+// Default schemas for known triggers
+const DEFAULT_SCHEMAS: Record<string, any> = {
+    'schedule': {
+        timestamp: Date.now(),
+        iso: new Date().toISOString(),
+        hour: new Date().getHours(),
+        minute: new Date().getMinutes(),
+        dayOfWeek: new Date().getDay(),
+        dayOfMonth: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+        cron: "0 9 * * 1-5" 
+    },
+    'manual-trigger': {
+        timestamp: Date.now(),
+        user_id: "usr_mock123",
+        payload: { "key": "value" }
+    },
+    'webhook': {
+        body: { "message": "Hello World" },
+        headers: { "content-type": "application/json" },
+        query: { "id": "123" },
+        method: "POST"
+    }
+};
+
 export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
-  const { nodes, variables, setVariable, deleteVariable } = useFlowStore();
+  const { nodes, variables, setVariable, deleteVariable, setSelectedNodeId, selectedNodeId } = useFlowStore();
   const [newVarName, setNewVarName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   
+  // DETERMINE SMART CONTEXT
+  const selectedNode = nodes.find(n => n.id === selectedNodeId);
+  let contextLoopSource: string | null = null;
+  
+  if (selectedNode) {
+     if (selectedNode.type === 'MAP' && selectedNode.data.fromArray) {
+         // Extract content from {{ steps.foo }} -> steps.foo
+         const match = selectedNode.data.fromArray.match(/\{\{\s*(.*?)\s*\}\}/);
+         contextLoopSource = match ? match[1] : selectedNode.data.fromArray;
+     } else if (selectedNode.type === 'FILTER' && selectedNode.data.settings?.arrayVariable) {
+         const match = selectedNode.data.settings.arrayVariable.match(/\{\{\s*(.*?)\s*\}\}/);
+         contextLoopSource = match ? match[1] : selectedNode.data.settings.arrayVariable;
+     }
+     // Can trigger re-renders, but fine for Sidebar
+  }
+
   const filteredNodes = nodes.filter(n => {
        const term = searchQuery.toLowerCase();
        const matchesName = n.data.label?.toLowerCase().includes(term);
@@ -182,7 +248,6 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
 
   const handleAddVariable = () => {
       if (!newVarName.trim()) return;
-      // Default to empty string or null
       setVariable(newVarName.trim(), null);
       setNewVarName("");
       setIsAdding(false);
@@ -272,7 +337,8 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
             
             {filteredNodes.map((node) => {
                 const runResult = node.data?.lastRunResult;
-                const hasRunData = runResult !== undefined;
+                const schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[node.type || ""];
+                const hasData = schema !== undefined;
                 
                 return (
                     <div key={node.id} className="border rounded-md bg-card overflow-hidden">
@@ -286,17 +352,34 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                     </div>
                     
                     <div className="p-2 bg-background min-h-[50px] max-h-[300px] overflow-y-auto">
-                        <div className="text-xs text-muted-foreground mb-2 px-1">
-                            {hasRunData 
-                                ? <span className="text-green-600 flex items-center gap-1">● Live Data</span> 
-                                : <span className="italic opacity-70">Run node to see variables</span>
-                            }
-                        </div>
-                        
-                        <JsonTree 
-                            data={hasRunData ? runResult : { id: node.id, ...node.data }} 
-                            path={`steps.${node.id}`} 
-                        />
+                        {hasData ? (
+                             <JsonTree 
+                                data={schema} 
+                                path={`steps.${node.id}`} 
+                                contextLoopSource={contextLoopSource}
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-6 px-4 space-y-3 text-center opacity-80 hover:opacity-100 transition-opacity">
+                                <div className="p-2 rounded-full bg-muted">
+                                    <Braces className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-medium text-foreground">No Data Available</p>
+                                    <p className="text-[10px] text-muted-foreground leading-tight">
+                                        Run this step or define a schema to see variables.
+                                    </p>
+                                </div>
+                                <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="h-7 text-xs w-full gap-2 border-dashed hover:border-solid hover:bg-muted/50"
+                                    onClick={() => setSelectedNodeId(node.id)}
+                                >
+                                    <Settings2 className="h-3 w-3" />
+                                    Configure Schema
+                                </Button>
+                            </div>
+                        )}
                     </div>
                     </div>
                 );

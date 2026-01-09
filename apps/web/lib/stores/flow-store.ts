@@ -33,6 +33,8 @@ interface FlowStore {
     clearExecutionTrace: () => void;
     addLog: (log: LogEntry) => void;
     clearLogs: () => void;
+    selectedNodeId: string | null;
+    setSelectedNodeId: (id: string | null) => void;
 }
 
 export const useFlowStore = create<FlowStore>((set) => ({
@@ -57,4 +59,6 @@ export const useFlowStore = create<FlowStore>((set) => ({
         logs: [...state.logs, { ...log, id: Math.random().toString(36).substring(7), timestamp: Date.now() }]
     })),
     clearLogs: () => set({ logs: [] }),
+    selectedNodeId: null,
+    setSelectedNodeId: (id) => set({ selectedNodeId: id }),
 }));

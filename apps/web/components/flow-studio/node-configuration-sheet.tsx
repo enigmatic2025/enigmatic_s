@@ -267,7 +267,15 @@ export function NodeConfigurationSheet({
                                     <ConfigComponent 
                                         key={selectedNode.id}
                                         data={formData} 
-                                        onUpdate={(newData: any) => setFormData({ ...formData, ...newData })} 
+                                        onUpdate={(newData: any) => {
+                                            const updated = { ...formData, ...newData };
+                                            setFormData(updated);
+                                            
+                                            // Live-update the store for schema changes (so Sidebar updates immediately)
+                                            if (newData.lastRunResult) {
+                                                onUpdate(selectedNode.id, updated);
+                                            }
+                                        }} 
                                     />
                                 );
                             }

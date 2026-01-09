@@ -69,7 +69,7 @@ export const flowService = {
         return response.json();
     },
 
-    async testAction(nodeData: any) {
+    async testAction(nodeData: any, context: any = {}) {
         // nodeData usually comes from the React Flow node object
         // We need to transform it into what the backend expects: { type, config, input }
 
@@ -79,7 +79,8 @@ export const flowService = {
             input: {
                 // For testing, we can pass some mock input or the body from the test tab
                 ...nodeData.data,
-                ...nodeData.input // If we have input simulation later
+                ...nodeData.input, // If we have input simulation later
+                ...context         // Inject global context (e.g. { steps: ... })
             }
         };
 

@@ -26,6 +26,17 @@ func (e *ExpressionEngine) Evaluate(expression string, ctx NodeContext) (interfa
 	// We use a non-greedy match (.*?)
 	re := regexp.MustCompile(`\{\{\s*(.*?)\s*\}\}`)
 
+	// Check if the ENTIRE string is just one expression (e.g. "{{ steps.foo }}")
+	// If so, we return the raw interface{} value to preserve types (maps, slices)
+	trimmed := strings.TrimSpace(expression)
+	loc := re.FindStringIndex(trimmed)
+	if loc != nil && loc[0] == 0 && loc[1] == len(trimmed) {
+		match := re.FindStringSubmatch(trimmed)
+		content := match[1]
+		return e.resolvePath(content, ctx)
+	}
+
+	// Otherwise, it's string interpolation (e.g. "Hello {{ steps.name }}")
 	// ReplaceAllStringFunc lets us handle each match
 	var err error
 	result := re.ReplaceAllStringFunc(expression, func(match string) string {
@@ -35,7 +46,7 @@ func (e *ExpressionEngine) Evaluate(expression string, ctx NodeContext) (interfa
 		val, evalErr := e.resolvePath(content, ctx)
 		if evalErr != nil {
 			err = evalErr // Capture error
-			return match  // Return original on error (or empty string?) - preventing crash
+			return match  // Return original on error
 		}
 		return fmt.Sprintf("%v", val)
 	})
@@ -64,15 +75,11 @@ func (e *ExpressionEngine) resolvePath(path string, ctx NodeContext) (interface{
 	switch root {
 	case "steps":
 		// steps.NodeName.field...
-		// In a real execution, we would look up the "Execution State" passed in ctx.
-		// For now, let's assume ctx.InputData contains a "steps" key which mimics the global state.
-		// If not found, we fall back to looking directly in InputData for backward compatibility.
+		// Step Data Access: Access data from previous steps via 'steps.StepID'.
+		// If 'steps' is not explicitly in InputData, we fallback to treating InputData as the step container.
 		if steps, ok := ctx.InputData["steps"].(map[string]interface{}); ok {
 			current = steps
 		} else {
-			// Fallback: treat InputData as the root for "steps" (though typically InputData is just the previous node's output)
-			// This part depends heavily on how the Workflow constructs NodeContext.
-			// Let's assume for this MVP that the Workflow passes the ENTIRE execution state history in `InputData["steps"]`.
 			return nil, fmt.Errorf("steps context not found in input")
 		}
 	case "input":
@@ -80,57 +87,75 @@ func (e *ExpressionEngine) resolvePath(path string, ctx NodeContext) (interface{
 		current = ctx.InputData
 	case "config":
 		current = ctx.Config
+	case "item":
+		// Loop item context
+		if val, ok := ctx.InputData["item"]; ok {
+			current = val
+		} else {
+			return nil, fmt.Errorf("item context not found (are you inside a loop?)")
+		}
 	default:
-		return nil, fmt.Errorf("unknown root object: %s (expected steps, input, or config)", root)
+		return nil, fmt.Errorf("unknown root object: %s (expected steps, input, config, or item)", root)
 	}
 
 	// 2. Traverse
-	// We started at index 0 (root), so we loop from 1
-	for i := 1; i < len(parts); i++ {
+	return e.Traverse(current, parts[1:])
+}
+
+// Traverse navigates an object using a list of path parts (keys or array indices)
+func (e *ExpressionEngine) Traverse(current interface{}, parts []string) (interface{}, error) {
+	for i := 0; i < len(parts); i++ {
 		key := parts[i]
-		
+
 		// Check for array indexing logic e.g. "users[0]"
 		arrayMatch := regexp.MustCompile(`^(\w+)\[(\d+)\]$`).FindStringSubmatch(key)
 		if len(arrayMatch) > 0 {
 			key = arrayMatch[1]
 			index := arrayMatch[2]
-			
+
 			// 1. Get Array
 			m, ok := current.(map[string]interface{})
 			if !ok {
-				return nil, fmt.Errorf("cannot access property '%s' on non-map object at '%s'", key, strings.Join(parts[:i], "."))
+				// Handle case where we try to access property on nil or non-map
+				if current == nil {
+					return nil, fmt.Errorf("cannot access property '%s' on nil", key)
+				}
+				return nil, fmt.Errorf("cannot access property '%s' on non-map object (type %T)", key, current)
 			}
-			
+
 			arrVal, exists := m[key]
 			if !exists {
-				return nil, fmt.Errorf("property '%s' not found at '%s'", key, strings.Join(parts[:i], "."))
+				return nil, fmt.Errorf("property '%s' not found", key)
 			}
-			
+
 			// 2. Access Index
 			arr, ok := arrVal.([]interface{})
 			if !ok {
-				 return nil, fmt.Errorf("property '%s' is not an array", key)
+				return nil, fmt.Errorf("property '%s' is not an array", key)
 			}
-			
+
 			// Convert index string to int
 			idx := 0
 			fmt.Sscanf(index, "%d", &idx)
-			
+
 			if idx < 0 || idx >= len(arr) {
 				return nil, fmt.Errorf("array index %d out of bounds for '%s'", idx, key)
 			}
-			
+
 			current = arr[idx]
 		} else {
 			// Normal Map Access
 			m, ok := current.(map[string]interface{})
 			if !ok {
-				return nil, fmt.Errorf("cannot access property '%s' on non-map object at '%s'", key, strings.Join(parts[:i], "."))
+				if current == nil {
+					return nil, fmt.Errorf("cannot access property '%s' on nil", key)
+				}
+				return nil, fmt.Errorf("cannot access property '%s' on non-map object (type %T)", key, current)
 			}
-			
+
 			val, exists := m[key]
 			if !exists {
-				return nil, fmt.Errorf("property '%s' not found at '%s'", key, strings.Join(parts[:i], "."))
+				return nil, fmt.Errorf("property '%s' not found", key)
 			}
 			current = val
 		}

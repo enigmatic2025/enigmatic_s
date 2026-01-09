@@ -139,17 +139,28 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   };
 
   // Sync with global store for Sidebar
-  const { syncNodes, syncEdges, setExecutionTrace, clearExecutionTrace } = useFlowStore();
+  const { syncNodes, syncEdges, setExecutionTrace, clearExecutionTrace, selectedNodeId, setSelectedNodeId } = useFlowStore();
   
   useEffect(() => {
     syncNodes(nodes);
     syncEdges(edges);
   }, [nodes, edges, syncNodes, syncEdges]);
 
+  // Handle external selection (e.g. from Sidebar)
+  useEffect(() => {
+      if (selectedNodeId) {
+          const node = nodes.find(n => n.id === selectedNodeId);
+          if (node) {
+              setSelectedNode(node);
+              setIsSheetOpen(true);
+          }
+      }
+  }, [selectedNodeId, nodes]);
+
   const onNodeClick = useCallback((event: React.MouseEvent, node: any) => {
-    setSelectedNode(node);
-    setIsSheetOpen(true);
-  }, []);
+    // We update the store, which triggers the effect above to open the sheet
+    setSelectedNodeId(node.id);
+  }, [setSelectedNodeId]);
 
   const handleNameBlur = () => {
     setIsEditingName(false);
@@ -552,7 +563,10 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       
       <NodeConfigurationSheet
         isOpen={isSheetOpen}
-        onClose={() => setIsSheetOpen(false)}
+        onClose={() => {
+            setIsSheetOpen(false);
+            setSelectedNodeId(null); 
+        }}
         selectedNode={selectedNode}
         onUpdate={onUpdateNode}
         onTest={flowService.testAction}
