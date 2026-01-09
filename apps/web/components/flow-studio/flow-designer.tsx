@@ -262,14 +262,47 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                       // We can use the 'nodes' array to look up names
                       const nodesMap = new Map(nodes.map(n => [n.id, n]));
 
+                      // Sort trace data by execution order (BFS from Trigger)
+                      const getSortedOrder = () => {
+                          const startNode = nodes.find(n => n.type === 'manual-trigger' || n.type === 'schedule' || n.type === 'webhook');
+                          if (!startNode) return Object.keys(traceData);
+
+                          const sorted: string[] = [];
+                          const queue = [startNode.id];
+                          const visited = new Set<string>();
+
+                          while (queue.length > 0) {
+                              const id = queue.shift()!;
+                              if (visited.has(id)) continue;
+                              visited.add(id);
+                              sorted.push(id);
+
+                              // Find connected target nodes
+                              const children = edges
+                                  .filter(e => e.source === id)
+                                  .map(e => e.target);
+                              
+                              queue.push(...children);
+                          }
+                          // Append any untraversed nodes that are in traceData
+                          Object.keys(traceData).forEach(id => {
+                              if (!visited.has(id)) sorted.push(id);
+                          });
+                          
+                          return sorted;
+                      };
+
+                      const sortedNodeIds = getSortedOrder();
+
                       addLog({ message: "Workflow Completed Successfully", type: "success" });
 
-                      Object.entries(traceData).forEach(([nodeId, result]: [string, any]) => {
+                      sortedNodeIds.forEach(nodeId => {
+                          const result = traceData[nodeId];
+                          if (!result) return; // Skip if node has no trace data
+
                           const node = nodesMap.get(nodeId);
                           const nodeName = node?.data?.label || node?.type || nodeId;
                           
-                          // Convert output to string if it's an object to avoid giant JSON blobs in the 'message'
-                          // actually 'details' property is best for the JSON.
                           addLog({ 
                               message: `Step '${nodeName}' executed`, 
                               type: "info", 

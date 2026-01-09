@@ -15,13 +15,11 @@ func (n *MapNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, 
 	engine := NewExpressionEngine()
 
 	mappings, ok := input.Config["mappings"].([]interface{})
-	if !ok {
-		// If no mappings, pass through input
-		// Or strictly, return empty? Usually pass-through or error.
-		// Let's pass through input data for now.
+	if !ok || len(mappings) == 0 {
+		// If no mappings, return empty object (as promised by UI)
 		return &NodeResult{
-			Status: "SUCCESS",
-			Output: input.InputData,
+			Status: StatusSuccess,
+			Output: map[string]interface{}{},
 		}, nil
 	}
 
