@@ -14,7 +14,7 @@ import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal } from "l
 import { useRouter, useParams } from "next/navigation";
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
-import { NodeConfigurationModal } from "@/components/flow-studio/node-configuration-modal";
+import { NodeConfigurationSheet } from "@/components/flow-studio/node-configuration-sheet";
 import { ConsoleModal } from "@/components/flow-studio/modals/console-modal";
 import {
   Tooltip,
@@ -448,7 +448,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         flowName={flowName}
       />
 
-      <NodeConfigurationModal
+// ...
+      <NodeConfigurationSheet
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}
         selectedNode={selectedNode}

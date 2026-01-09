@@ -18,7 +18,7 @@ export function NodeExecutionConsole({
   if (!testResult || !isVisible) return null;
 
   return (
-    <div className="flex-none border-t bg-muted/10 flex flex-col h-[40%] min-h-[200px] shadow-inner transition-all w-full">
+    <div className="flex-none border-t bg-muted/10 flex flex-col h-[300px] shadow-inner transition-all w-full">
       {/* Console Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b bg-background/80 backdrop-blur-sm select-none">
         <div className="flex items-center gap-2" onClick={onClose}>
@@ -65,7 +65,14 @@ export function NodeExecutionConsole({
             background: 'transparent', 
             minHeight: '100%',
           }}
-          wrapLongLines={true}
+          wrapLongLines={false}
+          codeTagProps={{
+            style: {
+                whiteSpace: 'pre',
+                wordBreak: 'normal',
+                overflowWrap: 'normal'
+            }
+          }}
         >
           {JSON.stringify(testResult.Output || testResult, null, 2)}
         </SyntaxHighlighter>

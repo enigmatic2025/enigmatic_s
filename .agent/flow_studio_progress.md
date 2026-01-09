@@ -3,7 +3,7 @@
 ## Completed Features
 - [x] **Canvas**: React Flow integration with custom node types.
 - [x] **Node Registry**: Centralized registry for node types and configurations.
-- [x] **Node Configuration**: Modal-based configuration with dynamic forms.
+- [x] **Node Configuration**: Right-side "Floating Inspector" Sheet (Non-blocking).
 - [x] **Testing**: "Test Action" tab in configuration modal.
 - [x] **Backend Execution**: Go backend with Temporal workflow engine (stub).
 - [x] **API Proxy**: Next.js API Proxy to handle backend communication securely.

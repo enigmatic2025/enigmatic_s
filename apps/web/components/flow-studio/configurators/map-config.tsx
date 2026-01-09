@@ -53,7 +53,7 @@ export function MapConfig({ data, onUpdate }: MapConfigProps) {
       <div className="space-y-4">
         {/* Source Array Input */}
         <div className="space-y-2">
-            <Label>From Array (Optional)</Label>
+            <Label>Array to Process</Label>
             <div className="flex gap-2">
                 <Input 
                     value={data.fromArray || ""}

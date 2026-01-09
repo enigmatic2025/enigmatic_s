@@ -203,19 +203,18 @@ Standardized design for flow nodes (Triggers, Actions).
   - **Status**: A visual indicator (e.g., "Ready" with a green dot) or a call to action (e.g., "Click to configure" in orange).
   - **No Duplicate Titles**: The node title should NOT be repeated in the body.
 
-### Configuration Modal
-
-Standardized modal for node settings.
+### Configuration Inspector (Floating Sheet)
+standardized right-side panel for node settings.
 
 - **Layout**:
-  - `DialogContent`: Fixed height `h-[85vh]`, max width `sm:max-w-[600px]`.
-  - **Header/Footer**: Fixed (sticky), `p-6`.
-  - **Body**: Scrollable (`overflow-y-auto`), `p-6 pb-20`.
-- **Typography**:
-  - Section Headers: `text-sm font-medium`.
-  - Labels: `text-sm font-medium`.
+  - `SheetContent`: `w-[800px]`, `h-[calc(100vh-3rem)]`, `right-6`, `top-6`, `bottom-6`.
+  - **Style**: Floating Card look.
+    - `rounded-xl`, `border`, `shadow-sm`.
+    - `bg-background`.
+    - **Non-blocking**: `overlay={false}`, `modal={false}` allows interaction with the rest of the app (e.g. dragging variables).
+  - **Header/Footer**: Fixed, `p-6`.
+  - **Body**: Scrollable with `overflow-y-auto`.
 - **Components**:
-  - Inputs/Textareas: Standard shadcn components.
-  - Key-Value Lists: For headers/params.
-  - **Complex Selectors**: Use `Command` + `Popover` for searchable lists (e.g., Timezones).
+  - **Code Console**: Fixed height (`h-[300px]`), horizontal scroll for long lines (`white-space: pre`).
+  - **Form**: Standard shadcn components.
 ```

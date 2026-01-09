@@ -134,16 +134,33 @@ function JsonRow({ label, value, path, isPrimitive }: { label: string; value: an
     }
 
     return (
+
         <div className="w-full">
             <div 
-                className="flex items-center gap-1 w-full hover:text-primary transition-colors select-none"
+                className="flex items-center gap-1 w-full hover:bg-muted/50 rounded pr-1 group select-none cursor-pointer"
                 onClick={() => setIsOpen(!isOpen)}
+                draggable
+                onDragStart={(e) => onDragStart(e, `{{ ${path} }}`)}
             >
-                {isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-                <span className="text-xs font-mono font-medium">{label}</span>
-                <span className="text-[10px] text-muted-foreground ml-2">
+                {isOpen ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
+                <span className="text-xs font-mono font-medium truncate">{label}</span>
+                <span className="text-[10px] text-muted-foreground ml-2 truncate flex-1 block">
                     {Array.isArray(value) ? `Array(${value.length})` : `{...}`}
                 </span>
+                
+                {/* Actions for Object/Array */}
+                <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopy(`{{ ${path} }}`);
+                        }}
+                        className="p-1 hover:text-foreground text-muted-foreground"
+                        title="Copy Path"
+                    >
+                        <Copy className="h-3 w-3" />
+                    </button>
+                </div>
             </div>
             {isOpen && <JsonTree data={value} path={path} />}
         </div>
