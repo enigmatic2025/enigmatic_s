@@ -64,6 +64,27 @@ Nodal is a Business Process Platform (BPP) designed to bridge the gap between vi
     -   **Collaboration**: Commenting on nodes, attaching files.
     -   **Status Tracking**: See exactly where the Action Flow is, historical timeline, and blockers.
 
+### 3.3. Work Orchestration (The "Hybrid" Engine)
+**The Nodal Differentiation**: Unlike purely automated tools (Zapier) or pure BPPs (ServiceNow), Nodal unifies both via the **Parent/Child Pattern**.
+
+#### 3.3.1. The "Dispatcher" (Parent Flow)
+-   **Role**: Automation / batch processing.
+-   **Behavior**: Stateless, high-throughput.
+-   **Example**: "Daily SQL Query triggers 50 risk reviews."
+
+#### 3.3.2. The "Case" (Child Flow)
+-   **Role**: Business Process / Long-running state.
+-   **Behavior**: Stateful, waits for humans, tracks specific entities (e.g., "Employee #123").
+-   **Key Feature**: **User Task Node**.
+    -   Pauses execution.
+    -   Generates an Inbox Item.
+    -   Resumes only when a human completes the form.
+
+#### 3.3.3. The Inbox (Unified Workspace)
+-   A dedicated simplified UI for non-technical users.
+-   Shows: "Tasks Assigned to Me", "Team Workload", "Process Status".
+-   No nodes, no graphs—just Forms and Chat.
+
 ### 3.3. Execution Engine
 -   **State Management**: Must support long-running processes (days/weeks).
     -   Persistence of workflow state during "wait" phases.
