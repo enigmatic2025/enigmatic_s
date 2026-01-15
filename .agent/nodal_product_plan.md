@@ -153,10 +153,10 @@ To ensure clarity and scalability, Nodal separates specific concerns into two di
 -   **Language**: **Go (Golang)**.
 -   **Workflow Engine**: **Temporal.io** (Go SDK).
     -   **Implemented**: The backend is fully integrated with Temporal for durable execution.
-    -   **Infrastructure**: Runs via Docker Compose, including:
-        -   **Temporal Server**: The core engine.
-        -   **PostgreSQL**: Stores Temporal's internal state (Tasks, Workflow History).
-        -   **Elasticsearch**: Powers Temporal's advanced visibility features.
+    -   **Implemented**: The backend is fully integrated with Temporal for durable execution.
+    -   **Infrastructure Strategy**:
+        -   **MVP / Free Tier**: "All-in-One" Container (Backend + `temporal server start-dev` embedded).
+        -   **Production / Scale**: Backend Scaled Horizontally + **Temporal Cloud** (Managed Service).
 -   **Node Execution**:
     -   **Registry Pattern**: All nodes are registered in `internal/nodes/registry.go`.
     -   **Dynamic Loading**: The `NodeExecutionActivity` dynamically looks up the correct executor based on the node type.
