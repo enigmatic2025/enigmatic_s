@@ -2,13 +2,15 @@ FROM golang:1.23-alpine
 
 WORKDIR /app
 
-COPY go.mod ./
-# COPY go.sum ./ # Uncomment when we have dependencies
-# RUN go mod download
+# Optimization: Disable CGO for static build and lower memory usage (Crucial for free tier)
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+
+COPY go.mod go.sum ./
+RUN go mod download
 
 COPY . .
 
-RUN go mod tidy
 RUN go build -o /usr/local/bin/backend-api ./cmd/api
 
 CMD ["/usr/local/bin/backend-api"]
