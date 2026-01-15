@@ -11,5 +11,6 @@ echo "Waiting for Temporal to start..."
 sleep 10
 
 # Start the Backend Application
+# use 'exec' so the Go process replaces the shell and receives signals (SIGTERM)
 echo "Starting Backend API..."
-/usr/local/bin/backend-api
+exec /usr/local/bin/backend-api

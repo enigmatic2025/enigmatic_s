@@ -155,8 +155,13 @@ To ensure clarity and scalability, Nodal separates specific concerns into two di
     -   **Implemented**: The backend is fully integrated with Temporal for durable execution.
     -   **Implemented**: The backend is fully integrated with Temporal for durable execution.
     -   **Infrastructure Strategy**:
-        -   **MVP / Free Tier**: "All-in-One" Container (Backend + `temporal server start-dev` embedded).
+        -   **MVP / Free Tier (Implemented)**: "All-in-One" Container (Backend + `temporal server start-dev` embedded script).
+            -   **Entrypoint**: `start.sh` manages both processes in a single container to stay within platform limits (Koyeb Free Tier).
         -   **Production / Scale**: Backend Scaled Horizontally + **Temporal Cloud** (Managed Service).
+    -   **API Gateway Pattern**:
+        -   Frontend uses a Next.js Rewrite/Proxy (`/api/proxy`) to forward requests to the Backend.
+        -   **Security**: Prevents CORS issues and hides the internal Backend URL (`koyeb.app`) from the public.
+        -   **Headers**: The Proxy aggressively sanitizes headers (`Host`, `Content-Encoding`) to ensure compatibility with Cloudflare/Koyeb routing.
 -   **Node Execution**:
     -   **Registry Pattern**: All nodes are registered in `internal/nodes/registry.go`.
     -   **Dynamic Loading**: The `NodeExecutionActivity` dynamically looks up the correct executor based on the node type.

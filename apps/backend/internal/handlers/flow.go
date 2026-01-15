@@ -73,8 +73,8 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 		"org_id":           req.OrgID,
 		"name":             req.Name,
 		"description":      req.Description,
-		"draft_definition": req.Definition, // API 'definition' maps to DB 'draft_definition'
-		"definition":       req.Definition, // REQUIRED: Satisfy NOT NULL constraint
+		"draft_definition": req.Definition,
+		"definition":       req.Definition, // COMPATIBILITY: The DB schema requires 'definition' (NOT NULL). We mirror draft here to satisfy it.
 		"variables_schema": req.VariablesSchema,
 		"is_active":        false, // Draft by default
 		"version":          1,
