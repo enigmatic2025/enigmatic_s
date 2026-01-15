@@ -74,6 +74,7 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 		"name":             req.Name,
 		"description":      req.Description,
 		"draft_definition": req.Definition, // API 'definition' maps to DB 'draft_definition'
+		"definition":       req.Definition, // REQUIRED: Satisfy NOT NULL constraint
 		"variables_schema": req.VariablesSchema,
 		"is_active":        false, // Draft by default
 		"version":          1,

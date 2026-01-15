@@ -13,10 +13,15 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ path:
         ? await request.blob()
         : undefined;
 
+    // Prepare headers: Remove 'host' to avoid SNI/VirtualHost mismatches at Koyeb/Cloudflare
+    const forwardedHeaders = new Headers(request.headers);
+    forwardedHeaders.delete('host');
+    forwardedHeaders.delete('connection'); // Let the agent handle connection
+
     try {
         const response = await fetch(url, {
             method: request.method,
-            headers: request.headers,
+            headers: forwardedHeaders,
             body,
             // @ts-ignore
             duplex: 'half',
@@ -34,11 +39,11 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ path:
         });
     } catch (error) {
         console.error('Proxy Error:', error);
-        return NextResponse.json({ 
+        return NextResponse.json({
             error: 'Failed to proxy request',
             debug_url: url,
-            debug_env: BACKEND_URL 
-        }, { 
+            debug_env: BACKEND_URL
+        }, {
             status: 500,
             headers: {
                 'X-Debug-Target-Url': url,
