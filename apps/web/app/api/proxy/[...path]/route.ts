@@ -7,7 +7,6 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ path:
     const path = pathArray.join('/');
     const searchParams = request.nextUrl.search; // Includes '?'
     const url = `${BACKEND_URL}/${path}${searchParams}`;
-    const url = `${BACKEND_URL}/${path}${searchParams}`;
 
     const body = request.method !== 'GET' && request.method !== 'HEAD'
         ? await request.blob()
