@@ -7,7 +7,7 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ path:
     const path = pathArray.join('/');
     const searchParams = request.nextUrl.search; // Includes '?'
     const url = `${BACKEND_URL}/${path}${searchParams}`;
-    console.log(`[Proxy] Forwarding to: ${url}`);
+    const url = `${BACKEND_URL}/${path}${searchParams}`;
 
     const body = request.method !== 'GET' && request.method !== 'HEAD'
         ? await request.blob()
@@ -29,8 +29,9 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ path:
 
         // Copy headers to a new object to avoid read-only issues
         const responseHeaders = new Headers(response.headers);
-        responseHeaders.set('X-Debug-Target-Url', url);
-        responseHeaders.set('X-Debug-Backend-Env', BACKEND_URL);
+        responseHeaders.delete('content-encoding'); // Fetch implementation decodes body, so we must remove this
+        responseHeaders.delete('content-length');   // Let Next.js recalculate length
+        responseHeaders.delete('transfer-encoding');
 
         return new NextResponse(response.body, {
             status: response.status,
@@ -39,17 +40,7 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ path:
         });
     } catch (error) {
         console.error('Proxy Error:', error);
-        return NextResponse.json({
-            error: 'Failed to proxy request',
-            debug_url: url,
-            debug_env: BACKEND_URL
-        }, {
-            status: 500,
-            headers: {
-                'X-Debug-Target-Url': url,
-                'X-Debug-Backend-Env': BACKEND_URL
-            }
-        });
+        return NextResponse.json({ error: 'Failed to proxy request' }, { status: 500 });
     }
 }
 
