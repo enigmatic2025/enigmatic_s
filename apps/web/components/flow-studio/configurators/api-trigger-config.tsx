@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Copy, Check, Plus, Trash2, Info } from 'lucide-react';
-import { useFlowStore } from '@/lib/stores/flow-store';
+import { useParams } from 'next/navigation';
 
 interface ApiTriggerConfigProps {
   nodeId: string;
@@ -15,7 +15,8 @@ interface SchemaField {
 }
 
 export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerConfigProps) {
-  const { flowId } = useFlowStore();
+  const params = useParams();
+  const flowId = params?.id as string;
   const [copied, setCopied] = useState(false);
   
   // Default schema logic
