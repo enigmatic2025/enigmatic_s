@@ -25,6 +25,19 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition) (interfa
 		return nil, err
 	}
 
+	// 0. Record Execution in DB
+	info := workflow.GetInfo(ctx)
+	recordParams := RecordActionFlowParams{
+		FlowID:     flowDefinition.ID,
+		WorkflowID: info.WorkflowExecution.ID,
+		RunID:      info.WorkflowExecution.RunID,
+		InputData:  map[string]interface{}{"source": "api"},
+	}
+
+	if err := workflow.ExecuteActivity(ctx, RecordActionFlowActivity, recordParams).Get(ctx, nil); err != nil {
+		logger.Error("Failed to record action flow", "Error", err)
+	}
+
 	// Store results of each step: NodeID -> Output Data
 	executionState := make(map[string]map[string]interface{})
 

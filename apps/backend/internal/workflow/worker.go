@@ -28,6 +28,7 @@ func StartWorker() {
 
 	w.RegisterWorkflow(NodalWorkflow)
 	w.RegisterActivity(NodeExecutionActivity)
+	w.RegisterActivity(RecordActionFlowActivity)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

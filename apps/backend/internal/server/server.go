@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -9,10 +10,12 @@ import (
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/handlers"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
+	"go.temporal.io/sdk/client"
 )
 
 type Server struct {
-	port string
+	port           string
+	temporalClient client.Client
 }
 
 func NewServer() *http.Server {
@@ -24,8 +27,17 @@ func NewServer() *http.Server {
 	// Initialize Database
 	database.Init()
 
+	// Initialize Temporal Client
+	// Note: In production we might want this to be lazy or retry, but for now we fail fast if Temporal isn't ready
+	// The start.sh script ensures Temporal starts before this if running locally.
+	c, err := client.Dial(client.Options{})
+	if err != nil {
+		log.Printf("Failed to create Temporal client: %v", err)
+	}
+
 	s := &Server{
-		port: port,
+		port:           port,
+		temporalClient: c,
 	}
 
 	// Declare Server config
@@ -79,6 +91,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /flows/", flowHandler.GetFlow)
 	mux.HandleFunc("GET /flows", flowHandler.ListFlows)
 	mux.HandleFunc("DELETE /flows/", flowHandler.DeleteFlow)
+
+	// Execution Routes
+	if s.temporalClient != nil {
+		executeHandler := handlers.NewExecuteFlowHandler(s.temporalClient)
+		mux.HandleFunc("POST /flows/{id}/execute", executeHandler.ExecuteFlow)
+	}
 
 	// Test Routes (Dev only, but useful for frontend dev)
 	mux.HandleFunc("POST /api/test/node", handlers.TestNodeHandler)

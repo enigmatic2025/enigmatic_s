@@ -14,11 +14,14 @@ import { VariableConfig } from '../configurators/variable-config';
 import { SwitchNode } from '../nodes/switch-node';
 import { SwitchConfig } from '../configurators/switch-config';
 import { MapConfig } from '../configurators/map-config';
+import ApiTriggerNode from '../nodes/api-trigger-node';
+import ApiTriggerConfig from '../configurators/api-trigger-config';
 
 export const NODE_TYPES = {
     schedule: ScheduleNode,
     action: ActionNode,
     'manual-trigger': ManualTriggerNode,
+    'api-trigger': ApiTriggerNode,
     condition: ConditionNode,
     loop: LoopNode,
     variable: VariableNode,
@@ -29,6 +32,7 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
     'http': HttpRequestConfig,
     'manual-trigger': ManualTriggerConfig,
     'schedule': ScheduleTriggerConfig,
+    'api-trigger': ApiTriggerConfig,
     'condition': ConditionConfig,
     'filter': FilterConfig,
     'loop': LoopConfig,
@@ -51,6 +55,7 @@ export const ACTION_NAMES: Record<string, string> = {
 
     default: "Action",
     'manual-trigger': "Manual Trigger",
+    'api-trigger': "Trigger: Create Flow",
     schedule: "Schedule"
 };
 

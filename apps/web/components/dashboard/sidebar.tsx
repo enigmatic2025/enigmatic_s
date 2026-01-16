@@ -240,6 +240,13 @@ export function Sidebar({
                           bgColorClass="bg-blue-500/10"
                           dataTransferType="schedule"
                         />
+                        <SidebarDraggableItem
+                          label="Trigger: Create Flow"
+                          icon={Zap}
+                          iconColorClass="text-emerald-500"
+                          bgColorClass="bg-emerald-500/10"
+                          dataTransferType="api-trigger"
+                        />
                       </div>
                     )}
                   </SidebarSection>
