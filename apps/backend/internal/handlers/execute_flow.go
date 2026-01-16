@@ -45,18 +45,23 @@ func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request)
 	// We need the 'published_definition' ideally, but for now we'll use 'draft_definition' if published is missing
 	// or just 'definition' based on the Dual-Write strategy.
 	dbClient := database.GetClient()
-	var flow struct {
+	var flows []struct {
 		ID              string                 `json:"id"`
 		Name            string                 `json:"name"`
 		Definition      map[string]interface{} `json:"definition"` // Compatibility column
 		VariablesSchema []interface{}          `json:"variables_schema"`
 	}
 
-	err := dbClient.DB.From("flows").Select("id, name, definition, variables_schema").Eq("id", flowID).Single().Execute(&flow)
+	err := dbClient.DB.From("flows").Select("id, name, definition, variables_schema").Eq("id", flowID).Execute(&flows)
 	if err != nil {
-		http.Error(w, "Flow not found: "+err.Error(), http.StatusNotFound)
+		http.Error(w, "Error fetching flow: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if len(flows) == 0 {
+		http.Error(w, "Flow not found", http.StatusNotFound)
+		return
+	}
+	flow := flows[0]
 
 	// 4. Validate Schema (Basic enforcement)
 	// TODO: Iterate over flow.Definition nodes to find the 'api-trigger' and check its 'schema'.

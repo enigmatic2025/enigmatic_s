@@ -38,8 +38,8 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 
 	// Insert into 'action_flows'
 	// Note: You must ensure this table exists in your Supabase migrations!
-	// If not, this will fail. Assuming it exists based on user prompt "creates an action flow".
-	_, err := client.DB.From("action_flows").Insert(record).Execute()
+	var results []map[string]interface{}
+	err := client.DB.From("action_flows").Insert(record).Execute(&results)
 	if err != nil {
 		return err
 	}

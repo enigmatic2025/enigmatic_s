@@ -130,6 +130,18 @@ To ensure clarity and scalability, Nodal separates specific concerns into two di
     -   **Viewer**: Can see status but not edit.
     -   **Editor**: Can change Flow design.
     -   **Admin**: Can manage API keys and Billing.
+-   **Workflow Studio**:
+    -   **Drag & Drop Editor**: React Flow implementation.
+    -   **Trigger Types**:
+        -   **Schedule**: Cron-based triggers.
+        -   **Trigger: Create Flow (API)**: Generates a unique endpoint for external systems to start a new instance (`POST`).
+    -   **Logic Nodes**:
+        -   **Loop**: Arrays iteration.
+        -   **Condition**: If/Else branching.
+        -   **Switch**: Multi-path branching.
+        -   **Map / Filter**: Data transformation.
+    -   **Action Nodes**: HTTP Requests, Email (SendGrid), etc.
+    -   **Variables**: Global & Local variable management.
 -   **Flow Lifecycle**:
     -   **Draft**: Work in progress.
     -   **Versioned**: Immutable snapshot (v1, v2).
