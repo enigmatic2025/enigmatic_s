@@ -8,10 +8,12 @@ import (
 )
 
 type RecordActionFlowParams struct {
-	FlowID     string                 `json:"flow_id"`
-	WorkflowID string                 `json:"workflow_id"`
-	RunID      string                 `json:"run_id"`
-	InputData  map[string]interface{} `json:"input_data"`
+	FlowID      string                 `json:"flow_id"`
+	WorkflowID  string                 `json:"workflow_id"`
+	RunID       string                 `json:"run_id"`
+	InputData   map[string]interface{} `json:"input_data"`
+	Title       string                 `json:"title"`
+	Description string                 `json:"description"`
 }
 
 // RecordActionFlowActivity Inserts a record into the 'action_flows' table

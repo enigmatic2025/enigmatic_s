@@ -231,15 +231,9 @@ export function Sidebar({
                     isOpen={triggersOpen}
                     onToggle={() => setTriggersOpen(!triggersOpen)}
                   >
-                    {(!searchQuery || "schedule".includes(searchQuery.toLowerCase())) && (
+                    {(!searchQuery || "trigger create flow".includes(searchQuery.toLowerCase())) && (
                       <div className="grid grid-cols-1 gap-2">
-                        <SidebarDraggableItem
-                          label="Schedule"
-                          icon={Workflow}
-                          iconColorClass="text-blue-500"
-                          bgColorClass="bg-blue-500/10"
-                          dataTransferType="schedule"
-                        />
+
                         <SidebarDraggableItem
                           label="Trigger: Create Flow"
                           icon={Zap}

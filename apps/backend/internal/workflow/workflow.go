@@ -9,7 +9,7 @@ import (
 )
 
 // NodalWorkflow executes a graph of nodes with support for suspending/signals
-func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition) (interface{}, error) {
+func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputData map[string]interface{}) (interface{}, error) {
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 1 * time.Minute, // Default timeout, can be overridden per node type
 	}
@@ -26,20 +26,40 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition) (interfa
 	}
 
 	// 0. Record Execution in DB
+	// 0. Initialize Execution State with Trigger Input
+	executionState := make(map[string]map[string]interface{})
+	executionState["trigger"] = map[string]interface{}{
+		"body": inputData,
+	}
+
+	// 1. Find API Trigger Node configuration for Templating
+	var titleTemplate, descTemplate string
+	for _, node := range flowDefinition.Nodes {
+		if node.Type == "api-trigger" {
+			if t, ok := node.Data["instanceNameTemplate"].(string); ok {
+				titleTemplate = t
+			}
+			if d, ok := node.Data["description"].(string); ok {
+				descTemplate = d
+			}
+			break
+		}
+	}
+
+	// 2. Record Execution in DB
 	info := workflow.GetInfo(ctx)
 	recordParams := RecordActionFlowParams{
-		FlowID:     flowDefinition.ID,
-		WorkflowID: info.WorkflowExecution.ID,
-		RunID:      info.WorkflowExecution.RunID,
-		InputData:  map[string]interface{}{"source": "api"},
+		FlowID:      flowDefinition.ID,
+		WorkflowID:  info.WorkflowExecution.ID,
+		RunID:       info.WorkflowExecution.RunID,
+		InputData:   inputData,
+		Title:       titleTemplate,
+		Description: descTemplate,
 	}
 
 	if err := workflow.ExecuteActivity(ctx, RecordActionFlowActivity, recordParams).Get(ctx, nil); err != nil {
 		logger.Error("Failed to record action flow", "Error", err)
 	}
-
-	// Store results of each step: NodeID -> Output Data
-	executionState := make(map[string]map[string]interface{})
 
 	// 2. Iterate through sorted nodes
 	for _, node := range sortedNodes {

@@ -1,9 +1,9 @@
-import { ScheduleNode } from '../nodes/schedule-node';
+// import { ScheduleNode } from '../nodes/schedule-node';
 import { ActionNode } from '../nodes/action-node';
 import { ManualTriggerNode } from '../nodes/manual-trigger-node';
 import { HttpRequestConfig } from '../configurators/http-request-config';
 import { ManualTriggerConfig } from '../configurators/manual-trigger-config';
-import { ScheduleTriggerConfig } from '../configurators/schedule-trigger-config';
+// import { ScheduleTriggerConfig } from '../configurators/schedule-trigger-config';
 import { ConditionNode } from '../nodes/condition-node';
 import { ConditionConfig } from '../configurators/condition-config';
 import { FilterConfig } from '../configurators/filter-config';
@@ -18,7 +18,7 @@ import ApiTriggerNode from '../nodes/api-trigger-node';
 import ApiTriggerConfig from '../configurators/api-trigger-config';
 
 export const NODE_TYPES = {
-    schedule: ScheduleNode,
+    // schedule: ScheduleNode,
     action: ActionNode,
     'manual-trigger': ManualTriggerNode,
     'api-trigger': ApiTriggerNode,
@@ -31,7 +31,7 @@ export const NODE_TYPES = {
 export const CONFIG_COMPONENTS: Record<string, any> = {
     'http': HttpRequestConfig,
     'manual-trigger': ManualTriggerConfig,
-    'schedule': ScheduleTriggerConfig,
+    // 'schedule': ScheduleTriggerConfig,
     'api-trigger': ApiTriggerConfig,
     'condition': ConditionConfig,
     'filter': FilterConfig,
@@ -56,7 +56,7 @@ export const ACTION_NAMES: Record<string, string> = {
     default: "Action",
     'manual-trigger': "Manual Trigger",
     'api-trigger': "Trigger: Create Flow",
-    schedule: "Schedule"
+    // schedule: "Schedule"
 };
 
 export const INITIAL_NODES = [];

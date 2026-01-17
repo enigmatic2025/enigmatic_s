@@ -22,9 +22,11 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
   // Default schema logic
   const schema: SchemaField[] = data.schema || [];
   
-  // Use Vercel URL if in prod, otherwise localhost
-  // Note: In a real app, this should come from an Environment Variable or Context
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  // Use configured APP_URL or fallback to browser origin
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL 
+    ? process.env.NEXT_PUBLIC_APP_URL 
+    : (typeof window !== 'undefined' ? window.location.origin : '');
+    
   const endpointUrl = `${baseUrl}/api/proxy/flows/${flowId || '{flow_id}'}/execute`;
 
   const copyToClipboard = () => {
