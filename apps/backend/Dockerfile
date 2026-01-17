@@ -6,8 +6,8 @@ WORKDIR /app
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 
-# Install curl for Temporal CLI download
-RUN apk add --no-cache curl
+# Install curl for Temporal CLI download and libc6-compat for running it
+RUN apk add --no-cache curl libc6-compat
 
 # Install Temporal CLI
 RUN curl -sSf https://temporal.download/cli.sh | sh && \
