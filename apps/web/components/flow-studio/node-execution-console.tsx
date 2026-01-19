@@ -68,12 +68,12 @@ export function NodeExecutionConsole({
         <SyntaxHighlighter
           language="json"
           style={syntaxTheme}
+          className="!bg-transparent"
           customStyle={{
             margin: 0,
             padding: '1rem',
             fontSize: '13px',
             lineHeight: '1.5',
-            background: 'transparent', 
             minHeight: '100%',
             overflow: 'visible', // Ensure parent handles scrolling
           }}

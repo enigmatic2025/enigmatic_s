@@ -53,7 +53,7 @@ export function SidebarConsole() {
                             No logs yet...
                         </div>
                     )}
-                    {logs.map((log, i) => (
+                    {logs.filter(log => !log.message.includes("Step 'trigger' executed")).map((log, i) => (
                         <div key={i} className="flex flex-col font-mono border-b border-slate-200 dark:border-white/5 pb-4 last:border-0 text-sm">
                             <div className="flex gap-4 items-start mb-2">
                                 <span className="text-slate-400 dark:text-slate-500 shrink-0 select-none w-24 pt-0.5">
@@ -84,12 +84,12 @@ export function SidebarConsole() {
                                         <SyntaxHighlighter
                                             language="json"
                                             style={syntaxTheme}
+                                            className="!bg-transparent"
                                             customStyle={{
                                                 margin: 0,
                                                 padding: '1rem',
                                                 fontSize: '13px',
                                                 lineHeight: '1.5',
-                                                backgroundColor: 'transparent',
                                                 minHeight: '100%',
                                                 overflowX: 'auto',
                                             }}
