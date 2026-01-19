@@ -9,97 +9,83 @@ import (
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
 	"go.temporal.io/sdk/client"
 )
 
-type ExecuteFlowHandler struct {
+type ExecutionHandler struct {
 	TemporalClient client.Client
 }
 
-func NewExecuteFlowHandler(c client.Client) *ExecuteFlowHandler {
-	return &ExecuteFlowHandler{
-		TemporalClient: c,
-	}
+func NewExecutionHandler(c client.Client) *ExecutionHandler {
+	return &ExecutionHandler{TemporalClient: c}
 }
 
-// ExecuteFlow starts a new instance of a flow
-// POST /flows/{flow_id}/execute
-func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
-	// 1. Extract Flow ID
-	pathParts := strings.Split(r.URL.Path, "/")
-	// Expected: /flows/{id}/execute -> ["", "flows", "ID", "execute"]
-	if len(pathParts) < 4 {
+// ExecuteFlow handles the execution of a flow by ID
+func (h *ExecutionHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
+	// 1. Parse Flow ID from URL
+	// Handles paths like /flows/{id}/execute
+	parts := strings.Split(r.URL.Path, "/")
+	// Expected parts: ["", "flows", "{id}", "execute"]
+	if len(parts) < 4 {
 		http.Error(w, "Invalid path", http.StatusBadRequest)
 		return
 	}
-	flowID := pathParts[2]
+	flowID := parts[2]
 
-	// 2. Parse Body
-	var inputData map[string]interface{}
-	if err := json.NewDecoder(r.Body).Decode(&inputData); err != nil {
-		http.Error(w, "Invalid JSON body", http.StatusBadRequest)
+	if flowID == "" {
+		http.Error(w, "Flow ID required", http.StatusBadRequest)
 		return
 	}
 
-	// 3. Fetch Flow Definition
-	// We need the 'published_definition' ideally, but for now we'll use 'draft_definition' if published is missing
-	// or just 'definition' based on the Dual-Write strategy.
+	// 2. Parse Input Data from Body
+	var req struct {
+		Input map[string]interface{} `json:"input"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	inputData := req.Input
+
+	// 3. Fetch Flow Definition from DB
 	dbClient := database.GetClient()
-	var flows []struct {
-		ID              string                 `json:"id"`
-		Name            string                 `json:"name"`
-		Definition      map[string]interface{} `json:"definition"` // Compatibility column
-		VariablesSchema []interface{}          `json:"variables_schema"`
+
+	// We use a temporary struct to capture the DB result
+	var dbResult []struct {
+		Definition json.RawMessage `json:"definition"`
 	}
 
-	err := dbClient.DB.From("flows").Select("id, name, definition, variables_schema").Eq("id", flowID).Execute(&flows)
-	if err != nil {
-		http.Error(w, "Error fetching flow: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if len(flows) == 0 {
+	err := dbClient.DB.From("flows").Select("definition").Eq("id", flowID).Execute(&dbResult)
+	if err != nil || len(dbResult) == 0 {
 		http.Error(w, "Flow not found", http.StatusNotFound)
 		return
 	}
-	flow := flows[0]
 
-	// 4. Validate Schema (Basic enforcement)
-	// TODO: Iterate over flow.Definition nodes to find the 'api-trigger' and check its 'schema'.
-	// For MVP, we just accept the payload as is.
-
-	// 4a. Inject Flow ID into Definition for the Workflow to use
-	if flow.Definition == nil {
-		flow.Definition = make(map[string]interface{})
-	}
-	flow.Definition["id"] = flow.ID
-
-	// 5. Generate Temporal Workflow ID
-	// Use an idempotency key if provided, otherwise random
-	idempotencyKey := r.Header.Get("X-Idempotency-Key")
-	var workflowID string
-	if idempotencyKey != "" {
-		workflowID = fmt.Sprintf("flow-%s-%s", flowID, idempotencyKey)
-	} else {
-		// New unique run every time
-		workflowID = fmt.Sprintf("flow-%s-%d", flowID, SystemTimeNow())
+	// Deserialize definition into workflow.FlowDefinition
+	var flowDef workflow.FlowDefinition
+	if err := json.Unmarshal(dbResult[0].Definition, &flowDef); err != nil {
+		http.Error(w, "Invalid flow definition in database", http.StatusInternalServerError)
+		return
 	}
 
-	// 6. Start Workflow
+	// 4. Setup Temporal Options
 	workflowOptions := client.StartWorkflowOptions{
-		ID:        workflowID,
-		TaskQueue: "FLOW_TASK_QUEUE", // Must match worker
+		ID:        "flow-" + flowID + "-" + fmt.Sprintf("%d", time.Now().UnixNano()),
+		TaskQueue: "nodal-task-queue",
 	}
 
-	// The workflow name must match what the worker registered.
-	// Assuming "FlowExecutionWorkflow" is the name.
-	we, err := h.TemporalClient.ExecuteWorkflow(context.Background(), workflowOptions, "FlowExecutionWorkflow", flow.Definition, inputData)
+	// 5. Execute Workflow
+	// Use the function reference to ensure type safety and correct name matching
+	// This also implicitly enforces the 2-argument signature (FlowDefinition, InputData)
+	we, err := h.TemporalClient.ExecuteWorkflow(context.Background(), workflowOptions, workflow.NodalWorkflow, flowDef, inputData)
 	if err != nil {
 		http.Error(w, "Failed to start workflow: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// 7. Record Action Flow in DB (Optional, or done by Workflow itself)
-	// Ideally the Workflow should record its own start in 'action_flows' table so it's consistent.
+	// 6. Record Action Flow in DB (Optional, or done by Workflow itself)
+	// Idealy the Workflow should record its own start in 'action_flows' table so it's consistent.
 	// But we can return the RunID immediately.
 
 	w.WriteHeader(http.StatusAccepted)
