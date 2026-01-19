@@ -13,17 +13,20 @@ import (
 	"go.temporal.io/sdk/client"
 )
 
-type ExecutionHandler struct {
+type ExecuteFlowHandler struct {
 	TemporalClient client.Client
 }
 
-func NewExecutionHandler(c client.Client) *ExecutionHandler {
-	return &ExecutionHandler{TemporalClient: c}
+func NewExecuteFlowHandler(c client.Client) *ExecuteFlowHandler {
+	return &ExecuteFlowHandler{
+		TemporalClient: c,
+	}
 }
 
 // ExecuteFlow handles the execution of a flow by ID
-func (h *ExecutionHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
-	// 1. Parse Flow ID from URL
+// POST /flows/{flow_id}/execute
+func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
+	// 1. Extract Flow ID
 	// Handles paths like /flows/{id}/execute
 	parts := strings.Split(r.URL.Path, "/")
 	// Expected parts: ["", "flows", "{id}", "execute"]
@@ -39,24 +42,30 @@ func (h *ExecutionHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2. Parse Input Data from Body
-	var req struct {
-		Input map[string]interface{} `json:"input"`
+	// If body is empty, default to empty map
+	var inputData map[string]interface{}
+	if r.ContentLength > 0 {
+		if err := json.NewDecoder(r.Body).Decode(&inputData); err != nil {
+			http.Error(w, "Invalid JSON body", http.StatusBadRequest)
+			return
+		}
 	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
+	if inputData == nil {
+		inputData = make(map[string]interface{})
 	}
-	inputData := req.Input
 
 	// 3. Fetch Flow Definition from DB
 	dbClient := database.GetClient()
 
 	// We use a temporary struct to capture the DB result
 	var dbResult []struct {
-		Definition json.RawMessage `json:"definition"`
+		ID              string          `json:"id"`
+		Name            string          `json:"name"`
+		Definition      json.RawMessage `json:"definition"`
+		VariablesSchema json.RawMessage `json:"variables_schema"`
 	}
 
-	err := dbClient.DB.From("flows").Select("definition").Eq("id", flowID).Execute(&dbResult)
+	err := dbClient.DB.From("flows").Select("id, name, definition, variables_schema").Eq("id", flowID).Execute(&dbResult)
 	if err != nil || len(dbResult) == 0 {
 		http.Error(w, "Flow not found", http.StatusNotFound)
 		return
@@ -68,6 +77,9 @@ func (h *ExecutionHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid flow definition in database", http.StatusInternalServerError)
 		return
 	}
+
+	// Inject Flow ID
+	flowDef.ID = flowID
 
 	// 4. Setup Temporal Options
 	workflowOptions := client.StartWorkflowOptions{
@@ -84,19 +96,10 @@ func (h *ExecutionHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 6. Record Action Flow in DB (Optional, or done by Workflow itself)
-	// Idealy the Workflow should record its own start in 'action_flows' table so it's consistent.
-	// But we can return the RunID immediately.
-
 	w.WriteHeader(http.StatusAccepted)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message":     "Flow execution started",
 		"workflow_id": we.GetID(),
 		"run_id":      we.GetRunID(),
 	})
-}
-
-// Simple helper for unique IDs if needed
-func SystemTimeNow() int64 {
-	return time.Now().UnixNano()
 }
