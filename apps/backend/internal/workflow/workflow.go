@@ -59,6 +59,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	if err := workflow.ExecuteActivity(ctx, RecordActionFlowActivity, recordParams).Get(ctx, nil); err != nil {
 		logger.Error("Failed to record action flow", "Error", err)
+		return nil, err // Stop execution if we can't record the start
 	}
 
 	// 2. Iterate through sorted nodes

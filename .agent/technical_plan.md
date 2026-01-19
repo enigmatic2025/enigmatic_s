@@ -55,3 +55,6 @@ Prefix: `/api/v1` (Proxied from Frontend)
 - **Proxies**: All external requests must go through `apps/web/app/api/proxy`.
 - **Validation**: Validate node inputs both Frontend (Zod) and Backend (Go Structs).
 - **Versioning**: Always modify `draft_definition`. Publish copies Draft -> Active.
+- **Database Schema**:
+    - **Strict Migrations**: Every Go struct change in `internal/database` that affects storage MUST have a corresponding `.sql` migration file in `migrations/`.
+    - **No Manual DDL**: Do not run `ALTER TABLE` manually in production without checking in the migration file first.
