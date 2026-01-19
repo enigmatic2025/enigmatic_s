@@ -100,7 +100,7 @@ export const flowService = {
         return response.json();
     },
 
-    async testFlow(flowDefinition: any, flowId?: string) {
+    async testFlow(flowDefinition: any, flowId?: string, inputPayload?: any) {
         const response = await fetch(`${API_BASE_URL}/api/test/flow`, {
             method: 'POST',
             headers: {
@@ -108,7 +108,8 @@ export const flowService = {
             },
             body: JSON.stringify({
                 flow_definition: flowDefinition,
-                flow_id: flowId
+                flow_id: flowId,
+                input: inputPayload
             }),
         });
 

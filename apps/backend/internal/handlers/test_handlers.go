@@ -64,7 +64,8 @@ func TestNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 // TestFlowRequest is the payload for testing a flow.
 type TestFlowRequest struct {
-	FlowDefinition interface{} `json:"flow_definition"`
+	FlowDefinition interface{}            `json:"flow_definition"`
+	Input          map[string]interface{} `json:"input"`
 }
 
 type TestHandler struct {
@@ -88,10 +89,7 @@ func (h *TestHandler) TestFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 1. Generate Mock Input Data from Schema (if API Trigger exists)
-	inputData := make(map[string]interface{})
-
-	// We need to inspect the raw map/json to find the api-trigger schema
+	// Marshall flow definition to JSON first (to unmarshal into struct)
 	flowDefJson, err := json.Marshal(req.FlowDefinition)
 	if err != nil {
 		http.Error(w, "Invalid flow definition format", http.StatusBadRequest)
@@ -105,37 +103,44 @@ func (h *TestHandler) TestFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Scan for API Trigger Schema
-	for _, node := range flowDef.Nodes {
-		if node.Type == "api-trigger" {
-			if schema, ok := node.Data["schema"].([]interface{}); ok {
-				for _, field := range schema {
-					if fieldMap, ok := field.(map[string]interface{}); ok {
-						if key, ok := fieldMap["key"].(string); ok {
-							fieldType, _ := fieldMap["type"].(string)
+	// 1. Prepare Input Data
+	inputData := make(map[string]interface{})
 
-							// Default Values
-							switch fieldType {
-							case "string":
-								inputData[key] = "example_string"
-							case "number":
-								inputData[key] = 123
-							case "boolean":
-								inputData[key] = true
-							case "object":
-								inputData[key] = map[string]interface{}{}
-							case "array":
-								inputData[key] = []interface{}{}
-							default:
-								inputData[key] = "value"
+	if len(req.Input) > 0 {
+		inputData = req.Input
+	} else {
+		// Scan for API Trigger Schema (Mock Generation)
+		for _, node := range flowDef.Nodes {
+			if node.Type == "api-trigger" {
+				if schema, ok := node.Data["schema"].([]interface{}); ok {
+					for _, field := range schema {
+						if fieldMap, ok := field.(map[string]interface{}); ok {
+							if key, ok := fieldMap["key"].(string); ok {
+								fieldType, _ := fieldMap["type"].(string)
+
+								// Default Values
+								switch fieldType {
+								case "string":
+									inputData[key] = "example_string"
+								case "number":
+									inputData[key] = 123
+								case "boolean":
+									inputData[key] = true
+								case "object":
+									inputData[key] = map[string]interface{}{}
+								case "array":
+									inputData[key] = []interface{}{}
+								default:
+									inputData[key] = "value"
+								}
 							}
 						}
 					}
 				}
+				break
 			}
-			break
 		}
-	}
+	} // End of else block (Mock Generation)
 
 	options := client.StartWorkflowOptions{
 		ID:        "test-flow-" + generateID(),

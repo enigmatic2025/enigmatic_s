@@ -3,6 +3,7 @@ import { Node, useReactFlow, Edge } from 'reactflow';
 import { toast } from "sonner";
 import { flowService } from '@/services/flow-service';
 import { validateFlow } from '@/lib/flow-validation';
+import { useFlowStore } from '@/lib/stores/flow-store';
 
 const getId = () => `node_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -34,6 +35,7 @@ export function useFlowOperations({
     setSelectedNode,
 }: UseFlowOperationsProps) {
     const { project } = useReactFlow();
+    const variables = useFlowStore((state) => state.variables);
 
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
@@ -142,7 +144,11 @@ export function useFlowOperations({
             name: flowName,
             description: "Created via Flow Studio",
             definition: { nodes, edges, viewport: { x: 0, y: 0, zoom: 1 } },
-            variables_schema: [],
+            variables_schema: Object.entries(variables).map(([key, value]) => ({
+                key,
+                type: typeof value === 'object' ? 'json' : typeof value,
+                value
+            })),
         };
 
         try {

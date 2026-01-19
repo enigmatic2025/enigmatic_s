@@ -35,18 +35,19 @@ type NodeExecutor interface {
 // Registry is the global map of all available node types.
 // It maps the node type string (e.g., "SET") to its corresponding NodeExecutor implementation.
 var Registry = map[string]NodeExecutor{
-	"DEBUG":     &DebugNode{},
-	"SET":       &SetNode{},
-	"CONDITION": &ConditionNode{},
-	"MAP":       &MapNode{},
-	"HTTP":      &HttpNode{},
-	"PARSE":     &ParseNode{},
-	"APPROVAL":  &ApprovalNode{},
-	"SCHEDULE":  &ScheduleNode{},
-	"LOOP":      &LoopNode{},
-	"SWITCH":    &SwitchNode{},
-	"FILTER":    &FilterNode{},
-	"EMAIL":     &EmailNode{},
+	"DEBUG":       &DebugNode{},
+	"SET":         &SetNode{},
+	"VARIABLE":    &SetNode{}, // Alias for SetNode
+	"CONDITION":   &ConditionNode{},
+	"MAP":         &MapNode{},
+	"HTTP":        &HttpNode{},
+	"PARSE":       &ParseNode{},
+	"APPROVAL":    &ApprovalNode{},
+	"SCHEDULE":    &ScheduleNode{},
+	"LOOP":        &LoopNode{},
+	"SWITCH":      &SwitchNode{},
+	"FILTER":      &FilterNode{},
+	"EMAIL":       &EmailNode{},
 	"TRIGGER":     &TriggerNode{},
 	"API-TRIGGER": &TriggerNode{}, // Support for API Trigger node type
 	"ACTION":      &HttpNode{},    // Alias for generic Action nodes (defaults to HTTP)

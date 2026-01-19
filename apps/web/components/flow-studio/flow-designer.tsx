@@ -16,6 +16,7 @@ import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
 import { NodeConfigurationSheet } from "@/components/flow-studio/node-configuration-sheet";
 import { ConsoleModal } from "@/components/flow-studio/modals/console-modal";
+import { TestPayloadModal } from "@/components/flow-studio/modals/test-payload-modal";
 import {
   Tooltip,
   TooltipContent,
@@ -48,8 +49,24 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   // Console/Logs State
   const [unreadLogs, setUnreadLogs] = useState(false);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  // Payload Modal State
+  const [isTestPayloadModalOpen, setIsTestPayloadModalOpen] = useState(false);
+  const [triggerSchema, setTriggerSchema] = useState<any[]>([]);
   const logs = useFlowStore((state) => state.logs);
   const prevLogsLength = useRef(0);
+
+  // Intercept Play Click
+  const onPlayClick = () => {
+      // Check if we have an API Trigger with Schema
+      const triggerNode = nodes.find(n => n.type === 'api-trigger');
+      if (triggerNode && triggerNode.data?.schema && triggerNode.data.schema.length > 0) {
+          setTriggerSchema(triggerNode.data.schema);
+          setIsTestPayloadModalOpen(true);
+      } else {
+          // No schema or no trigger, run directly
+          handleTestRun({});
+      }
+  };
 
   // Custom Hooks
   const {
@@ -103,6 +120,16 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           if (savedEdges) setEdges(savedEdges);
         }
         if (data.name) setFlowName(data.name);
+
+        // Load Global Variables
+        if (data.variables_schema && Array.isArray(data.variables_schema)) {
+            const { setVariable } = useFlowStore.getState();
+            data.variables_schema.forEach((v: any) => {
+                if (v.key) {
+                   setVariable(v.key, v.value);
+                }
+            });
+        }
       } catch (error) {
         console.error("Error loading flow:", error);
         toast.error("Failed to load flow data");
@@ -115,14 +142,16 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
     // Cleanup / Reset on Mount
     // ensuring we don't show stale data from a previous flow or session
-    const { clearLogs, clearExecutionTrace } = useFlowStore.getState();
+    const { clearLogs, clearExecutionTrace, clearVariables } = useFlowStore.getState();
     clearLogs();
     clearExecutionTrace();
+    clearVariables();
 
     // Optional: Cleanup on unmount too if desired
     return () => {
         clearLogs();
         clearExecutionTrace();
+        clearVariables();
     };
   }, [flowId, setNodes, setEdges]);
   
@@ -179,7 +208,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const TEST_TOAST_ID = "test-run-status";
   const { addLog, clearLogs } = useFlowStore();
 
-  const handleTestRun = async () => {
+  const handleTestRun = async (inputPayload: any = {}) => {
     toast.loading("Starting action flow test...", { id: TEST_TOAST_ID });
     clearLogs(); // Clear logs before starting
     addLog({ message: "Starting action flow test...", type: "info" });
@@ -214,7 +243,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       
       console.log("Transformed Flow Definition:", flowDefinition); // Debug log to verify type transformation
       
-      const result = await flowService.testFlow(flowDefinition, flowId);
+      const result = await flowService.testFlow(flowDefinition, flowId, inputPayload);
       
       toast.success(`Action Flow started!`, { id: TEST_TOAST_ID });
       addLog({ message: `Action Flow started with Workflow ID: ${result.workflow_id}`, type: "success", details: result });
@@ -472,7 +501,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                   variant="ghost" 
                   size="icon" 
                   className={`h-8 w-8 transition-colors ${isPolling ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : 'text-muted-foreground hover:text-foreground'}`}
-                  onClick={isPolling ? handleStop : handleTestRun}
+                  onClick={isPolling ? handleStop : onPlayClick}
                 >
                   {isPolling ? <Square className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4" />}
                 </Button>
@@ -577,6 +606,13 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       <ConsoleModal 
         isOpen={isConsoleOpen} 
         onClose={() => setIsConsoleOpen(false)} 
+      />
+
+      <TestPayloadModal 
+        isOpen={isTestPayloadModalOpen}
+        onClose={() => setIsTestPayloadModalOpen(false)}
+        onRun={(payload) => handleTestRun(payload)}
+        schema={triggerSchema}
       />
     </div>
   );

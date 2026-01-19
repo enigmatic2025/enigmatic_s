@@ -31,6 +31,7 @@ interface FlowStore {
     deleteVariable: (key: string) => void;
     setExecutionTrace: (trace: Record<string, ExecutionResult>) => void;
     clearExecutionTrace: () => void;
+    clearVariables: () => void;
     addLog: (log: LogEntry) => void;
     clearLogs: () => void;
     selectedNodeId: string | null;
@@ -55,6 +56,7 @@ export const useFlowStore = create<FlowStore>((set) => ({
     }),
     setExecutionTrace: (trace) => set({ executionTrace: trace }),
     clearExecutionTrace: () => set({ executionTrace: {} }),
+    clearVariables: () => set({ variables: {} }),
     addLog: (log) => set((state) => ({
         logs: [...state.logs, { ...log, id: Math.random().toString(36).substring(7), timestamp: Date.now() }]
     })),
