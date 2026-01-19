@@ -25,16 +25,23 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		return nil, err
 	}
 
-	// 0. Record Execution in DB
 	// 0. Initialize Execution State with Trigger Input
 	executionState := make(map[string]map[string]interface{})
+
+	// Legacy global reference
 	executionState["trigger"] = map[string]interface{}{
 		"body": inputData,
 	}
 
-	// 1. Find API Trigger Node configuration for Templating
+	// 1. Find API Trigger Node configuration for Templating AND pre-populate node output
 	var titleTemplate, descTemplate string
 	for _, node := range flowDefinition.Nodes {
+		// Populate the specific node ID with the input data (Flat, for variable constraints)
+		// This ensures {{ steps.node_id.field }} works directly on the payload
+		if node.Type == "api-trigger" || node.Type == "manual-trigger" || node.Type == "webhook" {
+			executionState[node.ID] = inputData
+		}
+
 		if node.Type == "api-trigger" {
 			if t, ok := node.Data["instanceNameTemplate"].(string); ok {
 				titleTemplate = t
@@ -64,6 +71,11 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	// 2. Iterate through sorted nodes
 	for _, node := range sortedNodes {
+		// Skip Trigger Nodes (they are the entry point, already "executed")
+		if node.Type == "api-trigger" || node.Type == "manual-trigger" || node.Type == "webhook" {
+			continue
+		}
+
 		// Construct Context for the Node
 		nodeCtx := nodes.NodeContext{
 			WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
