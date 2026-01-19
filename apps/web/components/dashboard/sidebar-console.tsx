@@ -89,7 +89,7 @@ export function SidebarConsole() {
                                                 padding: '1rem',
                                                 fontSize: '13px',
                                                 lineHeight: '1.5',
-                                                background: 'transparent',
+                                                backgroundColor: 'transparent',
                                                 minHeight: '100%',
                                                 overflowX: 'auto',
                                             }}

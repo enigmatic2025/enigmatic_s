@@ -22,15 +22,21 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 
 	// Ensure the table exists or we have the struct definition.
 	// For MVP, using a map or struct. Let's use a struct matching the Supabase table.
+	// Handle nullable FlowID (e.g. for Test Runs of unsaved flows)
+	var flowIDPtr *string
+	if params.FlowID != "" {
+		flowIDPtr = &params.FlowID
+	}
+
 	record := struct {
-		FlowID     string                 `json:"flow_id"`
+		FlowID     *string                `json:"flow_id"`
 		TemporalID string                 `json:"temporal_id"`
 		RunID      string                 `json:"run_id"`
 		Status     string                 `json:"status"`
 		InputData  map[string]interface{} `json:"input_data"`
 		StartedAt  time.Time              `json:"started_at"`
 	}{
-		FlowID:     params.FlowID,
+		FlowID:     flowIDPtr,
 		TemporalID: params.WorkflowID,
 		RunID:      params.RunID,
 		Status:     "RUNNING",
