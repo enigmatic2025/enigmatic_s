@@ -337,7 +337,27 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
             
             {filteredNodes.map((node) => {
                 const runResult = node.data?.lastRunResult;
-                const schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[node.type || ""];
+                let schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[node.type || ""];
+                
+                // Special handling for API Trigger / Incoming Webhook Schema
+                if (schema === undefined && node.type === 'api-trigger' && node.data?.schema && Array.isArray(node.data.schema)) {
+                    const parsedSchema: Record<string, any> = {};
+                    node.data.schema.forEach((field: any) => {
+                        if (field.key) {
+                            parsedSchema[field.key] = field.type === 'string' ? "example_string" : 
+                                                        field.type === 'number' ? 123 : 
+                                                        field.type === 'boolean' ? true :
+                                                        field.type === 'object' ? {} : 
+                                                        field.type === 'array' ? [] : "value";
+                        }
+                    });
+                    
+                    // If the schema has fields, use it.
+                    if (Object.keys(parsedSchema).length > 0) {
+                        schema = parsedSchema;
+                    }
+                }
+
                 const hasData = schema !== undefined;
                 
                 return (

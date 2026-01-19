@@ -65,14 +65,14 @@ export function useFlowOperations({
             const isTrigger = nodeType === 'schedule' || nodeType === 'manual-trigger' || nodeType === 'api-trigger';
 
             if (nodes.length === 0 && !isTrigger) {
-                toast.error("The first node must be a Trigger (e.g. 'Trigger: Create Flow').");
+                toast.error("The first node must be a Trigger (e.g. Schedule, Incoming Webhook).");
                 return;
             }
 
             // Validation: Only one Trigger allowed
             const hasTrigger = nodes.some(n => n.type === 'schedule' || n.type === 'manual-trigger' || n.type === 'api-trigger');
             if (isTrigger && hasTrigger) {
-                toast.error("Only one Trigger is allowed per flow.");
+                toast.error("Only one Trigger (Start Event) is allowed per flow.");
                 return;
             }
 

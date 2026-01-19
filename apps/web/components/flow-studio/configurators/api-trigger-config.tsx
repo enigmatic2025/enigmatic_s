@@ -57,7 +57,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
       {/* Introduction */}
       <div className="space-y-2">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Trigger Settings
+          Incoming Webhook Settings
         </label>
         <div className="space-y-3">
             <div>
@@ -113,6 +113,14 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         <p className="text-[10px] text-muted-foreground">
             Send a POST request with the JSON body defined below.
         </p>
+        <div className="flex items-start gap-1.5 pt-2 border-t border-border/50">
+            <Info className="w-3 h-3 text-muted-foreground shrink-0 mt-0.5" />
+            <p className="text-[10px] text-muted-foreground/80">
+                This URL is dynamic based on your current environment. 
+                When deployed to production (Koyeb), it will automatically show your official domain. 
+                Local testing URLs (localhost) are not saved.
+            </p>
+        </div>
       </div>
 
       {/* Schema Builder */}

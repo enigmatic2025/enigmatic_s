@@ -55,7 +55,7 @@ export const ACTION_NAMES: Record<string, string> = {
 
     default: "Action",
     'manual-trigger': "Manual Trigger",
-    'api-trigger': "Trigger: Create Flow",
+    'api-trigger': "Incoming Webhook",
     // schedule: "Schedule"
 };
 

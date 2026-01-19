@@ -67,42 +67,31 @@ type TestFlowRequest struct {
 	FlowDefinition interface{} `json:"flow_definition"`
 }
 
-// TestFlowHandler triggers a Temporal workflow.
-func TestFlowHandler(w http.ResponseWriter, r *http.Request) {
+type TestHandler struct {
+	client client.Client
+}
+
+func NewTestHandler(c client.Client) *TestHandler {
+	return &TestHandler{client: c}
+}
+
+// TestFlow triggers a Temporal workflow.
+func (h *TestHandler) TestFlow(w http.ResponseWriter, r *http.Request) {
+	if h.client == nil {
+		http.Error(w, "Temporal client not initialized", http.StatusServiceUnavailable)
+		return
+	}
+
 	var req TestFlowRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	// Connect to Temporal
-	hostPort := os.Getenv("TEMPORAL_HOST_PORT")
-	if hostPort == "" {
-		hostPort = "127.0.0.1:7233"
-	}
+	// 1. Generate Mock Input Data from Schema (if API Trigger exists)
+	inputData := make(map[string]interface{})
 
-	// Create a simple logger to suppress the warning
-	logger := &SimpleLogger{}
-
-	c, err := client.Dial(client.Options{
-		HostPort: hostPort,
-		Logger:   logger,
-	})
-	if err != nil {
-		fmt.Printf("Failed to connect to Temporal at %s: %v\n", hostPort, err)
-		http.Error(w, "Failed to connect to Temporal", http.StatusInternalServerError)
-		return
-	}
-	defer c.Close()
-
-	options := client.StartWorkflowOptions{
-		ID:        "test-flow-" + generateID(), // Helper needed or use UUID
-		TaskQueue: "nodal-task-queue",
-	}
-
-	// Convert the generic map to a strict FlowDefinition struct
-	// This ensures we validate the structure BEFORE sending to Temporal
-	// and solves the mismatch between 'interface{}' and 'FlowDefinition'
+	// We need to inspect the raw map/json to find the api-trigger schema
 	flowDefJson, err := json.Marshal(req.FlowDefinition)
 	if err != nil {
 		http.Error(w, "Invalid flow definition format", http.StatusBadRequest)
@@ -116,10 +105,48 @@ func TestFlowHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	we, err := c.ExecuteWorkflow(r.Context(), options, workflow.NodalWorkflow, flowDef)
+	// Scan for API Trigger Schema
+	for _, node := range flowDef.Nodes {
+		if node.Type == "api-trigger" {
+			if schema, ok := node.Data["schema"].([]interface{}); ok {
+				for _, field := range schema {
+					if fieldMap, ok := field.(map[string]interface{}); ok {
+						if key, ok := fieldMap["key"].(string); ok {
+							fieldType, _ := fieldMap["type"].(string)
+
+							// Default Values
+							switch fieldType {
+							case "string":
+								inputData[key] = "example_string"
+							case "number":
+								inputData[key] = 123
+							case "boolean":
+								inputData[key] = true
+							case "object":
+								inputData[key] = map[string]interface{}{}
+							case "array":
+								inputData[key] = []interface{}{}
+							default:
+								inputData[key] = "value"
+							}
+						}
+					}
+				}
+			}
+			break
+		}
+	}
+
+	options := client.StartWorkflowOptions{
+		ID:        "test-flow-" + generateID(),
+		TaskQueue: "nodal-task-queue",
+	}
+
+	// Execute with Input Data
+	we, err := h.client.ExecuteWorkflow(r.Context(), options, workflow.NodalWorkflow, flowDef, inputData)
 	if err != nil {
 		fmt.Printf("Failed to start workflow: %v\n", err)
-		http.Error(w, "Failed to start workflow", http.StatusInternalServerError)
+		http.Error(w, "Failed to start workflow: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

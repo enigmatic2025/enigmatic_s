@@ -47,8 +47,9 @@ var Registry = map[string]NodeExecutor{
 	"SWITCH":    &SwitchNode{},
 	"FILTER":    &FilterNode{},
 	"EMAIL":     &EmailNode{},
-	"TRIGGER":   &TriggerNode{},
-	"ACTION":    &HttpNode{}, // Alias for generic Action nodes (defaults to HTTP)
+	"TRIGGER":     &TriggerNode{},
+	"API-TRIGGER": &TriggerNode{}, // Support for API Trigger node type
+	"ACTION":      &HttpNode{},    // Alias for generic Action nodes (defaults to HTTP)
 }
 
 // GetExecutor returns the executor for a given node type.

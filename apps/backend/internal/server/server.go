@@ -99,8 +99,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}
 
 	// Test Routes (Dev only, but useful for frontend dev)
+	testHandler := handlers.NewTestHandler(s.temporalClient)
 	mux.HandleFunc("POST /api/test/node", handlers.TestNodeHandler)
-	mux.HandleFunc("POST /api/test/flow", handlers.TestFlowHandler)
+	mux.HandleFunc("POST /api/test/flow", testHandler.TestFlow)
 	mux.HandleFunc("GET /api/test/flow/", handlers.GetFlowResultHandler)
 	mux.HandleFunc("POST /api/test/flow/cancel", handlers.CancelFlowHandler)
 
