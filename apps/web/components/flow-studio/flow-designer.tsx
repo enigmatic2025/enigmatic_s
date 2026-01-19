@@ -304,7 +304,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
                       // Sort trace data by execution order (BFS from Trigger)
                       const getSortedOrder = () => {
-                          const startNode = nodes.find(n => n.type === 'manual-trigger' || n.type === 'schedule' || n.type === 'webhook');
+                          const startNode = nodes.find(n => n.type === 'manual-trigger' || n.type === 'schedule' || n.type === 'webhook' || n.type === 'api-trigger');
                           if (!startNode) return Object.keys(traceData);
 
                           const sorted: string[] = [];

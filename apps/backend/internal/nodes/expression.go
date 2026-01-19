@@ -82,6 +82,13 @@ func (e *ExpressionEngine) resolvePath(path string, ctx NodeContext) (interface{
 		} else {
 			return nil, fmt.Errorf("steps context not found in input")
 		}
+	case "variables":
+		// variables.varName
+		if vars, ok := ctx.InputData["variables"].(map[string]interface{}); ok {
+			current = vars
+		} else {
+			return nil, fmt.Errorf("variables context not found in input")
+		}
 	case "input":
 		// Direct input to this node
 		current = ctx.InputData

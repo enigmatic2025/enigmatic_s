@@ -27,6 +27,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	// 0. Initialize Execution State with Trigger Input
 	executionState := make(map[string]map[string]interface{})
+	variables := make(map[string]interface{}) // Global variables state
 
 	// Legacy global reference
 	executionState["trigger"] = map[string]interface{}{
@@ -81,7 +82,8 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 			StepID:     node.ID,
 			InputData: map[string]interface{}{
-				"steps": executionState,
+				"steps":     executionState,
+				"variables": variables,
 			},
 			Config: node.Data,
 		}
@@ -138,6 +140,16 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 		// Store output for future steps
 		executionState[node.ID] = result.Output
+
+		// If this was a Set Variable node, update the global variables state
+		if node.Type == "set" || node.Type == "variable" {
+			for k, v := range result.Output {
+				// Avoid pollution from debug keys
+				if k != "_debug_message" && k != "_received_config" {
+					variables[k] = v
+				}
+			}
+		}
 	}
 
 	logger.Info("Nodal workflow completed successfully")
