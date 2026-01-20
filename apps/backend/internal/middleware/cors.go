@@ -5,8 +5,14 @@ import "net/http"
 func CORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
-		// Allow any origin for now to fix production connectivity issues
-		if origin != "" {
+		allowedOrigins := map[string]bool{
+			"http://localhost:3000":       true,
+			"https://enigmatic.works":     true,
+			"https://www.enigmatic.works": true,
+			"https://enigmatic-6fxrllo46-enigmatics-projects-826a326e.vercel.app": true,
+		}
+
+		if allowedOrigins[origin] {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 		}
 
