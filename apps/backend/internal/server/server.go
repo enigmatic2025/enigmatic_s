@@ -63,39 +63,39 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Protected Admin Routes (Require Auth Middleware)
 	// User promotion
-	mux.Handle("POST /admin/promote", middleware.Auth(http.HandlerFunc(adminHandler.PromoteToAdmin)))
+	mux.Handle("POST /api/admin/promote", middleware.Auth(http.HandlerFunc(adminHandler.PromoteToAdmin)))
 
 	// List endpoints
-	mux.Handle("GET /admin/users", middleware.Auth(http.HandlerFunc(adminHandler.ListUsers)))
-	mux.Handle("GET /admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.ListOrgs)))
+	mux.Handle("GET /api/admin/users", middleware.Auth(http.HandlerFunc(adminHandler.ListUsers)))
+	mux.Handle("GET /api/admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.ListOrgs)))
 
 	// Organization CRUD
-	mux.Handle("POST /admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.CreateOrganization)))
-	mux.Handle("PUT /admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
-	mux.Handle("DELETE /admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
+	mux.Handle("POST /api/admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.CreateOrganization)))
+	mux.Handle("PUT /api/admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
+	mux.Handle("DELETE /api/admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
 
 	// User Management
-	mux.Handle("POST /admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
-	mux.Handle("PUT /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
-	mux.Handle("DELETE /admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
-	mux.Handle("POST /admin/users/{id}/block", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
-	mux.Handle("POST /admin/users/{id}/reset-mfa", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
-	mux.Handle("POST /admin/users/{id}/password", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
-	mux.Handle("POST /admin/users/{id}/role", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUserRole)))
+	mux.Handle("POST /api/admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
+	mux.Handle("PUT /api/admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
+	mux.Handle("DELETE /api/admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
+	mux.Handle("POST /api/admin/users/{id}/block", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
+	mux.Handle("POST /api/admin/users/{id}/reset-mfa", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
+	mux.Handle("POST /api/admin/users/{id}/password", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
+	mux.Handle("POST /api/admin/users/{id}/role", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUserRole)))
 
 	// Flow Routes
 	flowHandler := handlers.NewFlowHandler()
 	// TODO: Add Auth middleware once we have token passing from frontend
-	mux.HandleFunc("POST /flows", flowHandler.CreateFlow)
-	mux.HandleFunc("PUT /flows/", flowHandler.UpdateFlow)
-	mux.HandleFunc("GET /flows/", flowHandler.GetFlow)
-	mux.HandleFunc("GET /flows", flowHandler.ListFlows)
-	mux.HandleFunc("DELETE /flows/", flowHandler.DeleteFlow)
+	mux.HandleFunc("POST /api/flows", flowHandler.CreateFlow)
+	mux.HandleFunc("PUT /api/flows/", flowHandler.UpdateFlow)
+	mux.HandleFunc("GET /api/flows/", flowHandler.GetFlow)
+	mux.HandleFunc("GET /api/flows", flowHandler.ListFlows)
+	mux.HandleFunc("DELETE /api/flows/", flowHandler.DeleteFlow)
 
 	// Execution Routes
 	if s.temporalClient != nil {
 		executeHandler := handlers.NewExecuteFlowHandler(s.temporalClient)
-		mux.HandleFunc("POST /flows/{id}/execute", executeHandler.ExecuteFlow)
+		mux.HandleFunc("POST /api/flows/{id}/execute", executeHandler.ExecuteFlow)
 	}
 
 	// Test Routes (Dev only, but useful for frontend dev)
@@ -106,7 +106,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("POST /api/test/flow/cancel", handlers.CancelFlowHandler)
 
 	// Publish Route
-	mux.HandleFunc("POST /flows/{id}/publish", flowHandler.PublishFlow)
+	mux.HandleFunc("POST /api/flows/{id}/publish", flowHandler.PublishFlow)
 
 	return mux
 }

@@ -1,5 +1,5 @@
-// Use local proxy to avoid CORS and hide backend URL
-const API_BASE_URL = '/api/proxy';
+// Direct API path, handled by Next.js Rewrites to Backend
+const API_BASE_URL = '/api';
 
 export interface FlowData {
     org_id: string;
@@ -84,7 +84,7 @@ export const flowService = {
             }
         };
 
-        const response = await fetch(`${API_BASE_URL}/api/test/node`, {
+        const response = await fetch(`${API_BASE_URL}/test/node`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export const flowService = {
     },
 
     async testFlow(flowDefinition: any, flowId?: string, inputPayload?: any) {
-        const response = await fetch(`${API_BASE_URL}/api/test/flow`, {
+        const response = await fetch(`${API_BASE_URL}/test/flow`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export const flowService = {
     },
 
     async getFlowResult(workflowId: string, runId: string) {
-        const response = await fetch(`${API_BASE_URL}/api/test/flow/${runId}?workflow_id=${workflowId}`);
+        const response = await fetch(`${API_BASE_URL}/test/flow/${runId}?workflow_id=${workflowId}`);
         if (!response.ok) {
             // verification: avoid throwing if it's just not found yet (race condition), but 404 usually means not found.
             // Let's just return null or throw.
@@ -132,7 +132,7 @@ export const flowService = {
     },
 
     async cancelFlow(workflowId: string, runId: string) {
-        const response = await fetch(`${API_BASE_URL}/api/test/flow/cancel`, {
+        const response = await fetch(`${API_BASE_URL}/test/flow/cancel`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
