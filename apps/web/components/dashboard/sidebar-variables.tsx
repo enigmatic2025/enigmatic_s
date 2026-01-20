@@ -148,8 +148,8 @@ function JsonRow({ label, value, path, isPrimitive, contextLoopSource }: { label
                 onClick={() => handleCopy(`{{ ${path} }}`)}
             >
                 <div className="w-1 h-1 rounded-full bg-muted-foreground/30 mr-1" />
-                <span className="text-xs font-mono text-muted-foreground group-hover:text-primary transition-colors">{label}:</span>
-                <span className="text-[10px] font-mono font-semibold text-orange-600/70 dark:text-orange-400/80 truncate max-w-[150px]">
+                <span className="text-xs font-mono text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap">{label}:</span>
+                <span className="text-[10px] font-mono font-semibold text-orange-600/70 dark:text-orange-400/80 whitespace-nowrap">
                     {value === null ? "Null" : (typeof value).charAt(0).toUpperCase() + (typeof value).slice(1)}
                 </span>
                 <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 ml-auto" />
@@ -167,8 +167,8 @@ function JsonRow({ label, value, path, isPrimitive, contextLoopSource }: { label
                 onDragStart={(e) => onDragStart(e, `{{ ${path} }}`)}
             >
                 {isOpen ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
-                <span className="text-xs font-mono font-medium truncate">{label}</span>
-                <span className="text-[10px] text-muted-foreground ml-2 truncate flex-1 block">
+                <span className="text-xs font-mono font-medium whitespace-nowrap">{label}</span>
+                <span className="text-[10px] text-muted-foreground ml-2 whitespace-nowrap block">
                     {Array.isArray(value) ? `Array(${value.length})` : `{...}`}
                 </span>
                 
@@ -298,9 +298,9 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                             {Object.entries(variables).map(([key, value]) => (
                                 <div key={key} className="flex items-center justify-between group hover:bg-muted/50 p-1 rounded">
                                     <div className="flex items-center gap-2 overflow-hidden">
-                                        <span className="text-xs font-mono font-medium text-purple-600 truncate max-w-[120px]">{key}</span>
+                                        <span className="text-xs font-mono font-medium text-purple-600 whitespace-nowrap">{key}</span>
                                         <span className="text-[10px] text-muted-foreground">=</span>
-                                        <span className="text-[10px] font-mono truncate text-green-600 max-w-[80px]">
+                                        <span className="text-[10px] font-mono whitespace-nowrap text-green-600">
                                             {value === null ? 'null' : JSON.stringify(value)}
                                         </span>
                                     </div>
@@ -379,7 +379,7 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                         </span>
                     </div>
                     
-                    <div className="p-2 bg-background min-h-[50px] max-h-[300px] overflow-y-auto">
+                    <div className="p-2 bg-background min-h-[50px] max-h-[300px] overflow-auto">
                         {hasData ? (
                              <JsonTree 
                                 data={schema} 

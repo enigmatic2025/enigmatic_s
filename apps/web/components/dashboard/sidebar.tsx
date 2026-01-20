@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import {
   Search,
@@ -59,11 +59,50 @@ export function Sidebar({
   const [connectorsOpen, setConnectorsOpen] = useState(false);
   const [humanInLoopOpen, setHumanInLoopOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  
+  // Resizable Sidebar State
+  const [sidebarWidth, setSidebarWidth] = useState(400);
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const isDesignMode = pathname.includes("/flow-studio/design");
 
   // Prevent hydration mismatch for Radix UI components (Tabs)
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    e.preventDefault(); 
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback((mouseMoveEvent: MouseEvent) => {
+    if (isResizing) {
+        const newWidth = mouseMoveEvent.clientX; 
+        if (newWidth > 300 && newWidth < 800) {
+            setSidebarWidth(newWidth);
+        }
+    }
+  }, [isResizing]);
+
+  useEffect(() => {
+    if (isResizing) {
+        window.addEventListener("mousemove", resize);
+        window.addEventListener("mouseup", stopResizing);
+        document.body.style.cursor = "col-resize";
+        document.body.style.userSelect = "none";
+    }
+    return () => {
+        window.removeEventListener("mousemove", resize);
+        window.removeEventListener("mouseup", stopResizing);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+    };
+  }, [isResizing, resize, stopResizing]);
 
   const NavItem = ({
     href,
@@ -130,9 +169,14 @@ export function Sidebar({
 
   return (
     <aside
+      ref={sidebarRef}
+      style={{ 
+        width: sidebarOpen && isDesignMode ? sidebarWidth : undefined,
+        transition: isResizing ? 'none' : 'width 300ms ease-in-out'
+      }}
       className={`
-        fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-zinc-900 border-r border-border transition-all duration-300 ease-in-out flex flex-col
-        ${sidebarOpen ? (pathname.includes("/flow-studio/design") ? "w-[400px]" : "w-64") : "w-16"}
+        fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-zinc-900 border-r border-border flex flex-col
+        ${sidebarOpen ? (isDesignMode ? "" : "w-64") : "w-16"}
         ${
           mobileMenuOpen
             ? "translate-x-0"
@@ -140,6 +184,14 @@ export function Sidebar({
         }
       `}
     >
+      {/* Resizer Handle */}
+      {sidebarOpen && isDesignMode && (
+          <div
+            className={`absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-primary/20 transition-colors z-[60] ${isResizing ? 'bg-primary/20' : ''}`}
+            onMouseDown={startResizing}
+            title="Drag to resize"
+          />
+      )}
       {/* Header */}
       <div
         className={`h-14 flex items-center ${
