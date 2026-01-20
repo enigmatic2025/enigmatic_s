@@ -28,41 +28,77 @@ interface TestPayloadModalProps {
   onClose: () => void;
   onRun: (payload: any) => void;
   schema: SchemaField[];
+  flowId?: string;
 }
 
-export function TestPayloadModal({ isOpen, onClose, onRun, schema }: TestPayloadModalProps) {
+export function TestPayloadModal({ isOpen, onClose, onRun, schema, flowId }: TestPayloadModalProps) {
   const [mode, setMode] = useState<'form' | 'json'>('form');
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [jsonInput, setJsonInput] = useState<string>("{\n  \n}");
 
+  // Helper to save
+  const saveToSession = (data: any) => {
+      if (flowId) {
+          try {
+              sessionStorage.setItem(`test_payload_${flowId}`, JSON.stringify(data));
+          } catch(e) {}
+      }
+  };
+
   // Initialize form data when schema changes or modal opens
   useEffect(() => {
     if (isOpen) {
-      if (schema && schema.length > 0) {
-        setMode('form');
-        const initialData: Record<string, any> = {};
-        schema.forEach(field => {
-          // Set sensible defaults based on type
-          if (field.type === 'string') initialData[field.key] = "";
-          if (field.type === 'number') initialData[field.key] = 0;
-          if (field.type === 'boolean') initialData[field.key] = false;
-          if (field.type === 'array') initialData[field.key] = [];
-          if (field.type === 'object') initialData[field.key] = {};
-        });
-        setFormData(initialData);
-        setJsonInput(JSON.stringify(initialData, null, 2));
+      // 1. Try to load from Session Storage
+      const sessionKey = flowId ? `test_payload_${flowId}` : null;
+      let loadedData = null;
+      
+      if (sessionKey) {
+        try {
+          const stored = sessionStorage.getItem(sessionKey);
+          if (stored) {
+             loadedData = JSON.parse(stored);
+          }
+        } catch (e) { console.error("Failed to load session payload", e); }
+      }
+
+      if (loadedData) {
+          // If we have saved data, prefer it
+          setFormData(loadedData);
+          setJsonInput(JSON.stringify(loadedData, null, 2));
+          // Default to form mode if schema exists, else json
+          if (schema && schema.length > 0) {
+              setMode('form');
+          } else {
+              setMode('json');
+          }
       } else {
-        setMode('json');
-        setJsonInput("{\n  \n}");
+          // Fallback to Defaults (Existing Logic)
+          if (schema && schema.length > 0) {
+            setMode('form');
+            const initialData: Record<string, any> = {};
+            schema.forEach(field => {
+              if (field.type === 'string') initialData[field.key] = "";
+              if (field.type === 'number') initialData[field.key] = 0;
+              if (field.type === 'boolean') initialData[field.key] = false;
+              if (field.type === 'array') initialData[field.key] = [];
+              if (field.type === 'object') initialData[field.key] = {};
+            });
+            setFormData(initialData);
+            setJsonInput(JSON.stringify(initialData, null, 2));
+          } else {
+            setMode('json');
+            setJsonInput("{\n  \n}");
+          }
       }
     }
-  }, [isOpen, schema]);
+  }, [isOpen, schema, flowId]);
 
   // Sync Form -> JSON
   const handleFormChange = (key: string, value: any) => {
     const newData = { ...formData, [key]: value };
     setFormData(newData);
     setJsonInput(JSON.stringify(newData, null, 2));
+    saveToSession(newData);
   };
 
   // Sync JSON -> Form (best effort)
@@ -71,24 +107,47 @@ export function TestPayloadModal({ isOpen, onClose, onRun, schema }: TestPayload
     try {
       const parsed = JSON.parse(str);
       setFormData(parsed);
+      saveToSession(parsed);
     } catch (e) {
       // Invalid JSON, don't sync form yet
     }
   };
 
   const handleRun = () => {
+    let payload: Record<string, any> = {};
+
     if (mode === 'json') {
       try {
-        const payload = JSON.parse(jsonInput);
-        onRun(payload);
+        payload = JSON.parse(jsonInput);
       } catch (e) {
         toast.error("Invalid JSON format");
         return;
       }
     } else {
-      // Form mode
-      onRun(formData);
+      payload = formData;
     }
+
+    // Validation
+    if (schema && schema.length > 0) {
+      const missingFields: string[] = [];
+      
+      schema.forEach(field => {
+        if (field.required) {
+          const val = payload[field.key];
+          // Simple validation: check for undefined, null, or empty string if string type
+          if (val === undefined || val === null || (typeof val === 'string' && val.trim() === '')) {
+            missingFields.push(field.key);
+          }
+        }
+      });
+
+      if (missingFields.length > 0) {
+        toast.error(`Missing required fields: ${missingFields.join(', ')}`);
+        return; // Stop execution
+      }
+    }
+
+    onRun(payload);
     onClose();
   };
 

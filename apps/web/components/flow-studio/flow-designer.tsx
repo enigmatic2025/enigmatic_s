@@ -10,7 +10,7 @@ import 'reactflow/dist/style.css';
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal } from "lucide-react";
+import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal, Loader2 } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
@@ -209,7 +209,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const { addLog, clearLogs } = useFlowStore();
 
   const handleTestRun = async (inputPayload: any = {}) => {
-    toast.loading("Starting action flow test...", { id: TEST_TOAST_ID });
+    // Start generic loading state (isPolling=true but currentRun=null implies "Starting")
+    setIsPolling(true);
     clearLogs(); // Clear logs before starting
     addLog({ message: "Starting action flow test...", type: "info" });
     
@@ -245,15 +246,15 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       
       const result = await flowService.testFlow(flowDefinition, flowId, inputPayload);
       
-      toast.success(`Action Flow started!`, { id: TEST_TOAST_ID });
+      // Removed success toast as requested
       addLog({ message: `Action Flow started with Workflow ID: ${result.workflow_id}`, type: "success", details: result });
       console.log("Action Flow Started:", result);
 
-      // Start Polling
-      setIsPolling(true);
+      // Continue polling with active run
       setCurrentRun({ workflowId: result.workflow_id, runId: result.run_id });
       
     } catch (error: any) {
+      setIsPolling(false); // Stop loading on error
       console.error("Action Flow test error:", error);
       addLog({ message: "Failed to start action flow test", type: "error", details: error });
       
@@ -502,8 +503,13 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                   size="icon" 
                   className={`h-8 w-8 transition-colors ${isPolling ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : 'text-muted-foreground hover:text-foreground'}`}
                   onClick={isPolling ? handleStop : onPlayClick}
+                  disabled={isPolling && !currentRun}
                 >
-                  {isPolling ? <Square className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4" />}
+                  {isPolling ? (
+                    currentRun ? <Square className="h-4 w-4 fill-current" /> : <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Play className="h-4 w-4" />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -613,6 +619,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onClose={() => setIsTestPayloadModalOpen(false)}
         onRun={(payload) => handleTestRun(payload)}
         schema={triggerSchema}
+        flowId={flowId}
       />
     </div>
   );
