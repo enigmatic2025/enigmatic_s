@@ -71,13 +71,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Organization CRUD
 	mux.Handle("POST /api/admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.CreateOrganization)))
-	mux.Handle("PUT /api/admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
-	mux.Handle("DELETE /api/admin/orgs/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
+	mux.Handle("PUT /api/admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
+	mux.Handle("DELETE /api/admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
 
 	// User Management
 	mux.Handle("POST /api/admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
-	mux.Handle("PUT /api/admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
-	mux.Handle("DELETE /api/admin/users/", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
+	mux.Handle("PUT /api/admin/users/{id}", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
+	mux.Handle("DELETE /api/admin/users/{id}", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
 	mux.Handle("POST /api/admin/users/{id}/block", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
 	mux.Handle("POST /api/admin/users/{id}/reset-mfa", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
 	mux.Handle("POST /api/admin/users/{id}/password", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
@@ -102,7 +102,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	testHandler := handlers.NewTestHandler(s.temporalClient)
 	mux.HandleFunc("POST /api/test/node", handlers.TestNodeHandler)
 	mux.HandleFunc("POST /api/test/flow", testHandler.TestFlow)
-	mux.HandleFunc("GET /api/test/flow/", handlers.GetFlowResultHandler)
+	mux.HandleFunc("GET /api/test/flow/{run_id}", handlers.GetFlowResultHandler)
 	mux.HandleFunc("POST /api/test/flow/cancel", handlers.CancelFlowHandler)
 
 	// Publish Route

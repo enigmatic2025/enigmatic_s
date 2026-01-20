@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
@@ -27,14 +26,9 @@ func NewExecuteFlowHandler(c client.Client) *ExecuteFlowHandler {
 // POST /flows/{flow_id}/execute
 func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request) {
 	// 1. Extract Flow ID
+	// 1. Extract Flow ID
 	// Handles paths like /flows/{id}/execute
-	parts := strings.Split(r.URL.Path, "/")
-	// Expected parts: ["", "flows", "{id}", "execute"]
-	if len(parts) < 4 {
-		http.Error(w, "Invalid path", http.StatusBadRequest)
-		return
-	}
-	flowID := parts[2]
+	flowID := r.PathValue("id")
 
 	if flowID == "" {
 		http.Error(w, "Flow ID required", http.StatusBadRequest)

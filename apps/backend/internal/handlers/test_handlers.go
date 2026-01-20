@@ -174,25 +174,13 @@ func generateID() string {
 // GetFlowResultHandler checks the status of a workflow run
 func GetFlowResultHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract RunID from path: /api/test/flow/{runID}
-	// Since we used HandleFunc with specific pattern in main, we might need manual parsing
-	// or if we use Go 1.22 path vars.
-	// Assuming standard library for now, let's just grab the last segment.
+	runID := r.PathValue("run_id")
 
-	// Simplistic ID extraction from URL
-	// Simplistic ID extraction from URL
-	path := r.URL.Path // e.g. /api/test/flow/RunID
+	fmt.Printf("DEBUG: GetFlowResultHandler - RunID: %s\n", runID)
 
-	fmt.Printf("DEBUG: Full Request URL: %s, RawQuery: %s\n", r.URL.String(), r.URL.RawQuery)
-
-	runID := strings.TrimPrefix(path, "/api/test/flow/")
-
-	fmt.Printf("DEBUG: GetFlowResultHandler - Path: %s, Extracted RunID: %s\n", path, runID)
-
-	if runID == "" || runID == path { // check if replacement happened
-		// Try alternative if prefix was missed (e.g. if behind functionality)
-		// But for now just log it.
-		fmt.Printf("ERROR: Missing Run ID. Path was %s\n", path)
-		http.Error(w, fmt.Sprintf("Missing Run ID. Path: %s", path), http.StatusBadRequest)
+	if runID == "" {
+		fmt.Printf("ERROR: Missing Run ID.\n")
+		http.Error(w, "Missing Run ID", http.StatusBadRequest)
 		return
 	}
 

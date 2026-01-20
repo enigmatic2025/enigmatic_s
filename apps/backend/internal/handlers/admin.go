@@ -138,8 +138,8 @@ func (h *AdminHandler) CreateOrganization(w http.ResponseWriter, r *http.Request
 	client := database.GetClient()
 	var results []map[string]interface{}
 	err := client.DB.From("organizations").Insert(map[string]interface{}{
-		"name": req.Name,
-		"slug": req.Slug,
+		"name":              req.Name,
+		"slug":              req.Slug,
 		"subscription_plan": req.Plan,
 	}).Execute(&results)
 
@@ -272,25 +272,25 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// and to skip email confirmation if desired (we'll auto-confirm for admin creation)
 	supabaseUrl := os.Getenv("SUPABASE_URL")
 	supabaseKey := os.Getenv("SUPABASE_KEY")
-	
+
 	// Create user payload
 	adminUserBody := map[string]interface{}{
-		"email":          req.Email,
-		"password":       req.Password,
-		"email_confirm":  true,
+		"email":         req.Email,
+		"password":      req.Password,
+		"email_confirm": true,
 		"user_metadata": map[string]interface{}{
 			"full_name": req.FullName,
 		},
 	}
-	
+
 	jsonBody, _ := json.Marshal(adminUserBody)
-	
+
 	// Make request to Supabase Auth Admin API
 	request, _ := http.NewRequest("POST", supabaseUrl+"/auth/v1/admin/users", bytes.NewBuffer(jsonBody))
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+supabaseKey)
 	request.Header.Set("apikey", supabaseKey)
-	
+
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
@@ -298,13 +298,13 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer response.Body.Close()
-	
+
 	if response.StatusCode != 200 && response.StatusCode != 201 {
 		bodyBytes, _ := io.ReadAll(response.Body)
 		http.Error(w, "Supabase Auth Error: "+string(bodyBytes), response.StatusCode)
 		return
 	}
-	
+
 	var authUser struct {
 		ID string `json:"id"`
 	}
@@ -315,17 +315,17 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// 2. Update Profile (System Role)
 	dbClient := database.GetClient()
-	
+
 	profileUpdates := map[string]interface{}{
 		"full_name": req.FullName,
 	}
-	
+
 	if req.UserType == "system" {
 		profileUpdates["system_role"] = "admin"
 	} else {
 		profileUpdates["system_role"] = "user"
 	}
-	
+
 	var profileResults []map[string]interface{}
 	err = dbClient.DB.From("profiles").Update(profileUpdates).Eq("id", authUser.ID).Execute(&profileResults)
 	if err != nil {
@@ -348,7 +348,7 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 			"org_id":  req.OrganizationID,
 			"role":    orgRole,
 		}).Execute(&memberResults)
-		
+
 		if err != nil {
 			log.Printf("Error creating membership for user %s: %v", authUser.ID, err)
 			// We might want to return a warning or error here, but user is created
@@ -357,7 +357,7 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status": "success", 
+		"status":  "success",
 		"message": "User created successfully",
 		"user_id": authUser.ID,
 	})
@@ -365,7 +365,7 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUser updates a user's profile
 func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	userID := strings.TrimPrefix(r.URL.Path, "/admin/users/")
+	userID := r.PathValue("id")
 	if userID == "" {
 		http.Error(w, "User ID required", http.StatusBadRequest)
 		return
@@ -415,7 +415,7 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 // DeleteUser deletes a user account
 func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	userID := strings.TrimPrefix(r.URL.Path, "/admin/users/")
+	userID := r.PathValue("id")
 	if userID == "" {
 		http.Error(w, "User ID required", http.StatusBadRequest)
 		return
@@ -462,8 +462,7 @@ func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 // BlockUser blocks or unblocks a user
 func (h *AdminHandler) BlockUser(w http.ResponseWriter, r *http.Request) {
-	userID := strings.TrimPrefix(r.URL.Path, "/admin/users/")
-	userID = strings.TrimSuffix(userID, "/block")
+	userID := r.PathValue("id")
 	if userID == "" {
 		http.Error(w, "User ID required", http.StatusBadRequest)
 		return
@@ -530,8 +529,7 @@ func (h *AdminHandler) BlockUser(w http.ResponseWriter, r *http.Request) {
 
 // ResetUserMFA resets a user's MFA
 func (h *AdminHandler) ResetUserMFA(w http.ResponseWriter, r *http.Request) {
-	userID := strings.TrimPrefix(r.URL.Path, "/admin/users/")
-	userID = strings.TrimSuffix(userID, "/reset-mfa")
+	userID := r.PathValue("id")
 	if userID == "" {
 		http.Error(w, "User ID required", http.StatusBadRequest)
 		return
@@ -545,7 +543,7 @@ func (h *AdminHandler) ResetUserMFA(w http.ResponseWriter, r *http.Request) {
 	// Or just try to delete known types. Supabase Admin API allows deleting factors by ID.
 	// Since we want to reset ALL, we might need to list first.
 	// Endpoint: GET /auth/v1/admin/users/{id}/factors
-	
+
 	request, _ := http.NewRequest("GET", supabaseUrl+"/auth/v1/admin/users/"+userID+"/factors", nil)
 	request.Header.Set("Authorization", "Bearer "+supabaseKey)
 	request.Header.Set("apikey", supabaseKey)
@@ -578,7 +576,7 @@ func (h *AdminHandler) ResetUserMFA(w http.ResponseWriter, r *http.Request) {
 		delReq, _ := http.NewRequest("DELETE", supabaseUrl+"/auth/v1/admin/users/"+userID+"/factors/"+factor.ID, nil)
 		delReq.Header.Set("Authorization", "Bearer "+supabaseKey)
 		delReq.Header.Set("apikey", supabaseKey)
-		
+
 		delResp, err := httpClient.Do(delReq)
 		if err != nil || delResp.StatusCode != 200 {
 			log.Printf("Failed to delete factor %s for user %s", factor.ID, userID)
@@ -593,7 +591,7 @@ func (h *AdminHandler) ResetUserMFA(w http.ResponseWriter, r *http.Request) {
 	logoutReq, _ := http.NewRequest("POST", supabaseUrl+"/auth/v1/admin/users/"+userID+"/logout", nil)
 	logoutReq.Header.Set("Authorization", "Bearer "+supabaseKey)
 	logoutReq.Header.Set("apikey", supabaseKey)
-	
+
 	logoutResp, err := httpClient.Do(logoutReq)
 	if err != nil {
 		log.Printf("Failed to logout user %s: %v", userID, err)
@@ -616,8 +614,7 @@ func (h *AdminHandler) ResetUserMFA(w http.ResponseWriter, r *http.Request) {
 
 // ChangeUserPassword changes a user's password
 func (h *AdminHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
-	userID := strings.TrimPrefix(r.URL.Path, "/admin/users/")
-	userID = strings.TrimSuffix(userID, "/password")
+	userID := r.PathValue("id")
 	if userID == "" {
 		http.Error(w, "User ID required", http.StatusBadRequest)
 		return
@@ -672,8 +669,7 @@ func (h *AdminHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request
 
 // UpdateUserRole updates a user's organization role
 func (h *AdminHandler) UpdateUserRole(w http.ResponseWriter, r *http.Request) {
-	userID := strings.TrimPrefix(r.URL.Path, "/admin/users/")
-	userID = strings.TrimSuffix(userID, "/role")
+	userID := r.PathValue("id")
 	if userID == "" {
 		http.Error(w, "User ID required", http.StatusBadRequest)
 		return
@@ -697,12 +693,12 @@ func (h *AdminHandler) UpdateUserRole(w http.ResponseWriter, r *http.Request) {
 	// Note: This assumes user has only one membership for now, or we update all.
 	// Ideally we should specify org_id, but for this simple admin panel we might just update their role in whatever org they are in.
 	// Or we can look up their membership.
-	
+
 	client := database.GetClient()
 	var results []map[string]interface{}
-	
-	// We update all memberships for this user to the new role. 
-	// In a multi-org system, this might be dangerous, but for this requirement it seems acceptable 
+
+	// We update all memberships for this user to the new role.
+	// In a multi-org system, this might be dangerous, but for this requirement it seems acceptable
 	// as the UI implies a single "Role" column.
 	err := client.DB.From("memberships").Update(map[string]interface{}{
 		"role": req.Role,
