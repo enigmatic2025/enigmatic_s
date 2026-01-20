@@ -331,7 +331,7 @@ export function NodeConfigurationSheet({
                             className="gap-2 border bg-background hover:bg-muted"
                         >
                             {isExecuting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
-                            {isExecuting ? "Running..." : "Test Run"}
+                            {isExecuting ? "Running Step..." : "Test Step"}
                         </Button>
                     </div>
                 )}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   Search,
@@ -58,6 +58,12 @@ export function Sidebar({
   const [builtInToolsOpen, setBuiltInToolsOpen] = useState(true);
   const [connectorsOpen, setConnectorsOpen] = useState(false);
   const [humanInLoopOpen, setHumanInLoopOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Prevent hydration mismatch for Radix UI components (Tabs)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const NavItem = ({
     href,
@@ -214,7 +220,7 @@ export function Sidebar({
           )}
 
           {/* Designer Mode - Draggable Nodes */}
-          {pathname.includes("/flow-studio/design") && sidebarOpen && (
+          {isMounted && pathname.includes("/flow-studio/design") && sidebarOpen && (
             <Tabs defaultValue="nodes" className="w-full">
               <div className="px-3 mb-2">
                   <TabsList className="w-full grid grid-cols-2">

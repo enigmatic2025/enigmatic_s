@@ -10,7 +10,7 @@ import 'reactflow/dist/style.css';
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal, Loader2, Eraser } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
@@ -212,7 +212,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     // Start generic loading state (isPolling=true but currentRun=null implies "Starting")
     setIsPolling(true);
     clearLogs(); // Clear logs before starting
-    addLog({ message: "Starting action flow test...", type: "info" });
+    addLog({ message: "Starting flow execution...", type: "info" });
     
     try {
       clearExecutionTrace(); // Clear previous results
@@ -247,21 +247,21 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       const result = await flowService.testFlow(flowDefinition, flowId, inputPayload);
       
       // Removed success toast as requested
-      addLog({ message: `Action Flow started with Workflow ID: ${result.workflow_id}`, type: "success", details: result });
-      console.log("Action Flow Started:", result);
+      addLog({ message: `Flow execution started with Workflow ID: ${result.workflow_id}`, type: "success", details: result });
+      console.log("Flow Execution Started:", result);
 
       // Continue polling with active run
       setCurrentRun({ workflowId: result.workflow_id, runId: result.run_id });
       
     } catch (error: any) {
       setIsPolling(false); // Stop loading on error
-      console.error("Action Flow test error:", error);
-      addLog({ message: "Failed to start action flow test", type: "error", details: error });
+      console.error("Flow execution error:", error);
+      addLog({ message: "Failed to start flow execution", type: "error", details: error });
       
       if (error.message?.includes("409")) {
-          toast.warning("Test run already in progress. Please stop the current run first.", { id: TEST_TOAST_ID });
+          toast.warning("Execution already in progress. Please stop the current run first.", { id: TEST_TOAST_ID });
       } else {
-          toast.error("Failed to start action flow test", { id: TEST_TOAST_ID });
+          toast.error("Failed to start flow execution", { id: TEST_TOAST_ID });
       }
     }
   };
@@ -471,6 +471,27 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 </TooltipContent>
             </Tooltip>
 
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        onClick={() => {
+                            clearExecutionTrace();
+                            clearLogs();
+                            // Optional: toast.success("Test results cleared"); 
+                            // User asked for a way to clear, success toast might be redundant but helpful confirmation.
+                        }}
+                    >
+                        <Eraser className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Clear Test Results</p>
+                </TooltipContent>
+            </Tooltip>
+
              <Tooltip>
                 <TooltipTrigger asChild>
                     <Button 
@@ -513,7 +534,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{isPolling ? "Stop Run" : "Test Run"}</p>
+                <p>{isPolling ? "Stop Execution" : "Run Flow"}</p>
               </TooltipContent>
             </Tooltip>
 

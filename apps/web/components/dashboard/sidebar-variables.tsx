@@ -358,6 +358,14 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                     }
                 }
 
+                // Special handling for Set Variable nodes
+                // We want to allow copying {{ variables.varName }} directly
+                if (node.type === 'variable' && node.data?.variableName) {
+                    schema = {
+                        [node.data.variableName]: node.data.value || "current_value"
+                    };
+                }
+
                 const hasData = schema !== undefined;
                 
                 return (
@@ -375,7 +383,7 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                         {hasData ? (
                              <JsonTree 
                                 data={schema} 
-                                path={`steps.${node.id}`} 
+                                path={node.type === 'variable' ? 'variables' : `steps.${node.id}`} 
                                 contextLoopSource={contextLoopSource}
                             />
                         ) : (

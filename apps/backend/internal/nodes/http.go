@@ -31,13 +31,13 @@ func (n *HttpNode) Execute(ctx context.Context, input NodeContext) (*NodeResult,
 
 	// 2. Prepare Body
 	var bodyReader io.Reader
-	if input.Config["body"] != nil {
-		bodyStr, ok := input.Config["body"].(string)
+	if resolvedConfig["body"] != nil {
+		bodyStr, ok := resolvedConfig["body"].(string)
 		if ok {
 			bodyReader = bytes.NewBufferString(bodyStr)
 		} else {
 			// Try to marshal if it's an object
-			jsonBody, err := json.Marshal(input.Config["body"])
+			jsonBody, err := json.Marshal(resolvedConfig["body"])
 			if err == nil {
 				bodyReader = bytes.NewBuffer(jsonBody)
 			}
@@ -51,7 +51,7 @@ func (n *HttpNode) Execute(ctx context.Context, input NodeContext) (*NodeResult,
 	}
 
 	// 4. Add Headers
-	if headers, ok := input.Config["headers"].(map[string]interface{}); ok {
+	if headers, ok := resolvedConfig["headers"].(map[string]interface{}); ok {
 		for k, v := range headers {
 			if val, ok := v.(string); ok {
 				req.Header.Set(k, val)
