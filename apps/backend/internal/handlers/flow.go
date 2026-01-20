@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
@@ -91,7 +90,7 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 
 // UpdateFlow updates an existing flow
 func (h *FlowHandler) UpdateFlow(w http.ResponseWriter, r *http.Request) {
-	flowID := strings.TrimPrefix(r.URL.Path, "/flows/")
+	flowID := r.PathValue("id")
 	if flowID == "" {
 		http.Error(w, "Flow ID required", http.StatusBadRequest)
 		return
@@ -171,7 +170,7 @@ func (h *FlowHandler) UpdateFlow(w http.ResponseWriter, r *http.Request) {
 
 // GetFlow gets a flow by ID
 func (h *FlowHandler) GetFlow(w http.ResponseWriter, r *http.Request) {
-	flowID := strings.TrimPrefix(r.URL.Path, "/flows/")
+	flowID := r.PathValue("id")
 	if flowID == "" {
 		http.Error(w, "Flow ID required", http.StatusBadRequest)
 		return
@@ -234,7 +233,7 @@ func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
 
 // DeleteFlow deletes a flow by ID
 func (h *FlowHandler) DeleteFlow(w http.ResponseWriter, r *http.Request) {
-	flowID := strings.TrimPrefix(r.URL.Path, "/flows/")
+	flowID := r.PathValue("id")
 	if flowID == "" {
 		http.Error(w, "Flow ID required", http.StatusBadRequest)
 		return
@@ -255,15 +254,11 @@ func (h *FlowHandler) DeleteFlow(w http.ResponseWriter, r *http.Request) {
 
 // PublishFlow promotes draft to published
 func (h *FlowHandler) PublishFlow(w http.ResponseWriter, r *http.Request) {
-	// URL path: /flows/{id}/publish
-	// Need to extract ID carefully
-	pathParts := strings.Split(r.URL.Path, "/")
-	if len(pathParts) < 3 {
-		http.Error(w, "Invalid path", http.StatusBadRequest)
+	flowID := r.PathValue("id")
+	if flowID == "" {
+		http.Error(w, "Flow ID required", http.StatusBadRequest)
 		return
 	}
-	// parts: ["", "flows", "ID", "publish"]
-	flowID := pathParts[2]
 
 	client := database.GetClient()
 

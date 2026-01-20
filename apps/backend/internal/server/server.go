@@ -87,10 +87,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	flowHandler := handlers.NewFlowHandler()
 	// TODO: Add Auth middleware once we have token passing from frontend
 	mux.HandleFunc("POST /api/flows", flowHandler.CreateFlow)
-	mux.HandleFunc("PUT /api/flows/", flowHandler.UpdateFlow)
-	mux.HandleFunc("GET /api/flows/", flowHandler.GetFlow)
+	mux.HandleFunc("PUT /api/flows/{id}", flowHandler.UpdateFlow)
+	mux.HandleFunc("GET /api/flows/{id}", flowHandler.GetFlow)
 	mux.HandleFunc("GET /api/flows", flowHandler.ListFlows)
-	mux.HandleFunc("DELETE /api/flows/", flowHandler.DeleteFlow)
+	mux.HandleFunc("DELETE /api/flows/{id}", flowHandler.DeleteFlow)
 
 	// Execution Routes
 	if s.temporalClient != nil {
