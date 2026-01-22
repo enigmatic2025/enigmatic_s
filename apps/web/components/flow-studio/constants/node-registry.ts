@@ -1,4 +1,3 @@
-// import { ScheduleNode } from '../nodes/schedule-node';
 import { ActionNode } from '../nodes/action-node';
 import { ManualTriggerNode } from '../nodes/manual-trigger-node';
 import { HttpRequestConfig } from '../configurators/http-request-config';
@@ -16,6 +15,8 @@ import { SwitchConfig } from '../configurators/switch-config';
 import { MapConfig } from '../configurators/map-config';
 import ApiTriggerNode from '../nodes/api-trigger-node';
 import ApiTriggerConfig from '../configurators/api-trigger-config';
+import { HumanTaskNode } from '../nodes/human-task-node';
+import { HumanTaskConfig } from '../configurators/human-task-config';
 
 export const NODE_TYPES = {
     // schedule: ScheduleNode,
@@ -26,6 +27,7 @@ export const NODE_TYPES = {
     loop: LoopNode,
     variable: VariableNode,
     switch: SwitchNode,
+    'human-task': HumanTaskNode,
 };
 
 export const CONFIG_COMPONENTS: Record<string, any> = {
@@ -39,6 +41,7 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
     'variable': VariableConfig,
     'switch': SwitchConfig,
     'map': MapConfig,
+    'human-task': HumanTaskConfig,
     // Fallbacks
     'action': HttpRequestConfig, // Default action to HTTP for now
 };

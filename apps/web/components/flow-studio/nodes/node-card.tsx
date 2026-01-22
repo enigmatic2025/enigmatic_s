@@ -12,6 +12,7 @@ interface NodeCardProps {
   isSelected?: boolean;
   isConnectable?: boolean;
   testId?: string;
+  executionStatus?: any;
 }
 
 /**

@@ -8,6 +8,7 @@ import (
 
 // NodeContext contains all the data available to the node during execution.
 type NodeContext struct {
+	FlowID     string
 	WorkflowID string
 	StepID     string
 	InputData  map[string]interface{}
@@ -51,6 +52,7 @@ var Registry = map[string]NodeExecutor{
 	"TRIGGER":     &TriggerNode{},
 	"API-TRIGGER": &TriggerNode{}, // Support for API Trigger node type
 	"ACTION":      &HttpNode{},    // Alias for generic Action nodes (defaults to HTTP)
+	"HUMAN-TASK":  &HumanTaskNode{},
 }
 
 // GetExecutor returns the executor for a given node type.

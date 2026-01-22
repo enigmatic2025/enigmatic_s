@@ -79,6 +79,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 		// Construct Context for the Node
 		nodeCtx := nodes.NodeContext{
+			FlowID:     flowDefinition.ID,
 			WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 			StepID:     node.ID,
 			InputData: map[string]interface{}{
@@ -108,8 +109,14 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			logger.Info("Node requested suspension", "ID", node.ID)
 
 			// Wait for a Signal
-			// Signal name convention: "Resume-<NodeID>" or just a generic "Resume" with payload
+			// Wait for a Signal
+			// Signal name convention: "Resume-<NodeID>" or "HumanTask-<TaskID>"
 			signalName := "Resume-" + node.ID
+
+			// If the node returned a task_id (Human Task), listen to that specific task signal
+			if tid, ok := result.Output["task_id"].(string); ok {
+				signalName = "HumanTask-" + tid
+			}
 			var signalData interface{}
 
 			selector := workflow.NewSelector(ctx)

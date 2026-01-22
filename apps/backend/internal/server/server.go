@@ -98,6 +98,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 		mux.HandleFunc("POST /api/flows/{id}/execute", executeHandler.ExecuteFlow)
 	}
 
+	// Task Routes
+	taskHandler := handlers.NewHumanTaskHandler(s.temporalClient)
+	mux.HandleFunc("GET /api/tasks", taskHandler.GetTasksHandler)
+	mux.HandleFunc("POST /api/tasks/{id}/complete", taskHandler.CompleteTaskHandler)
+
 	// Test Routes (Dev only, but useful for frontend dev)
 	testHandler := handlers.NewTestHandler(s.temporalClient)
 	mux.HandleFunc("POST /api/test/node", handlers.TestNodeHandler)

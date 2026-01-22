@@ -24,7 +24,8 @@ import {
   ListFilter,
   Repeat,
   Braces,
-  Table
+  Table,
+  ClipboardList
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,7 +58,7 @@ export function Sidebar({
   const [triggersOpen, setTriggersOpen] = useState(true);
   const [builtInToolsOpen, setBuiltInToolsOpen] = useState(true);
   const [connectorsOpen, setConnectorsOpen] = useState(false);
-  const [humanInLoopOpen, setHumanInLoopOpen] = useState(false);
+  const [humanInLoopOpen, setHumanInLoopOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   
   // Resizable Sidebar State
@@ -303,6 +304,25 @@ export function Sidebar({
                     )}
                   </SidebarSection>
 
+                  {/* Human in loop */}
+                  <SidebarSection
+                    title="Human in loop"
+                    isOpen={humanInLoopOpen}
+                    onToggle={() => setHumanInLoopOpen(!humanInLoopOpen)}
+                  >
+                    {(!searchQuery || "human task approval form".includes(searchQuery.toLowerCase())) && (
+                      <div className="grid grid-cols-1 gap-2">
+                        <SidebarDraggableItem
+                          label="Human Task"
+                          icon={ClipboardList}
+                          iconColorClass="text-teal-500"
+                          bgColorClass="bg-teal-500/10"
+                          dataTransferType="human-task"
+                        />
+                      </div>
+                    )}
+                  </SidebarSection>
+
                   {/* Built-in tools */}
                   <SidebarSection
                     title="Built-in tools"
@@ -403,16 +423,7 @@ export function Sidebar({
                     </div>
                   </SidebarSection>
 
-                  {/* Human in loop */}
-                  <SidebarSection
-                    title="Human in loop"
-                    isOpen={humanInLoopOpen}
-                    onToggle={() => setHumanInLoopOpen(!humanInLoopOpen)}
-                  >
-                    <div className="text-xs text-muted-foreground">
-                      Approval steps coming soon.
-                    </div>
-                  </SidebarSection>
+
                 </div>
               </TabsContent>
 
