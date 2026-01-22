@@ -5,6 +5,7 @@ import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { NodeCard } from './node-card';
+import { NodeStatus } from './node-status';
 
 export const VariableNode = memo(({ id, data, isConnectable }: any) => {
   const { setNodes } = useReactFlow();
@@ -51,31 +52,17 @@ export const VariableNode = memo(({ id, data, isConnectable }: any) => {
       </CardHeader>
       
       <CardContent className="p-4 pt-2">
-        <div className="flex flex-col gap-1">
             {(() => {
                  const isConfigured = !!data.variableName && (data.value !== undefined && data.value !== '') && !!data.description;
                  return (
-                    <>
-                        <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "font-medium")}>
-                        {isConfigured ? (
+                    <NodeStatus 
+                        isConfigured={isConfigured}
+                        configuredContent={
                             <span className="font-mono text-teal-600">{data.variableName} = {data.value}</span>
-                        ) : (
-                             <span className="flex items-center gap-1 text-red-500">
-                                <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                                Incomplete
-                            </span>
-                        )}
-                        </div>
-                        {isConfigured && (
-                        <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                            Ready
-                        </div>
-                        )}
-                    </>
+                        }
+                    />
                  );
             })()}
-        </div>
       </CardContent>
 
       <Handle

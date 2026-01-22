@@ -34,6 +34,19 @@
 - **Visuals**: Matches the Node's color theme.
 - **Layout**: "Floating Inspector" style (Shadow XS, Rounded, Non-blocking).
 
+### 3.3. Node Validation States
+Nodes must clearly communicate their configuration status:
+
+- **Ready (Valid)**:
+    - **Visual**: Green Dot (`bg-green-500`) + "Ready" Text (`text-green-600`).
+    - **Condition**: ALL required fields (including Label/Description) are filled.
+    - **Display**: Shows the configured summary or description.
+
+- **Incomplete (Invalid)**:
+    - **Visual**: Red Dot (`bg-red-500`) + "Incomplete" Text (`text-red-500`).
+    - **Condition**: Any required field is missing.
+    - **Action**: Blocks flow saving.
+
 ## 4. UI Patterns
 
 ### 4.1. Variable Reference
@@ -42,8 +55,8 @@
 - **Visuals**: Code blocks or inputs highlighting variables in a distinct color.
 
 ### 4.2. Empty States
-- Use `text-muted-foreground`.
-- Provide a clear "Call to Action" (e.g., "Configure Schema").
+- When a node is incomplete, use the **Incomplete** pattern (Red Dot).
+- Do not use generic "Click to configure" text; be explicit about the status.
 
 ## 5. Future Implementation Rules
 - Always check this Design System before creating new Nodes.

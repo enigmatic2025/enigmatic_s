@@ -5,6 +5,7 @@ import { ClipboardList, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { NodeStatus } from './node-status';
 
 const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
   const { setNodes } = useReactFlow();
@@ -64,22 +65,10 @@ const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
           const isConfigured = !!data.assignee && !!data.description;
           
           return (
-            <div className="flex flex-col gap-1">
-               <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "font-medium")}>
-                  {isConfigured ? (data.description || 'Task configured') : (
-                         <span className="flex items-center gap-1 text-red-500">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                            Incomplete
-                        </span>
-                  )}
-               </div>
-               {isConfigured && (
-                    <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                      Ready
-                    </div>
-               )}
-            </div>
+            <NodeStatus 
+              isConfigured={isConfigured}
+              configuredContent={data.description || 'Task configured'}
+            />
           );
         })()}
       </CardContent>

@@ -5,6 +5,7 @@ import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { NodeCard } from './node-card';
+import { NodeStatus } from './node-status';
 
 export const LoopNode = memo(({ id, data, isConnectable }: any) => {
   const { setNodes } = useReactFlow();
@@ -54,22 +55,11 @@ export const LoopNode = memo(({ id, data, isConnectable }: any) => {
         {(() => {
            const isConfigured = !!data.items && !!data.description;
            return (
-             <div className="flex flex-col gap-1 mb-4">
-                <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "font-medium")}>
-                  {isConfigured ? `Iterating ${data.items}` : (
-                         <span className="flex items-center gap-1 text-red-500">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                            Incomplete
-                        </span>
-                  )}
-                </div>
-                {isConfigured && (
-                     <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
-                       <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                       Ready
-                     </div>
-                )}
-             </div>
+             <NodeStatus 
+               isConfigured={isConfigured}
+               configuredContent={`Iterating ${data.items}`}
+               className="mb-4"
+             />
            );
         })()}
       </CardContent>

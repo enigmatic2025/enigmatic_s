@@ -5,6 +5,7 @@ import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { NodeCard } from './node-card';
 import { cn } from '@/lib/utils';
+import { NodeStatus } from './node-status';
 
 export const SwitchNode = memo(({ id, data, isConnectable }: any) => {
   const { setNodes } = useReactFlow();
@@ -59,24 +60,13 @@ export const SwitchNode = memo(({ id, data, isConnectable }: any) => {
         {(() => {
             const isConfigured = !!data.variable && !!data.description;
             return (
-                <div className="flex flex-col gap-1 mb-4">
-                    <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "font-medium")}>
-                    {isConfigured ? (
-                        <span className="font-mono text-amber-600">Switch on {data.variable}</span>
-                    ) : (
-                         <span className="flex items-center gap-1 text-red-500">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                            Incomplete
-                        </span>
-                    )}
-                    </div>
-                    {isConfigured && (
-                        <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                        Ready
-                        </div>
-                    )}
-                </div>
+                <NodeStatus
+                  isConfigured={isConfigured}
+                  configuredContent={
+                    <span className="font-mono text-amber-600">Switch on {data.variable}</span>
+                  }
+                  className="mb-4"
+                />
             );
         })()}
         {/* Spacers to push the card height to match handles */}

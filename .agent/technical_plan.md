@@ -35,12 +35,16 @@ Prefix: `/api/v1` (Proxied from Frontend)
 - [x] **Deployment**: Dockerized All-in-One on Koyeb.
 - [x] **API Trigger**: Dynamic URL & execution (`POST /execute`).
 - [x] **Visuals**: Design System v1 (Subtle Colors).
+- [x] **Validation Framework**: Strict Save Guards + UI Indicators (Ready/Incomplete).
+- [x] **Data Ops**: Map, Filter, Switch, Loop Nodes implemented.
+- [x] **Process Studio**: Human Task Node, Validation, & Configurator.
 
 ## 5. Technical Roadmap
 ### Phase 1: MVP Polish (Current)
-- [ ] **Debug Save**: Verify full round-trip of complex flows.
-- [ ] **Process Studio**: "Human-in-the-Loop" Nodes (Forms/Approvals).
-- [ ] **Data Ops**: "Map" and "Filter" nodes robust implementation.
+- [x] **Debug Save**: Verify full round-trip of complex flows.
+- [x] **Process Studio**: "Human-in-the-Loop" Nodes (Forms/Approvals).
+- [x] **Data Ops**: "Map" and "Filter" nodes robust implementation.
+- [ ] **Inbox UI**: Frontend interface for executing Human Tasks.
 
 ### Phase 2: Signal Studio (Event Driven)
 - [ ] **Run Workflow Node**: Fire-and-forget sub-flows.
