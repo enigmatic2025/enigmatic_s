@@ -17,7 +17,7 @@ export function LoopConfig({ data, onUpdate }: { data: any; onUpdate: (data: any
 
       <div className="space-y-4">
         <div className="space-y-2">
-            <Label>Array to Loop Over</Label>
+            <Label>Array to Loop Over <span className="text-red-500">*</span></Label>
             <Input 
                 placeholder="{{ steps.trigger.items }}" 
                 value={data.items || ""}

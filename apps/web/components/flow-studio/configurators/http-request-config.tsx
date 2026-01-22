@@ -54,7 +54,7 @@ export function HttpRequestConfig({ data, onUpdate }: HttpRequestConfigProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>URL</Label>
+        <Label>URL <span className="text-red-500">*</span></Label>
         <Input
           placeholder="https://api.example.com/v1/resource"
           value={formData.url || ""}

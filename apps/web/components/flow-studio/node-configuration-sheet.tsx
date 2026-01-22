@@ -233,7 +233,7 @@ export function NodeConfigurationSheet({
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 gap-4">
                             <div className="space-y-2">
-                                <Label>Label</Label>
+                                <Label>Label <span className="text-red-500">*</span></Label>
                                 <Input
                                     value={formData.label || ""}
                                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
@@ -241,7 +241,7 @@ export function NodeConfigurationSheet({
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>Description</Label>
+                                <Label>Description <span className="text-red-500">*</span></Label>
                                 <Textarea
                                     value={formData.description || ""}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}

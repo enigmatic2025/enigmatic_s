@@ -25,7 +25,7 @@ export function ConditionConfig({ data, onUpdate }: { data: any; onUpdate: (data
 
       <div className="grid gap-4 border rounded-md p-4 bg-muted/10">
         <div className="space-y-2">
-          <Label>Value A (Left)</Label>
+          <Label>Value A (Left) <span className="text-red-500">*</span></Label>
           <Input 
             placeholder="{{ steps.trigger.data.status }}" 
             value={condition.left}
@@ -35,7 +35,7 @@ export function ConditionConfig({ data, onUpdate }: { data: any; onUpdate: (data
         </div>
 
         <div className="space-y-2">
-          <Label>Operator</Label>
+          <Label>Operator <span className="text-red-500">*</span></Label>
           <Select 
             value={condition.operator} 
             onValueChange={(val) => updateCondition("operator", val)}
@@ -57,7 +57,7 @@ export function ConditionConfig({ data, onUpdate }: { data: any; onUpdate: (data
         </div>
 
         <div className="space-y-2">
-          <Label>Value B (Right)</Label>
+          <Label>Value B (Right) <span className="text-red-500">*</span></Label>
           <Input 
             placeholder="success" 
             value={condition.right}

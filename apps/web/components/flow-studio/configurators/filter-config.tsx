@@ -125,7 +125,7 @@ export function FilterConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
       {/* 1. Array Selection */}
       <div className="space-y-2">
             <div className="flex items-center justify-between">
-                <Label>Array to Filter (Variable)</Label>
+                <Label>Array to Filter (Variable) <span className="text-red-500">*</span></Label>
                  <Button variant="outline" size="sm" onClick={() => setIsSchemaOpen(true)} className="h-6 text-[10px] gap-1 h-auto py-1">
                     <Braces className="h-3 w-3" />
                     Define output structure
@@ -167,7 +167,7 @@ export function FilterConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
                    <div key={index} className="grid grid-cols-[1fr,100px,1fr,32px] gap-2 items-start">
                        {/* Field */}
                        <div className="space-y-1">
-                           {index === 0 && <Label className="text-[10px]">Item Field</Label>}
+                           {index === 0 && <Label className="text-[10px]">Item Field <span className="text-red-500">*</span></Label>}
                            <Input 
                                 placeholder="e.g. price" 
                                 value={condition.field}
@@ -178,7 +178,7 @@ export function FilterConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
 
                        {/* Operator */}
                        <div className="space-y-1">
-                           {index === 0 && <Label className="text-[10px]">Operator</Label>}
+                           {index === 0 && <Label className="text-[10px]">Operator <span className="text-red-500">*</span></Label>}
                            <Select 
                                 value={condition.operator} 
                                 onValueChange={(val) => updateCondition(index, "operator", val)}
@@ -198,7 +198,7 @@ export function FilterConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
 
                        {/* Value */}
                        <div className="space-y-1">
-                           {index === 0 && <Label className="text-[10px]">Value</Label>}
+                           {index === 0 && <Label className="text-[10px]">Value <span className="text-red-500">*</span></Label>}
                            <Input 
                                 placeholder="e.g. 100" 
                                 value={condition.value}

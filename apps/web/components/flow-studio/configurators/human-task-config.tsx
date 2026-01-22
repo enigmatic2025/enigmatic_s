@@ -62,19 +62,10 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
           <p className="text-[11px] text-muted-foreground">Allows you to identify this task in the Inbox.</p>
         </div>
 
-        <div className="space-y-2">
-          <Label>Instructions (for AI Assistant)</Label>
-          <Textarea 
-            value={currentConfig.description || ''} 
-            onChange={(e) => onUpdate({ ...currentConfig, description: e.target.value })}
-            placeholder="e.g. Ask the user to upload the receipt and confirm the total amount."
-            className="min-h-[80px]"
-          />
-          <p className="text-[11px] text-muted-foreground">The AI uses this to guide the user.</p>
-        </div>
+
 
         <div className="space-y-2">
-          <Label>Assignee (Email or Role)</Label>
+          <Label>Assignee (Email or Role) <span className="text-red-500">*</span></Label>
           <Input 
             value={currentConfig.assignee || ''} 
             onChange={(e) => onUpdate({ ...currentConfig, assignee: e.target.value })}
@@ -109,12 +100,26 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                 </div>
                 
                 <div className="flex-1 space-y-3">
-                  {/* Row 1: Label & Type */}
-                  <div className="flex gap-2">
+                  {/* Row 1: Label & Type & Delete */}
+                  <div className="flex gap-2 items-center">
                     <div className="flex-1">
                       <Input 
                         value={field.label} 
-                        onChange={(e) => updateField(index, { label: e.target.value })}
+                        onChange={(e) => {
+                          const newLabel = e.target.value;
+                          const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+                          
+                          // Auto-generate key if it matches the previous slug or is default/empty
+                          // We check if current key is a slug of the current label (before update)
+                          const currentSlug = slugify(field.label);
+                          const isAutoKey = field.key === currentSlug || field.key.startsWith('field_') || field.key === '';
+                          
+                          const updates: Partial<SchemaField> = { label: newLabel };
+                          if (isAutoKey) {
+                             updates.key = slugify(newLabel);
+                          }
+                          updateField(index, updates);
+                        }}
                         placeholder="Field Label (Question)"
                         className="h-8 text-sm font-medium border-transparent bg-transparent hover:bg-background hover:border-input focus:bg-background focus:border-input px-2 -ml-2 transition-all" 
                       />
@@ -136,16 +141,31 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                         <SelectItem value="date"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> Date</div></SelectItem>
                       </SelectContent>
                     </Select>
+
+                    <Button
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                      onClick={() => removeField(index)}
+                      title="Remove Field"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
 
                   {/* Row 2: Key & Required */}
                   <div className="flex items-center gap-3 text-xs">
-                    <div className="flex items-center gap-1.5 flex-1 bg-background border rounded px-2 py-1">
-                      <span className="text-muted-foreground font-mono">key:</span>
+                    <div className="flex items-center gap-1.5 flex-1 bg-background border rounded px-2 py-1 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
+                      <span className="text-muted-foreground font-mono select-none">key:</span>
                       <input 
-                        className="bg-transparent border-none outline-none w-full font-mono text-foreground"
+                        className="bg-transparent border-none outline-none w-full font-mono text-foreground placeholder:text-muted-foreground/30"
                         value={field.key}
-                        onChange={(e) => updateField(index, { key: e.target.value })}
+                        onChange={(e) => {
+                             // Enforce strict slug format (lower_snake_case)
+                             const validKey = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+                             updateField(index, { key: validKey });
+                        }}
+                        placeholder="variable_name"
                       />
                     </div>
                     
@@ -160,14 +180,6 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                   </div>
                 </div>
 
-                <Button
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-6 w-6 text-muted-foreground hover:text-destructive absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => removeField(index)}
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
               </div>
             </div>
           ))}

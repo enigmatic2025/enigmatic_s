@@ -90,12 +90,21 @@ export const ActionNode = memo(({ id, data, isConnectable }: any) => {
       
       <CardContent className="p-4 pt-2">
         {(() => {
-          const isConfigured = subtype === 'http' ? !!data.url : true;
+          const isConfigured = (
+            (subtype === 'http' ? !!data.url : true) &&
+            (subtype === 'email' ? !!data.to : true) &&
+            !!data.description
+          );
           
           return (
             <div className="flex flex-col gap-1">
-              <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "text-orange-500 font-medium")}>
-                {isConfigured ? (data.description || 'Action configured') : 'Click to configure'}
+              <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "font-medium")}>
+                {isConfigured ? (data.description || 'Action configured') : (
+                         <span className="flex items-center gap-1 text-red-500">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                            Incomplete
+                        </span>
+                )}
               </div>
               {isConfigured && (
                 <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">

@@ -61,7 +61,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         </label>
         <div className="space-y-3">
             <div>
-              <label className="text-xs text-muted-foreground block mb-1.5">Action Flow Title Template</label>
+              <label className="text-xs text-muted-foreground block mb-1.5">Action Flow Title Template <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={data.instanceNameTemplate || ''}
@@ -75,7 +75,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
             </div>
             
             <div>
-              <label className="text-xs text-muted-foreground block mb-1.5">Description</label>
+              <label className="text-xs text-muted-foreground block mb-1.5">Description <span className="text-red-500">*</span></label>
               <textarea
                 value={data.description || ''}
                 onChange={(e) => onUpdate({ ...data, description: e.target.value })}

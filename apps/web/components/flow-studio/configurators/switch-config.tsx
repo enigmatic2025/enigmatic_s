@@ -45,7 +45,7 @@ export function SwitchConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
 
       <div className="space-y-4">
         <div className="space-y-2">
-            <Label>Variable to Check</Label>
+            <Label>Variable to Check <span className="text-red-500">*</span></Label>
             <Input 
                 placeholder="{{ steps.trigger.data.status }}" 
                 value={data.variable || ""}

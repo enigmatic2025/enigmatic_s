@@ -4,6 +4,7 @@ import { Split, Trash2 } from 'lucide-react';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { NodeCard } from './node-card';
+import { cn } from '@/lib/utils';
 
 export const ConditionNode = memo(({ id, data, isConnectable }: any) => {
   const { setNodes } = useReactFlow();
@@ -53,11 +54,31 @@ export const ConditionNode = memo(({ id, data, isConnectable }: any) => {
       </CardHeader>
       
       <CardContent className="p-4 pt-2 pb-8">
-        <div className="flex flex-col gap-1">
-          <div className="text-xs font-mono text-muted-foreground truncate bg-muted/50 p-1 rounded px-2 mb-4">
-            {conditionPreview}
-          </div>
-        </div>
+        {(() => {
+            const c = data.condition || {};
+            const isConfigured = !!c.left && !!c.operator && !!c.right && !!data.description;
+            return (
+                <div className="flex flex-col gap-1">
+                <div className={cn("text-xs font-mono truncate bg-muted/50 p-1 rounded px-2 mb-4", !isConfigured && "bg-transparent p-0")}>
+                    {isConfigured 
+                        ? `${c.left} ${c.operator} ${c.right}`
+                        : (
+                         <span className="flex items-center gap-1 text-red-500 font-sans font-medium">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                            Incomplete
+                        </span>
+                        )
+                    }
+                </div>
+                 {isConfigured && (
+                        <div className="text-[10px] font-medium text-green-600 flex items-center gap-1 mb-2 -mt-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                        Ready
+                        </div>
+                    )}
+                </div>
+            );
+        })()}
       </CardContent>
 
       {/* True Path - Fixed Position relative to Top */}

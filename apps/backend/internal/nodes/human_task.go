@@ -13,7 +13,15 @@ type HumanTaskNode struct{}
 func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
 	// 1. Parse Configuration
 	title, _ := input.Config["title"].(string)
-	description, _ := input.Config["description"].(string)
+	
+	// 'description' in generic node data is for the designer (documentation).
+	// 'instructions' is the specific prompt for the human task.
+	// We prioritize instructions, but fallback to description for backward compat.
+	description, _ := input.Config["instructions"].(string)
+	if description == "" {
+		description, _ = input.Config["description"].(string)
+	}
+
 	assignee, _ := input.Config["assignee"].(string)
 
 	// Default values

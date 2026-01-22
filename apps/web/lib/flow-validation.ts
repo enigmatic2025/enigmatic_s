@@ -49,6 +49,104 @@ export const validateFlow = (nodes: Node[], edges: Edge[]): boolean => {
         }
     }
 
+    // 4. Check Node Configuration
+    for (const node of nodes) {
+        // Generic Checks (Global)
+        if (!node.data.label) {
+            toast.error(`A node matches ID ${node.id} but is missing a Label.`);
+            return false;
+        }
+        if (!node.data.description) {
+            toast.error(`Node "${node.data.label}" is missing a Description.`);
+            return false;
+        }
+
+        // Human Task
+        if (node.type === 'human-task') {
+            if (!node.data.assignee) {
+                toast.error(`Node "${node.data.title || node.data.label}" is missing an Assignee.`);
+                return false;
+            }
+        }
+
+        // API Trigger
+        if (node.type === 'api-trigger') {
+            if (!node.data.instanceNameTemplate) {
+                toast.error(`Trigger "${node.data.label}" is missing an Action Flow Title Template.`);
+                return false;
+            }
+        }
+
+        // Action Nodes
+        if (node.type === 'action') {
+            const subtype = node.data.subtype || 'http';
+
+            if (subtype === 'http') {
+                if (!node.data.url) {
+                    toast.error(`Node "${node.data.label}" is missing a URL.`);
+                    return false;
+                }
+                if (!node.data.method) {
+                    // Should have a default, but checking just in case
+                    // Actually, usually defaults to GET in config, but let's be strict if it's potentially empty
+                }
+            }
+
+            if (subtype === 'email') {
+                if (!node.data.to) {
+                    toast.error(`Node "${node.data.label}" is missing a Recipient (To).`);
+                    return false;
+                }
+            }
+        }
+
+        // Variable Nodes
+        if (node.type === 'variable') {
+            if (!node.data.variableName) {
+                toast.error(`Node "${node.data.label}" is missing a Variable Name.`);
+                return false;
+            }
+            if (node.data.value === undefined || node.data.value === '') {
+                toast.error(`Node "${node.data.label}" is missing a Value.`);
+                return false;
+            }
+        }
+
+        // Switch Logic
+        if (node.type === 'switch') {
+            if (!node.data.variable) {
+                toast.error(`Switch Node "${node.data.label}" is missing a Variable to Check.`);
+                return false;
+            }
+        }
+
+        // Loop Logic
+        if (node.type === 'loop') {
+            if (!node.data.items) {
+                toast.error(`Loop Node "${node.data.label}" is missing an Array to Loop Over.`);
+                return false;
+            }
+        }
+
+        // Condition Logic
+        if (node.type === 'condition') {
+            const c = node.data.condition || {};
+            if (!c.left || !c.operator || !c.right) {
+                toast.error(`Condition Node "${node.data.label}" is incomplete (Left, Operator, and Right values required).`);
+                return false;
+            }
+        }
+
+        // Filter Logic
+        if (node.type === 'filter') {
+            const s = node.data.settings || {};
+            if (!s.arrayVariable) {
+                toast.error(`Filter Node "${node.data.label}" is missing an Array to Filter.`);
+                return false;
+            }
+        }
+    }
+
     if (visited.size !== nodes.length) {
         const orphanCount = nodes.length - visited.size;
         console.log("Validation Failed: Orphans found", {

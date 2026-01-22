@@ -1,11 +1,19 @@
 import { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps, useReactFlow } from 'reactflow';
 import { NodeCard } from './node-card';
-import { ClipboardList } from 'lucide-react';
+import { ClipboardList, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-const HumanTaskNode = memo(({ data, selected }: NodeProps) => {
+const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
+  const { setNodes } = useReactFlow();
+  
+  const onDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNodes((nodes) => nodes.filter((node) => node.id !== id));
+  };
+
   const colorClass = "text-teal-500 bg-teal-500/10 border-teal-500/20 hover:border-teal-500/50";
   const borderClasses = "border-teal-500/20 hover:border-teal-500/50";
   const handleColor = "bg-teal-500";
@@ -35,25 +43,45 @@ const HumanTaskNode = memo(({ data, selected }: NodeProps) => {
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
               Human Task
             </span>
-            <CardTitle className="text-sm font-medium leading-none truncate" title={data.config?.title}>
-               {data.config?.title || 'Action Required'}
+            <CardTitle className="text-sm font-medium leading-none truncate" title={data.title}>
+               {data.title || 'Action Required'}
             </CardTitle>
           </div>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive shrink-0"
+          onClick={onDelete}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <Trash2 className="h-3 w-3" />
+        </Button>
       </CardHeader>
 
       <CardContent className="p-4 pt-2">
-         <div className="flex flex-col gap-1">
-            <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "text-teal-500 font-medium")}>
-               {isConfigured ? (data.config?.description || 'Task configured') : 'Click to configure'}
+         {(() => {
+          const isConfigured = !!data.assignee && !!data.description;
+          
+          return (
+            <div className="flex flex-col gap-1">
+               <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "font-medium")}>
+                  {isConfigured ? (data.description || 'Task configured') : (
+                         <span className="flex items-center gap-1 text-red-500">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                            Incomplete
+                        </span>
+                  )}
+               </div>
+               {isConfigured && (
+                    <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      Ready
+                    </div>
+               )}
             </div>
-            {isConfigured && (
-                 <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
-                   <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                   {data.config?.assignee || 'Assigned'}
-                 </div>
-            )}
-         </div>
+          );
+        })()}
       </CardContent>
 
       {/* Output Handle */}

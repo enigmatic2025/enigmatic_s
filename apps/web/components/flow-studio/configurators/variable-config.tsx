@@ -22,7 +22,7 @@ export function VariableConfig({ data, onUpdate }: { data: any; onUpdate: (data:
 
       <div className="space-y-4">
         <div className="space-y-2">
-            <Label>Variable Name</Label>
+            <Label>Variable Name <span className="text-red-500">*</span></Label>
             <Select 
                 value={data.variableName || ""} 
                 onValueChange={(val) => updateField("variableName", val)}
@@ -46,7 +46,7 @@ export function VariableConfig({ data, onUpdate }: { data: any; onUpdate: (data:
         </div>
 
         <div className="space-y-2">
-            <Label>Set To Value</Label>
+            <Label>Set To Value <span className="text-red-500">*</span></Label>
             <Input 
                 placeholder="123 or {{ steps.trigger.data.id }}" 
                 value={data.value || ""}

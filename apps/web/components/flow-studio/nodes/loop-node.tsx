@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Handle, Position, useReactFlow } from 'reactflow';
-import { Repeat } from 'lucide-react';
+import { Repeat, Trash2 } from 'lucide-react';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -39,12 +39,39 @@ export const LoopNode = memo(({ id, data, isConnectable }: any) => {
             <CardTitle className="text-sm font-medium leading-none truncate" title={data.label}>{data.label || "For Each Item"}</CardTitle>
           </div>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive shrink-0"
+          onClick={onDelete}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <Trash2 className="h-3 w-3" />
+        </Button>
       </CardHeader>
       
       <CardContent className="p-4 pt-2 pb-8">
-        <div className="text-xs text-muted-foreground truncate mb-4">
-          {data.items ? `Iterating ${data.items}` : 'Configure Loop source'}
-        </div>
+        {(() => {
+           const isConfigured = !!data.items && !!data.description;
+           return (
+             <div className="flex flex-col gap-1 mb-4">
+                <div className={cn("text-xs truncate", isConfigured ? "text-muted-foreground" : "font-medium")}>
+                  {isConfigured ? `Iterating ${data.items}` : (
+                         <span className="flex items-center gap-1 text-red-500">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                            Incomplete
+                        </span>
+                  )}
+                </div>
+                {isConfigured && (
+                     <div className="text-[10px] font-medium text-green-600 flex items-center gap-1">
+                       <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                       Ready
+                     </div>
+                )}
+             </div>
+           );
+        })()}
       </CardContent>
 
       <div className="absolute right-3 top-[5.5rem] flex items-center transform -translate-y-1/2 pointer-events-none">
