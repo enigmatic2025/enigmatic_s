@@ -1,53 +1,78 @@
 import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
-import { Zap } from 'lucide-react';
+import { Handle, Position, useReactFlow } from 'reactflow';
+import { Zap, Trash2 } from 'lucide-react';
+import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { NodeCard } from './node-card';
+import { NodeStatus } from './node-status';
 
-const ApiTriggerNode = ({ data, selected }: NodeProps) => {
+const ApiTriggerNode = memo(({ id, data, isConnectable }: any) => {
+  const { setNodes } = useReactFlow();
+
+  const onDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNodes((nodes) => nodes.filter((node) => node.id !== id));
+  };
+
   return (
-    <div
-      className={`
-        relative flex flex-col w-[280px] rounded-xl bg-card border-2 transition-all duration-200
-        ${selected ? 'border-emerald-500 shadow-lg ring-1 ring-emerald-500/50' : 'border-border/50 hover:border-emerald-400/50'}
-      `}
+    <NodeCard 
+      nodeId={id} 
+      borderColorClass="border-emerald-500/20 hover:border-emerald-500"
+      testId="api-trigger-node"
     >
-      {/* Header */}
-      <div className="flex items-center gap-3 p-3 border-b border-border/50 bg-gradient-to-r from-emerald-500/10 to-transparent rounded-t-lg">
-        <div className="flex items-center justify-center p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
-          <Zap className="w-4 h-4" />
+      <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="p-2 bg-emerald-500/10 rounded-md">
+            <Zap className="h-4 w-4 text-emerald-500" />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              Start Event
+            </span>
+            <CardTitle className="text-sm font-medium leading-none truncate" title={data.label}>{data.label || 'Incoming Webhook'}</CardTitle>
+          </div>
         </div>
-        <div className="flex flex-col min-w-0">
-          <span className="text-sm font-semibold text-foreground truncate">
-            {data.label || 'Incoming Webhook'}
-          </span>
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-            START EVENT
-          </span>
-        </div>
-      </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive shrink-0"
+          onClick={onDelete}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <Trash2 className="h-3 w-3" />
+        </Button>
+      </CardHeader>
 
-      {/* Body */}
-      <div className="p-3 space-y-2">
-        <div className="text-xs text-muted-foreground">
-          {data.description || 'Starts a new flow run when data is received.'}
-        </div>
-        
-        {/* Endpoint Preview */}
-        <div className="flex items-center gap-2 p-2 rounded bg-muted/50 border border-border/30">
-          <Zap className="w-3 h-3 text-emerald-500" />
-          <code className="text-[10px] text-muted-foreground font-mono truncate">
-            /api/v1/flows/.../execute
-          </code>
-        </div>
-      </div>
+      <CardContent className="p-4 pt-2">
+         <NodeStatus
+            isConfigured={true}
+            configuredContent={
+                <div className="flex flex-col gap-2">
+                    <div className="truncate">
+                        {data.description || 'Starts a new flow run when data is received.'}
+                    </div>
+                    <div className="flex items-center gap-2 p-2 rounded bg-muted/50 border border-border/30">
+                        <Zap className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <code className="text-[10px] text-muted-foreground font-mono truncate">
+                            /api/v1/flows/.../execute
+                        </code>
+                    </div>
+                </div>
+            }
+         />
+      </CardContent>
 
-      {/* Output Handle */}
       <Handle
         type="source"
         position={Position.Right}
-        className="w-3 h-3 -right-1.5 bg-emerald-500 border-2 border-background z-50 transition-transform hover:scale-125"
+        isConnectable={isConnectable}
+        className="w-3 h-3 bg-emerald-500 border-2 border-background z-50"
       />
-    </div>
+    </NodeCard>
   );
-};
+});
 
-export default memo(ApiTriggerNode);
+ApiTriggerNode.displayName = 'ApiTriggerNode';
+
+export default ApiTriggerNode;
