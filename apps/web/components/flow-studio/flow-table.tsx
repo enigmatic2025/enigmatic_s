@@ -40,15 +40,21 @@ export function FlowTable({ initialFlows, slug }: FlowTableProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDelete = async () => {
-    if (!selectedFlow) return;
+    if (!selectedFlow || isDeleting) return;
+    setIsDeleting(true);
     try {
       await flowService.deleteFlow(selectedFlow.id);
       setFlows(flows.filter((f) => f.id !== selectedFlow.id));
+      toast.dismiss();
       toast.success("Flow deleted successfully");
       setIsDeleteModalOpen(false);
     } catch (error) {
       toast.error("Failed to delete flow");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
