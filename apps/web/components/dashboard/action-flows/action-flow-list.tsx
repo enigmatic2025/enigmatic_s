@@ -3,8 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Copy, ExternalLink, Play, RotateCcw, Terminal } from "lucide-react";
+import { Copy, ExternalLink, Play, RotateCcw, Terminal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+
+import { useRouter, usePathname } from "next/navigation";
 
 export interface ActionFlowExec {
   id: string; // The Action Flow ID (DB)
@@ -21,6 +23,9 @@ interface ActionFlowListProps {
 }
 
 export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -34,8 +39,8 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
   if (data.length === 0) {
     return (
       <div className="text-center py-12 border rounded-lg bg-muted/5">
-        <p className="text-sm text-muted-foreground">No executions found.</p>
-        <p className="text-xs text-muted-foreground/50">Run a flow to see it here.</p>
+        <p className="text-sm text-muted-foreground">No action flows found.</p>
+        <p className="text-xs text-muted-foreground/50">Run an action flow to see it here.</p>
       </div>
     );
   }
@@ -71,7 +76,11 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
   return (
     <div className="space-y-3">
       {data.map((exec) => (
-        <Card key={exec.id} className="p-4 border shadow-sm hover:shadow-md transition-shadow group">
+        <Card 
+            key={exec.id} 
+            className="p-4 border shadow-none cursor-pointer group hover:bg-muted/40 transition-colors"
+            onClick={() => router.push(`${pathname}/${exec.id}`)}
+        >
           <div className="flex items-start justify-between">
             {/* Left: Main Info */}
             <div className="flex items-start gap-4">
@@ -95,11 +104,11 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                   
                   {/* Deployment / Run Info Line */}
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Terminal className="w-3 h-3" />
                     <span className="font-mono">{exec.temporal_workflow_id}</span>
                     <span className="text-slate-300 dark:text-slate-700">•</span>
                     <span className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors"
-                        onClick={() => {
+                        onClick={(e) => {
+                            e.stopPropagation();
                             navigator.clipboard.writeText(exec.id);
                             toast.success("ID Copied");
                         }}
@@ -118,9 +127,31 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                 </span>
                 
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
-                        View Logs <ExternalLink className="w-3 h-3" />
-                    </Button>
+                   <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      onClick={async (e) => {
+                          e.stopPropagation();
+                          if (!confirm("Are you sure you want to delete this action flow run?")) return;
+                          
+                          const res = await fetch(`/api/action-flows/${exec.id}`, { method: 'DELETE' });
+                          if (res.ok) {
+                              toast.success("Deleted");
+                              router.refresh(); // Trigger server component refresh? No, this is client.
+                              // For client side list refetch, we might need a prop or just full reload.
+                              // Ideally parent passes "onDelete" or controls state.
+                              // For MVP, router.refresh() does a soft refresh, 
+                              // OR we can trigger a reload.
+                              window.location.reload(); 
+                          } else {
+                              toast.error("Failed to delete");
+                          }
+                      }}
+                      title="Delete"
+                   >
+                     <Trash2 className="w-3.5 h-3.5" />
+                   </Button>
                 </div>
             </div>
           </div>

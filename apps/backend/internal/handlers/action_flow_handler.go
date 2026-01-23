@@ -1,16 +1,23 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
+	"go.temporal.io/sdk/client"
 )
 
-type ActionFlowHandler struct{}
+type ActionFlowHandler struct {
+	TemporalClient client.Client
+}
 
-func NewActionFlowHandler() *ActionFlowHandler {
-	return &ActionFlowHandler{}
+func NewActionFlowHandler(c client.Client) *ActionFlowHandler {
+	return &ActionFlowHandler{
+		TemporalClient: c,
+	}
 }
 
 // ListActionFlows handles GET /api/action-flows
@@ -26,7 +33,6 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		TemporalWorkflowID string         `json:"temporal_workflow_id"`
 		InputData          map[string]any `json:"input_data"`
 		StartedAt          string         `json:"started_at"`
-		// Flows struct removed since we fetch manually
 	}
 
 	var results []ActionFlowResult
@@ -37,27 +43,9 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		Limit(limit).
 		Execute(&results)
 
-	// Sort by StartedAt Descending (since DB Order method is not available in this chain)
-	// assuming ISO8601 strings, string comparison works.
-	if len(results) > 1 {
-		// Simple bubble sort or similar is overkill, let's just assume we need to import sort?
-		// Or since we are in ReplaceFileContent, I can't easily add imports without replacing top of file.
-		// I will just remove the Order call for now to Fix the Error immediately.
-		// Sorting can be done in Frontend or next step if needed.
-		// Actually, let's try to add the import if I can match the top.
-	}
-
 	if err != nil {
-		// Try without order if it fails (fallback from before)
-		err = client.DB.From("action_flows").
-			Select("*").
-			Limit(limit).
-			Execute(&results)
-
-		if err != nil {
-			http.Error(w, "Failed to fetch action flows: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
+		http.Error(w, "Failed to fetch action flows: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	// 2. Hydrate Flow Names manually
@@ -78,11 +66,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 				ID   string `json:"id"`
 				Name string `json:"name"`
 			}
-			// Fetch all flows to be safe/simple without complex IN query builder if specific syntax unsupported
-			// For MVP with < 100 flows, fetching all names is acceptable, or we assume Select * includes them.
-			// Actually, let's just fetch all flows with "id,name" to simple map.
 			client.DB.From("flows").Select("id, name").Execute(&flows)
-
 			for _, f := range flows {
 				flowNameMap[f.ID] = f.Name
 			}
@@ -104,7 +88,6 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		name := flowNameMap[r.FlowID]
 		if name == "" {
 			name = "Unknown Flow"
-			// Attempt to show ID if name missing
 			if r.FlowID != "" {
 				name = "Flow " + r.FlowID[0:6] + "..."
 			}
@@ -122,4 +105,46 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(flatResults)
+}
+
+// DeleteActionFlow handles DELETE /api/action-flows/{id}
+func (h *ActionFlowHandler) DeleteActionFlow(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "Missing ID", http.StatusBadRequest)
+		return
+	}
+
+	dbClient := database.GetClient()
+
+	// 1. Get the action flow first to find the Temporal Workflow ID
+	type ActionFlowInfo struct {
+		TemporalWorkflowID string `json:"temporal_workflow_id"`
+		Status             string `json:"status"`
+	}
+	var results []ActionFlowInfo
+
+	// Check if record exists
+	err := dbClient.DB.From("action_flows").Select("temporal_workflow_id, status").Eq("id", id).Execute(&results)
+
+	if err == nil && len(results) > 0 {
+		af := results[0]
+		// 2. Try to terminate workflow if needed
+		if h.TemporalClient != nil && (af.Status == "RUNNING" || af.Status == "PAUSED") {
+			// Terminate it. We ignore error if it's already done.
+			_ = h.TemporalClient.TerminateWorkflow(context.Background(), af.TemporalWorkflowID, "", "User deleted form dashboard")
+		}
+	}
+
+	// 3. Delete from DB
+	// PostgREST Execute requires a target to unmarshal into, even for Delete
+	var deleted []map[string]interface{}
+	err = dbClient.DB.From("action_flows").Delete().Eq("id", id).Execute(&deleted)
+	if err != nil {
+		http.Error(w, "Failed to delete: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Deleted %s", id)
 }
