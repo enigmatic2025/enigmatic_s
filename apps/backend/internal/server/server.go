@@ -84,7 +84,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("POST /api/admin/users/{id}/role", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUserRole)))
 
 	// Flow Routes
-	flowHandler := handlers.NewFlowHandler()
+	flowHandler := handlers.NewFlowHandler(s.temporalClient)
 	// TODO: Add Auth middleware once we have token passing from frontend
 	mux.HandleFunc("POST /api/flows", flowHandler.CreateFlow)
 	mux.HandleFunc("PUT /api/flows/{id}", flowHandler.UpdateFlow)

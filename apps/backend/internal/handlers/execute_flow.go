@@ -53,21 +53,33 @@ func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request)
 
 	// We use a temporary struct to capture the DB result
 	var dbResult []struct {
-		ID              string          `json:"id"`
-		Name            string          `json:"name"`
-		Definition      json.RawMessage `json:"definition"`
-		VariablesSchema json.RawMessage `json:"variables_schema"`
+		ID                  string          `json:"id"`
+		Name                string          `json:"name"`
+		PublishedDefinition json.RawMessage `json:"published_definition"`
+		Definition          json.RawMessage `json:"definition"`
+		VariablesSchema     json.RawMessage `json:"variables_schema"`
+		IsActive            bool            `json:"is_active"`
 	}
 
-	err := dbClient.DB.From("flows").Select("id, name, definition, variables_schema").Eq("id", flowID).Execute(&dbResult)
+	err := dbClient.DB.From("flows").Select("id, name, published_definition, definition, variables_schema, is_active").Eq("id", flowID).Execute(&dbResult)
 	if err != nil || len(dbResult) == 0 {
 		http.Error(w, "Flow not found", http.StatusNotFound)
 		return
 	}
 
+	if !dbResult[0].IsActive {
+		http.Error(w, "Flow is not active", http.StatusBadRequest)
+		return
+	}
+
 	// Deserialize definition into workflow.FlowDefinition
 	var flowDef workflow.FlowDefinition
-	if err := json.Unmarshal(dbResult[0].Definition, &flowDef); err != nil {
+	defBytes := dbResult[0].PublishedDefinition
+	if defBytes == nil {
+		defBytes = dbResult[0].Definition
+	}
+
+	if err := json.Unmarshal(defBytes, &flowDef); err != nil {
 		http.Error(w, "Invalid flow definition in database", http.StatusInternalServerError)
 		return
 	}

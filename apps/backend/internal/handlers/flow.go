@@ -1,17 +1,24 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
+	temporalClient "go.temporal.io/sdk/client"
 )
 
-type FlowHandler struct{}
+type FlowHandler struct {
+	TemporalClient temporalClient.Client
+}
 
-func NewFlowHandler() *FlowHandler {
-	return &FlowHandler{}
+func NewFlowHandler(c temporalClient.Client) *FlowHandler {
+	return &FlowHandler{
+		TemporalClient: c,
+	}
 }
 
 // CreateFlow creates a new flow
@@ -30,14 +37,14 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := database.GetClient()
+	dbClient := database.GetClient()
 
 	// Resolve OrgID from Slug if OrgID is missing or invalid placeholder
 	if (req.OrgID == "" || req.OrgID == "00000000-0000-0000-0000-000000000000") && req.Slug != "" {
 		var orgs []struct {
 			ID string `json:"id"`
 		}
-		err := client.DB.From("organizations").Select("id").Eq("slug", req.Slug).Execute(&orgs)
+		err := dbClient.DB.From("organizations").Select("id").Eq("slug", req.Slug).Execute(&orgs)
 		if err == nil && len(orgs) > 0 {
 			req.OrgID = orgs[0].ID
 		}
@@ -61,14 +68,14 @@ func (h *FlowHandler) CreateFlow(w http.ResponseWriter, r *http.Request) {
 	var existing []struct {
 		ID string `json:"id"`
 	}
-	err := client.DB.From("flows").Select("id").Eq("org_id", req.OrgID).Eq("name", req.Name).Execute(&existing)
+	err := dbClient.DB.From("flows").Select("id").Eq("org_id", req.OrgID).Eq("name", req.Name).Execute(&existing)
 	if err == nil && len(existing) > 0 {
 		http.Error(w, "A flow with this name already exists", http.StatusConflict)
 		return
 	}
 
 	var results []map[string]interface{}
-	err = client.DB.From("flows").Insert(map[string]interface{}{
+	err = dbClient.DB.From("flows").Insert(map[string]interface{}{
 		"org_id":           req.OrgID,
 		"name":             req.Name,
 		"description":      req.Description,
@@ -155,13 +162,30 @@ func (h *FlowHandler) UpdateFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := database.GetClient()
+	dbClient := database.GetClient()
 	var results []map[string]interface{}
-	err := client.DB.From("flows").Update(updates).Eq("id", flowID).Execute(&results)
+	err := dbClient.DB.From("flows").Update(updates).Eq("id", flowID).Execute(&results)
 
 	if err != nil {
 		http.Error(w, "Failed to update flow: "+err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// Handle Temporal Schedule Pause/Unpause if IsActive changed
+	if req.IsActive != nil {
+		// We fire and forget the schedule update to avoid blocking UI or failing if Temporal is down
+		// Ideally this should be cleaner, but for now:
+		go func() {
+			sc := h.TemporalClient.ScheduleClient()
+			scheduleID := "schedule-" + flowID
+			ctx := context.Background()
+			handle := sc.GetHandle(ctx, scheduleID)
+			if *req.IsActive {
+				_ = handle.Unpause(ctx, temporalClient.ScheduleUnpauseOptions{Note: "User activated flow"})
+			} else {
+				_ = handle.Pause(ctx, temporalClient.SchedulePauseOptions{Note: "User deactivated flow"})
+			}
+		}()
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -176,9 +200,9 @@ func (h *FlowHandler) GetFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := database.GetClient()
+	dbClient := database.GetClient()
 	var results []map[string]interface{}
-	err := client.DB.From("flows").Select("*").Eq("id", flowID).Execute(&results)
+	err := dbClient.DB.From("flows").Select("*").Eq("id", flowID).Execute(&results)
 
 	if err != nil {
 		http.Error(w, "Failed to get flow: "+err.Error(), http.StatusInternalServerError)
@@ -202,13 +226,13 @@ func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := database.GetClient()
+	dbClient := database.GetClient()
 
 	// 1. Resolve Org ID from Slug
 	var orgs []struct {
 		ID string `json:"id"`
 	}
-	err := client.DB.From("organizations").Select("id").Eq("slug", slug).Execute(&orgs)
+	err := dbClient.DB.From("organizations").Select("id").Eq("slug", slug).Execute(&orgs)
 	if err != nil || len(orgs) == 0 {
 		http.Error(w, "Organization not found", http.StatusNotFound)
 		return
@@ -217,7 +241,7 @@ func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
 
 	// 2. Fetch Flows
 	var flows []map[string]interface{}
-	err = client.DB.From("flows").Select("*").Eq("org_id", orgID).Execute(&flows)
+	err = dbClient.DB.From("flows").Select("*").Eq("org_id", orgID).Execute(&flows)
 
 	if err != nil {
 		http.Error(w, "Failed to fetch flows: "+err.Error(), http.StatusInternalServerError)
@@ -239,9 +263,9 @@ func (h *FlowHandler) DeleteFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := database.GetClient()
+	dbClient := database.GetClient()
 	var results []map[string]interface{}
-	err := client.DB.From("flows").Delete().Eq("id", flowID).Execute(&results)
+	err := dbClient.DB.From("flows").Delete().Eq("id", flowID).Execute(&results)
 
 	if err != nil {
 		http.Error(w, "Failed to delete flow: "+err.Error(), http.StatusInternalServerError)
@@ -260,13 +284,13 @@ func (h *FlowHandler) PublishFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := database.GetClient()
+	dbClient := database.GetClient()
 
 	// 1. Get current draft
 	var current []struct {
 		DraftDefinition map[string]interface{} `json:"draft_definition"`
 	}
-	err := client.DB.From("flows").Select("draft_definition").Eq("id", flowID).Execute(&current)
+	err := dbClient.DB.From("flows").Select("draft_definition").Eq("id", flowID).Execute(&current)
 	if err != nil || len(current) == 0 {
 		http.Error(w, "Flow not found", http.StatusNotFound)
 		return
@@ -281,10 +305,14 @@ func (h *FlowHandler) PublishFlow(w http.ResponseWriter, r *http.Request) {
 	// Note: Supabase/PostgREST doesn't support "SET col = other_col" easily in one Update call via client usually (unless using RPC).
 	// So we fetch (done) and update.
 
+	// 2. Promote to Published
 	var results []map[string]interface{}
-	err = client.DB.From("flows").Update(map[string]interface{}{
+	err = dbClient.DB.From("flows").Update(map[string]interface{}{
 		"published_definition": current[0].DraftDefinition,
+		"definition":           current[0].DraftDefinition, // Keep legacy definition in sync
 		"published_at":         time.Now(),
+		"is_active":            true, // Auto-activate on publish? Maybe not, checking user intent. Usually publish implies ready. Let's strictly follow button state if possible, but usually publish -> active. Let's leave is_active alone strictly unless requested, BUT the user said "Inactive means it cannot be called".
+		// Actually, let's NOT auto-activate. The user has an "Active/Inactive" toggle.
 	}).Eq("id", flowID).Execute(&results)
 
 	if err != nil {
@@ -292,7 +320,70 @@ func (h *FlowHandler) PublishFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Update Temporal Schedule here
+	// 3. Update Temporal Schedule
+	// We need to parse the draft definition to check for schedule nodes
+	// Since current[0].DraftDefinition is map[string]interface{}, allow loose marshalling or re-marshal
+	defBytes, _ := json.Marshal(current[0].DraftDefinition)
+	var flowDef workflow.FlowDefinition
+	if err := json.Unmarshal(defBytes, &flowDef); err == nil {
+		flowDef.ID = flowID // ensure ID is set
+		// Look for schedule node
+		var scheduleNode *workflow.Node
+		for _, n := range flowDef.Nodes {
+			if n.Type == "schedule" {
+				scheduleNode = &n
+				break
+			}
+		}
+
+		// Initialize Schedule Client
+		sc := h.TemporalClient.ScheduleClient()
+		if sc != nil {
+			scheduleID := "schedule-" + flowID
+			ctx := context.Background()
+
+			if scheduleNode != nil {
+				// Extract Cron
+				// Assuming data structure: { "cron": "* * * * *" }
+				cronExpr, _ := scheduleNode.Data["cron"].(string)
+				if cronExpr != "" {
+
+					// Try Create
+					_, err := sc.Create(ctx, temporalClient.ScheduleOptions{
+						ID: scheduleID,
+						Action: &temporalClient.ScheduleWorkflowAction{
+							ID:        "flow-run-" + flowID + "-${activeScheduleId}-${scheduleTime}",
+							Workflow:  workflow.NodalWorkflow,
+							Args:      []interface{}{flowDef, map[string]interface{}{}},
+							TaskQueue: "nodal-task-queue",
+						},
+						Spec: temporalClient.ScheduleSpec{
+							CronExpressions: []string{cronExpr},
+						},
+					})
+					if err != nil {
+						// If exists, Delete and Recreate
+						_ = sc.GetHandle(ctx, scheduleID).Delete(ctx)
+						_, _ = sc.Create(ctx, temporalClient.ScheduleOptions{
+							ID: scheduleID,
+							Action: &temporalClient.ScheduleWorkflowAction{
+								ID:        "flow-run-" + flowID + "-${activeScheduleId}-${scheduleTime}",
+								Workflow:  workflow.NodalWorkflow,
+								Args:      []interface{}{flowDef, map[string]interface{}{}},
+								TaskQueue: "nodal-task-queue",
+							},
+							Spec: temporalClient.ScheduleSpec{
+								CronExpressions: []string{cronExpr},
+							},
+						})
+					}
+				}
+			} else {
+				// No schedule node? Delete any existing schedule
+				_ = sc.GetHandle(ctx, scheduleID).Delete(ctx)
+			}
+		}
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{

@@ -142,19 +142,31 @@ export default async function FlowStudioPage({
         </Link>
       </div>
 
-      <Tabs defaultValue="mine" className="w-full space-y-6">
+      <Tabs defaultValue="templates" className="w-full space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg h-auto inline-flex">
           <TabsTrigger
             value="templates"
-            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground"
+            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
           >
             Templates
           </TabsTrigger>
           <TabsTrigger
-            value="mine"
-            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground"
+            value="draft"
+            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
           >
-            Flows
+            Draft
+          </TabsTrigger>
+          <TabsTrigger
+            value="active"
+            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
+          >
+            Active
+          </TabsTrigger>
+          <TabsTrigger
+            value="inactive"
+            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
+          >
+            Inactive
           </TabsTrigger>
         </TabsList>
 
@@ -168,19 +180,6 @@ export default async function FlowStudioPage({
                 className="pl-9 bg-background border-input shadow-none"
               />
             </div>
-            <Select defaultValue="popular">
-              <SelectTrigger className="w-[180px] bg-background shadow-none">
-                <div className="flex items-center gap-2">
-                  <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-                  <SelectValue placeholder="Sort by" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="popular">Popular</SelectItem>
-                <SelectItem value="newest">Newest</SelectItem>
-                <SelectItem value="name">Name</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Templates Grid */}
@@ -211,33 +210,18 @@ export default async function FlowStudioPage({
           </div>
         </TabsContent>
 
-        <TabsContent value="mine" className="space-y-4">
-          {/* Search and Filter */}
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search flows..."
-                className="pl-9 bg-background border-input shadow-none"
-              />
-            </div>
-            <Select defaultValue="recent">
-              <SelectTrigger className="w-[180px] bg-background shadow-none">
-                <div className="flex items-center gap-2">
-                  <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-                  <SelectValue placeholder="Sort by" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recent">Recent</SelectItem>
-                <SelectItem value="status">Status</SelectItem>
-                <SelectItem value="name">Name</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <FlowTable initialFlows={flows} slug={slug} />
+        <TabsContent value="draft" className="space-y-4">
+            <FlowTable initialFlows={flows.filter((f: any) => !f.is_active && !f.published_at)} slug={slug} />
         </TabsContent>
+
+        <TabsContent value="active" className="space-y-4">
+            <FlowTable initialFlows={flows.filter((f: any) => f.is_active)} slug={slug} />
+        </TabsContent>
+
+        <TabsContent value="inactive" className="space-y-4">
+            <FlowTable initialFlows={flows.filter((f: any) => !f.is_active && f.published_at)} slug={slug} />
+        </TabsContent>
+
       </Tabs>
     </div>
   );
