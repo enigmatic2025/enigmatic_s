@@ -92,6 +92,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /api/flows", flowHandler.ListFlows)
 	mux.HandleFunc("DELETE /api/flows/{id}", flowHandler.DeleteFlow)
 
+	// Action Flow Routes (Executions)
+	actionFlowHandler := handlers.NewActionFlowHandler()
+	mux.HandleFunc("GET /api/action-flows", actionFlowHandler.ListActionFlows)
+
 	// Execution Routes
 	if s.temporalClient != nil {
 		executeHandler := handlers.NewExecuteFlowHandler(s.temporalClient)
