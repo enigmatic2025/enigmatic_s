@@ -55,38 +55,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
     <div className="space-y-6">
       
       {/* Introduction */}
-      <div className="space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Incoming Webhook Settings
-        </label>
-        <div className="space-y-3">
-            <div>
-              <label className="text-xs text-muted-foreground block mb-1.5">Action Flow Title Template <span className="text-red-500">*</span></label>
-              <input
-                type="text"
-                value={data.instanceNameTemplate || ''}
-                onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
-                placeholder="e.g. New Order {{ order_id }}"
-                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Name the running instance dynamically using variables.
-              </p>
-            </div>
-            
-            <div>
-              <label className="text-xs text-muted-foreground block mb-1.5">Description <span className="text-red-500">*</span></label>
-              <textarea
-                value={data.description || ''}
-                onChange={(e) => onUpdate({ ...data, description: e.target.value })}
-                placeholder="Describe what triggers this flow..."
-                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm h-20 resize-none focus:ring-1 focus:ring-primary outline-none"
-              />
-            </div>
-        </div>
-      </div>
-
-      {/* Endpoint URL */}
+      {/* Endpoint URL - Moved to Top */}
       <div className="p-3 bg-muted/30 rounded-lg border border-border space-y-2">
         <div className="flex items-center justify-between">
             <span className="text-xs font-medium flex items-center gap-1.5">
@@ -123,7 +92,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         </div>
       </div>
 
-      {/* Schema Builder */}
+      {/* Schema Builder - Moved to Top */}
       <div>
         <div className="flex items-center justify-between mb-3">
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -184,6 +153,38 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                     </div>
                 ))
             )}
+        </div>
+      </div>
+
+      {/* Settings - Moved to Bottom */}
+      <div className="space-y-2">
+        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Incoming Webhook Settings
+        </label>
+        <div className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1.5">Action Flow Title Template <span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                value={data.instanceNameTemplate || ''}
+                onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
+                placeholder="e.g. New Order {{ order_id }}"
+                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Name the running instance dynamically using variables.
+              </p>
+            </div>
+            
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1.5">Information <span className="text-red-500">*</span></label>
+              <textarea
+                value={data.instanceDescriptionTemplate || ''}
+                onChange={(e) => onUpdate({ ...data, instanceDescriptionTemplate: e.target.value })}
+                placeholder="Information about the action flow"
+                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm h-20 resize-none focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
         </div>
       </div>
       

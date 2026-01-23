@@ -47,7 +47,10 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			if t, ok := node.Data["instanceNameTemplate"].(string); ok {
 				titleTemplate = t
 			}
-			if d, ok := node.Data["description"].(string); ok {
+			if d, ok := node.Data["instanceDescriptionTemplate"].(string); ok {
+				descTemplate = d
+			} else if d, ok := node.Data["description"].(string); ok {
+				// Fallback to legacy description if new field is empty
 				descTemplate = d
 			}
 			break
