@@ -248,7 +248,7 @@ export const VisualCanvasPreview = () => {
       <div className="h-8 w-0 border-l border-dashed border-border my-1"></div>
 
       {/* Plus Button */}
-      <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center shadow-lg z-10">
+      <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center shadow-none z-10">
         <Plus className="h-5 w-5 text-white" />
       </div>
     </div>

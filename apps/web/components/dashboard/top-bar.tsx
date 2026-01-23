@@ -52,7 +52,7 @@ export function TopBar({
   };
 
   return (
-    <header className="h-14 border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40 px-6 flex items-center justify-between">
+    <header className="h-14 bg-background sticky top-0 z-40 px-6 flex items-center justify-between border-b-0 shadow-none">
       <div className="flex items-center gap-4">
         {/* Mobile Menu Trigger */}
         <div className="lg:hidden">

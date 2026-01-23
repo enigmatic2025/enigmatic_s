@@ -59,7 +59,7 @@ export default function ActionFlowPlyPage() {
        </div>
 
        {/* Toolbar */}
-       <div className="flex items-center justify-between gap-4 bg-card p-1 rounded-lg border shadow-sm">
+       <div className="flex items-center justify-between gap-4 bg-card p-1 rounded-lg border shadow-none">
           <div className="relative flex-1 max-w-sm">
              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
              <Input 
