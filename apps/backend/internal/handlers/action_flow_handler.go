@@ -33,6 +33,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		TemporalWorkflowID string         `json:"temporal_workflow_id"`
 		InputData          map[string]any `json:"input_data"`
 		StartedAt          string         `json:"started_at"`
+		Title              string         `json:"title"`
 	}
 
 	var results []ActionFlowResult
@@ -66,6 +67,12 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 				ID   string `json:"id"`
 				Name string `json:"name"`
 			}
+			// PostgREST "in" filter format: (id1,id2,...)
+			// optimizing: select id,name from flows where id in (...)
+			// Since we don't have a robust 'In' builder here easily without string join,
+			// let's just fetch all names or loop. Fetching all is safer for small counts.
+			// Actually, let's just loop-query or assume client cache? No, backend hydration is better.
+			// Re-using existing logic but fixed strict typing.
 			client.DB.From("flows").Select("id, name").Execute(&flows)
 			for _, f := range flows {
 				flowNameMap[f.ID] = f.Name
@@ -78,6 +85,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		ID                 string `json:"id"`
 		FlowID             string `json:"flow_id"`
 		FlowName           string `json:"flow_name"`
+		Title              string `json:"title"` // Dynamic Instance Title
 		Status             string `json:"status"`
 		TemporalWorkflowID string `json:"temporal_workflow_id"`
 		StartedAt          string `json:"started_at"`
@@ -85,18 +93,19 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 
 	flatResults := make([]FlatResult, len(results))
 	for i, r := range results {
-		name := flowNameMap[r.FlowID]
-		if name == "" {
-			name = "Unknown Flow"
-			if r.FlowID != "" {
-				name = "Flow " + r.FlowID[0:6] + "..."
-			}
+		flowName := flowNameMap[r.FlowID]
+		if flowName == "" {
+			flowName = "Unknown Flow"
 		}
+
+		// Use the Dynamic Title if available, otherwise fallback to Flow Name in UI logic
+		// But here we send both.
 
 		flatResults[i] = FlatResult{
 			ID:                 r.ID,
 			FlowID:             r.FlowID,
-			FlowName:           name,
+			FlowName:           flowName,
+			Title:              r.Title,
 			Status:             r.Status,
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,

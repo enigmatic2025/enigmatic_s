@@ -125,7 +125,7 @@ export function FlowTable({ initialFlows, slug }: FlowTableProps) {
                       : "Manual"}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    Never
+                    {flow.last_run ? new Date(flow.last_run).toLocaleDateString() : "Never"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

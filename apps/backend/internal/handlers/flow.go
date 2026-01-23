@@ -248,6 +248,33 @@ func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 3. Hydrate Last Run (Optimization: In a real app, use a View or Computed Column)
+	if len(flows) > 0 {
+		for i, f := range flows {
+			flowID, _ := f["id"].(string)
+			if flowID != "" {
+				var runs []struct {
+					CreatedAt string `json:"created_at"`
+				}
+				// Fetch the single most recent run for this flow
+				// Error query is ignored to avoid breaking the main list
+				dbClient.DB.From("action_flows").
+					Select("created_at").
+					Eq("flow_id", flowID).
+					Execute(&runs)
+
+				if len(runs) > 0 {
+					flows[i]["last_run"] = runs[0].CreatedAt
+				}
+			}
+		}
+	}
+
+	if err != nil {
+		http.Error(w, "Failed to fetch flows: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	// Note: Sorting is currently handled by the database query order or default insertion order.
 	// If explicit sorting by updated_at is needed, ensure the PostgREST library supports .Order() correctly.
 

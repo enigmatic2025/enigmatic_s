@@ -13,7 +13,7 @@ type HumanTaskNode struct{}
 func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
 	// 1. Parse Configuration
 	title, _ := input.Config["title"].(string)
-	
+
 	// 'description' in generic node data is for the designer (documentation).
 	// 'instructions' is the specific prompt for the human task.
 	// We prioritize instructions, but fallback to description for backward compat.
@@ -61,19 +61,7 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 		CreatedAt   time.Time   `json:"created_at"`
 		UpdatedAt   time.Time   `json:"updated_at"`
 	}{
-		FlowID: "", // We need flowID. It is usually in input.Config or Context?
-		// checking NodeContext struct: WorkflowID, StepID, InputData, Config.
-		// WorkflowID is Temporal WorkflowID. We don't strictly have FlowID in Context unless we passed it.
-		// Wait, 'system.go' RecordActionFlowActivity used params.FlowID.
-		// In 'workflow.go', we see:
-		// recordParams := RecordActionFlowParams{ FlowID: flowDefinition.ID ... }
-		// But in NodeContext, we don't explicitly pass FlowID.
-		// We might need to fetch it or store it in variables?
-		// For now, let's leave FlowID empty or try to extract from WorkflowID if formatted 'flow-UUID'.
-
-		RunID: input.WorkflowID, // Using WorkflowID as RunID reference (Temporal RunID is better but ctx info is limited here without Temporal SDK imports in `nodes` package)
-		// Wait, input.WorkflowID IS the RunID usually ? No, it's Execution.ID.
-		// Let's use input.WorkflowID for now.
+		FlowID: input.FlowID,
 
 		Title:       title,
 		Description: description,

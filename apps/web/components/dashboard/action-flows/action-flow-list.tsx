@@ -12,6 +12,7 @@ export interface ActionFlowExec {
   id: string; // The Action Flow ID (DB)
   flow_id: string;
   flow_name: string;
+  title?: string;
   status: string; // RUNNING, COMPLETED, FAILED, TERMINATED
   temporal_workflow_id: string;
   started_at: string;
@@ -93,12 +94,16 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
 
                <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-foreground">{exec.flow_name}</span>
-                    <span className="text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded">
-                        {exec.flow_id.substring(0, 8)}
+                    <span className="font-semibold text-sm text-foreground">
+                        {exec.title || exec.flow_name}
                     </span>
+                    {exec.title && (
+                        <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+                            {exec.flow_name}
+                        </span>
+                    )}
                     <div className={`text-[10px] uppercase font-bold tracking-wider px-1.5 rounded ${getStatusColor(exec.status)}`}>
-                        {exec.status}
+                        {exec.status === "RUNNING" ? "Active" : exec.status}
                     </div>
                   </div>
                   
