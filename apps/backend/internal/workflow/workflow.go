@@ -57,8 +57,44 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		}
 	}
 
-	// 2. Record Execution in DB
+	// 1.5 Evaluate Templates (Title, Description) before Recording
+	// We need to resolve variables like {{ steps.trigger.data.id }} immediately so the Dashboard title is useful
 	info := workflow.GetInfo(ctx)
+	expressionEngine := nodes.NewExpressionEngine()
+
+	// Create a context for evaluation
+	// Note: At this very start moment, only 'trigger' (and aliases) exist in executionState
+	evalCtx := nodes.NodeContext{
+		FlowID:     flowDefinition.ID,
+		WorkflowID: info.WorkflowExecution.ID,
+		InputData: map[string]interface{}{
+			"steps":     executionState,
+			"variables": variables,
+			"input":     inputData, // For backward compatibility or direct access
+		},
+	}
+
+	if titleTemplate != "" {
+		if val, err := expressionEngine.Evaluate(titleTemplate, evalCtx); err == nil {
+			titleTemplate = fmt.Sprintf("%v", val)
+		}
+	}
+	// Note: We intentionally don't evaluate Description here fully if it's meant to be static,
+	// but if user wants dynamic descriptions (e.g. "Order #123"), we should support it.
+	// Users requested decoupling, so description might be static info.
+	// However, evaluating it enables "Order #{{id}} details". Let's evaluate it too.
+	if descTemplate != "" {
+		if val, err := expressionEngine.Evaluate(descTemplate, evalCtx); err == nil {
+			descTemplate = fmt.Sprintf("%v", val)
+		}
+	}
+
+	// 2. Record Execution in DB
+	// info variable is already defined above in original code, but we need it here if moving things?
+	// Ah, 'info' was defined at line 58 in original. I am inserting before line 58 (implied).
+	// Let's make sure we have 'info' available or move definition.
+	// Actually, let's keep the flow linear.
+
 	recordParams := RecordActionFlowParams{
 		FlowID:      flowDefinition.ID,
 		WorkflowID:  info.WorkflowExecution.ID,
