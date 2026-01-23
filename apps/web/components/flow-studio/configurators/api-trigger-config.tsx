@@ -27,7 +27,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
     ? process.env.NEXT_PUBLIC_APP_URL 
     : (typeof window !== 'undefined' ? window.location.origin : '');
     
-  const endpointUrl = `${baseUrl}/api/proxy/flows/${flowId || '{flow_id}'}/execute`;
+  const endpointUrl = `${baseUrl}/api/flows/${flowId || '{flow_id}'}/execute`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(endpointUrl);

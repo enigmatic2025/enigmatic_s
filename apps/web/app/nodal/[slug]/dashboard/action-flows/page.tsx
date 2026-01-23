@@ -59,12 +59,12 @@ export default function ActionFlowPlyPage() {
        </div>
 
        {/* Toolbar */}
-       <div className="flex items-center justify-between gap-4 bg-card p-1 rounded-lg border shadow-none">
-          <div className="relative flex-1 max-w-sm">
+       <div className="flex items-center gap-4">
+          <div className="relative flex-1">
              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
              <Input 
                 placeholder="Search processes..." 
-                className="pl-9 h-9 border-0 bg-transparent focus-visible:ring-0"
+                className="pl-9 bg-background border-input shadow-none"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
              />
