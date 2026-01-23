@@ -17,11 +17,8 @@ func NewActionFlowHandler() *ActionFlowHandler {
 func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Request) {
 	client := database.GetClient()
 
-	// Parse query params
 	limit := 50
-	// For production, parse "limit" query param to int
 
-	// Struct to hold the result including joined flow name
 	type ActionFlowResult struct {
 		ID                 string         `json:"id"`
 		FlowID             string         `json:"flow_id"`
@@ -29,31 +26,61 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		TemporalWorkflowID string         `json:"temporal_workflow_id"`
 		InputData          map[string]any `json:"input_data"`
 		StartedAt          string         `json:"started_at"`
-
-		// Joined fields from 'flows' table
-		// Note: Supabase logic might require flattened structure or nested
-		Flows struct {
-			Name string `json:"name"`
-		} `json:"flows"`
+		// Flows struct removed since we fetch manually
 	}
 
 	var results []ActionFlowResult
 
-	// Using Supabase select syntax.
-	// We removed the join "flows(name)" because it causes errors if the FK relation isn't explicitly exposed to PostgREST.
+	// 1. Fetch Action Flows (Raw)
 	err := client.DB.From("action_flows").
 		Select("*").
+		Order("started_at.desc").
 		Limit(limit).
 		Execute(&results)
 
 	if err != nil {
-		// Fallback: Fetch without join
-		// If the join fails, it usually returns error about "flows" relation
-		http.Error(w, "Failed to fetch action flows: "+err.Error(), http.StatusInternalServerError)
-		return
+		// Try without order if it fails (fallback from before)
+		err = client.DB.From("action_flows").
+			Select("*").
+			Limit(limit).
+			Execute(&results)
+
+		if err != nil {
+			http.Error(w, "Failed to fetch action flows: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
-	// Flatten for frontend
+	// 2. Hydrate Flow Names manually
+	flowNameMap := make(map[string]string)
+	if len(results) > 0 {
+		flowIDs := make([]string, 0)
+		seen := make(map[string]bool)
+
+		for _, af := range results {
+			if af.FlowID != "" && !seen[af.FlowID] {
+				flowIDs = append(flowIDs, af.FlowID)
+				seen[af.FlowID] = true
+			}
+		}
+
+		if len(flowIDs) > 0 {
+			var flows []struct {
+				ID   string `json:"id"`
+				Name string `json:"name"`
+			}
+			// Fetch all flows to be safe/simple without complex IN query builder if specific syntax unsupported
+			// For MVP with < 100 flows, fetching all names is acceptable, or we assume Select * includes them.
+			// Actually, let's just fetch all flows with "id,name" to simple map.
+			client.DB.From("flows").Select("id, name").Execute(&flows)
+
+			for _, f := range flows {
+				flowNameMap[f.ID] = f.Name
+			}
+		}
+	}
+
+	// 3. Flatten Result
 	type FlatResult struct {
 		ID                 string `json:"id"`
 		FlowID             string `json:"flow_id"`
@@ -65,16 +92,22 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 
 	flatResults := make([]FlatResult, len(results))
 	for i, r := range results {
+		name := flowNameMap[r.FlowID]
+		if name == "" {
+			name = "Unknown Flow"
+			// Attempt to show ID if name missing
+			if r.FlowID != "" {
+				name = "Flow " + r.FlowID[0:6] + "..."
+			}
+		}
+
 		flatResults[i] = FlatResult{
 			ID:                 r.ID,
 			FlowID:             r.FlowID,
-			FlowName:           r.Flows.Name,
+			FlowName:           name,
 			Status:             r.Status,
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,
-		}
-		if flatResults[i].FlowName == "" {
-			flatResults[i].FlowName = "Unknown Flow"
 		}
 	}
 

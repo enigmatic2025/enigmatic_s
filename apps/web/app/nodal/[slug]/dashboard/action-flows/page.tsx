@@ -44,19 +44,18 @@ export default function ActionFlowPlyPage() {
     e.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const activeCount = executions.filter(e => e.status === "RUNNING").length;
+
   return (
-    <div className="h-full flex flex-col space-y-6 p-8 max-w-6xl mx-auto">
+    <div className="h-full w-full space-y-6">
        {/* Header */}
-       <div className="flex items-center justify-between">
-          <div>
-             <h1 className="text-2xl font-semibold tracking-tight">Action Flow SOP</h1>
-             <p className="text-sm text-muted-foreground mt-1">
-                Standard Operating Procedures and Process Maps.
-             </p>
-          </div>
-          <div className="flex items-center gap-2">
-             {/* Auto-refresh is active */}
-          </div>
+       <div className="flex items-baseline gap-4">
+          <h1 className="text-xl font-medium tracking-tight text-foreground">
+            Action Flow
+          </h1>
+          <span className="text-secondary-foreground/60 text-sm font-medium">
+            {activeCount} active flow{activeCount !== 1 ? "s" : ""}
+          </span>
        </div>
 
        {/* Toolbar */}
