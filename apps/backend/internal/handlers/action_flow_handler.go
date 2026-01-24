@@ -157,3 +157,91 @@ func (h *ActionFlowHandler) DeleteActionFlow(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Deleted %s", id)
 }
+
+// GetActionFlow handles GET /api/action-flows/{id}
+func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "Missing ID", http.StatusBadRequest)
+		return
+	}
+
+	client := database.GetClient()
+
+	type ActionFlowResult struct {
+		ID                 string         `json:"id"`
+		FlowID             string         `json:"flow_id"`
+		Status             string         `json:"status"`
+		TemporalWorkflowID string         `json:"temporal_workflow_id"`
+		InputData          map[string]any `json:"input_data"`
+		Output             map[string]any `json:"output"`
+		StartedAt          string         `json:"started_at"`
+		Title              string         `json:"title"`
+	}
+
+	var results []ActionFlowResult
+
+	// Fetch Action Flow
+	err := client.DB.From("action_flows").
+		Select("*").
+		Eq("id", id).
+		Execute(&results)
+
+	if err != nil {
+		http.Error(w, "Failed to fetch action flow: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(results) == 0 {
+		http.Error(w, "Action Flow not found", http.StatusNotFound)
+		return
+	}
+
+	af := results[0]
+
+	// Fetch Flow Name
+	var flowName string = "Unknown Flow"
+	if af.FlowID != "" {
+		var flows []struct {
+			Name string `json:"name"`
+		}
+		client.DB.From("flows").Select("name").Eq("id", af.FlowID).Execute(&flows)
+		if len(flows) > 0 {
+			flowName = flows[0].Name
+		}
+	}
+
+	// Flatten Result
+	type FlatResult struct {
+		ID                 string         `json:"id"`
+		FlowID             string         `json:"flow_id"`
+		FlowName           string         `json:"flow_name"`
+		Title              string         `json:"title"`
+		Status             string         `json:"status"`
+		TemporalWorkflowID string         `json:"temporal_workflow_id"`
+		StartedAt          string         `json:"started_at"`
+		InputData          map[string]any `json:"input_data"`
+		Output             map[string]any `json:"output"`
+	}
+
+	// Use Dynamic Title or Fallback
+	displayTitle := af.Title
+	if displayTitle == "" {
+		displayTitle = flowName
+	}
+
+	response := FlatResult{
+		ID:                 af.ID,
+		FlowID:             af.FlowID,
+		FlowName:           flowName,
+		Title:              displayTitle,
+		Status:             af.Status,
+		TemporalWorkflowID: af.TemporalWorkflowID,
+		StartedAt:          af.StartedAt,
+		InputData:          af.InputData,
+		Output:             af.Output,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}

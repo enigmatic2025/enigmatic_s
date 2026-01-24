@@ -155,5 +155,13 @@ export const flowService = {
             throw new Error('Failed to publish flow');
         }
         return response.json();
+    },
+
+    async getActionFlow(id: string) {
+        const response = await fetch(`${API_BASE_URL}/action-flows/${id}`, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error('Failed to fetch action flow details');
+        }
+        return response.json();
     }
 };
