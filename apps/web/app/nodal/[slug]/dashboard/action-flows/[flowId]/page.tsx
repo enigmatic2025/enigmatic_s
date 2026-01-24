@@ -116,7 +116,7 @@ export default function ActionFlowDetailPage() {
                         ${isRunning ? 'bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-blue-200 animate-pulse' : ''}
                     `}
                 >
-                    {data.status}
+                    {data.status === "RUNNING" ? "Active" : data.status}
                 </Badge>
              </div>
           </div>
@@ -155,80 +155,9 @@ export default function ActionFlowDetailPage() {
               </div>
 
               <div className="flex-1 overflow-y-auto bg-muted/5 p-6 space-y-6">
-                  <TabsContent value="overview" className="m-0 space-y-6 max-w-5xl mx-auto w-full">
-                      {/* Summary Cards */}
-                      <div className="grid grid-cols-3 gap-4">
-                          <Card>
-                               <CardHeader className="pb-2">
-                                   <CardTitle className="text-sm font-medium text-muted-foreground">Temporal Workflow ID</CardTitle>
-                               </CardHeader>
-                               <CardContent>
-                                   <div className="text-sm font-mono truncate" title={data.temporal_workflow_id}>
-                                       {data.temporal_workflow_id}
-                                   </div>
-                               </CardContent>
-                          </Card>
-                          <Card>
-                               <CardHeader className="pb-2">
-                                   <CardTitle className="text-sm font-medium text-muted-foreground">Original Flow</CardTitle>
-                               </CardHeader>
-                               <CardContent>
-                                   <div className="text-sm font-medium truncate">
-                                       {data.flow_name}
-                                   </div>
-                               </CardContent>
-                          </Card>
-                          <Card>
-                               <CardHeader className="pb-2">
-                                   <CardTitle className="text-sm font-medium text-muted-foreground">Started At</CardTitle>
-                               </CardHeader>
-                               <CardContent>
-                                   <div className="text-sm">
-                                       {new Date(data.started_at).toLocaleString()}
-                                   </div>
-                               </CardContent>
-                          </Card>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-6 h-[500px]">
-                           {/* Input Payload */}
-                           <Card className="flex flex-col overflow-hidden border-2 mb-8">
-                                <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/20 py-3">
-                                     <CardTitle className="text-sm font-medium flex items-center gap-2">
-                                         <span className="w-2 h-2 rounded-full bg-blue-500" />
-                                         Input Data
-                                     </CardTitle>
-                                </CardHeader>
-                                <div className="flex-1 overflow-auto bg-slate-950 p-0">
-                                   <SyntaxHighlighter
-                                       language="json"
-                                       style={vscDarkPlus}
-                                       customStyle={{ margin: 0, padding: '1.5rem', fontSize: '12px' }}
-                                   >
-                                       {JSON.stringify(data.input_data, null, 2) || "{}"}
-                                   </SyntaxHighlighter>
-                                </div>
-                           </Card>
-
-                           {/* Output Result */}
-                           <Card className="flex flex-col overflow-hidden border-2 border-emerald-500/20 mb-8">
-                                <CardHeader className="flex flex-row items-center justify-between border-b bg-emerald-500/5 py-3">
-                                     <CardTitle className="text-sm font-medium flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-                                         <CheckCircle2 className="w-4 h-4" />
-                                         Wait Result / Output
-                                     </CardTitle>
-                                </CardHeader>
-                                <div className="flex-1 overflow-auto bg-slate-950 p-0">
-                                   <SyntaxHighlighter
-                                       language="json"
-                                       style={vscDarkPlus}
-                                       customStyle={{ margin: 0, padding: '1.5rem', fontSize: '12px' }}
-                                   >
-                                       {JSON.stringify(data.output, null, 2) || "// No output yet or still running"}
-                                   </SyntaxHighlighter>
-                                </div>
-                           </Card>
-                      </div>
+                  <TabsContent value="overview" className="m-0 space-y-6 max-w-5xl mx-auto w-full p-12 text-center text-muted-foreground">
+                       <Activity className="w-12 h-12 mb-4 opacity-20 mx-auto" />
+                       <p>Overview details coming soon.</p>
                   </TabsContent>
 
                   <TabsContent value="map" className="m-0 h-full flex flex-col items-center justify-center p-12 text-muted-foreground">
