@@ -5,15 +5,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type } from 'lucide-react';
+import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type, Clock, PenTool } from 'lucide-react';
 
 interface SchemaField {
   key: string;
-  type: 'text' | 'long-text' | 'number' | 'rating' | 'boolean' | 'date' | 'file' | 'multi-choice';
+  type: 'text' | 'long-text' | 'number' | 'rating' | 'boolean' | 'date' | 'time' | 'datetime' | 'file' | 'multi-choice' | 'checkboxes' | 'signature';
   label: string;
   description?: string;
   required: boolean;
-  options?: string[]; // For multi-choice
+  options?: string[]; // For multi-choice and checkboxes
 }
 
 interface HumanTaskConfigProps {
@@ -107,11 +107,12 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                           const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
                           
                           // Auto-generate key if it matches the previous slug or is default/empty
-                          // We check if current key is a slug of the current label (before update)
                           const currentSlug = slugify(field.label);
                           const isAutoKey = field.key === currentSlug || field.key.startsWith('field_') || field.key === '';
                           
                           const updates: Partial<SchemaField> = { label: newLabel };
+                          
+                          // Only auto-update key if it's not a section header (headers don't use keys heavily)
                           if (isAutoKey) {
                              updates.key = slugify(newLabel);
                           }
@@ -132,11 +133,19 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                         <SelectItem value="text"><div className="flex items-center gap-2"><Type className="w-3 h-3"/> Short Text</div></SelectItem>
                         <SelectItem value="long-text"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> Long Text</div></SelectItem>
                         <SelectItem value="number"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">123</span> Number</div></SelectItem>
+                        
                         <SelectItem value="multi-choice"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Multiple Choice</div></SelectItem>
+                        <SelectItem value="checkboxes"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Checkboxes</div></SelectItem>
+                        
                         <SelectItem value="rating"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">★</span> Rating (1-5)</div></SelectItem>
                         <SelectItem value="boolean"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Yes/No</div></SelectItem>
-                        <SelectItem value="file"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> File</div></SelectItem>
-                        <SelectItem value="date"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> Date</div></SelectItem>
+                        
+                        <SelectItem value="date"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> Date only</div></SelectItem>
+                        <SelectItem value="time"><div className="flex items-center gap-2"><Clock className="w-3 h-3"/> Time only</div></SelectItem>
+                        <SelectItem value="datetime"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> Date & Time</div></SelectItem>
+
+                        <SelectItem value="file"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> File Upload</div></SelectItem>
+                        <SelectItem value="signature"><div className="flex items-center gap-2"><PenTool className="w-3 h-3"/> Signature</div></SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -151,14 +160,20 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                     </Button>
                   </div>
 
-                  {/* Options Editor for Multi-Choice */}
-                  {field.type === 'multi-choice' && (
+                  {/* Options Editor for Multi-Choice / Checkboxes */}
+                  {(field.type === 'multi-choice' || field.type === 'checkboxes') && (
                       <div className="pl-4 border-l-2 border-muted-foreground/20 space-y-2">
-                          <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Choices</Label>
+                          <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">
+                            {field.type === 'multi-choice' ? 'Options (Select One)' : 'Options (Select Many)'}
+                          </Label>
                           <div className="grid grid-cols-1 gap-2">
                               {(field.options || []).map((option, optIndex) => (
                                   <div key={optIndex} className="flex gap-2 items-center">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+                                      {field.type === 'multi-choice' ? (
+                                        <div className="w-3 h-3 mt-0.5 rounded-full border border-muted-foreground/30 shrink-0" />
+                                      ) : (
+                                        <div className="w-3 h-3 mt-0.5 rounded border border-muted-foreground/30 shrink-0" />
+                                      )}
                                       <Input 
                                           value={option}
                                           onChange={(e) => {
@@ -166,7 +181,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                                               newOptions[optIndex] = e.target.value;
                                               updateField(index, { options: newOptions });
                                           }}
-                                          placeholder={`Choice ${optIndex + 1}`}
+                                          placeholder={`Option ${optIndex + 1}`}
                                           className="h-7 text-xs"
                                       />
                                       <Button
@@ -189,7 +204,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                                   className="justify-start h-7 text-xs text-primary hover:text-primary hover:bg-primary/10 w-fit px-2"
                                   onClick={() => {
                                       const newOptions = [...(field.options || [])];
-                                      newOptions.push(`Choice ${newOptions.length + 1}`);
+                                      newOptions.push(`Option ${newOptions.length + 1}`);
                                       updateField(index, { options: newOptions });
                                   }}
                               >
