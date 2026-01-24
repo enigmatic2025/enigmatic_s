@@ -9,10 +9,11 @@ import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type } fro
 
 interface SchemaField {
   key: string;
-  type: 'text' | 'long-text' | 'number' | 'rating' | 'boolean' | 'date' | 'file';
+  type: 'text' | 'long-text' | 'number' | 'rating' | 'boolean' | 'date' | 'file' | 'multi-choice';
   label: string;
   description?: string;
   required: boolean;
+  options?: string[]; // For multi-choice
 }
 
 interface HumanTaskConfigProps {
@@ -124,13 +125,14 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                       value={field.type} 
                       onValueChange={(val: any) => updateField(index, { type: val })}
                     >
-                      <SelectTrigger className="w-[130px] h-8 text-xs">
+                      <SelectTrigger className="w-[140px] h-8 text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="text"><div className="flex items-center gap-2"><Type className="w-3 h-3"/> Short Text</div></SelectItem>
                         <SelectItem value="long-text"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> Long Text</div></SelectItem>
                         <SelectItem value="number"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">123</span> Number</div></SelectItem>
+                        <SelectItem value="multi-choice"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Multiple Choice</div></SelectItem>
                         <SelectItem value="rating"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">★</span> Rating (1-5)</div></SelectItem>
                         <SelectItem value="boolean"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Yes/No</div></SelectItem>
                         <SelectItem value="file"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> File</div></SelectItem>
@@ -148,6 +150,54 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
+
+                  {/* Options Editor for Multi-Choice */}
+                  {field.type === 'multi-choice' && (
+                      <div className="pl-4 border-l-2 border-muted-foreground/20 space-y-2">
+                          <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Choices</Label>
+                          <div className="grid grid-cols-1 gap-2">
+                              {(field.options || []).map((option, optIndex) => (
+                                  <div key={optIndex} className="flex gap-2 items-center">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+                                      <Input 
+                                          value={option}
+                                          onChange={(e) => {
+                                              const newOptions = [...(field.options || [])];
+                                              newOptions[optIndex] = e.target.value;
+                                              updateField(index, { options: newOptions });
+                                          }}
+                                          placeholder={`Choice ${optIndex + 1}`}
+                                          className="h-7 text-xs"
+                                      />
+                                      <Button
+                                          variant="ghost" 
+                                          size="icon" 
+                                          className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                          onClick={() => {
+                                              const newOptions = [...(field.options || [])];
+                                              newOptions.splice(optIndex, 1);
+                                              updateField(index, { options: newOptions });
+                                          }}
+                                      >
+                                          <Trash2 className="w-3 h-3" />
+                                      </Button>
+                                  </div>
+                              ))}
+                              <Button
+                                  variant="ghost" 
+                                  size="sm"
+                                  className="justify-start h-7 text-xs text-primary hover:text-primary hover:bg-primary/10 w-fit px-2"
+                                  onClick={() => {
+                                      const newOptions = [...(field.options || [])];
+                                      newOptions.push(`Choice ${newOptions.length + 1}`);
+                                      updateField(index, { options: newOptions });
+                                  }}
+                              >
+                                  <Plus className="w-3 h-3 mr-1" /> Add Option
+                              </Button>
+                          </div>
+                      </div>
+                  )}
 
                   {/* Row 2: Key & Required */}
                   <div className="flex items-center gap-3 text-xs">
