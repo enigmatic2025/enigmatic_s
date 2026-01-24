@@ -242,13 +242,13 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         viewport: { x: 0, y: 0, zoom: 1 } 
       };
       
-      console.log("Transformed Flow Definition:", flowDefinition); // Debug log to verify type transformation
+      // Log removed("Transformed Flow Definition:", flowDefinition); // Debug log to verify type transformation
       
       const result = await flowService.testFlow(flowDefinition, flowId, inputPayload);
       
       // Removed success toast as requested
       addLog({ message: `Flow execution started with Workflow ID: ${result.workflow_id}`, type: "success", details: result });
-      console.log("Flow Execution Started:", result);
+      // Log removed("Flow Execution Started:", result);
 
       // Continue polling with active run
       setCurrentRun({ workflowId: result.workflow_id, runId: result.run_id });
