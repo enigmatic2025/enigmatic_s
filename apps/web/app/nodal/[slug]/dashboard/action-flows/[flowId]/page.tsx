@@ -123,13 +123,13 @@ export default function ActionFlowDetailPage() {
        </div>
 
        {/* Tabs & Content */}
-       <div className="flex-1 overflow-hidden flex flex-col">
-          <Tabs defaultValue="overview" className="h-full flex flex-col">
-              <div className="px-6 border-b bg-background/50 backdrop-blur-sm z-10">
-                  <TabsList className="h-10 bg-transparent p-0 gap-6">
+       <div className="flex-1 overflow-hidden flex flex-col p-6">
+          <Tabs defaultValue="overview" className="h-full flex flex-col space-y-6">
+              <div>
+                  <TabsList className="bg-muted p-1 rounded-lg h-auto inline-flex">
                       <TabsTrigger 
                         value="overview" 
-                        className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 pb-2 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground shadow-none transition-none"
+                        className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
                       >
                          <div className="flex items-center gap-2">
                             <Activity className="w-4 h-4" /> Overview
@@ -137,7 +137,7 @@ export default function ActionFlowDetailPage() {
                       </TabsTrigger>
                       <TabsTrigger 
                         value="map" 
-                        className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 pb-2 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground shadow-none transition-none"
+                        className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
                       >
                          <div className="flex items-center gap-2">
                             <MapIcon className="w-4 h-4" /> Map
@@ -145,7 +145,7 @@ export default function ActionFlowDetailPage() {
                       </TabsTrigger>
                       <TabsTrigger 
                         value="activity" 
-                        className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 pb-2 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground shadow-none transition-none"
+                        className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
                       >
                          <div className="flex items-center gap-2">
                             <FileJson className="w-4 h-4" /> Activity
@@ -154,7 +154,7 @@ export default function ActionFlowDetailPage() {
                   </TabsList>
               </div>
 
-              <div className="flex-1 overflow-y-auto bg-muted/5 p-6 space-y-6">
+              <div className="flex-1 overflow-y-auto bg-muted/5 rounded-xl border p-6">
                   <TabsContent value="overview" className="m-0 space-y-6 max-w-5xl mx-auto w-full p-12 text-center text-muted-foreground">
                        <Activity className="w-12 h-12 mb-4 opacity-20 mx-auto" />
                        <p>Overview details coming soon.</p>
