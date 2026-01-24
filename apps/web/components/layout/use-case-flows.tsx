@@ -20,6 +20,11 @@ import {
   Bot,
   User,
   Calendar,
+  Activity,
+  Package,
+  ClipboardList,
+  Siren,
+  HardHat,
 } from "lucide-react";
 import { FlowBlockNode, ConditionNode } from "@/components/ui/flow-nodes";
 
@@ -77,6 +82,7 @@ const FlowWrapper = ({
         zoomOnPinch={false}
         zoomOnDoubleClick={false}
         minZoom={minZoom}
+        maxZoom={1}
       >
         <Background color="var(--muted-foreground)" gap={20} size={1} />
       </ReactFlow>
@@ -272,3 +278,176 @@ export const AssetMaintenanceFlow = () => (
     fitView={true}
   />
 );
+
+// --- Manufacturing Predictive Flow ---
+const manufacturingNodes: Node[] = [
+  // 1. IoT Sensor Stream
+  {
+    id: "mf1",
+    type: "flowBlock",
+    position: { x: 130, y: 0 },
+    style: { width: 240 },
+    data: {
+      label: "IoT Sensor Stream",
+      subLabel: "Vibration > Threshold",
+      icon: Activity,
+      badge: "MQTT",
+      iconBg:
+        "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+    },
+  },
+  // 2. Anomaly Detection
+  {
+    id: "mf2",
+    type: "flowBlock",
+    position: { x: 130, y: 140 },
+    style: { width: 240 },
+    data: {
+      label: "Anomaly Detection",
+      subLabel: "Model Confidence: 98%",
+      icon: Bot,
+      badge: "AI Analysis",
+      iconBg:
+        "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
+    },
+  },
+  // 3. Maintenance Ticket (Branch Left)
+  {
+    id: "mf3",
+    type: "flowBlock",
+    position: { x: 0, y: 300 },
+    style: { width: 240 },
+    data: {
+      label: "Create Work Order",
+      subLabel: "Assign to: Shift Lead",
+      icon: Wrench,
+      badge: "CMMS",
+      iconBg:
+        "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+    },
+  },
+  // 4. Production Schedule Update (Branch Right)
+  {
+    id: "mf4",
+    type: "flowBlock",
+    position: { x: 260, y: 300 },
+    style: { width: 240 },
+    data: {
+      label: "Adjust Schedule",
+      subLabel: "Reroute Line 4",
+      icon: Calendar,
+      badge: "ERP Sync",
+      iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+    },
+  },
+];
+
+const manufacturingEdges: Edge[] = [
+  { id: "e-mf1-mf2", source: "mf1", target: "mf2" },
+  { id: "e-mf2-mf3", source: "mf2", target: "mf3" },
+  { id: "e-mf2-mf4", source: "mf2", target: "mf4" },
+];
+
+export const ManufacturingFlow = () => (
+  <FlowWrapper
+    initialNodes={manufacturingNodes}
+    initialEdges={manufacturingEdges}
+    fitView={true}
+  />
+);
+
+
+// --- Construction Material Flow ---
+const constructionNodes: Node[] = [
+  // 1. Site Request
+  {
+    id: "cn1",
+    type: "flowBlock",
+    position: { x: 130, y: 0 },
+    style: { width: 240 },
+    data: {
+      label: "Material Request",
+      subLabel: "Concrete - Zone B",
+      icon: ClipboardList,
+      badge: "Field App",
+      iconBg:
+        "bg-slate-50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400",
+    },
+  },
+  // 2. Inventory Check
+  {
+    id: "cn2",
+    type: "flowBlock",
+    position: { x: 130, y: 140 },
+    style: { width: 240 },
+    data: {
+      label: "Inventory Check",
+      subLabel: "Batch Plant #4",
+      icon: Package,
+      badge: "ERP",
+      iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+    },
+  },
+  // 3. Dispatch Truck (Branch Left)
+  {
+    id: "cn3",
+    type: "flowBlock",
+    position: { x: 0, y: 300 },
+    style: { width: 240 },
+    data: {
+      label: "Dispatch Driver",
+      subLabel: "ETA: 45 min",
+      icon: Truck,
+      badge: "Logistics",
+      iconBg:
+        "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+    },
+  },
+  // 4. Site Access (Branch Right)
+  {
+    id: "cn4",
+    type: "flowBlock",
+    position: { x: 260, y: 300 },
+    style: { width: 240 },
+    data: {
+      label: "Gate Code",
+      subLabel: "Access Granted",
+      icon: HardHat,
+      badge: "Security",
+      iconBg:
+        "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+    },
+  },
+   // 5. Delivery Complete (Merge)
+   {
+    id: "cn5",
+    type: "flowBlock",
+    position: { x: 130, y: 480 },
+    style: { width: 240 },
+    data: {
+      label: "Pour Complete",
+      subLabel: "Quality Logged",
+      icon: Database,
+      badge: "Record",
+      iconBg:
+        "bg-slate-50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400",
+    },
+  },
+];
+
+const constructionEdges: Edge[] = [
+  { id: "e-cn1-cn2", source: "cn1", target: "cn2" },
+  { id: "e-cn2-cn3", source: "cn2", target: "cn3" },
+  { id: "e-cn2-cn4", source: "cn2", target: "cn4" },
+  { id: "e-cn3-cn5", source: "cn3", target: "cn5" },
+  { id: "e-cn4-cn5", source: "cn4", target: "cn5" },
+];
+
+export const ConstructionFlow = () => (
+  <FlowWrapper
+    initialNodes={constructionNodes}
+    initialEdges={constructionEdges}
+    fitView={true}
+  />
+);
+

@@ -5,8 +5,14 @@ import { cn } from "@/lib/utils";
 import {
   DriverOnboardingFlow,
   AssetMaintenanceFlow,
+  ManufacturingFlow,
+  ConstructionFlow,
 } from "@/components/layout/use-case-flows";
-import { BillingClaimsPreview } from "@/components/layout/use-case-visualizations";
+import {
+  BillingClaimsPreview,
+  ManufacturingMaterialFlowPreview,
+  ConstructionSiteCoordinationPreview,
+} from "@/components/layout/use-case-visualizations";
 import { CTASection } from "@/components/layout/cta-section";
 
 const useCases = [
@@ -34,6 +40,38 @@ const useCases = [
     className: "md:col-span-3",
     minHeight: "min-h-[500px] md:min-h-[600px]",
   },
+  {
+    title: "Predictive Manufacturing Operations",
+    description:
+      "Connect the shop floor to top floor. Ingest live sensor data to detect anomalies, automatically trigger work orders in your CMMS, and reschedule production shifts in your ERP without manual intervention.",
+    component: <ManufacturingFlow />,
+    className: "md:col-span-2",
+    minHeight: "min-h-[500px] md:min-h-[800px]",
+  },
+  {
+    title: "Production Line Visibility",
+    description:
+      "Real-time monitoring of material inputs and outputs. When inventory drops below thresholds, Nodal's AI agents negotiate replenishment with suppliers instantly.",
+    component: <ManufacturingMaterialFlowPreview />,
+    className: "md:col-span-1",
+    minHeight: "min-h-[500px] md:min-h-[800px]",
+  },
+  {
+    title: "Field Communication Integration",
+    description:
+      "Bridge the gap between the job site and the back office. Site foremen can report issues via SMS or Chat, which Nodal translates into formal RFI documents and ticket requests.",
+    component: <ConstructionSiteCoordinationPreview />,
+    className: "md:col-span-1",
+    minHeight: "min-h-[500px] md:min-h-[800px]",
+  },
+  {
+    title: "Construction Material Logistics",
+    description:
+      "Just-in-time delivery for complex sites. Coordinate concrete pours and material drops by syncing site requests directly with batch plants and logistics dispatchers.",
+    component: <ConstructionFlow />,
+    className: "md:col-span-2",
+    minHeight: "min-h-[500px] md:min-h-[800px]",
+  },
 ];
 
 export default function UseCasesPage() {
@@ -50,8 +88,7 @@ export default function UseCasesPage() {
           >
             <span className="text-foreground">Use Cases. </span>
             <span className="text-muted-foreground">
-              See how Enigmatic and Nodal solve complex logistics challenges
-              with precision and automation.
+              See how Enigmatic and Nodal digitize manual workflows and orchestrate complex operations at scale.
             </span>
           </motion.h1>
         </div>

@@ -236,3 +236,178 @@ export const BillingClaimsPreview = () => {
     </div>
   );
 };
+
+// --- Manufacturing Material Flow Visual ---
+export const ManufacturingMaterialFlowPreview = () => {
+  return (
+    <div className="relative flex flex-col items-center justify-center h-full w-full p-6 bg-slate-50 dark:bg-zinc-950/50">
+      <div className="w-full max-w-lg bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+        {/* Header */}
+        <div className="bg-muted/30 px-6 py-4 border-b flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span className="font-medium text-sm">Production Line A4 Status</span>
+          </div>
+          <span className="text-xs text-muted-foreground font-mono">LIVE</span>
+        </div>
+
+        {/* Status Section */}
+        <div className="p-6 grid grid-cols-2 gap-4">
+           {/* Metric 1 */}
+           <div className="p-4 rounded-lg bg-muted/20 border border-border">
+              <span className="text-xs text-muted-foreground block mb-1">Output Rate</span>
+              <span className="text-2xl font-light">98%</span>
+           </div>
+           {/* Metric 2 */}
+           <div className="p-4 rounded-lg bg-muted/20 border border-border">
+              <span className="text-xs text-muted-foreground block mb-1">Active Shift</span>
+              <span className="text-2xl font-light">Morning</span>
+           </div>
+        </div>
+
+        {/* Alert Section */}
+        <div className="mx-6 mb-6 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 flex gap-4 items-start">
+            <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-md shrink-0">
+               <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-500" />
+            </div>
+            <div>
+               <h4 className="text-sm font-medium text-amber-900 dark:text-amber-100">Low Material Inventory Detected</h4>
+               <p className="text-xs text-amber-700 dark:text-amber-300/80 mt-1">Raw Steel Coil reserves have dropped below 15% threshold.</p>
+            </div>
+        </div>
+
+        {/* Automated Actions Log */}
+        <div className="px-6 pb-6">
+           <h5 className="text-xs font-medium text-muted-foreground mb-3 text-center uppercase tracking-wider">Automated Resolution</h5>
+           <div className="space-y-3 relative">
+              {/* Line */}
+              <div className="absolute left-3.5 top-2 bottom-2 w-px bg-border"></div>
+
+              {/* Step 1 */}
+              <div className="relative flex items-center gap-3">
+                 <div className="h-7 w-7 rounded-full bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 flex items-center justify-center shrink-0 z-10">
+                    <Database className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                 </div>
+                 <div className="text-sm">
+                    <span className="font-medium">ERP Signal</span>
+                    <span className="text-muted-foreground ml-2 text-xs">08:42:15 AM</span>
+                 </div>
+              </div>
+
+               {/* Step 2 */}
+              <div className="relative flex items-center gap-3">
+                 <div className="h-7 w-7 rounded-full bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 flex items-center justify-center shrink-0 z-10">
+                    <Bot className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+                 </div>
+                 <div className="text-sm">
+                    <span className="font-medium">Reorder Triggered</span>
+                    <span className="text-muted-foreground ml-2 text-xs">08:42:16 AM</span>
+                 </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="relative flex items-center gap-3">
+                <div className="h-7 w-7 rounded-full bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 flex items-center justify-center shrink-0 z-10">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                 </div>
+                 <div className="text-sm">
+                    <span className="font-medium">Supplier Confirmed</span>
+                     <span className="text-muted-foreground ml-2 text-xs">Delivery: 2:00 PM Today</span>
+                 </div>
+              </div>
+           </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+// --- Construction Site Coordination Visual ---
+export const ConstructionSiteCoordinationPreview = () => {
+    return (
+        <div className="relative flex flex-col items-center justify-center h-full w-full p-6 bg-slate-50 dark:bg-zinc-950/50">
+           {/* Mobile Phone Simulation */}
+           <div className="w-[320px] bg-background border border-border shadow-2xl rounded-[32px] overflow-hidden flex flex-col h-[500px]">
+              
+              {/* App Header */}
+              <div className="bg-zinc-900 text-white p-4 pt-12">
+                 <div className="flex justify-between items-center">
+                    <span className="font-medium">Site Report</span>
+                    <div className="flex gap-1 items-center">
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>
+                        <span className="text-[10px] opacity-80">Online</span>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Chat Content */}
+              <div className="flex-1 bg-slate-50 dark:bg-zinc-900/50 p-4 space-y-4 overflow-hidden relative">
+                 
+                 {/* System Msg */}
+                 <div className="flex justify-center">
+                    <span className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">Today, 09:14 AM</span>
+                 </div>
+
+                 {/* User Msg (Right) */}
+                 <div className="flex flex-col items-end">
+                    <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2 text-sm max-w-[85%]">
+                       Main excavator hydraulic failure. We&apos;re halted on Zone B.
+                    </div>
+                    <span className="text-[10px] text-muted-foreground mt-1">Foreman Mike</span>
+                 </div>
+
+                 {/* Bot Response (Left) */}
+                 <div className="flex flex-col items-start">
+                    <div className="flex gap-2 items-end max-w-[90%]">
+                        <div className="h-6 w-6 rounded-full bg-purple-600 flex items-center justify-center shrink-0">
+                           <Bot className="h-3 w-3 text-white" />
+                        </div>
+                        <div className="bg-white dark:bg-zinc-800 border border-border rounded-2xl rounded-tl-sm px-4 py-3 text-sm shadow-sm">
+                           <p className="mb-2">Acknowledged. This is marked as <span className="text-red-500 font-medium">Critical Priority</span>.</p>
+                           
+                           {/* Action Card */}
+                           <div className="bg-slate-50 dark:bg-zinc-900 rounded border border-border p-2 space-y-1 mb-2">
+                               <div className="flex items-center gap-2">
+                                  <Wrench className="h-3 w-3 text-orange-500"/>
+                                  <span className="text-xs font-medium">Ticket #8821 Created</span>
+                               </div>
+                               <div className="flex items-center gap-2">
+                                  <User className="h-3 w-3 text-blue-500"/>
+                                  <span className="text-xs font-medium">Maintenance Team Notify</span>
+                               </div>
+                           </div>
+
+                           <p className="text-xs text-muted-foreground">Estimate: Tech arriving in 45m.</p>
+                        </div>
+                    </div>
+                 </div>
+
+                  {/* Project Manager Msg (Left) */}
+                 <div className="flex flex-col items-start">
+                    <div className="flex gap-2 items-end max-w-[85%]">
+                        <div className="h-6 w-6 rounded-full bg-gray-200 dark:bg-zinc-700 flex items-center justify-center shrink-0">
+                            <span className="text-[9px] font-bold text-gray-600 dark:text-gray-300">PM</span>
+                        </div>
+                        <div className="bg-white dark:bg-zinc-800 border border-border rounded-2xl rounded-tl-sm px-4 py-2 text-sm shadow-sm">
+                            Moving Crew B to Zone C foundation work until resolved.
+                        </div>
+                    </div>
+                 </div>
+
+              </div>
+
+              {/* Input Area */}
+              <div className="p-3 bg-background border-t border-border flex gap-2 items-center">
+                 <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                    <Plus className="h-4 w-4" />
+                 </div>
+                 <div className="h-8 flex-1 rounded-full bg-muted/50 border border-border px-3 text-xs flex items-center text-muted-foreground">
+                    Type a message...
+                 </div>
+              </div>
+
+           </div>
+        </div>
+    )
+}

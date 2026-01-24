@@ -56,7 +56,7 @@ export const FlowBlockNode = memo(({ data }: NodeProps) => {
       </div>
 
       {data.badge && (
-        <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+        <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground whitespace-nowrap">
           {data.badge}
         </span>
       )}
