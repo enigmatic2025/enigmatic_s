@@ -366,7 +366,7 @@ const productLinks: LinkItem[] = [
   {
     title: "Nodal",
     href: "/login",
-    description: "Our flagship logistics platform for modern supply chains",
+    description: "The central operating system for modern industrial operations",
     icon: GlobeIcon,
   },
   {

@@ -7,21 +7,21 @@ import Image from "next/image";
 const principles = [
   {
     icon: <UserCheck className="w-6 h-6" />,
-    title: "Humans in Command",
+    title: "Intelligence, Amplified",
     description:
-      "People stay firmly in control. AI amplifies productivity and catches errors, but your team always makes the final decisions and owns the outcomes.",
+      "Automation shouldn't replace your team—it should elevate them. We handle the repetitive execution so your experts can focus on high-value decisions.",
   },
   {
     icon: <ShieldCheck className="w-6 h-6" />,
-    title: "Built for Zero Regret",
+    title: "Mission-Critical Precision",
     description:
-      "We engineer relentless reliability and bulletproof accuracy into every layer, because in logistics even a single failure can cost millions and destroy trust.",
+      "When mistakes cost millions, 'good enough' isn't an option. We engineer fault-tolerant workflows designed to withstand the pressure of real-world operations.",
   },
   {
     icon: <Eye className="w-6 h-6" />,
-    title: "Radical Transparency",
+    title: "Total Visibility",
     description:
-      "Every process, status, and data point is visible in real time to you, your team, and your customers. No black boxes, no surprises, no excuses.",
+      "No more black boxes or data silos. We unify your operational context into a single source of truth, giving you the clarity to act before problems escalate.",
   },
 ];
 
@@ -48,10 +48,10 @@ export function PrinciplesSection() {
                 className="text-2xl md:text-4xl font-normal tracking-tight leading-[1.15]"
               >
                 <span className="text-foreground">
-                  Most logistics platforms promise to do everything.{" "}
+                  Generic software ignores operational reality.{" "}
                 </span>
                 <span className="text-muted-foreground">
-                  Real operations are far more nuanced than that. We follow three principles.
+                  To build a resilient enterprise, you need more than just tools. You need a philosophy of engineering.
                 </span>
               </motion.h2>
             </motion.div>

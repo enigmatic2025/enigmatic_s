@@ -39,8 +39,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Modernizing logistics technology to put people back in control of
-              the tools that run their day-to-day operations.
+              Digitizing complex workflows and building automated solutions that power the future of industrial operations.
             </p>
           </div>
 
