@@ -19,10 +19,10 @@ export function ProblemSection() {
               className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
             >
               <span className="text-foreground">
-                The Logistics Fragmentation Problem.{" "}
+                The Operational Fragmentation Problem.{" "}
               </span>
               <span className="text-muted-foreground">
-                Modern supply chains are breaking under the weight of outdated
+                Modern industrial operations are breaking under the weight of outdated
                 tools and disconnected systems.
               </span>
             </motion.h2>
@@ -38,7 +38,7 @@ export function ProblemSection() {
                 transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
                 className="flex flex-col h-full"
               >
-                <div className="relative w-full h-full mb-10 rounded-xl overflow-hidden flex items-center justify-center p-8 border">
+                <div className="relative w-full aspect-square mb-10 rounded-xl overflow-hidden flex items-center justify-center p-8 border hover:bg-muted/5 transition-colors">
                   <DottedIcon 
                     pattern={item.pattern} 
                     className="w-full h-full max-w-[180px] max-h-[180px]"
@@ -110,21 +110,21 @@ const hiddenCostsPattern = [
 
 const items = [
   {
-    title: "Manual Workflows",
+    title: "Manual Coordination",
     description:
-      "Your logistics teams are still glued to spreadsheets, emails, and manual workarounds, so exceptions get missed, shipments delay, and everyone works from different playbooks.",
+      "Teams are still glued to spreadsheets, emails, and phone calls to coordinate complex operations. Critical updates get missed, schedules slip, and everyone works from different playbooks.",
     pattern: manualWorkflowsPattern,
   },
   {
-    title: "Disconnected Systems",
+    title: "Disconnected Data",
     description:
-      "Disconnected TMS modules, carrier portals, ELD systems, and random AI tools each person picks create data silos, double-entry headaches, and constant workflow bottlenecks.",
+      "Silos between ERPs, specialized software, and field tools create blind spots. Data is double-entered, inaccurate, and trapped in systems that don't talk to each other.",
     pattern: disconnectedPattern,
   },
   {
-    title: "Hidden Costs",
+    title: "Reactive Firefighting",
     description:
-      "All these fragmented processes and “everyone does it their own way” habits are quietly eating your margins, fueling demurrage fees, and costing your operation way more than you think.",
+      "All this fragmentation forces your best people to spend their day chasing information and fixing errors instead of optimizing performance and driving growth.",
     pattern: hiddenCostsPattern,
   },
 ];

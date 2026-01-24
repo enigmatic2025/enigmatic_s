@@ -18,10 +18,9 @@ export function ServicesSection() {
               transition={{ duration: 0.5 }}
               className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-8"
             >
-              <span className="text-foreground">Take Back Control. </span>
+              <span className="text-foreground">Orchestrate Your Operations. </span>
               <span className="text-muted-foreground">
-                Modern logistics teams face chaos from outdated tools and
-                disconnected processes. Enigmatic gives you control and clarity.
+                Move from chaos to clarity. Enigmatic unifies your fragmented tools and workflows into a single, intelligent digital ecosystem.
               </span>
             </motion.h2>
           </div>
@@ -33,12 +32,12 @@ export function ServicesSection() {
               {/* Left Panel */}
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
-                  Consulting & Engineering
+                  Strategic Digital Transformation
                 </h3>
                 <p className="text-base text-muted-foreground mb-6">
-                  From custom integrations to full-scale infrastructure. We help
-                  you connect your disparate systems to build a cohesive
-                  technology ecosystem that actually works together.
+                  We don't just patch holes. We re-engineer your core operational
+                  workflows, replacing manual bottlenecks with scalable, automated
+                  solutions tailored to your unique infrastructure.
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 bg-muted/30 rounded-xl border border-border/50 relative overflow-hidden flex items-center justify-center">
@@ -53,12 +52,12 @@ export function ServicesSection() {
               {/* Right Panel */}
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
-                  The Nodal Platform
+                  The Nodal Operating System
                 </h3>
                 <p className="text-base text-muted-foreground mb-6">
-                  The business process platform where technical engineers design
-                  Action Flows that blend AI, automation, and human expertise
-                  into one consistent operation.
+                  The central nervous system for your business. Nodal connects
+                  your teams, tools, and data into a single, intelligent
+                  interface—executing actions so you don't have to.
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 flex items-center justify-center p-4">
@@ -79,11 +78,12 @@ export function ServicesSection() {
                   <Workflow className="w-6 h-6 text-foreground" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  Event-Driven Triggers
+                  Intelligent Triggers
                 </h3>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Kick off workflows automatically based on email receipts, TMS
-                  status changes, or API webhooks.
+                  Automatically initiate complex workflows based on real-time
+                  signals—whether it's an incoming email, a status update, or an
+                  API event.
                 </p>
               </div>
 
@@ -93,12 +93,12 @@ export function ServicesSection() {
                   <Users className="w-6 h-6 text-foreground" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  Human-in-the-Loop
+                  Human-Centric Control
                 </h3>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Ensure consistency with native validation steps. When
-                  confidence is low, Nodal loops in a human to review and
-                  approve.
+                  Amplify your workforce. Intelligent routing ensures only
+                  critical exceptions reach your team, while standard tasks are
+                  handled instantly.
                 </p>
               </div>
 
@@ -108,11 +108,12 @@ export function ServicesSection() {
                   <Network className="w-6 h-6 text-foreground" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  Universal Connectivity
+                  Total Connectivity
                 </h3>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Seamlessly connect with any TMS, WMS, ELD, or EDI partner.
-                  Break down data silos across your stack.
+                  Bridge the gap between legacy systems and modern tools. Unify
+                  data from ERPs, field devices, and external partners into one
+                  source of truth.
                 </p>
               </div>
             </div>
