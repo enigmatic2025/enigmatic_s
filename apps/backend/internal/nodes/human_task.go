@@ -11,25 +11,49 @@ import (
 type HumanTaskNode struct{}
 
 func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
-	// 1. Parse Configuration
-	title, _ := input.Config["title"].(string)
+	// 1. Initialize Expression Engine
+	expressionEngine := NewExpressionEngine()
 
-	// 'description' in generic node data is for the designer (documentation).
-	// 'instructions' is the specific prompt for the human task.
-	// We prioritize instructions, but fallback to description for backward compat.
+	// 2. Parse Configuration
+	// User clarified: Node Label is for Designer (Map).
+	// Task Title is for End User (Inbox) and can be dynamic.
+	rawTitle, _ := input.Config["title"].(string)
+
+	// Default values
+	if rawTitle == "" {
+		rawTitle, _ = input.Config["label"].(string) // Fallback to label if title is missing
+	}
+	if rawTitle == "" {
+		rawTitle = "Untitled Task"
+	}
+
+	// Evaluate Title
+	titleVal, err := expressionEngine.Evaluate(rawTitle, input)
+	if err == nil {
+		rawTitle = fmt.Sprintf("%v", titleVal)
+	}
+	title := rawTitle // Final evaluated title
+
+	// 'description' parsing...
 	description, _ := input.Config["instructions"].(string)
 	if description == "" {
 		description, _ = input.Config["description"].(string)
 	}
 
-	assignee, _ := input.Config["assignee"].(string)
-
-	// Default values
-	if title == "" {
-		title = "Untitled Task"
+	// Evaluate Description
+	descVal, err := expressionEngine.Evaluate(description, input)
+	if err == nil {
+		description = fmt.Sprintf("%v", descVal)
 	}
+
+	assignee, _ := input.Config["assignee"].(string)
+	// (Evaluate assignee if we want dynamic assignment - good to have)
+	assigneeVal, err := expressionEngine.Evaluate(assignee, input)
+	if err == nil {
+		assignee = fmt.Sprintf("%v", assigneeVal)
+	}
+
 	if assignee == "" {
-		// Fallback or error? For now, allow empty for "unassigned" queue
 		assignee = "unassigned"
 	}
 
@@ -72,17 +96,16 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 		UpdatedAt:   time.Now(),
 	}
 
-	// Hotfix: Try to extract FlowID from WorkflowID if it follows "flow-UUID" pattern
-	// Or just query the DB for the flow associated with this workflow_id? efficiently?
-	// Actually, `human_tasks` has foreign key to `flows`. We NEED a valid Flow ID.
-	// Users might get FK violation if empty.
-	// Let's check if `flow_id` is passed in `input.InputData` or `variables`?
-	// In workflow.go, we pass "steps" and "variables".
-	// Maybe we should add FlowID to NodeContext in workflow.go?
-	// Plan: update workflow.go to pass FlowID in NodeContext.
+	// Ensure FlowID is present to avoid Foreign Key violations
+	if taskRecord.FlowID == "" {
+		return &NodeResult{
+			Status: StatusFailed,
+			Error:  "flow_id is missing",
+		}, nil
+	}
 
 	var results []map[string]interface{}
-	err := client.DB.From("human_tasks").Insert(taskRecord).Execute(&results)
+	err = client.DB.From("human_tasks").Insert(taskRecord).Execute(&results)
 	if err != nil {
 		return &NodeResult{
 			Status: StatusFailed,

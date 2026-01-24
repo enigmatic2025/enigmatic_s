@@ -42,10 +42,10 @@ const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-              Human Task
+              Human Action
             </span>
-            <CardTitle className="text-sm font-medium leading-none truncate" title={data.title}>
-               {data.title || 'Action Required'}
+            <CardTitle className="text-sm font-medium leading-none truncate" title={data.label || data.title}>
+               {data.label || data.title || 'Action Required'}
             </CardTitle>
           </div>
         </div>

@@ -239,20 +239,51 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
      // Can trigger re-renders, but fine for Sidebar
   }
 
+  const handleAddVariable = () => {
+      const name = newVarName.trim();
+      if (!name) return;
+      
+      if (variables.hasOwnProperty(name)) {
+          toast.error(`Variable "${name}" already exists`);
+          return;
+      }
+
+      setVariable(name, null);
+      setNewVarName("");
+      setIsAdding(false);
+      toast.success(`Variable "${name}" created`);
+  };
+
+  // Filter Global Variables
+  const filteredGlobalVars = Object.entries(variables).filter(([key]) => 
+      key.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const filteredNodes = nodes.filter(n => {
        const term = searchQuery.toLowerCase();
        const matchesName = n.data.label?.toLowerCase().includes(term);
        const matchesId = n.id.toLowerCase().includes(term);
-       return matchesName || matchesId;
-  });
+       
+       // Deep Search: Check if any variable in the schema matches
+       let matchesSchema = false;
+       const runResult = n.data?.lastRunResult;
+       let schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[n.type || ""];
+       
+       // Re-resolve schema logic same as render (simplified for search)
+       if (schema === undefined && n.type === 'api-trigger' && n.data?.schema) {
+           schema = {};
+           n.data.schema.forEach((f: any) => schema[f.key] = "value");
+       }
+       if (n.type === 'variable' && n.data?.variableName) {
+           schema = { [n.data.variableName]: "value" };
+       }
 
-  const handleAddVariable = () => {
-      if (!newVarName.trim()) return;
-      setVariable(newVarName.trim(), null);
-      setNewVarName("");
-      setIsAdding(false);
-      toast.success(`Variable "${newVarName}" created`);
-  };
+       if (schema && typeof schema === 'object') {
+           matchesSchema = Object.keys(schema).some(key => key.toLowerCase().includes(term));
+       }
+
+       return matchesName || matchesId || matchesSchema;
+  });
 
   return (
     <div className="h-full flex flex-col">
@@ -291,11 +322,13 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                 )}
 
                 <div className="p-2 bg-background">
-                    {Object.keys(variables).length === 0 ? (
-                        <div className="text-xs text-muted-foreground italic p-1">No global variables defined.</div>
+                    {filteredGlobalVars.length === 0 ? (
+                        <div className="text-xs text-muted-foreground italic p-1">
+                            {Object.keys(variables).length === 0 ? "No global variables defined." : `No matches for "${searchQuery}"`}
+                        </div>
                     ) : (
                         <div className="space-y-1">
-                            {Object.entries(variables).map(([key, value]) => (
+                            {filteredGlobalVars.map(([key, value]) => (
                                 <div key={key} className="flex items-center justify-between group hover:bg-muted/50 p-1 rounded">
                                     <div className="flex items-center gap-2 overflow-hidden">
                                         <span className="text-xs font-mono font-medium text-purple-600 whitespace-nowrap">{key}</span>

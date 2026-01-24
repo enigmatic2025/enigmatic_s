@@ -25,11 +25,11 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		return nil, err
 	}
 
-	// 0. Initialize Execution State with Trigger Input
+	// 0. Initialize Execution State
 	executionState := make(map[string]map[string]interface{})
 	variables := make(map[string]interface{}) // Global variables state
 
-	// Legacy global reference
+	// Initialize 'trigger' scope with input data (standard convention)
 	executionState["trigger"] = map[string]interface{}{
 		"body": inputData,
 	}

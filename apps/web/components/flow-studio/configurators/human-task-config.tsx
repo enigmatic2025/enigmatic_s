@@ -50,19 +50,15 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
     <div className="space-y-6">
       {/* General Settings */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">General</h3>
-        
         <div className="space-y-2">
-          <Label>Task Title</Label>
+          <Label>Action Title <span className="text-red-500">*</span></Label>
           <Input 
             value={currentConfig.title || ''} 
             onChange={(e) => onUpdate({ ...currentConfig, title: e.target.value })}
-            placeholder="e.g. Approve Expense Report"
+            placeholder="e.g. Review {{ steps.trigger.data.name }}"
           />
-          <p className="text-[11px] text-muted-foreground">Allows you to identify this task in the Inbox.</p>
+          <p className="text-[11px] text-muted-foreground">The name of the task shown to the assignee. Supports variables.</p>
         </div>
-
-
 
         <div className="space-y-2">
           <Label>Assignee (Email or Role) <span className="text-red-500">*</span></Label>
