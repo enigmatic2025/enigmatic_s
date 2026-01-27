@@ -87,6 +87,14 @@ func (e *ExpressionEngine) resolvePath(path string, ctx NodeContext) (interface{
 
 		if steps, ok := val.(map[string]interface{}); ok {
 			current = steps
+		} else if stepsTyped, ok := val.(map[string]map[string]interface{}); ok {
+			// Handle strictly typed map coming from executionState
+			// Convert to map[string]interface{} so Traverse can handle it
+			converted := make(map[string]interface{}, len(stepsTyped))
+			for k, v := range stepsTyped {
+				converted[k] = v
+			}
+			current = converted
 		} else {
 			// Try to recover if it's map[string]any (alias) but strictly checked?
 			// Go interfaces handle this usually. The only failure is if it's totally different.

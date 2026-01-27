@@ -416,7 +416,11 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                         {hasData ? (
                              <JsonTree 
                                 data={schema} 
-                                path={node.type === 'variable' ? 'variables' : `steps.${node.id}`} 
+                                path={
+                                    node.type === 'variable' ? 'variables' : 
+                                    node.type === 'api-trigger' ? 'steps.trigger.body' :
+                                    `steps.${node.id}`
+                                } 
                                 contextLoopSource={contextLoopSource}
                             />
                         ) : (
