@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { CONFIG_COMPONENTS, NODE_METADATA } from "./constants/node-registry";
 import { NodeExecutionConsole } from "./node-execution-console";
 import { useFlowStore } from "@/lib/stores/flow-store";
+import { validateVariableReferences } from "./hooks/use-variable-validation";
 
 interface NodeConfigurationSheetProps {
   isOpen: boolean;
@@ -98,88 +99,32 @@ export function NodeConfigurationSheet({
         return;
       }
 
-      // --- Dependency Validation ---
+      // --- Standardized Validation Check ---
       
-      // 1. Find all valid ancestor nodes (upstream)
-      const validAncestorIds = new Set<string>();
-      const queue = [selectedNode.id];
-      const visited = new Set<string>();
+      // Recursive helper to find strings to validate in formData
+      const findStrings = (obj: any): string[] => {
+          if (!obj) return [];
+          if (typeof obj === 'string') return [obj];
+          if (Array.isArray(obj)) return obj.flatMap(findStrings);
+          if (typeof obj === 'object') return Object.values(obj).flatMap(findStrings);
+          return [];
+      };
 
-      // Work backwards from current node: find all edges pointing TO the queue items
-      while (queue.length > 0) {
-          const currentId = queue.shift()!;
-          if (visited.has(currentId)) continue;
-          visited.add(currentId);
+      const allStrings = findStrings(formData);
+      const validationErrors: string[] = [];
 
-          // Find edges where target is currentId
-          const incomingEdges = edges.filter(e => e.target === currentId);
-          
-          for (const edge of incomingEdges) {
-              if (edge.source) {
-                  validAncestorIds.add(edge.source);
-                  queue.push(edge.source);
-              }
+      allStrings.forEach(str => {
+          const res = validateVariableReferences(str, selectedNode.id, nodes, edges);
+          if (!res.isValid) {
+              validationErrors.push(...res.errors);
           }
-      }
+      });
 
-      // 2. Scan formData for variable references {{ steps.foo... }}
-      const jsonString = JSON.stringify(formData);
-      // Regex to capture "steps.node_id"
-      const regex = /steps\.([a-zA-Z0-9_-]+)/g;
-      let match;
-      const invalidDependencies: string[] = [];
-
-      while ((match = regex.exec(jsonString)) !== null) {
-          const referencedNodeId = match[1];
-          let effectiveId = referencedNodeId;
-
-          // 2a. Resolve 'trigger' alias
-          if (referencedNodeId === 'trigger') {
-              const triggerNode = nodes.find(n => n.type === 'api-trigger');
-              if (triggerNode) {
-                  effectiveId = triggerNode.id;
-              }
-          }
-
-
-          // It's invalid if it's NOT in ancestors AND it's NOT the current node (recursion/loop)
-          if (!validAncestorIds.has(effectiveId) && effectiveId !== selectedNode.id) {
-              invalidDependencies.push(referencedNodeId); // Push original name for error msg
-          }
-      }
-
-      if (invalidDependencies.length > 0) {
-          const uniqueInvalid = Array.from(new Set(invalidDependencies));
-          toast.error(`Invalid Variable Reference: You are trying to use data from future or unconnected nodes: ${uniqueInvalid.join(', ')}`);
+      if (validationErrors.length > 0) {
+          const uniqueErrors = Array.from(new Set(validationErrors));
+          // Just show the first few to avoid screen clutter
+          toast.error(`Validation Failed: ${uniqueErrors[0]}`); 
           return;
-      }
-
-      // --- 3. API Trigger Specific Validation (Schema Integrity) ---
-      if (selectedNode.type === 'api-trigger') {
-          const schemaKeys = new Set((formData.schema || []).map((f: any) => f.key));
-          const missingVars: string[] = [];
-
-          // Helper to check string for bad vars
-          const checkTemplate = (tpl: string) => {
-              if (!tpl) return;
-              const matches = tpl.matchAll(/steps\.trigger\.body\.([a-zA-Z0-9_-]+)/g);
-              for (const m of matches) {
-                  const varName = m[1];
-                  if (!schemaKeys.has(varName)) {
-                      missingVars.push(varName);
-                  }
-              }
-          };
-
-          checkTemplate(formData.instanceNameTemplate || '');
-          checkTemplate(formData.instanceDescriptionTemplate || '');
-          (formData.infoFields || []).forEach((f: any) => checkTemplate(f.value || ''));
-
-          if (missingVars.length > 0) {
-              const uniqueMissing = Array.from(new Set(missingVars));
-              toast.error(`Schema Mismatch: The following variables are used but not defined in your Schema: ${uniqueMissing.join(', ')}`);
-              return;
-          }
       }
 
       // -----------------------------

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { flowService } from '@/services/flow-service';
 import { validateFlow } from '@/lib/flow-validation';
 import { useFlowStore } from '@/lib/stores/flow-store';
+import { validateVariableReferences } from './use-variable-validation';
 
 const getId = () => `node_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -134,6 +135,43 @@ export function useFlowOperations({
         if (!validateFlow(nodes, edges)) {
             return;
         }
+
+        // --- NEW: Global Variable Validation Logic ---
+        const findStrings = (obj: any): string[] => {
+            if (!obj) return [];
+            if (typeof obj === 'string') return [obj];
+            if (Array.isArray(obj)) return obj.flatMap(findStrings);
+            if (typeof obj === 'object') return Object.values(obj).flatMap(findStrings);
+            return [];
+        };
+
+        let hasVariableErrors = false;
+
+        for (const node of nodes) {
+            const stringsToCheck = findStrings(node.data);
+            const nodeErrors: string[] = [];
+
+            stringsToCheck.forEach(str => {
+                const res = validateVariableReferences(str, node.id, nodes, edges);
+                if (!res.isValid) {
+                    nodeErrors.push(...res.errors);
+                }
+            });
+
+            if (nodeErrors.length > 0) {
+                const unique = Array.from(new Set(nodeErrors));
+                // Show toast for this node
+                toast.error(`Node '${node.data.label}' has invalid variables: ${unique[0]}`);
+                hasVariableErrors = true;
+                // We stop at the first node to avoid spamming toasts
+                break;
+            }
+        }
+
+        if (hasVariableErrors) {
+            return; // Block save
+        }
+        // ---------------------------------------------
 
         // TODO: Get actual Org ID from context
         const orgId = "00000000-0000-0000-0000-000000000000";

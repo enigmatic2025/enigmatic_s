@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { useFlowStore } from '@/lib/stores/flow-store';
+import { useVariableValidation } from '../hooks/use-variable-validation';
+import { ValidatedInput } from '../inputs/validated-input';
+import { ValidatedTextarea } from '../inputs/validated-textarea';
+import { useReactFlow } from 'reactflow';
 import { Copy, Check, Plus, Trash2, Info } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
@@ -213,19 +218,15 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         
         {/* Validation Helper Logic */}
         {(() => {
-            const schemaKeys = new Set(schema.map(f => f.key));
-            const getMissingVars = (tpl: string) => {
-                if (!tpl) return [];
-                const matches = tpl.matchAll(/steps\.trigger\.body\.([a-zA-Z0-9_-]+)/g);
-                const missing = [];
-                for (const m of matches) {
-                    if (!schemaKeys.has(m[1])) missing.push(m[1]);
-                }
-                return [...new Set(missing)];
-            };
-
-            const titleErrors = getMissingVars(data.instanceNameTemplate || '');
-            const descErrors = getMissingVars(data.instanceDescriptionTemplate || '');
+            // Note: We use the hook for validation now.
+            // We need access to nodes/edges which are not prop-drilled, so we use store + reactflow context
+            const { nodes } = useFlowStore();
+            // We need to pass the CURRENT node ID. 
+            // Since this component is finding the api-trigger, we assume the selected node IS the api-trigger or we find it.
+            // The prop 'data' is passed, but we need the ID. 
+            // Let's assume the parent passes the node ID or we find the trigger node.
+            const triggerNode = nodes.find(n => n.type === 'api-trigger');
+            const nodeId = triggerNode?.id || 'trigger'; // Fallback
 
             return (
                 <div className="space-y-5">
@@ -234,25 +235,15 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                         <label className="text-sm font-medium text-foreground">
                             Action Flow Title Template <span className="text-red-500">*</span>
                         </label>
-                        <input
-                            type="text"
+                        <ValidatedInput 
+                            nodeId={nodeId}
                             value={data.instanceNameTemplate || ''}
                             onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
                             placeholder="e.g. Driver At Risk {{ steps.trigger.body.driver_code }}"
-                            className={`w-full bg-background border rounded-md px-3 h-9 text-sm focus:ring-1 focus:ring-primary outline-none transition-all ${
-                                titleErrors.length > 0 ? 'border-red-500 focus:ring-red-500' : 'border-input hover:border-accent-foreground/50'
-                            }`}
                         />
-                        {titleErrors.length > 0 ? (
-                            <p className="text-[10px] text-red-500 font-medium flex items-center gap-1">
-                                <Info className="w-3 h-3" />
-                                Invalid variables: {titleErrors.join(', ')}
-                            </p>
-                        ) : (
-                            <p className="text-[10px] text-muted-foreground">
-                                Name the running instance dynamically using variables.
-                            </p>
-                        )}
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                            Name the running instance dynamically using variables.
+                        </p>
                     </div>
                     
                     {/* Information (Description) */}
@@ -260,23 +251,16 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                         <label className="text-sm font-medium text-foreground">
                             Information <span className="text-red-500">*</span>
                         </label>
-                        <textarea
+                        <ValidatedTextarea
+                            nodeId={nodeId}
                             value={data.instanceDescriptionTemplate || ''}
                             onChange={(e) => onUpdate({ ...data, instanceDescriptionTemplate: e.target.value })}
                             placeholder="Provide detailed instructions or context for this action flow..."
-                            className={`w-full bg-background border rounded-md px-3 py-2 text-sm min-h-[100px] resize-none focus:ring-1 focus:ring-primary outline-none transition-all ${
-                                descErrors.length > 0 ? 'border-red-500 focus:ring-red-500' : 'border-input hover:border-accent-foreground/50'
-                            }`}
+                            className="min-h-[100px]"
                         />
-                        {descErrors.length > 0 && (
-                            <p className="text-[10px] text-red-500 font-medium flex items-center gap-1">
-                                <Info className="w-3 h-3" />
-                                Invalid variables: {descErrors.join(', ')}
-                            </p>
-                        )}
                     </div>
 
-                    {/* Additional Fields (No Divider, cohesive flow) */}
+                    {/* Additional Fields */}
                     <div className="space-y-3 pt-2">
                         <div className="flex items-center justify-between">
                             <label className="text-sm font-medium text-foreground">
@@ -306,57 +290,46 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                                     <p className="text-xs text-muted-foreground">No additional fields configured.</p>
                                 </div>
                             ) : (
-                                data.infoFields.map((field: any, index: number) => {
-                                    const fieldErrors = getMissingVars(field.value || '');
-                                    return (
-                                        <div key={index} className="space-y-1">
-                                            <div className="flex items-start gap-2 group">
-                                                <div className="w-1/3">
-                                                    <input
-                                                        type="text"
-                                                        value={field.label}
-                                                        onChange={(e) => {
-                                                            const newFields = [...data.infoFields];
-                                                            newFields[index] = { ...field, label: e.target.value };
-                                                            onUpdate({ ...data, infoFields: newFields });
-                                                        }}
-                                                        placeholder="Label"
-                                                        className="w-full bg-background border border-input rounded-md px-3 h-9 text-sm focus:ring-1 focus:ring-primary outline-none transition-all hover:border-accent-foreground/50"
-                                                    />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <input
-                                                        type="text"
-                                                        value={field.value}
-                                                        onChange={(e) => {
-                                                            const newFields = [...data.infoFields];
-                                                            newFields[index] = { ...field, value: e.target.value };
-                                                            onUpdate({ ...data, infoFields: newFields });
-                                                        }}
-                                                        placeholder="Value"
-                                                        className={`w-full bg-background border rounded-md px-3 h-9 text-sm focus:ring-1 focus:ring-primary outline-none transition-all ${
-                                                            fieldErrors.length > 0 ? 'border-red-500 focus:ring-red-500' : 'border-input hover:border-accent-foreground/50'
-                                                        }`}
-                                                    />
-                                                </div>
-                                                <button
-                                                    onClick={() => {
-                                                        const newFields = data.infoFields.filter((_: any, i: number) => i !== index);
+                                data.infoFields.map((field: any, index: number) => (
+                                    <div key={index} className="space-y-1">
+                                        <div className="flex items-start gap-2 group">
+                                            <div className="w-1/3">
+                                                <input
+                                                    type="text"
+                                                    value={field.label}
+                                                    onChange={(e) => {
+                                                        const newFields = [...data.infoFields];
+                                                        newFields[index] = { ...field, label: e.target.value };
                                                         onUpdate({ ...data, infoFields: newFields });
                                                     }}
-                                                    className="p-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all self-center"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                    placeholder="Label"
+                                                    className="w-full bg-background border border-input rounded-md px-3 h-9 text-sm focus:ring-1 focus:ring-primary outline-none transition-all hover:border-accent-foreground/50"
+                                                />
                                             </div>
-                                            {fieldErrors.length > 0 && (
-                                                <p className="text-[10px] text-red-500 pl-[34%] font-medium">
-                                                    Missing: {fieldErrors.join(', ')}
-                                                </p>
-                                            )}
+                                            <div className="flex-1">
+                                                <ValidatedInput
+                                                    nodeId={nodeId}
+                                                    value={field.value}
+                                                    onChange={(e) => {
+                                                        const newFields = [...data.infoFields];
+                                                        newFields[index] = { ...field, value: e.target.value };
+                                                        onUpdate({ ...data, infoFields: newFields });
+                                                    }}
+                                                    placeholder="Value"
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    const newFields = data.infoFields.filter((_: any, i: number) => i !== index);
+                                                    onUpdate({ ...data, infoFields: newFields });
+                                                }}
+                                                className="h-9 w-9 flex items-center justify-center opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded transition-all"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
                                         </div>
-                                    );
-                                })
+                                    </div>
+                                ))
                             )}
                             {(data.infoFields?.length || 0) > 0 && (
                                 <p className="text-[10px] text-muted-foreground text-right">
