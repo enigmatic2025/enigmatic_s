@@ -87,6 +87,43 @@ func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request)
 	// Inject Flow ID
 	flowDef.ID = flowID
 
+	// 3.5 Validate Trigger Schema
+	// Check if the input body matches the required fields defined in the API Trigger
+	for _, node := range flowDef.Nodes {
+		if node.Type == "api-trigger" {
+			if schemaRaw, ok := node.Data["schema"]; ok {
+				// Determine if schemaRaw is a list of objects
+				// We need to marshal/unmarshal or type assert carefully
+				// Start by assuming it came effectively from JSON unmarshal as []interface{}
+				if schemaList, ok := schemaRaw.([]interface{}); ok {
+					var missingFields []string
+
+					for _, fieldItem := range schemaList {
+						if fieldMap, ok := fieldItem.(map[string]interface{}); ok {
+							key, _ := fieldMap["key"].(string)
+							required, _ := fieldMap["required"].(bool)
+
+							if key != "" && required {
+								val, exists := inputData[key]
+								// Check existence and nilness
+								if !exists || val == nil {
+									missingFields = append(missingFields, key)
+								}
+							}
+						}
+					}
+
+					if len(missingFields) > 0 {
+						http.Error(w, fmt.Sprintf("Missing required fields: %v", missingFields), http.StatusBadRequest)
+						return
+					}
+				}
+			}
+			// Only one start trigger per flow usually, so we can break
+			break
+		}
+	}
+
 	// 4. Setup Temporal Options
 	workflowOptions := client.StartWorkflowOptions{
 		ID:        "flow-" + flowID + "-" + fmt.Sprintf("%d", time.Now().UnixNano()),
