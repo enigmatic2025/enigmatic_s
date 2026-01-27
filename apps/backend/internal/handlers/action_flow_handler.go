@@ -126,22 +126,30 @@ func (h *ActionFlowHandler) DeleteActionFlow(w http.ResponseWriter, r *http.Requ
 
 	dbClient := database.GetClient()
 
-	// 1. Get the action flow first to find the Temporal Workflow ID
+	// 1. Get the action flow first to find the Temporal Workflow ID and Run ID
 	type ActionFlowInfo struct {
 		TemporalWorkflowID string `json:"temporal_workflow_id"`
 		Status             string `json:"status"`
+		RunID              string `json:"run_id"`
 	}
 	var results []ActionFlowInfo
 
 	// Check if record exists
-	err := dbClient.DB.From("action_flows").Select("temporal_workflow_id, status").Eq("id", id).Execute(&results)
+	err := dbClient.DB.From("action_flows").Select("temporal_workflow_id, status, run_id").Eq("id", id).Execute(&results)
 
 	if err == nil && len(results) > 0 {
 		af := results[0]
 		// 2. Try to terminate workflow if needed
 		if h.TemporalClient != nil && (af.Status == "RUNNING" || af.Status == "PAUSED") {
-			// Terminate it. We ignore error if it's already done.
 			_ = h.TemporalClient.TerminateWorkflow(context.Background(), af.TemporalWorkflowID, "", "User deleted form dashboard")
+		}
+
+		// 3. Delete associated Human Tasks
+		// While we could rely on run_id, let's be safe and check if RunID is present
+		if af.RunID != "" {
+			var deletedTasks []map[string]interface{}
+			// Ignore error here as it's cleanup
+			_ = dbClient.DB.From("human_tasks").Delete().Eq("run_id", af.RunID).Execute(&deletedTasks)
 		}
 	}
 

@@ -77,10 +77,20 @@ func (e *ExpressionEngine) resolvePath(path string, ctx NodeContext) (interface{
 		// steps.NodeName.field...
 		// Step Data Access: Access data from previous steps via 'steps.StepID'.
 		// If 'steps' is not explicitly in InputData, we fallback to treating InputData as the step container.
-		if steps, ok := ctx.InputData["steps"].(map[string]interface{}); ok {
+		// steps.NodeName.field...
+		// Step Data Access: Access data from previous steps via 'steps.StepID'.
+		// If 'steps' is not explicitly in InputData, we fallback to treating InputData as the step container.
+		val, exists := ctx.InputData["steps"]
+		if !exists {
+			return nil, fmt.Errorf("steps context not found in input")
+		}
+
+		if steps, ok := val.(map[string]interface{}); ok {
 			current = steps
 		} else {
-			return nil, fmt.Errorf("steps context not found in input")
+			// Try to recover if it's map[string]any (alias) but strictly checked?
+			// Go interfaces handle this usually. The only failure is if it's totally different.
+			return nil, fmt.Errorf("steps context exists but is of wrong type: %T", val)
 		}
 	case "variables":
 		// variables.varName
