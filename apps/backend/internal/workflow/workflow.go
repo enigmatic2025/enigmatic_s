@@ -36,6 +36,8 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	// 1. Find API Trigger Node configuration for Templating AND pre-populate node output
 	var titleTemplate, descTemplate string
+	var infoFieldsRaw []interface{}
+
 	for _, node := range flowDefinition.Nodes {
 		// Populate the specific node ID with the input data (Flat, for variable constraints)
 		// This ensures {{ steps.node_id.field }} works directly on the payload
@@ -52,6 +54,10 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			} else if d, ok := node.Data["description"].(string); ok {
 				// Fallback to legacy description if new field is empty
 				descTemplate = d
+			}
+
+			if fields, ok := node.Data["infoFields"].([]interface{}); ok {
+				infoFieldsRaw = fields
 			}
 			break
 		}
@@ -89,6 +95,28 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		}
 	}
 
+	var infoFields []map[string]string
+	if len(infoFieldsRaw) > 0 {
+		infoFields = make([]map[string]string, 0, len(infoFieldsRaw))
+		for _, raw := range infoFieldsRaw {
+			if fieldMap, ok := raw.(map[string]interface{}); ok {
+				label, _ := fieldMap["label"].(string)
+				valueTpl, _ := fieldMap["value"].(string)
+
+				// Evaluate value template
+				evaluatedValue := valueTpl
+				if val, err := expressionEngine.Evaluate(valueTpl, evalCtx); err == nil {
+					evaluatedValue = fmt.Sprintf("%v", val)
+				}
+
+				infoFields = append(infoFields, map[string]string{
+					"label": label,
+					"value": evaluatedValue,
+				})
+			}
+		}
+	}
+
 	// 2. Record Execution in DB
 	// info variable is already defined above in original code, but we need it here if moving things?
 	// Ah, 'info' was defined at line 58 in original. I am inserting before line 58 (implied).
@@ -102,6 +130,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		InputData:   inputData,
 		Title:       titleTemplate,
 		Description: descTemplate,
+		InfoFields:  infoFields,
 	}
 
 	if err := workflow.ExecuteActivity(ctx, RecordActionFlowActivity, recordParams).Get(ctx, nil); err != nil {

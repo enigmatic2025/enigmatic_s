@@ -173,6 +173,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		FlowID             string         `json:"flow_id"`
 		Status             string         `json:"status"`
 		TemporalWorkflowID string         `json:"temporal_workflow_id"`
+		RunID              string         `json:"run_id"`
 		InputData          map[string]any `json:"input_data"`
 		Output             map[string]any `json:"output"`
 		StartedAt          string         `json:"started_at"`
@@ -211,6 +212,74 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		}
 	}
 
+	// Fetch Activities (Human Tasks + System Events)
+	type Activity struct {
+		Type      string `json:"type"` // "trigger", "human_action", "end"
+		Name      string `json:"name"`
+		Status    string `json:"status"`
+		StartedAt string `json:"started_at"`
+		ID        string `json:"id,omitempty"`
+	}
+	var activities []Activity
+
+	// 1. Start Event
+	activities = append(activities, Activity{
+		Type:      "trigger",
+		Name:      "Workflow Started",
+		Status:    "COMPLETED",
+		StartedAt: af.StartedAt,
+	})
+
+	// 2. Human Tasks
+	if af.RunID != "" {
+		type HumanTask struct {
+			ID        string `json:"id"`
+			Title     string `json:"title"` // Dynamic title
+			Status    string `json:"status"`
+			CreatedAt string `json:"created_at"`
+		}
+		var tasks []HumanTask
+		// Query using RunID
+		client.DB.From("human_tasks").
+			Select("id, title, status, created_at").
+			Eq("run_id", af.RunID).
+			Execute(&tasks)
+
+		for _, t := range tasks {
+			activities = append(activities, Activity{
+				Type:      "human_action",
+				Name:      t.Title,
+				Status:    t.Status,
+				StartedAt: t.CreatedAt,
+				ID:        t.ID,
+			})
+		}
+	}
+
+	// Sort Activities by StartedAt
+	// Simple bubble sort or slice sort since list is small
+	// Adding dependency on "sort" package might be annoying if not imported.
+	// Let's use simple bubble sort for <10 items usually.
+	for i := 0; i < len(activities); i++ {
+		for j := 0; j < len(activities)-i-1; j++ {
+			if activities[j].StartedAt > activities[j+1].StartedAt {
+				activities[j], activities[j+1] = activities[j+1], activities[j]
+			}
+		}
+	}
+
+	// 3. End Event (if finished)
+	if af.Status == "COMPLETED" || af.Status == "FAILED" || af.Status == "TERMINATED" {
+		// We don't have exact ended_at column yet, using a rough placement or none?
+		// User wants a list. If we don't have end time, maybe we don't show "Activity" for end,
+		// but the Status label shows it.
+		// However, purely for the list visualization, let's allow "Completed" state.
+		// We can reuse StartedAt (bad) or leave it out.
+		// Let's add it if we have a way to know time. For now, skipping explicit "End Activity" in the list
+		// unless we want to show it. Koyeb usually shows "Deployment healthy" as a final state.
+		// Let's stick to "Actions" meaning "Things that happened".
+	}
+
 	// Flatten Result
 	type FlatResult struct {
 		ID                 string         `json:"id"`
@@ -219,13 +288,21 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		Title              string         `json:"title"`
 		Status             string         `json:"status"`
 		TemporalWorkflowID string         `json:"temporal_workflow_id"`
+		RunID              string         `json:"run_id"`
 		StartedAt          string         `json:"started_at"`
 		InputData          map[string]any `json:"input_data"`
 		Output             map[string]any `json:"output"`
+		Activities         []Activity     `json:"activities"`
 	}
 
 	// Use Dynamic Title or Fallback
 	displayTitle := af.Title
+	if displayTitle == "" {
+		// Check input_data for title (fallback persistence)
+		if t, ok := af.InputData["title"].(string); ok && t != "" {
+			displayTitle = t
+		}
+	}
 	if displayTitle == "" {
 		displayTitle = flowName
 	}
@@ -237,9 +314,11 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		Title:              displayTitle,
 		Status:             af.Status,
 		TemporalWorkflowID: af.TemporalWorkflowID,
+		RunID:              af.RunID,
 		StartedAt:          af.StartedAt,
 		InputData:          af.InputData,
 		Output:             af.Output,
+		Activities:         activities,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

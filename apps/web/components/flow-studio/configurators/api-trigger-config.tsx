@@ -156,38 +156,119 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         </div>
       </div>
 
-      {/* Settings - Moved to Bottom */}
-      <div className="space-y-2">
+      {/* Action Flow Information - Renamed from Incoming Webhook Settings */}
+      <div className="space-y-4">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Incoming Webhook Settings
+          Action Flow Information
         </label>
-        <div className="space-y-3">
-            <div>
-              <label className="text-xs text-muted-foreground block mb-1.5">Action Flow Title Template <span className="text-red-500">*</span></label>
-              <input
-                type="text"
-                value={data.instanceNameTemplate || ''}
-                onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
-                placeholder="e.g. New Order {{ order_id }}"
-                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Name the running instance dynamically using variables.
-              </p>
+        
+        <div className="space-y-4">
+            {/* Title & Description */}
+            <div className="space-y-3">
+                <div>
+                    <label className="text-xs text-muted-foreground block mb-1.5">Action Flow Title Template <span className="text-red-500">*</span></label>
+                    <input
+                        type="text"
+                        value={data.instanceNameTemplate || ''}
+                        onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
+                        placeholder="e.g. New Order {{ order_id }}"
+                        className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+                    />
+                    <p className="text-[10px] text-muted-foreground mt-1">
+                        Name the running instance dynamically using variables.
+                    </p>
+                </div>
+                
+                <div>
+                    <label className="text-xs text-muted-foreground block mb-1.5">Information <span className="text-red-500">*</span></label>
+                    <textarea
+                        value={data.instanceDescriptionTemplate || ''}
+                        onChange={(e) => onUpdate({ ...data, instanceDescriptionTemplate: e.target.value })}
+                        placeholder="Information about the action flow"
+                        className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm h-20 resize-none focus:ring-1 focus:ring-primary outline-none"
+                    />
+                </div>
             </div>
-            
-            <div>
-              <label className="text-xs text-muted-foreground block mb-1.5">Information <span className="text-red-500">*</span></label>
-              <textarea
-                value={data.instanceDescriptionTemplate || ''}
-                onChange={(e) => onUpdate({ ...data, instanceDescriptionTemplate: e.target.value })}
-                placeholder="Information about the action flow"
-                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm h-20 resize-none focus:ring-1 focus:ring-primary outline-none"
-              />
+
+            {/* Custom Information Fields */}
+            <div className="pt-2 border-t border-border">
+                <div className="flex items-center justify-between mb-3">
+                    <label className="text-xs font-medium text-foreground">
+                        Additional Fields
+                    </label>
+                    <button
+                        onClick={() => {
+                            const currentFields = data.infoFields || [];
+                            if (currentFields.length < 24) {
+                                onUpdate({ 
+                                    ...data, 
+                                    infoFields: [...currentFields, { label: '', value: '' }] 
+                                });
+                            }
+                        }}
+                        disabled={(data.infoFields?.length || 0) >= 24}
+                        className="text-[10px] flex items-center gap-1 bg-primary/10 text-primary hover:bg-primary/20 px-2 py-1 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Plus className="w-3 h-3" />
+                        Add Field
+                    </button>
+                </div>
+
+                <div className="space-y-2">
+                    {(!data.infoFields || data.infoFields.length === 0) ? (
+                         <div className="text-center py-4 border border-dashed border-border rounded-lg bg-muted/20">
+                            <p className="text-[10px] text-muted-foreground">No additional fields configured.</p>
+                        </div>
+                    ) : (
+                        data.infoFields.map((field: any, index: number) => (
+                            <div key={index} className="flex items-start gap-2 group">
+                                <div className="w-1/3">
+                                    <input
+                                        type="text"
+                                        value={field.label}
+                                        onChange={(e) => {
+                                            const newFields = [...data.infoFields];
+                                            newFields[index] = { ...field, label: e.target.value };
+                                            onUpdate({ ...data, infoFields: newFields });
+                                        }}
+                                        placeholder="Label"
+                                        className="w-full bg-background border border-border rounded px-2 py-1.5 text-xs font-semibold focus:ring-1 focus:ring-primary outline-none"
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <input
+                                        type="text"
+                                        value={field.value}
+                                        onChange={(e) => {
+                                            const newFields = [...data.infoFields];
+                                            newFields[index] = { ...field, value: e.target.value };
+                                            onUpdate({ ...data, infoFields: newFields });
+                                        }}
+                                        placeholder="Value (supports {{ variables }})"
+                                        className="w-full bg-background border border-border rounded px-2 py-1.5 text-xs focus:ring-1 focus:ring-primary outline-none"
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        const newFields = data.infoFields.filter((_: any, i: number) => i !== index);
+                                        onUpdate({ ...data, infoFields: newFields });
+                                    }}
+                                    className="p-1.5 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 transition-all self-center"
+                                >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        ))
+                    )}
+                    {(data.infoFields?.length || 0) > 0 && (
+                        <p className="text-[10px] text-muted-foreground text-right">
+                            {(data.infoFields?.length || 0)} / 24 fields used
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
       </div>
-      
     </div>
   );
 }
