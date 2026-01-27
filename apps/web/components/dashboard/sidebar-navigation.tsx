@@ -9,6 +9,7 @@ import {
   Blocks,
   Library,
   Workflow,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -138,6 +139,13 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
             label="Action Flows"
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/action-flows`)}
+          />
+          <NavItem
+            href={`/nodal/${currentOrg?.slug}/dashboard/organization`}
+            icon={Users}
+            label="Organization"
+            sidebarOpen={sidebarOpen}
+            active={isActive(`/nodal/${currentOrg?.slug}/dashboard/organization`)}
           />
         </nav>
       </div>

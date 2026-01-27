@@ -119,6 +119,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Publish Route
 	mux.HandleFunc("POST /api/flows/{id}/publish", flowHandler.PublishFlow)
 
+	// Organization Routes
+	orgHandler := handlers.NewOrganizationHandler()
+	mux.Handle("GET /api/orgs/{orgId}/members", middleware.Auth(http.HandlerFunc(orgHandler.GetMembers)))
+	mux.Handle("GET /api/orgs/{orgId}/teams", middleware.Auth(http.HandlerFunc(orgHandler.GetTeams)))
+	mux.Handle("POST /api/orgs/{orgId}/teams", middleware.Auth(http.HandlerFunc(orgHandler.CreateTeam)))
+
 	return mux
 }
 
