@@ -46,6 +46,54 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
     'action': HttpRequestConfig, // Default action to HTTP for now
 };
 
+export const NODE_METADATA: Record<string, { title: string; description: string }> = {
+    'http': {
+        title: "HTTP Request",
+        description: "Send an HTTP request to any API endpoint or service."
+    },
+    'api-trigger': {
+        title: "Incoming Webhook",
+        description: "Starts a new flow run when data is received via the generated URL."
+    },
+    'manual-trigger': {
+        title: "Manual Trigger",
+        description: "Start the flow manually from the dashboard for testing."
+    },
+    'condition': {
+        title: "Condition",
+        description: "Branch the flow based on logical rules (If/Else)."
+    },
+    'filter': {
+        title: "Filter Data",
+        description: "Stop the flow execution if conditions are not met."
+    },
+    'loop': {
+        title: "Loop",
+        description: "Iterate over a list of items and run steps for each."
+    },
+    'variable': {
+        title: "Set Variable",
+        description: "Create or update a variable for use in later steps."
+    },
+    'switch': {
+        title: "Switch",
+        description: "Route the flow into different paths based on values."
+    },
+    'map': {
+        title: "Map Data",
+        description: "Transform data structures from one format to another."
+    },
+    'human-task': {
+        title: "Human Task",
+        description: "Pause the flow and wait for human approval or input."
+    },
+    // Fallback
+    'action': {
+        title: "Action",
+        description: "Perform a generic action."
+    }
+};
+
 export const ACTION_NAMES: Record<string, string> = {
     http: "HTTP Request",
     email: "Send Email",
@@ -55,11 +103,10 @@ export const ACTION_NAMES: Record<string, string> = {
     variable: "Set Variable",
     switch: "Switch (Case)",
     map: "Map Data (Transform)",
-
     default: "Action",
     'manual-trigger': "Manual Trigger",
     'api-trigger': "Incoming Webhook",
-    // schedule: "Schedule"
+    'human-task': "Human Task"
 };
 
 export const INITIAL_NODES = [];

@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Play, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import { CONFIG_COMPONENTS } from "./constants/node-registry";
+import { CONFIG_COMPONENTS, NODE_METADATA } from "./constants/node-registry";
 import { NodeExecutionConsole } from "./node-execution-console";
 import { useFlowStore } from "@/lib/stores/flow-store";
 
@@ -141,6 +141,7 @@ export function NodeConfigurationSheet({
               }
           }
 
+
           // It's invalid if it's NOT in ancestors AND it's NOT the current node (recursion/loop)
           if (!validAncestorIds.has(effectiveId) && effectiveId !== selectedNode.id) {
               invalidDependencies.push(referencedNodeId); // Push original name for error msg
@@ -151,6 +152,34 @@ export function NodeConfigurationSheet({
           const uniqueInvalid = Array.from(new Set(invalidDependencies));
           toast.error(`Invalid Variable Reference: You are trying to use data from future or unconnected nodes: ${uniqueInvalid.join(', ')}`);
           return;
+      }
+
+      // --- 3. API Trigger Specific Validation (Schema Integrity) ---
+      if (selectedNode.type === 'api-trigger') {
+          const schemaKeys = new Set((formData.schema || []).map((f: any) => f.key));
+          const missingVars: string[] = [];
+
+          // Helper to check string for bad vars
+          const checkTemplate = (tpl: string) => {
+              if (!tpl) return;
+              const matches = tpl.matchAll(/steps\.trigger\.body\.([a-zA-Z0-9_-]+)/g);
+              for (const m of matches) {
+                  const varName = m[1];
+                  if (!schemaKeys.has(varName)) {
+                      missingVars.push(varName);
+                  }
+              }
+          };
+
+          checkTemplate(formData.instanceNameTemplate || '');
+          checkTemplate(formData.instanceDescriptionTemplate || '');
+          (formData.infoFields || []).forEach((f: any) => checkTemplate(f.value || ''));
+
+          if (missingVars.length > 0) {
+              const uniqueMissing = Array.from(new Set(missingVars));
+              toast.error(`Schema Mismatch: The following variables are used but not defined in your Schema: ${uniqueMissing.join(', ')}`);
+              return;
+          }
       }
 
       // -----------------------------
@@ -219,55 +248,66 @@ export function NodeConfigurationSheet({
         }}
       >
         {/* Header */}
-        <SheetHeader className="p-6 pb-4 border-b flex-none bg-background z-10">
-          <SheetTitle className="flex items-center gap-2">
-            <span className="truncate max-w-[400px]">
-                {formData.label || selectedNode.type}
-            </span>
-            <span className="text-[10px] font-normal uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded-full border">
-                {selectedNode.type}
-            </span>
-          </SheetTitle>
-          <SheetDescription>
-            Configure and execute this step.
-          </SheetDescription>
-        </SheetHeader>
-
-        {/* Main Split Content */}
-        <div className="flex-1 flex flex-col min-h-0 bg-muted/5">
+        {(() => {
+            const type = selectedNode.data?.subtype || selectedNode.type;
+            const metadata = NODE_METADATA[type] || NODE_METADATA['action'];
             
-            {/* Top Panel: Settings (Scrollable) */}
-            <div className="flex-1 overflow-y-auto min-h-0">
-                <div className="p-6 space-y-8">
-                    {/* 1. General Settings */}
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="space-y-2">
-                                <Label>Label <span className="text-red-500">*</span></Label>
-                                <Input
-                                    value={formData.label || ""}
-                                    onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                                    placeholder="Step Name"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Description <span className="text-red-500">*</span></Label>
-                                <Textarea
-                                    value={formData.description || ""}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="What does this step do?"
-                                    rows={2}
-                                    className="resize-none font-mono text-xs"
-                                />
-                            </div>
-                        </div>
-                    </div>
+            return (
+                <SheetHeader className="p-6 pb-4 border-b flex-none bg-background z-10">
+                  <SheetTitle className="flex items-center gap-2">
+                    <span className="truncate max-w-[400px]">
+                        {metadata.title}
+                    </span>
+                    <span className="text-[10px] font-normal uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded-full border">
+                        {selectedNode.type}
+                    </span>
+                  </SheetTitle>
+                  <SheetDescription>
+                    {metadata.description}
+                  </SheetDescription>
+                </SheetHeader>
+            );
+        })()}
+        
+                {/* Main Split Content */}
+                <div className="flex-1 flex flex-col min-h-0 bg-muted/5">
+                    
+                    {/* Top Panel: Settings (Scrollable) */}
+                    <div className="flex-1 overflow-y-auto min-h-0">
+                        <div className="p-6 space-y-8">
+                            {/* 1. General Settings (Hidden for API Trigger as it handles its own) */}
+                            {selectedNode.type !== 'api-trigger' && (
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Label <span className="text-red-500">*</span></Label>
+                                            <Input
+                                                value={formData.label || ""}
+                                                onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+                                                placeholder="Step Name"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Description <span className="text-red-500">*</span></Label>
+                                            <Textarea
+                                                value={formData.description || ""}
+                                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                                placeholder="What does this step do?"
+                                                rows={2}
+                                                className="resize-none font-mono text-xs"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                     {/* 2. Component Configuration */}
                     <div className="space-y-4">
-                        <h4 className="text-sm font-medium border-b pb-2 flex items-center justify-between">
-                            <span>Configuration</span>
-                        </h4>
+                        {selectedNode.type !== 'api-trigger' && (
+                            <h4 className="text-sm font-medium border-b pb-2 flex items-center justify-between">
+                                <span>Configuration</span>
+                            </h4>
+                        )}
                         {(() => {
                             const type = selectedNode.data?.subtype || selectedNode.data?.type || selectedNode.type;
                             const ConfigComponent = CONFIG_COMPONENTS[type];
