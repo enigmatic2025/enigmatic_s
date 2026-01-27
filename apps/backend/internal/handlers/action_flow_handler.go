@@ -177,7 +177,6 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		InputData          map[string]any `json:"input_data"`
 		Output             map[string]any `json:"output"`
 		StartedAt          string         `json:"started_at"`
-		Title              string         `json:"title"`
 	}
 
 	var results []ActionFlowResult
@@ -296,12 +295,9 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 	}
 
 	// Use Dynamic Title or Fallback
-	displayTitle := af.Title
-	if displayTitle == "" {
-		// Check input_data for title (fallback persistence)
-		if t, ok := af.InputData["title"].(string); ok && t != "" {
-			displayTitle = t
-		}
+	displayTitle := ""
+	if t, ok := af.InputData["title"].(string); ok && t != "" {
+		displayTitle = t
 	}
 	if displayTitle == "" {
 		displayTitle = flowName

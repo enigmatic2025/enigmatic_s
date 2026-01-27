@@ -53,18 +53,7 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 		Status     string                 `json:"status"`
 		InputData  map[string]interface{} `json:"input_data"`
 		StartedAt  time.Time              `json:"started_at"`
-		Title      string                 `json:"title"`
-		// We could add Description column if schema supports it, but currently not in 003 migration.
-		// So we might skip description or put in InputData too?
-		// Let's put Description in InputData for now alongside info fields if needed,
-		// but wait, we have Title/Description in Params.
-		// Migration 003 didn't add description/title columns?
-		// Let's check 003... No.
-		// But earlier `GetActionFlow` read `Title`.
-		// Let's check `ActionFlowResult` in handler again. `Title string` is there.
-		// Checking schema... database probably has it.
-		// Assuming 'title' exists. 'description' probably doesn't or wasn't used.
-		// I will rely on 'title' being there.
+		// Title removed as column does not exist in schema. Using InputData["title"] instead.
 	}{
 		FlowID:     flowIDPtr,
 		TemporalID: params.WorkflowID,
@@ -72,7 +61,6 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 		Status:     "RUNNING",
 		InputData:  finalInputData,
 		StartedAt:  time.Now(),
-		Title:      params.Title,
 	}
 
 	// Insert into 'action_flows'
