@@ -112,40 +112,43 @@ export default function ActionFlowDetailPage() {
                      </Button>
                 </div>
             </div>
-
-            <div className="space-y-1">
-                <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                    {data.title || data.flow_name}
-                </h1>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="font-mono">{data.id}</span>
+            
+            {/* Flow Header Info */}
+            <div className="px-5 py-5 space-y-4">
+                <div className="space-y-1">
+                    <h1 className="text-xl font-bold tracking-tight text-foreground">
+                        {data.title || data.flow_name || "Untitled Action Flow"}
+                    </h1>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono opacity-60">
+                        {data.id}
+                    </div>
                 </div>
-            </div>
 
-            <div className="space-y-1">
-                 <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Description</h4>
-                 <p className="text-sm text-foreground/90 leading-relaxed">
-                    {data.input_data?.description || "No description provided for this workflow execution."}
-                 </p>
-            </div>
-         </div>
+                <div className="space-y-1.5">
+                     <h4 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Description</h4>
+                     <p className="text-sm text-foreground/80 leading-snug">
+                        {data.input_data?.description || "No description provided for this workflow execution."}
+                     </p>
+                   </div>
+             </div>
+          </div>
 
          {/* Data Grid Section */}
-         <div className="px-6 py-2">
-            <div className="rounded-xl border bg-card/50 shadow-none">
-                 <div className="grid grid-cols-4 gap-6 p-5">
+         <div className="px-5 py-1">
+            <div className="rounded-lg border bg-card/40 shadow-none">
+                 <div className="grid grid-cols-4 gap-4 p-3.5">
                      {data.input_data?._info_fields?.slice(0, 4).map((field: any, i: number) => (
-                         <div key={i} className="flex flex-col gap-1">
-                              <span className="text-[10px] uppercase font-medium text-muted-foreground/70 tracking-wider truncate">
+                         <div key={i} className="flex flex-col gap-0.5">
+                              <span className="text-[9px] uppercase font-semibold text-muted-foreground/60 tracking-widest truncate">
                                   {field.label}
                               </span>
-                              <span className="text-sm font-medium text-foreground truncate leading-tight" title={field.value}>
+                              <span className="text-[13px] font-medium text-foreground truncate leading-tight" title={field.value}>
                                   {field.value}
                               </span>
                          </div>
                      ))}
                      {(!data.input_data._info_fields || data.input_data._info_fields.length === 0) && (
-                         <div className="col-span-4 p-4 text-center text-sm text-muted-foreground italic">
+                         <div className="col-span-4 p-2 text-center text-xs text-muted-foreground italic">
                              No key data points available
                          </div>
                      )}
@@ -153,35 +156,24 @@ export default function ActionFlowDetailPage() {
             </div>
          </div>
 
-         {/* Assignees Section (Empty) */}
-         <div className="px-6 py-2 space-y-2">
-             <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Assignees</h4>
-             <div className="flex items-center gap-3 min-h-[24px]">
-                 <span className="text-sm text-muted-foreground italic">Unassigned</span>
+         {/* Assignees Section */}
+         <div className="px-5 py-3 space-y-1.5">
+             <h4 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Assignees</h4>
+             <div className="flex items-center gap-2 min-h-[20px]">
+                 <span className="text-xs text-muted-foreground/80 italic">Unassigned</span>
              </div>
          </div>
 
-         {/* Status Line */}
-         <div className="px-6 py-4">
-            <div className="grid grid-cols-2 gap-x-12 gap-y-6">
-                <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Current Action</span>
-                    <p className="text-sm font-medium">
-                        {currentAction?.name || "Initializing..."}
-                    </p>
-                </div>
-                <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Progress</span>
-                    <p className="text-sm font-medium">35%</p>
-                </div>
-                <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Started</span>
+         <div className="px-5 py-3">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+                <div className="space-y-0.5">
+                    <span className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">Started</span>
                     <p className="text-sm font-medium">
                         {new Date(data.started_at).toLocaleDateString()}
                     </p>
                 </div>
-                <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground">Last Update</span>
+                <div className="space-y-0.5">
+                    <span className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">Last Update</span>
                     <p className="text-sm font-medium">
                         {new Date(lastUpdate).toLocaleTimeString()}
                     </p>
@@ -190,11 +182,11 @@ export default function ActionFlowDetailPage() {
          </div>
 
          {/* Divider */}
-         <div className="h-px bg-border mx-6 my-2" />
+         <div className="h-px bg-border/60 mx-5 my-2" />
 
          {/* Actions List */}
          <div className="flex-1 flex flex-col min-h-0">
-             <div className="px-6 pt-2 pb-0">
+             <div className="px-5 pt-1 pb-0">
                  <Tabs defaultValue="actions" className="w-full">
                      <TabsList className="w-full justify-start bg-muted p-1 rounded-lg h-auto inline-flex gap-1 w-auto">
                          <TabsTrigger 
@@ -254,10 +246,15 @@ export default function ActionFlowDetailPage() {
                                      </div>
                                      
                                      {/* Status Bar */}
+                                     {/* Status Bar */}
                                      {activity.status === 'COMPLETED' ? (
-                                         <div className="h-1.5 w-full bg-emerald-500/80" />
+                                         <div className="h-6 w-full bg-emerald-500/10 flex items-center px-4">
+                                            <span className="text-[10px] font-medium text-emerald-600 uppercase tracking-wider">Completed</span>
+                                         </div>
                                      ) : (
-                                         <div className="h-1.5 w-full bg-muted-foreground/20" />
+                                         <div className="h-6 w-full bg-muted flex items-center px-4">
+                                            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">In Progress</span>
+                                         </div>
                                      )}
                                  </Card>
                              ))}

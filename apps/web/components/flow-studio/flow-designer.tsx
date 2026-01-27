@@ -47,7 +47,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  // --- Publication Status Logic ---
+  const [isDirty, setIsDirty] = useState(false); // Track unsaved changes
   const [publishStatus, setPublishStatus] = useState<'draft' | 'published' | 'changed'>('draft');
 
   // Console/Logs State
@@ -82,6 +82,22 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     onEdgesChange,
     onConnect,
   } = useFlowState();
+
+  // Wrap node/edge changes to set dirty
+  const onNodesChangeWrapped = useCallback((changes: any) => {
+      onNodesChange(changes);
+      if (changes.length > 0) setIsDirty(true);
+  }, [onNodesChange]);
+
+  const onEdgesChangeWrapped = useCallback((changes: any) => {
+      onEdgesChange(changes);
+      if (changes.length > 0) setIsDirty(true);
+  }, [onEdgesChange]);
+
+  const onConnectWrapped = useCallback((params: any) => {
+      onConnect(params);
+      setIsDirty(true);
+  }, [onConnect]);
 
   const { onLayout } = useAutoLayout();
 
@@ -227,16 +243,18 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
   const handleSave = async () => {
       await baseHandleSave();
-      // If we saved successfully (assumed if no error thrown, though handleSave catches errors... check toast?)
-      // We can optimistically set to 'changed' if it was 'published'. 
-      // If it was 'draft', it remains 'draft'.
+      setIsDirty(false);
       if (publishStatus === 'published') {
           setPublishStatus('changed');
       }
   };
   
-  // Unwrap ops for cleaner usage
-  const { onDragOver, onDrop, onUpdateNode, handleDelete } = ops;
+  const { onDragOver, onDrop, onUpdateNode: baseOnUpdateNode, handleDelete } = ops;
+
+  const onUpdateNode = useCallback((nodeId: string, newData: any) => {
+      baseOnUpdateNode(nodeId, newData);
+      setIsDirty(true);
+  }, [baseOnUpdateNode]);
 
   // CONSTANT TOAST ID for Test Runs
   const TEST_TOAST_ID = "test-run-status";
@@ -609,8 +627,9 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handlePublish}
+                    disabled={isDirty} 
                     >
                     <Rocket className="h-4 w-4" />
                     </Button>
@@ -649,9 +668,9 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
+          onNodesChange={onNodesChangeWrapped}
+          onEdgesChange={onEdgesChangeWrapped}
+          onConnect={onConnectWrapped}
           onDragOver={onDragOver}
           onDrop={onDrop}
           onNodeClick={onNodeClick}
