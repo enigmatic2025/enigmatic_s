@@ -154,13 +154,11 @@ export default function ActionFlowDetailPage() {
 
               <div className="flex-1 overflow-y-auto">
                   <TabsContent value="overview" className="m-0 w-full pb-10">
-                       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                       <div className="flex h-full gap-8">
                            
                            {/* Left Column: Actions Timeline */}
-                           {/* User requested 'alligned better on the left' and 'taking up the whole space'. 
-                               Taking 1/4th of the screen for the list, 3/4th for the content. */}
-                           <div className="lg:col-span-1 space-y-4">
-                               <div className="flex items-center justify-between">
+                           <div className="w-[300px] shrink-0 space-y-4 pt-1">
+                               <div className="flex items-center justify-between px-1">
                                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                                        Actions
                                        <span className="text-xs font-normal bg-muted text-foreground px-2 py-0.5 rounded-full tabular-nums">
@@ -171,7 +169,7 @@ export default function ActionFlowDetailPage() {
                                
                                <div className="space-y-3">
                                    {data.activities?.map((activity: any, i: number) => (
-                                       <Card key={i} className="overflow-hidden border transition-all">
+                                       <Card key={i} className="overflow-hidden border transition-all hover:bg-muted/40">
                                            <div className="p-3 flex items-start gap-3">
                                                <div className={`mt-1.5 w-2 h-2 rounded-full shrink-0 
                                                    ${activity.status === 'COMPLETED' ? 'bg-emerald-500' : 
@@ -188,7 +186,6 @@ export default function ActionFlowDetailPage() {
                                                    <p className="text-xs text-muted-foreground">{activity.type === 'trigger' ? 'Trigger' : 'Human Action'}</p>
                                                </div>
                                            </div>
-                                            {/* Footer for Human Tasks logic if needed, e.g. View Task button */}
                                             {activity.type === 'human_action' && (
                                                 <div className="bg-muted/30 px-3 py-1.5 border-t flex justify-end">
                                                     <Button variant="ghost" size="sm" className="h-5 text-[10px] hover:text-primary px-2">
@@ -207,10 +204,13 @@ export default function ActionFlowDetailPage() {
                                </div>
                            </div>
 
+                           {/* Vertical Divider */}
+                           <div className="w-px bg-border h-full" />
+
                            {/* Right Column: Info & Details */}
-                           <div className="lg:col-span-3 space-y-8">
+                           <div className="flex-1 space-y-8 pt-1">
                                
-                               {/* Title & Description (Borderless) */}
+                               {/* Title & Description */}
                                <div className="space-y-2">
                                    <h2 className="text-2xl font-semibold tracking-tight text-foreground">
                                        {data.title || "Untitled Action Flow"}
@@ -224,34 +224,35 @@ export default function ActionFlowDetailPage() {
                                     )}
                                </div>
 
-                               {/* Card 2: Information Table */}
-                               <Card>
-                                   <CardHeader className="pb-3 border-b">
-                                       <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                                           Action Flow Information
-                                       </h4>
-                                   </CardHeader>
-                                   <CardContent className="p-0">
-                                       {data.input_data?._info_fields && data.input_data._info_fields.length > 0 ? (
-                                           <div className="divide-y">
-                                               {data.input_data._info_fields.map((field: any, i: number) => (
-                                                   <div key={i} className="grid grid-cols-3 p-4 hover:bg-muted/5 transition-colors">
-                                                       <div className="text-sm font-medium text-muted-foreground">
-                                                           {field.label}
-                                                       </div>
-                                                       <div className="col-span-2 text-sm text-foreground font-medium">
-                                                           {field.value}
-                                                       </div>
-                                                   </div>
-                                               ))}
-                                           </div>
-                                       ) : (
-                                           <div className="p-8 text-center text-muted-foreground text-sm">
-                                               No additional information fields.
-                                           </div>
-                                       )}
-                                   </CardContent>
-                               </Card>
+                               {/* Overview Section */}
+                               <div className="space-y-3">
+                                   <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground px-1">
+                                       Overview
+                                   </h4>
+
+                                   <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
+                                       <div className="p-6">
+                                            {data.input_data?._info_fields && data.input_data._info_fields.length > 0 ? (
+                                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-6">
+                                                    {data.input_data._info_fields.map((field: any, i: number) => (
+                                                        <div key={i} className="flex flex-col gap-1">
+                                                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                                                {field.label}
+                                                            </span>
+                                                            <span className="text-sm font-medium text-foreground truncate" title={field.value}>
+                                                                {field.value}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="p-4 text-center text-muted-foreground text-sm border-dashed border border-transparent">
+                                                    No additional information provided.
+                                                </div>
+                                            )}
+                                       </div>
+                                   </div>
+                               </div>
 
                            </div>
                        </div>

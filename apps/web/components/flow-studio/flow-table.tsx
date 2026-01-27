@@ -82,9 +82,7 @@ export function FlowTable({ initialFlows, slug }: FlowTableProps) {
             <TableRow className="border-none hover:bg-transparent">
               <TableHead className="w-[300px] pl-0">Name</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Trigger</TableHead>
               <TableHead>Last Run</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -106,6 +104,7 @@ export function FlowTable({ initialFlows, slug }: FlowTableProps) {
                     </Link>
                   </TableCell>
                   <TableCell>
+                    <div className="flex flex-col gap-1 items-start">
                     <Badge
                       variant="outline"
                       className={
@@ -116,59 +115,34 @@ export function FlowTable({ initialFlows, slug }: FlowTableProps) {
                     >
                       {flow.is_active ? "Active" : "Draft"}
                     </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {flow.definition?.nodes?.find(
-                      (n: any) => n.type === "schedule"
-                    )
-                      ? "Schedule"
-                      : "Manual"}
+                    
+                    {(() => {
+                        // Check for unpublished changes
+                        if (flow.is_active && flow.definition && flow.draft_definition) {
+                            const defStr = JSON.stringify(flow.definition);
+                            const draftStr = JSON.stringify(flow.draft_definition);
+                            if (defStr !== draftStr) {
+                                return (
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-yellow-500/10 text-yellow-600 border-yellow-500/20 hover:bg-yellow-500/20 gap-1 whitespace-nowrap">
+                                        <div className="w-1 h-1 rounded-full bg-yellow-500" />
+                                        Unpublished Changes
+                                    </Badge>
+                                );
+                            }
+                        }
+                        return null;
+                    })()}
+                    </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {flow.last_run ? new Date(flow.last_run).toLocaleDateString() : "Never"}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedFlow(flow);
-                            setIsRenameModalOpen(true);
-                          }}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Rename
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => {
-                            setSelectedFlow(flow);
-                            setIsDeleteModalOpen(true);
-                          }}
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={3}
                   className="text-center text-muted-foreground py-8"
                 >
                   No flows found. Create one to get started!

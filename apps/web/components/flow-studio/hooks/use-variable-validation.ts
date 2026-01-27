@@ -47,14 +47,34 @@ export function validateVariableReferences(
         triggerSchemaKeys = new Set((triggerNode.data.schema as any[]).map(f => f.key));
     }
 
-    // 3. Regex Scan
-    // Matches {{ steps.node_id.field... }}
-    const regex = /steps\.([a-zA-Z0-9_-]+)(?:\.body\.([a-zA-Z0-9_-]+))?/g;
-    const matches = text.matchAll(regex);
+    // 3. Strict Parsing
+    // Match anything within {{ }}
+    const blockRegex = /\{\{([^}]+)\}\}/g;
+    const matches = text.matchAll(blockRegex);
+
+    // Strict pattern for the usage inside: steps.NODE.body.FIELD
+    // No spaces allowed inside the variable name itself, and it must match exactly.
+    // We allow surrounding whitespace INSIDE the brackets, e.g. {{ steps.foo.body.bar }} is valid.
+    const strictVarRegex = /^\s*steps\.([a-zA-Z0-9_-]+)(?:\.body\.([a-zA-Z0-9_-]+))?\s*$/;
 
     for (const match of matches) {
-        const nodeRef = match[1];
-        const fieldRef = match[2]; // Optional, mainly for trigger.body.FIELD
+        const rawContent = match[1]; // " steps.trigger.body.driver 2 "
+
+        // Check if it fits the strict variable pattern
+        const varMatch = rawContent.match(strictVarRegex);
+
+        if (!varMatch) {
+            // It failed strict matching.
+            // If it LOOKS like a steps reference (starts with steps.), we flag it as Malformed/Syntax Error.
+            if (rawContent.trim().startsWith('steps.')) {
+                errors.push(`Invalid syntax near "${rawContent.trim()}". Check for spaces or typos.`);
+                // We don't continue schema checks for this because we can't reliably parse it.
+            }
+            continue;
+        }
+
+        const nodeRef = varMatch[1];
+        const fieldRef = varMatch[2];
 
         let effectiveNodeId = nodeRef;
         if (nodeRef === 'trigger' && triggerNode) {
@@ -65,12 +85,6 @@ export function validateVariableReferences(
         // Valid if it's an ancestor OR it's the current node (self-ref) OR it's the special 'trigger' alias (if it exists)
         const isSelf = effectiveNodeId === currentNodeId;
         const isAncestor = validAncestorIds.has(effectiveNodeId);
-        // const isTriggerAlias = nodeRef === 'trigger' && !!triggerNode;
-
-        // Note: trigger alias is valid IF the trigger exists. 
-        // If the trigger IS the current node, isTriggerAlias covers it.
-        // If the trigger is upstream, isAncestor might NOT cover it if we rely on alias resolution? 
-        // Actually, if we resolved 'trigger' -> ID, then isAncestor checks the ID.
 
         // Refined Check:
         let isReachable = isAncestor || isSelf;

@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { useCallback, useRef, useState, useEffect } from 'react';
 import ReactFlow, {
   Background,
@@ -46,6 +47,9 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  // --- Publication Status Logic ---
+  const [publishStatus, setPublishStatus] = useState<'draft' | 'published' | 'changed'>('draft');
+
   // Console/Logs State
   const [unreadLogs, setUnreadLogs] = useState(false);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
@@ -81,25 +85,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
   const { onLayout } = useAutoLayout();
 
-  const {
-    onDragOver,
-    onDrop,
-    onUpdateNode,
-    handleSave,
-    handleDelete,
-  } = useFlowOperations({
-    nodes,
-    setNodes,
-    edges,
-    setEdges,
-    flowId,
-    flowName,
-    setFlowName,
-    slug: params.slug as string,
-    router,
-    reactFlowWrapper,
-    setSelectedNode,
-  });
+
 
   // Load Flow Data
   useEffect(() => {
@@ -114,6 +100,25 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         
         const loadedDefinition = data.draft_definition || data.definition; // Prioritize draft, fallback to legacy
         
+        // Determine Status
+        if (!data.definition) {
+            setPublishStatus('draft'); // Never published
+        } else {
+            // Compare draft vs definition
+            // Note: This simple stringify comparison relies on consistent key order. 
+            // Ideally backend returns a 'has_unpublished_changes' flag.
+            const draftStr = JSON.stringify(data.draft_definition);
+            const defStr = JSON.stringify(data.definition);
+            
+            // If we don't have a draft_definition separate from definition in DB, they might be equal.
+            // If draft_definition is undefined in data, it means it matches or hasn't been branched.
+            if (!data.draft_definition || draftStr === defStr) {
+                setPublishStatus('published');
+            } else {
+                setPublishStatus('changed');
+            }
+        }
+
         if (loadedDefinition) {
           const { nodes: savedNodes, edges: savedEdges } = loadedDefinition;
           if (savedNodes) setNodes(savedNodes);
@@ -153,7 +158,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         clearExecutionTrace();
         clearVariables();
     };
-  }, [flowId, setNodes, setEdges]);
+  }, [flowId, setNodes, setEdges, setFlowName]);
   
   const handlePublish = async () => {
       if (!flowId) return;
@@ -161,6 +166,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           toast.info("Publishing flow...");
           await flowService.publishFlow(flowId);
           toast.success("Flow published successfully! It is now live.");
+          setPublishStatus('published');
       } catch (error) {
           console.error("Publish error:", error);
           toast.error("Failed to publish flow");
@@ -203,6 +209,34 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       setIsEditingName(false);
     }
   };
+
+  // Wrapped Save Handler to update status
+  const { handleSave: baseHandleSave, ...ops } = useFlowOperations({
+    nodes,
+    setNodes,
+    edges,
+    setEdges,
+    flowId,
+    flowName,
+    setFlowName,
+    slug: params.slug as string,
+    router,
+    reactFlowWrapper,
+    setSelectedNode,
+  });
+
+  const handleSave = async () => {
+      await baseHandleSave();
+      // If we saved successfully (assumed if no error thrown, though handleSave catches errors... check toast?)
+      // We can optimistically set to 'changed' if it was 'published'. 
+      // If it was 'draft', it remains 'draft'.
+      if (publishStatus === 'published') {
+          setPublishStatus('changed');
+      }
+  };
+  
+  // Unwrap ops for cleaner usage
+  const { onDragOver, onDrop, onUpdateNode, handleDelete } = ops;
 
   // CONSTANT TOAST ID for Test Runs
   const TEST_TOAST_ID = "test-run-status";
@@ -447,9 +481,29 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 {flowName}
               </h2>
             )}
-            <span className="text-xs text-muted-foreground">
-              {flowId ? "Last saved 2 mins ago" : "Unsaved changes"}
-            </span>
+            <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">
+                {flowId ? "Last saved 2 mins ago" : "Unsaved changes"}
+                </span>
+                
+                {publishStatus === 'published' && (
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-green-500/10 text-green-600 border-green-500/20 hover:bg-green-500/20 gap-1">
+                        <span className="w-1 h-1 rounded-full bg-green-500 inline-block" />
+                        Published
+                    </Badge>
+                )}
+                {publishStatus === 'changed' && (
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-yellow-500/10 text-yellow-600 border-yellow-500/20 hover:bg-yellow-500/20 gap-1">
+                         <span className="w-1 h-1 rounded-full bg-yellow-500 inline-block" />
+                         Unpublished Changes
+                    </Badge>
+                )}
+                {publishStatus === 'draft' && (
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-slate-500/10 text-slate-600 border-slate-500/20 hover:bg-slate-500/20">
+                        Draft
+                    </Badge>
+                )}
+            </div>
           </div>
         </div>
 
@@ -555,7 +609,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10 transition-colors"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     onClick={handlePublish}
                     >
                     <Rocket className="h-4 w-4" />
