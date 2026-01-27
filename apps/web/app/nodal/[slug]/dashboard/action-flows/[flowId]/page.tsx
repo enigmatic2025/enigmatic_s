@@ -4,11 +4,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { flowService } from "@/services/flow-service";
-import { ArrowLeft, Copy, Check, Clock, Activity, Map as MapIcon, FileJson, RotateCw } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Check, Copy, Clock, MousePointer2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import DashboardLoading from "../../loading"; 
 
@@ -26,7 +27,7 @@ interface ActionFlowDetail {
 }
 
 export default function ActionFlowDetailPage() {
-  const { slug, flowId } = useParams(); // flowId is the ACTION FLOW ID (execution id) here, confusing naming in route but standard for Next.js [param]
+  const { slug, flowId } = useParams();
   const router = useRouter();
   const [data, setData] = useState<ActionFlowDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,221 +56,238 @@ export default function ActionFlowDetailPage() {
          navigator.clipboard.writeText(data.id);
          setCopiedId(true);
          setTimeout(() => setCopiedId(false), 2000);
-         toast.success("ID copied to clipboard");
+         toast.success("Action Flow ID copied");
      }
   };
 
   if (loading) return <DashboardLoading />;
-
   if (!data) return <div className="p-8 text-center text-muted-foreground">Action Flow not found</div>;
 
   const isSuccess = data.status === "COMPLETED";
   const isFailed = data.status === "FAILED";
   const isRunning = data.status === "RUNNING";
 
+  const currentAction = data.activities?.find(a => a.status === 'RUNNING') || data.activities?.[data.activities?.length - 1];
+  const lastUpdate = currentAction?.started_at || data.started_at;
+
   return (
-    <div className="h-full w-full flex flex-col bg-background/50">
-       {/* Header */}
-       <div className="border-b bg-background px-6 py-5 flex flex-col gap-4">
-          <div className="flex items-center gap-2 mb-1">
-             <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 -ml-2 text-muted-foreground hover:text-foreground"
-                onClick={() => router.back()}
-             >
-                <ArrowLeft className="h-4 w-4" />
-             </Button>
-             <div className="flex flex-col">
-                <h1 className="text-xl font-semibold tracking-tight">{data.title || data.flow_name}</h1>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                    <span className="font-medium text-foreground/80 flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 bg-black dark:bg-white rounded-sm" />
-                        Action Flow
-                    </span>
-                    <span className="text-muted-foreground/40">|</span>
-                    <span className="font-mono text-[10px]">{data.id}</span>
-                    <button onClick={copyId} className="hover:text-foreground transition-colors" title="Copy ID">
-                        {copiedId ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-                    </button>
-                    <span className="text-muted-foreground/40">|</span>
-                    <span className="flex items-center gap-1">
-                         <Clock className="w-3 h-3" />
-                         {new Date(data.started_at).toLocaleString()}
-                    </span>
-                </div>
-             </div>
-             
-             <div className="ml-auto flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={fetchDetails} className="h-8 gap-1">
-                    <RotateCw className="w-3.5 h-3.5" />
-                    Refresh
-                </Button>
-                {/* Status Badge */}
-                <Badge 
-                    variant={isSuccess ? "default" : isFailed ? "destructive" : "secondary"}
-                    className={`h-8 px-3 text-xs font-medium uppercase tracking-wide
-                        ${isSuccess ? 'bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200' : ''}
-                        ${isFailed ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-200' : ''}
-                        ${isRunning ? 'bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-blue-200 animate-pulse' : ''}
-                    `}
+    <div className="flex h-full w-full bg-background overflow-hidden relative">
+      
+      {/* Left Panel: Master View (Scrollable) */}
+      <div className="w-[55%] min-w-[500px] h-full flex flex-col border-r bg-background overflow-y-auto">
+         
+         {/* Top Navigation & Header */}
+         <div className="p-6 pb-2 space-y-6">
+            <div className="flex items-center justify-between">
+                <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 gap-1 -ml-2 text-muted-foreground hover:text-foreground"
+                    onClick={() => router.back()}
                 >
-                    {data.status === "RUNNING" ? "Active" : data.status}
-                </Badge>
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                </Button>
+
+                <div className="flex items-center gap-2">
+                     <Badge 
+                        variant="secondary" 
+                        className="rounded-full px-3 py-1 font-medium bg-muted hover:bg-muted/80 text-foreground border-0 gap-2"
+                     >
+                        <div className={`w-2 h-2 rounded-full ${
+                             isSuccess ? 'bg-blue-500' : 
+                             isFailed ? 'bg-red-500' : 
+                             'bg-blue-500'
+                        }`} />
+                        {data.status === "RUNNING" ? "In Progress" : data.status}
+                     </Badge>
+                     <Badge variant="secondary" className="rounded-full px-3 py-1 font-medium bg-muted hover:bg-muted/80 text-foreground border-0 gap-2">
+                        <div className="w-4 h-4 rounded-full border border-orange-500 flex items-center justify-center">
+                            <ArrowLeft className="w-2.5 h-2.5 text-orange-500 rotate-90" />
+                        </div>
+                        High
+                     </Badge>
+                     <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                        <MoreHorizontal className="h-4 w-4" />
+                     </Button>
+                </div>
+            </div>
+
+            <div className="space-y-1">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                    {data.title || data.flow_name}
+                </h1>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-mono">{data.id}</span>
+                </div>
+            </div>
+
+            <div className="space-y-1">
+                 <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Description</h4>
+                 <p className="text-sm text-foreground/90 leading-relaxed">
+                    {data.input_data?.description || "No description provided for this workflow execution."}
+                 </p>
+            </div>
+         </div>
+
+         {/* Data Grid Section */}
+         <div className="px-6 py-2">
+            <div className="rounded-xl border bg-card/50 shadow-none">
+                 <div className="grid grid-cols-4 gap-6 p-5">
+                     {data.input_data?._info_fields?.slice(0, 4).map((field: any, i: number) => (
+                         <div key={i} className="flex flex-col gap-1">
+                              <span className="text-[10px] uppercase font-medium text-muted-foreground/70 tracking-wider truncate">
+                                  {field.label}
+                              </span>
+                              <span className="text-sm font-medium text-foreground truncate leading-tight" title={field.value}>
+                                  {field.value}
+                              </span>
+                         </div>
+                     ))}
+                     {(!data.input_data._info_fields || data.input_data._info_fields.length === 0) && (
+                         <div className="col-span-4 p-4 text-center text-sm text-muted-foreground italic">
+                             No key data points available
+                         </div>
+                     )}
+                 </div>
+            </div>
+         </div>
+
+         {/* Assignees Section (Empty) */}
+         <div className="px-6 py-2 space-y-2">
+             <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Assignees</h4>
+             <div className="flex items-center gap-3 min-h-[24px]">
+                 <span className="text-sm text-muted-foreground italic">Unassigned</span>
              </div>
-          </div>
-       </div>
+         </div>
 
-       {/* Tabs & Content */}
-       <div className="flex-1 overflow-hidden flex flex-col p-6">
-          <Tabs defaultValue="overview" className="h-full flex flex-col space-y-6">
-              <div>
-                  <TabsList className="bg-muted p-1 rounded-lg h-auto inline-flex">
-                      <TabsTrigger 
-                        value="overview" 
-                        className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
-                      >
-                         <div className="flex items-center gap-2">
-                            <Activity className="w-4 h-4" /> Overview
+         {/* Status Line */}
+         <div className="px-6 py-4">
+            <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+                <div className="space-y-1">
+                    <span className="text-xs text-muted-foreground">Current Action</span>
+                    <p className="text-sm font-medium">
+                        {currentAction?.name || "Initializing..."}
+                    </p>
+                </div>
+                <div className="space-y-1">
+                    <span className="text-xs text-muted-foreground">Progress</span>
+                    <p className="text-sm font-medium">35%</p>
+                </div>
+                <div className="space-y-1">
+                    <span className="text-xs text-muted-foreground">Started</span>
+                    <p className="text-sm font-medium">
+                        {new Date(data.started_at).toLocaleDateString()}
+                    </p>
+                </div>
+                <div className="space-y-1">
+                    <span className="text-xs text-muted-foreground">Last Update</span>
+                    <p className="text-sm font-medium">
+                        {new Date(lastUpdate).toLocaleTimeString()}
+                    </p>
+                </div>
+            </div>
+         </div>
+
+         {/* Divider */}
+         <div className="h-px bg-border mx-6 my-2" />
+
+         {/* Actions List */}
+         <div className="flex-1 flex flex-col min-h-0">
+             <div className="px-6 pt-2 pb-0">
+                 <Tabs defaultValue="actions" className="w-full">
+                     <TabsList className="w-full justify-start bg-muted p-1 rounded-lg h-auto inline-flex gap-1 w-auto">
+                         <TabsTrigger 
+                            value="actions" 
+                            className="rounded-md px-3 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                         >
+                            Actions
+                         </TabsTrigger>
+                         <TabsTrigger 
+                            value="files" 
+                            className="rounded-md px-3 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                         >
+                            Files
+                         </TabsTrigger>
+                     </TabsList>
+                     
+                     <TabsContent value="actions" className="pt-6 space-y-4 pb-12">
+                         <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-semibold">Actions</h3>
+                            <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+                                + Quick Action
+                            </Button>
                          </div>
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="map" 
-                        className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
-                      >
-                         <div className="flex items-center gap-2">
-                            <MapIcon className="w-4 h-4" /> Map
+
+                         <div className="space-y-3">
+                             {data.activities?.filter(a => a.type === 'human_action').map((activity, i) => (
+                                 <Card key={i} className="flex flex-col overflow-hidden shadow-none border hover:bg-muted/30 transition-colors cursor-pointer group relative">
+                                     <div className="p-4 space-y-3">
+                                         <div className="space-y-1">
+                                             <div className="flex items-center justify-between">
+                                                <h4 className="text-sm font-semibold group-hover:text-foreground transition-colors">
+                                                    {activity.name || "Untitled Action"}
+                                                </h4>
+                                                <span className="text-[10px] text-muted-foreground tabular-nums">
+                                                    {new Date(activity.started_at).toLocaleDateString()}
+                                                </span>
+                                             </div>
+                                             <p className="text-xs text-muted-foreground line-clamp-2">
+                                                 Please review the driver details and confirm if intervention is required.
+                                             </p>
+                                         </div>
+                                         
+                                         <div className="flex items-center justify-between pt-1">
+                                             <div className="flex -space-x-2 overflow-hidden">
+                                                 {/* Dummy Assignees */}
+                                                 <Avatar className="inline-block h-6 w-6 rounded-full ring-2 ring-background">
+                                                     <AvatarFallback className="text-[9px] bg-indigo-100 text-indigo-700 font-medium">ST</AvatarFallback>
+                                                 </Avatar>
+                                                 <Avatar className="inline-block h-6 w-6 rounded-full ring-2 ring-background">
+                                                     <AvatarFallback className="text-[9px] bg-emerald-100 text-emerald-700 font-medium">JD</AvatarFallback>
+                                                 </Avatar>
+                                                 <Avatar className="inline-block h-6 w-6 rounded-full ring-2 ring-background">
+                                                     <AvatarFallback className="text-[9px] bg-slate-100 text-slate-700 font-medium">+1</AvatarFallback>
+                                                 </Avatar>
+                                             </div>
+                                         </div>
+                                     </div>
+                                     
+                                     {/* Status Bar */}
+                                     {activity.status === 'COMPLETED' ? (
+                                         <div className="h-1.5 w-full bg-emerald-500/80" />
+                                     ) : (
+                                         <div className="h-1.5 w-full bg-muted-foreground/20" />
+                                     )}
+                                 </Card>
+                             ))}
+                             
+                             {(!data.activities || data.activities.filter(a => a.type === 'human_action').length === 0) && (
+                                 <div className="p-8 text-center border border-dashed rounded-lg text-muted-foreground text-sm">
+                                     No human actions pending or completed.
+                                 </div>
+                             )}
                          </div>
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="activity" 
-                        className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
-                      >
-                         <div className="flex items-center gap-2">
-                            <FileJson className="w-4 h-4" /> Activity
+                     </TabsContent>
+                     
+                     <TabsContent value="files" className="pt-6">
+                         <div className="p-8 text-center text-muted-foreground text-sm border rounded-lg border-dashed">
+                             No files attached.
                          </div>
-                      </TabsTrigger>
-                  </TabsList>
-              </div>
+                     </TabsContent>
+                 </Tabs>
+             </div>
+         </div>
+      </div>
 
-              <div className="flex-1 overflow-y-auto">
-                  <TabsContent value="overview" className="m-0 w-full pb-10">
-                       <div className="flex h-full gap-8">
-                           
-                           {/* Left Column: Actions Timeline */}
-                           <div className="w-[300px] shrink-0 space-y-4 pt-1">
-                               <div className="flex items-center justify-between px-1">
-                                   <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                       Actions
-                                       <span className="text-xs font-normal bg-muted text-foreground px-2 py-0.5 rounded-full tabular-nums">
-                                           {data.activities?.length || 0}
-                                       </span>
-                                   </h3>
-                               </div>
-                               
-                               <div className="space-y-3">
-                                   {data.activities?.map((activity: any, i: number) => (
-                                       <Card key={i} className="overflow-hidden border transition-all hover:bg-muted/40">
-                                           <div className="p-3 flex items-start gap-3">
-                                               <div className={`mt-1.5 w-2 h-2 rounded-full shrink-0 
-                                                   ${activity.status === 'COMPLETED' ? 'bg-emerald-500' : 
-                                                     activity.status === 'FAILED' ? 'bg-red-500' : 
-                                                     'bg-blue-500 animate-pulse'}`} 
-                                               />
-                                               <div className="flex-1 space-y-1">
-                                                   <div className="flex items-center justify-between">
-                                                       <p className="text-sm font-medium leading-none">{activity.name || "Action"}</p>
-                                                       <span className="text-[10px] text-muted-foreground tabular-nums">
-                                                           {new Date(activity.started_at).toLocaleTimeString()}
-                                                       </span>
-                                                   </div>
-                                                   <p className="text-xs text-muted-foreground">{activity.type === 'trigger' ? 'Trigger' : 'Human Action'}</p>
-                                               </div>
-                                           </div>
-                                            {activity.type === 'human_action' && (
-                                                <div className="bg-muted/30 px-3 py-1.5 border-t flex justify-end">
-                                                    <Button variant="ghost" size="sm" className="h-5 text-[10px] hover:text-primary px-2">
-                                                        View Details
-                                                    </Button>
-                                                </div>
-                                            )}
-                                       </Card>
-                                   ))}
-                                   
-                                   {(!data.activities || data.activities.length === 0) && (
-                                       <div className="p-4 rounded-lg border border-dashed text-center text-muted-foreground text-sm">
-                                           No actions recorded.
-                                       </div>
-                                   )}
-                               </div>
-                           </div>
+      {/* Right Panel: Detail View (Fixed) */}
+      <div className="flex-1 bg-muted/10 flex flex-col items-center justify-center p-12 text-center">
+           <div className="max-w-sm flex flex-col items-center gap-4 text-muted-foreground/50">
+               <MousePointer2 className="w-12 h-12 stroke-[1.5]" />
+               <p className="font-medium text-base">Select an action to view details</p>
+           </div>
+      </div>
 
-                           {/* Vertical Divider */}
-                           <div className="w-px bg-border h-full" />
-
-                           {/* Right Column: Info & Details */}
-                           <div className="flex-1 space-y-8 pt-1">
-                               
-                               {/* Title & Description */}
-                               <div className="space-y-2">
-                                   <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                                       {data.title || "Untitled Action Flow"}
-                                   </h2>
-                                   {data.input_data?.description ? (
-                                       <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
-                                           {data.input_data.description}
-                                       </p>
-                                    ) : (
-                                        <p className="text-sm text-muted-foreground italic">No description provided.</p>
-                                    )}
-                               </div>
-
-                               {/* Overview Section */}
-                               <div className="space-y-3">
-                                   <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground px-1">
-                                       Overview
-                                   </h4>
-
-                                   <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
-                                       <div className="p-6">
-                                            {data.input_data?._info_fields && data.input_data._info_fields.length > 0 ? (
-                                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-6">
-                                                    {data.input_data._info_fields.map((field: any, i: number) => (
-                                                        <div key={i} className="flex flex-col gap-1">
-                                                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                                                                {field.label}
-                                                            </span>
-                                                            <span className="text-sm font-medium text-foreground truncate" title={field.value}>
-                                                                {field.value}
-                                                            </span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <div className="p-4 text-center text-muted-foreground text-sm border-dashed border border-transparent">
-                                                    No additional information provided.
-                                                </div>
-                                            )}
-                                       </div>
-                                   </div>
-                               </div>
-
-                           </div>
-                       </div>
-                  </TabsContent>
-
-                  <TabsContent value="map" className="m-0 h-full flex flex-col items-center justify-center p-12 text-muted-foreground">
-                       <MapIcon className="w-12 h-12 mb-4 opacity-20" />
-                       <p className="">Visual execution map coming soon.</p>
-                  </TabsContent>
-
-                  <TabsContent value="activity" className="m-0 h-full flex flex-col items-center justify-center p-12 text-muted-foreground">
-                       <FileJson className="w-12 h-12 mb-4 opacity-20" />
-                       <p>Detailed event log coming soon.</p>
-                  </TabsContent>
-              </div>
-          </Tabs>
-       </div>
     </div>
   );
 }
