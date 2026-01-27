@@ -171,7 +171,7 @@ export default function ActionFlowDetailPage() {
                                
                                <div className="space-y-3">
                                    {data.activities?.map((activity: any, i: number) => (
-                                       <Card key={i} className="overflow-hidden border shadow-sm transition-all hover:shadow-md">
+                                       <Card key={i} className="overflow-hidden border transition-all">
                                            <div className="p-3 flex items-start gap-3">
                                                <div className={`mt-1.5 w-2 h-2 rounded-full shrink-0 
                                                    ${activity.status === 'COMPLETED' ? 'bg-emerald-500' : 

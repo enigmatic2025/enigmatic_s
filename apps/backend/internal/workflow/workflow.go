@@ -80,9 +80,18 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		},
 	}
 
+	// Debug keys
+	keys := make([]string, 0, len(executionState))
+	for k := range executionState {
+		keys = append(keys, k)
+	}
+	logger.Info("Evaluation Context Ready", "AvailableSteps", keys)
+
 	if titleTemplate != "" {
 		if val, err := expressionEngine.Evaluate(titleTemplate, evalCtx); err == nil {
 			titleTemplate = fmt.Sprintf("%v", val)
+		} else {
+			logger.Error("Title Template Eval Failed", "Error", err, "Template", titleTemplate)
 		}
 	}
 	// Note: We intentionally don't evaluate Description here fully if it's meant to be static,
@@ -92,6 +101,8 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	if descTemplate != "" {
 		if val, err := expressionEngine.Evaluate(descTemplate, evalCtx); err == nil {
 			descTemplate = fmt.Sprintf("%v", val)
+		} else {
+			logger.Error("Description Template Eval Failed", "Error", err, "Template", descTemplate)
 		}
 	}
 
