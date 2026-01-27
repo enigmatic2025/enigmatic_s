@@ -131,9 +131,19 @@ export function NodeConfigurationSheet({
 
       while ((match = regex.exec(jsonString)) !== null) {
           const referencedNodeId = match[1];
+          let effectiveId = referencedNodeId;
+
+          // 2a. Resolve 'trigger' alias
+          if (referencedNodeId === 'trigger') {
+              const triggerNode = nodes.find(n => n.type === 'api-trigger');
+              if (triggerNode) {
+                  effectiveId = triggerNode.id;
+              }
+          }
+
           // It's invalid if it's NOT in ancestors AND it's NOT the current node (recursion/loop)
-          if (!validAncestorIds.has(referencedNodeId) && referencedNodeId !== selectedNode.id) {
-              invalidDependencies.push(referencedNodeId);
+          if (!validAncestorIds.has(effectiveId) && effectiveId !== selectedNode.id) {
+              invalidDependencies.push(referencedNodeId); // Push original name for error msg
           }
       }
 
@@ -272,7 +282,10 @@ export function NodeConfigurationSheet({
                                             setFormData(updated);
                                             
                                             // Live-update the store for schema changes (so Sidebar updates immediately)
-                                            if (newData.lastRunResult) {
+                                            if (
+                                              newData.lastRunResult || 
+                                              (selectedNode.type === 'api-trigger' && newData.schema !== undefined)
+                                            ) {
                                                 onUpdate(selectedNode.id, updated);
                                             }
                                         }} 

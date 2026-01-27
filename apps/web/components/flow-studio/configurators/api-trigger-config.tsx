@@ -52,148 +52,215 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       
-      {/* Introduction */}
-      {/* Endpoint URL - Moved to Top */}
-      <div className="p-3 bg-muted/30 rounded-lg border border-border space-y-2">
-        <div className="flex items-center justify-between">
-            <span className="text-xs font-medium flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5 text-blue-500" />
-                Endpoint URL
-            </span>
-            {flowId ? (
-                <span className="text-[10px] text-emerald-500 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded">Live</span>
-            ) : (
-                <span className="text-[10px] text-yellow-500 font-medium bg-yellow-500/10 px-1.5 py-0.5 rounded">Save to Generate</span>
-            )}
+      {/* SECTION 1: Designer Info */}
+      <div className="space-y-4">
+        {/* Node Label (Designer Title) */}
+        <div>
+           <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-xl font-semibold text-foreground tracking-tight">
+                    {data.label || "API Trigger"} 
+                </span>
+                <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded border uppercase tracking-wider">
+                    API-TRIGGER
+                </span>
+           </div>
+           <p className="text-sm text-muted-foreground">
+               Configure and execute this step.
+           </p>
         </div>
-        <div className="flex items-center gap-2">
-            <code className="flex-1 text-[10px] font-mono bg-background border border-border rounded px-2 py-1.5 truncate select-all">
-                {endpointUrl}
-            </code>
-            <button
-                onClick={copyToClipboard}
-                className="p-1.5 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
-            >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-            </button>
+
+        {/* Node Label Input (Editable) */}
+        <div>
+            <label className="text-sm font-medium text-foreground block mb-2">
+                Name
+            </label>
+            <input
+                type="text"
+                value={data.label || ''}
+                onChange={(e) => onUpdate({ ...data, label: e.target.value })}
+                placeholder="Step Name (e.g. New User Trigger)"
+                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none transition-all"
+            />
         </div>
-        <p className="text-[10px] text-muted-foreground">
-            Send a POST request with the JSON body defined below.
-        </p>
-        <div className="flex items-start gap-1.5 pt-2 border-t border-border/50">
-            <Info className="w-3 h-3 text-muted-foreground shrink-0 mt-0.5" />
-            <p className="text-[10px] text-muted-foreground/80">
-                This URL is dynamic based on your current environment. 
-                When deployed to production (Koyeb), it will automatically show your official domain. 
-                Local testing URLs (localhost) are not saved.
+
+        {/* Node Description (Designer Description) */}
+        <div>
+            <label className="text-sm font-medium text-foreground block mb-2">
+                Description <span className="text-red-500">*</span>
+            </label>
+            <textarea
+                value={data.description || ''}
+                onChange={(e) => onUpdate({ ...data, description: e.target.value })}
+                placeholder="Internal description for flow designers..."
+                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm h-24 resize-none focus:ring-1 focus:ring-primary outline-none transition-all"
+            />
+        </div>
+      </div>
+
+      <div className="h-px bg-border/60 w-full" />
+
+      {/* SECTION 2: Configuration (API) */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-foreground tracking-tight">
+            Configuration
+        </h3>
+
+        {/* Endpoint URL */}
+        <div className="p-4 bg-muted/20 rounded-lg border border-border space-y-3">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Info className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm font-medium">Endpoint URL</span>
+                </div>
+                {flowId ? (
+                    <span className="text-[10px] text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">Live</span>
+                ) : (
+                    <span className="text-[10px] text-amber-600 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-medium">Save to Generate</span>
+                )}
+            </div>
+            
+            <div className="flex items-center gap-2">
+                <code className="flex-1 text-xs font-mono bg-background border border-border rounded-md px-3 py-2.5 truncate select-all text-muted-foreground">
+                    {endpointUrl}
+                </code>
+                <button
+                    onClick={copyToClipboard}
+                    className="p-2 bg-background border border-border hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground active:scale-95"
+                    title="Copy URL"
+                >
+                    {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                </button>
+            </div>
+            
+            <p className="text-xs text-muted-foreground leading-relaxed">
+                Send a POST request with the JSON body defined below.
+            </p>
+            
+            <div className="flex items-start gap-2 pt-2 border-t border-border/50">
+                <Info className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0 mt-0.5" />
+                <p className="text-[10px] text-muted-foreground/70 leading-relaxed">
+                    This URL is dynamic based on your current environment. 
+                    When deployed to production (Koyeb), it will automatically show your official domain. 
+                    Local testing URLs (localhost) are not saved.
+                </p>
+            </div>
+        </div>
+
+        {/* Schema Builder */}
+        <div className="pt-2">
+            <div className="flex items-center justify-between mb-4">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Expected Payload (Schema)
+                </label>
+                <button
+                    onClick={handleAddField}
+                    className="text-xs flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md transition-colors font-medium"
+                >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add Field
+                </button>
+            </div>
+            
+            <div className="space-y-2.5">
+                {schema.length === 0 ? (
+                    <div className="text-center py-8 border border-dashed border-border rounded-lg bg-muted/10">
+                        <p className="text-sm text-foreground font-medium mb-1">No output schema defined</p>
+                        <p className="text-xs text-muted-foreground">Any JSON body sent to the webhook will be accepted.</p>
+                    </div>
+                ) : (
+                    schema.map((field, index) => (
+                        <div key={index} className="flex items-center gap-3 group">
+                            <div className="flex-1">
+                                <input
+                                    type="text"
+                                    value={field.key}
+                                    onChange={(e) => handleUpdateField(index, { key: e.target.value })}
+                                    placeholder="field_name"
+                                    className="w-full bg-background border border-border rounded px-3 py-2 text-sm font-mono focus:ring-1 focus:ring-primary outline-none"
+                                />
+                            </div>
+                            <div className="w-28">
+                                <select
+                                    value={field.type}
+                                    onChange={(e) => handleUpdateField(index, { type: e.target.value as any })}
+                                    className="w-full bg-background border border-border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none appearance-none"
+                                >
+                                    <option value="string">String</option>
+                                    <option value="number">Number</option>
+                                    <option value="boolean">Boolean</option>
+                                    <option value="object">Object</option>
+                                    <option value="array">Array</option>
+                                </select>
+                            </div>
+                            <button
+                                onClick={() => handleUpdateField(index, { required: !field.required })}
+                                className={`px-3 py-1.5 text-xs text-center border rounded font-medium min-w-[3rem] transition-colors ${field.required ? 'bg-red-500/10 border-red-500/20 text-red-600' : 'bg-muted border-border text-muted-foreground'}`}
+                            >
+                                {field.required ? 'Req' : 'Opt'}
+                            </button>
+                            <button
+                                onClick={() => handleRemoveField(index)}
+                                className="p-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded transition-all"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
+      </div>
+
+      <div className="h-px bg-border/60 w-full" />
+
+      {/* SECTION 3: Action Flow Information */}
+      <div className="space-y-6">
+        <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Action Flow Information
+            </h3>
+            <p className="text-xs text-muted-foreground">
+                Define how this instance appears in the Action Flow dashboard.
             </p>
         </div>
-      </div>
-
-      {/* Schema Builder - Moved to Top */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Expected Payload (Schema)
-            </label>
-            <button
-                onClick={handleAddField}
-                className="text-[10px] flex items-center gap-1 bg-primary/10 text-primary hover:bg-primary/20 px-2 py-1 rounded transition-colors"
-            >
-                <Plus className="w-3 h-3" />
-                Add Field
-            </button>
-        </div>
         
-        <div className="space-y-2">
-            {schema.length === 0 ? (
-                <div className="text-center py-6 border border-dashed border-border rounded-lg">
-                    <p className="text-xs text-muted-foreground">No fields defined.</p>
-                    <p className="text-[10px] text-muted-foreground/60">Any JSON body will be accepted.</p>
-                </div>
-            ) : (
-                schema.map((field, index) => (
-                    <div key={index} className="flex items-start gap-2 group">
-                        <div className="flex-1 space-y-1">
-                            <input
-                                type="text"
-                                value={field.key}
-                                onChange={(e) => handleUpdateField(index, { key: e.target.value })}
-                                placeholder="Key"
-                                className="w-full bg-background border border-border rounded px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-primary outline-none"
-                            />
-                        </div>
-                        <div className="w-24">
-                            <select
-                                value={field.type}
-                                onChange={(e) => handleUpdateField(index, { type: e.target.value as any })}
-                                className="w-full bg-background border border-border rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary outline-none appearance-none"
-                            >
-                                <option value="string">String</option>
-                                <option value="number">Number</option>
-                                <option value="boolean">Boolean</option>
-                                <option value="object">Object</option>
-                                <option value="array">Array</option>
-                            </select>
-                        </div>
-                        <button
-                            onClick={() => handleUpdateField(index, { required: !field.required })}
-                            className={`px-2 py-1 text-[10px] border rounded transition-colors ${field.required ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-muted border-transparent text-muted-foreground'}`}
-                        >
-                            {field.required ? 'Req' : 'Opt'}
-                        </button>
-                        <button
-                            onClick={() => handleRemoveField(index)}
-                            className="p-1 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 transition-all"
-                        >
-                            <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                    </div>
-                ))
-            )}
-        </div>
-      </div>
-
-      {/* Action Flow Information - Renamed from Incoming Webhook Settings */}
-      <div className="space-y-4">
-        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Action Flow Information
-        </label>
-        
-        <div className="space-y-4">
-            {/* Title & Description */}
-            <div className="space-y-3">
-                <div>
-                    <label className="text-xs text-muted-foreground block mb-1.5">Action Flow Title Template <span className="text-red-500">*</span></label>
-                    <input
-                        type="text"
-                        value={data.instanceNameTemplate || ''}
-                        onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
-                        placeholder="e.g. New Order {{ order_id }}"
-                        className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
-                    />
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                        Name the running instance dynamically using variables.
-                    </p>
-                </div>
-                
-                <div>
-                    <label className="text-xs text-muted-foreground block mb-1.5">Information <span className="text-red-500">*</span></label>
-                    <textarea
-                        value={data.instanceDescriptionTemplate || ''}
-                        onChange={(e) => onUpdate({ ...data, instanceDescriptionTemplate: e.target.value })}
-                        placeholder="Information about the action flow"
-                        className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm h-20 resize-none focus:ring-1 focus:ring-primary outline-none"
-                    />
-                </div>
+        <div className="space-y-5">
+            {/* Title Template */}
+            <div>
+                <label className="text-sm font-medium text-foreground block mb-2">
+                    Action Flow Title Template <span className="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    value={data.instanceNameTemplate || ''}
+                    onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
+                    placeholder="e.g. Driver At Risk {{ steps.trigger.body.driver_code }}"
+                    className="w-full bg-background border border-border rounded-md px-3 py-2.5 text-sm focus:ring-1 focus:ring-primary outline-none font-medium shadow-sm"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1.5">
+                    Name the running instance dynamically using variables.
+                </p>
+            </div>
+            
+            {/* Information (Description) */}
+            <div>
+                <label className="text-sm font-medium text-foreground block mb-2">
+                    Information <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                    value={data.instanceDescriptionTemplate || ''}
+                    onChange={(e) => onUpdate({ ...data, instanceDescriptionTemplate: e.target.value })}
+                    placeholder="Provide detailed instructions or context for this action flow..."
+                    className="w-full bg-background border border-border rounded-md px-3 py-2.5 text-sm h-28 resize-none focus:ring-1 focus:ring-primary outline-none shadow-sm"
+                />
             </div>
 
-            {/* Custom Information Fields */}
-            <div className="pt-2 border-t border-border">
-                <div className="flex items-center justify-between mb-3">
-                    <label className="text-xs font-medium text-foreground">
+            {/* Additional Fields */}
+            <div className="pt-4 border-t border-border/50">
+                <div className="flex items-center justify-between mb-4">
+                    <label className="text-sm font-medium text-foreground">
                         Additional Fields
                     </label>
                     <button
@@ -207,21 +274,21 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                             }
                         }}
                         disabled={(data.infoFields?.length || 0) >= 24}
-                        className="text-[10px] flex items-center gap-1 bg-primary/10 text-primary hover:bg-primary/20 px-2 py-1 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-xs flex items-center gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-1.5 rounded-md transition-colors font-medium disabled:opacity-50"
                     >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-3.5 h-3.5" />
                         Add Field
                     </button>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {(!data.infoFields || data.infoFields.length === 0) ? (
-                         <div className="text-center py-4 border border-dashed border-border rounded-lg bg-muted/20">
-                            <p className="text-[10px] text-muted-foreground">No additional fields configured.</p>
+                         <div className="text-center py-6 border border-dashed border-border rounded-lg bg-muted/20">
+                            <p className="text-xs text-muted-foreground">No additional fields configured.</p>
                         </div>
                     ) : (
                         data.infoFields.map((field: any, index: number) => (
-                            <div key={index} className="flex items-start gap-2 group">
+                            <div key={index} className="flex items-start gap-3 group">
                                 <div className="w-1/3">
                                     <input
                                         type="text"
@@ -232,7 +299,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                                             onUpdate({ ...data, infoFields: newFields });
                                         }}
                                         placeholder="Label"
-                                        className="w-full bg-background border border-border rounded px-2 py-1.5 text-xs font-semibold focus:ring-1 focus:ring-primary outline-none"
+                                        className="w-full bg-background border border-border rounded px-3 py-2 text-xs font-semibold focus:ring-1 focus:ring-primary outline-none"
                                     />
                                 </div>
                                 <div className="flex-1">
@@ -244,8 +311,8 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                                             newFields[index] = { ...field, value: e.target.value };
                                             onUpdate({ ...data, infoFields: newFields });
                                         }}
-                                        placeholder="Value (supports {{ variables }})"
-                                        className="w-full bg-background border border-border rounded px-2 py-1.5 text-xs focus:ring-1 focus:ring-primary outline-none"
+                                        placeholder="Value"
+                                        className="w-full bg-background border border-border rounded px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none"
                                     />
                                 </div>
                                 <button
@@ -253,15 +320,15 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                                         const newFields = data.infoFields.filter((_: any, i: number) => i !== index);
                                         onUpdate({ ...data, infoFields: newFields });
                                     }}
-                                    className="p-1.5 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 transition-all self-center"
+                                    className="p-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded transition-all self-center"
                                 >
-                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
                         ))
                     )}
                     {(data.infoFields?.length || 0) > 0 && (
-                        <p className="text-[10px] text-muted-foreground text-right">
+                        <p className="text-[10px] text-muted-foreground text-right mt-2">
                             {(data.infoFields?.length || 0)} / 24 fields used
                         </p>
                     )}
