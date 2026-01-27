@@ -160,6 +160,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		nodeCtx := nodes.NodeContext{
 			FlowID:     flowDefinition.ID,
 			WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
+			RunID:      workflow.GetInfo(ctx).WorkflowExecution.RunID,
 			StepID:     node.ID,
 			InputData: map[string]interface{}{
 				"steps":     executionState,

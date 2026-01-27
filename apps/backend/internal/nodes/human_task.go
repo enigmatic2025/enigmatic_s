@@ -86,6 +86,7 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 		UpdatedAt   time.Time   `json:"updated_at"`
 	}{
 		FlowID: input.FlowID,
+		RunID:  input.RunID,
 
 		Title:       title,
 		Description: description,

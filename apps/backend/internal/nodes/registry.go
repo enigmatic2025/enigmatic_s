@@ -10,6 +10,7 @@ import (
 type NodeContext struct {
 	FlowID     string
 	WorkflowID string
+	RunID      string
 	StepID     string
 	InputData  map[string]interface{}
 	Config     map[string]interface{}
