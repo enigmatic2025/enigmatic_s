@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,35 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Plus,
   Search,
-  ArrowUpDown,
-  LayoutTemplate,
   FileText,
   Users,
-  CreditCard,
-  MoreHorizontal,
-  PlayCircle,
-  Truck,
   TrendingUp,
-  AlertTriangle,
+  Truck,
 } from "lucide-react";
 
 const templates = [
@@ -73,61 +55,42 @@ const templates = [
   },
 ];
 
-const myFlows = [
-  {
-    id: "flow-1",
-    name: "New Order Sync",
-    status: "Running",
-    lastRun: "2 mins ago",
-    trigger: "Shopify Webhook",
-  },
-  {
-    id: "flow-2",
-    name: "Weekly Report Generation",
-    status: "Scheduled",
-    lastRun: "5 days ago",
-    trigger: "Schedule (Weekly)",
-  },
-  {
-    id: "flow-3",
-    name: "Lead Enrichment",
-    status: "Disabled",
-    lastRun: "1 hour ago",
-    trigger: "HubSpot Event",
-  },
-  {
-    id: "flow-4",
-    name: "Draft: Invoice Processing",
-    status: "Draft",
-    lastRun: "Never",
-    trigger: "Manual",
-  },
-];
-
 import Link from "next/link";
-
 import { FlowTable } from "@/components/flow-studio/flow-table";
+import { apiClient } from "@/lib/api-client";
+import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
-export default async function FlowStudioPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+export default function FlowStudioPage() {
+  const params = useParams();
+  const slug = params?.slug as string;
+  const [flows, setFlows] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch flows from backend
-  let flows = [];
-  try {
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:8001";
-    const res = await fetch(`${backendUrl}/api/flows?slug=${slug}`, {
-      cache: "no-store",
-    });
-    if (res.ok) {
-      flows = await res.json();
+  useEffect(() => {
+    if (slug) {
+        fetchFlows();
     }
-  } catch (error) {
-    console.error("Failed to fetch flows:", error);
-  }
+  }, [slug]);
+
+  const fetchFlows = async () => {
+    try {
+        setLoading(true);
+        const res = await apiClient.get(`/flows?slug=${slug}`);
+        if (res.ok) {
+            const data = await res.json();
+            setFlows(data);
+        } else {
+            console.error("Failed to load flows", res.status);
+            toast.error("Failed to load flows");
+        }
+    } catch (error) {
+        console.error("Error loading flows", error);
+        toast.error("Error loading flows");
+    } finally {
+        setLoading(false);
+    }
+  };
 
   return (
     <div className="h-full w-full space-y-6">
@@ -211,15 +174,15 @@ export default async function FlowStudioPage({
         </TabsContent>
 
         <TabsContent value="draft" className="space-y-4">
-            <FlowTable initialFlows={flows.filter((f: any) => !f.is_active && !f.published_at)} slug={slug} />
+            <FlowTable initialFlows={flows.filter((f: any) => !f.is_active && !f.published_at)} slug={slug} isLoading={loading} />
         </TabsContent>
 
         <TabsContent value="active" className="space-y-4">
-            <FlowTable initialFlows={flows.filter((f: any) => f.is_active)} slug={slug} />
+            <FlowTable initialFlows={flows.filter((f: any) => f.is_active)} slug={slug} isLoading={loading} />
         </TabsContent>
 
         <TabsContent value="inactive" className="space-y-4">
-            <FlowTable initialFlows={flows.filter((f: any) => !f.is_active && f.published_at)} slug={slug} />
+            <FlowTable initialFlows={flows.filter((f: any) => !f.is_active && f.published_at)} slug={slug} isLoading={loading} />
         </TabsContent>
 
       </Tabs>

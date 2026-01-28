@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/api-client";
 import { ActionFlowList, ActionFlowExec } from "@/components/dashboard/action-flows/action-flow-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,7 @@ export default function ActionFlowPlyPage() {
   const fetchExecutions = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/action-flows");
+      const res = await apiClient.get("/api/action-flows");
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setExecutions(data);
@@ -31,7 +32,7 @@ export default function ActionFlowPlyPage() {
     // Auto-refresh every 10 seconds to show live status updates (Koyeb style)
     const interval = setInterval(() => {
         // Silent refresh
-        fetch("/api/action-flows")
+        apiClient.get("/api/action-flows")
             .then(res => res.json())
             .then(data => setExecutions(data))
             .catch(() => {});

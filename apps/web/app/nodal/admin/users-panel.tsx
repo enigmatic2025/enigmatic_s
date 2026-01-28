@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, MoreHorizontal, Pencil, Trash, RotateCw, Shield, Lock, Ban, UserCog } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { apiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
 import { User, Organization } from '@/types/admin'
 import { Spinner } from "@/components/ui/spinner"
@@ -44,12 +44,7 @@ export function UsersPanel() {
 
   const fetchUsers = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch('/api/admin/users', {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      })
+      const res = await apiClient.get('/api/admin/users')
       if (res.ok) setUsers(await res.json())
     } catch (error) {
       toast.error('Failed to fetch users')
@@ -60,12 +55,7 @@ export function UsersPanel() {
 
   const fetchOrgs = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch('/api/admin/orgs', {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      })
+      const res = await apiClient.get('/api/admin/orgs')
       if (res.ok) setOrgs(await res.json())
     } catch (error) {
       toast.error('Failed to fetch organizations')
@@ -74,17 +64,7 @@ export function UsersPanel() {
 
   const handleCreate = async (data: any) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(data)
-      })
+      const res = await apiClient.post('/api/admin/users', data)
 
       if (!res.ok) throw new Error('Failed to create user')
 
@@ -99,17 +79,7 @@ export function UsersPanel() {
   const handleUpdate = async (data: any) => {
     if (!selectedUser) return
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch(`/api/admin/users/${selectedUser.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(data)
-      })
+      const res = await apiClient.put(`/api/admin/users/${selectedUser.id}`, data)
 
       if (!res.ok) throw new Error('Failed to update user')
 
@@ -126,13 +96,7 @@ export function UsersPanel() {
     if (!confirm(`Are you sure you want to delete ${user.email}?`)) return
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch(`/api/admin/users/${user.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      })
+      const res = await apiClient.delete(`/api/admin/users/${user.id}`)
 
       if (!res.ok) throw new Error('Failed to delete user')
 
@@ -147,17 +111,7 @@ export function UsersPanel() {
     if (!confirm(`Promote ${user.email} to System Admin?`)) return
 
     try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) return
-
-        const res = await fetch('/api/admin/promote', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({ user_id: user.id })
-        })
+        const res = await apiClient.post('/api/admin/promote', { user_id: user.id })
 
         if (!res.ok) throw new Error('Failed to promote')
         fetchUsers()
@@ -172,17 +126,7 @@ export function UsersPanel() {
     if (!confirm(`Are you sure you want to ${action} ${user.email}?`)) return
 
     try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) return
-
-        const res = await fetch(`/api/admin/users/${user.id}/block`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({ blocked: !user.blocked })
-        })
+        const res = await apiClient.post(`/api/admin/users/${user.id}/block`, { blocked: !user.blocked })
 
         if (!res.ok) throw new Error(`Failed to ${action} user`)
         fetchUsers()
@@ -196,13 +140,7 @@ export function UsersPanel() {
     if (!confirm(`Reset MFA for ${user.email}?`)) return
 
     try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) return
-
-        const res = await fetch(`/api/admin/users/${user.id}/reset-mfa`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${session.access_token}` }
-        })
+        const res = await apiClient.post(`/api/admin/users/${user.id}/reset-mfa`, {})
 
         if (!res.ok) throw new Error('Failed to reset MFA')
         toast.success('MFA reset successfully')
@@ -214,17 +152,7 @@ export function UsersPanel() {
   const handleChangePassword = async (password: string) => {
     if (!selectedUser) return
     try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) return
-
-        const res = await fetch(`/api/admin/users/${selectedUser.id}/password`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({ password })
-        })
+        const res = await apiClient.post(`/api/admin/users/${selectedUser.id}/password`, { password })
 
         if (!res.ok) throw new Error('Failed to change password')
 
@@ -238,17 +166,7 @@ export function UsersPanel() {
   const handleChangeRole = async (role: string) => {
     if (!selectedUser) return
     try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) return
-
-        const res = await fetch(`/api/admin/users/${selectedUser.id}/role`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({ role })
-        })
+        const res = await apiClient.post(`/api/admin/users/${selectedUser.id}/role`, { role })
 
         if (!res.ok) throw new Error('Failed to change role')
 

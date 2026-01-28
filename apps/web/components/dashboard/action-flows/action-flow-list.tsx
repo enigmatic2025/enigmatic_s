@@ -1,5 +1,6 @@
 "use client";
 
+import { apiClient } from "@/lib/api-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -140,7 +141,7 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                           e.stopPropagation();
                           if (!confirm("Are you sure you want to delete this action flow run?")) return;
                           
-                          const res = await fetch(`/api/action-flows/${exec.id}`, { method: 'DELETE' });
+                          const res = await apiClient.delete(`/api/action-flows/${exec.id}`);
                           if (res.ok) {
                               toast.success("Deleted");
                               router.refresh(); // Trigger server component refresh? No, this is client.

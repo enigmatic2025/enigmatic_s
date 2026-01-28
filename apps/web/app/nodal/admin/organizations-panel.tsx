@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Pencil, Trash, MoreHorizontal } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { apiClient } from "@/lib/api-client"
 import { toast } from 'sonner'
 import { Organization } from '@/types/admin'
 import { Spinner } from "@/components/ui/spinner"
@@ -38,12 +38,7 @@ export function OrganizationsPanel() {
 
   const fetchOrgs = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch('/api/admin/orgs', {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      })
+      const res = await apiClient.get('/api/admin/orgs')
 
       if (!res.ok) throw new Error('Failed to fetch orgs')
 
@@ -59,17 +54,7 @@ export function OrganizationsPanel() {
 
   const handleCreate = async (data: any) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch('/api/admin/orgs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(data)
-      })
+      const res = await apiClient.post('/api/admin/orgs', data)
 
       if (!res.ok) throw new Error('Failed to create org')
 
@@ -84,17 +69,7 @@ export function OrganizationsPanel() {
   const handleUpdate = async (data: any) => {
     if (!selectedOrg) return
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch(`/api/admin/orgs/${selectedOrg.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(data)
-      })
+      const res = await apiClient.put(`/api/admin/orgs/${selectedOrg.id}`, data)
 
       if (!res.ok) throw new Error('Failed to update org')
 
@@ -111,13 +86,7 @@ export function OrganizationsPanel() {
     if (!confirm(`Are you sure you want to delete ${org.name}? This cannot be undone.`)) return
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
-
-      const res = await fetch(`/api/admin/orgs/${org.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      })
+      const res = await apiClient.delete(`/api/admin/orgs/${org.id}`)
 
       if (!res.ok) {
           if (res.status === 403) {

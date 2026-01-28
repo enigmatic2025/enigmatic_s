@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -31,16 +31,26 @@ import { RenameFlowModal } from "@/components/flow-studio/modals/rename-flow-mod
 interface FlowTableProps {
   initialFlows: any[];
   slug: string;
+  isLoading?: boolean;
 }
 
-export function FlowTable({ initialFlows, slug }: FlowTableProps) {
+export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
   const router = useRouter();
-  const [flows, setFlows] = useState(initialFlows);
+  const [flows, setFlows] = useState<any[]>(initialFlows);
   const [selectedFlow, setSelectedFlow] = useState<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
 
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Update flows when initialFlows changes (e.g. after loading)
+  useEffect(() => {
+    setFlows(initialFlows);
+  }, [initialFlows]);
+
+  if (isLoading) {
+    return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading flows...</div>;
+  }
 
   const handleDelete = async () => {
     if (!selectedFlow || isDeleting) return;
