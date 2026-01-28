@@ -1,17 +1,15 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { flowService } from "@/services/flow-service";
-import { ArrowLeft, MoreHorizontal, Check, Copy, Clock, MousePointer2 } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Check, Clock, MousePointer2, AlertCircle, Info, Send, User, MessageSquare, LayoutGrid, Sparkles, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import DashboardLoading from "../../loading"; 
+import DashboardLoading from "../../loading";
+import { cn } from "@/lib/utils";
 
 interface ActionFlowDetail {
   id: string;
@@ -31,400 +29,413 @@ export default function ActionFlowDetailPage() {
   const router = useRouter();
   const [data, setData] = useState<ActionFlowDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [copiedId, setCopiedId] = useState(false);
 
   useEffect(() => {
     if (flowId) {
-        fetchDetails();
+      fetchDetails();
     }
   }, [flowId]);
 
   const fetchDetails = async () => {
     try {
-        setLoading(true);
-        const res = await flowService.getActionFlow(flowId as string);
-        setData(res);
+      setLoading(true);
+      const res = await flowService.getActionFlow(flowId as string);
+      setData(res);
     } catch (e) {
-        toast.error("Failed to load details");
+      toast.error("Failed to load details");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
-  const copyId = () => {
-     if (data?.id) {
-         navigator.clipboard.writeText(data.id);
-         setCopiedId(true);
-         setTimeout(() => setCopiedId(false), 2000);
-         toast.success("Action Flow ID copied");
-     }
-  };
+  const activitySegments = useMemo(() => {
+    if (!data?.activities) return [];
+    const allActivities = [...data.activities];
+    
+    // Calculate Durations for Proportional Sizing
+    const activitiesWithDuration = allActivities.map((act, idx) => {
+        const start = new Date(act.started_at).getTime();
+        let end = new Date().getTime(); 
+        
+        if (allActivities[idx + 1]) {
+            end = new Date(allActivities[idx+1].started_at).getTime();
+        } else if (act.status === 'COMPLETED') {
+            end = start + (15 * 60 * 1000); 
+        }
+        
+        let durationMs = Math.max(end - start, 60000); 
+        return { ...act, durationMs };
+    });
+
+    const pendingWeight = 300000; 
+
+    return allActivities.map((act, idx) => {
+        const isDone = act.status === 'COMPLETED';
+        const isRunning = act.status === 'RUNNING';
+        const isPending = !isDone && !isRunning;
+
+        let durationDisplay = "";
+        let computedWeight = pendingWeight;
+
+        if (!isPending) {
+            const ad = activitiesWithDuration[idx];
+            computedWeight = ad ? ad.durationMs : pendingWeight;
+            
+            const diffMins = Math.floor(computedWeight / 60000);
+                if (diffMins < 1) durationDisplay = "< 1m";
+            else if (diffMins < 60) durationDisplay = `${diffMins}m`;
+            else durationDisplay = `${Math.floor(diffMins/60)}h ${diffMins%60}m`;
+        }
+
+        return {
+            ...act,
+            computedWeight,
+            durationDisplay,
+            isDone,
+            isRunning,
+            isPending
+        };
+    });
+  }, [data]);
+
 
   if (loading) return <DashboardLoading />;
   if (!data) return <div className="p-8 text-center text-muted-foreground">Action Flow not found</div>;
 
   const isSuccess = data.status === "COMPLETED";
   const isFailed = data.status === "FAILED";
-  const isRunning = data.status === "RUNNING";
-
-  const currentAction = data.activities?.find(a => a.status === 'RUNNING') || data.activities?.[data.activities?.length - 1];
-  const lastUpdate = currentAction?.started_at || data.started_at;
 
   return (
-    <div className="flex flex-col h-full w-full bg-muted/5 p-6 gap-6 overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-white dark:bg-black p-6 gap-5 overflow-hidden font-sans transition-colors duration-300">
       
-      {/* Top Header Area */}
+      {/* HEADER SECTION */}
       <div className="flex items-start justify-between shrink-0">
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-3xl">
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-8 gap-1 -ml-2 text-muted-foreground hover:text-foreground hover:bg-transparent px-0"
+                className="h-auto p-0 text-muted-foreground hover:text-foreground hover:bg-transparent transition-colors group"
                 onClick={() => router.back()}
               >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Flows
+                <ArrowLeft className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" />
+                <span>Back to Flows</span>
               </Button>
               
-              <div className="space-y-1">
-                 <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              <div className="space-y-2">
+                 <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
                     {data.title || data.flow_name || "Untitled Action Flow"}
                  </h1>
-                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <span className="font-mono bg-muted px-2 py-0.5 rounded text-xs">{data.id}</span>
-                    <span className="w-1 h-1 rounded-full bg-border" />
-                    <span>{new Date(data.started_at).toLocaleDateString()}</span>
+                 <div className="flex items-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+                    <span className="font-mono text-[10px] tracking-wider uppercase opacity-70">{data.id}</span>
+                    <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                    <span className="font-medium">{new Date(data.started_at).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</span>
                  </div>
+                 
+                 {/* MOVED DESCRIPTION HERE */}
+                 {data.input_data?.description && (
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed pt-1 max-w-2xl">
+                        {data.input_data.description}
+                    </p>
+                 )}
               </div>
           </div>
 
-          <div className="flex items-center gap-3">
-              <div className={`px-4 py-2 rounded-full border text-sm font-medium flex items-center gap-2 ${
-                    isSuccess ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' :
-                    isFailed ? 'bg-red-500/10 border-red-500/20 text-red-600' :
-                    'bg-blue-500/10 border-blue-500/20 text-blue-600'
-                }`}>
-                    <div className={`w-2 h-2 rounded-full ${
-                        isSuccess ? 'bg-emerald-500' :
-                        isFailed ? 'bg-red-500' :
-                        'bg-blue-500'
-                    }`} />
-                    {data.status === "RUNNING" ? "In Progress" : data.status}
+          <div className="flex items-center gap-4">
+               {/* STATUS BADGE - MONOCHROME */}
+               <div className={cn(
+                   "pl-1.5 pr-3 py-1 rounded-full border flex items-center gap-2 shadow-sm transition-all",
+                   // Pure Black/White/Gray
+                   'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100'
+               )}>
+                    <div className={cn(
+                        "w-2 h-2 rounded-full",
+                         isSuccess ? 'bg-zinc-900 dark:bg-zinc-100' :
+                         isFailed ? 'bg-zinc-500' :
+                        'bg-zinc-900 dark:bg-zinc-100 animate-pulse'
+                    )} />
+                    <span className="text-[11px] font-semibold tracking-wide uppercase">
+                        {data.status === "RUNNING" ? "Running" : data.status}
+                    </span>
               </div>
-               <Button variant="outline" size="icon" className="rounded-full h-10 w-10">
-                  <MoreHorizontal className="h-4 w-4" />
+
+               <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 shadow-sm transition-all">
+                  <MoreHorizontal className="h-4 w-4 text-zinc-900 dark:text-zinc-400" />
                </Button>
-               <Button className="rounded-full px-6 bg-foreground text-background hover:bg-foreground/90">
-                  Action
+               <Button className="rounded-full px-6 h-10 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-black dark:hover:bg-zinc-200 font-medium shadow-sm transition-all hover:scale-[1.02]">
+                  Primary Action
                </Button>
           </div>
       </div>
 
+      {/* BODY SECTION */}
+      <div className="flex-1 flex flex-col min-h-0 gap-5">
 
-      {/* Main Grid Layout */}
-      <div className="flex-1 grid grid-cols-12 gap-4 min-h-0">
-          
-          {/* Left Column: Details Card */}
-          <div className="col-span-3 flex flex-col gap-4 overflow-hidden">
-              <div className="p-5 rounded-[24px] bg-white dark:bg-zinc-900 border border-border shadow-none space-y-6 h-full overflow-y-auto">
-                  <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                          <h2 className="text-lg font-bold tracking-tight">Details</h2>
-                          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-muted -mr-2">
-                              <MousePointer2 className="w-3.5 h-3.5 text-muted-foreground" />
-                          </Button>
-                      </div>
-                      
-                      {/* Description */}
-                      <div className="space-y-1.5">
-                           <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/50">Description</label>
-                           <p className="text-sm leading-snug text-foreground/90 font-medium">
-                               {data.input_data?.description || "No description provided."}
-                           </p>
-                      </div>
+          {/* 1. PROGRESS BAR (COLORFUL) */}
+          <div className="w-full h-16 shrink-0 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-1.5 flex flex-col justify-center">
+             <div className="flex w-full h-full rounded-lg overflow-hidden gap-1">
+                {activitySegments.length > 0 ? (
+                    activitySegments.map((segment: any, idx: number) => {
+                         // KEEPING COLORS
+                         const activeBg = segment.isPending 
+                            ? 'bg-zinc-200 dark:bg-zinc-800' 
+                            : (segment.isDone ? 'bg-emerald-500' : 'bg-blue-500'); 
+                         
+                         const textColor = segment.isPending 
+                            ? 'text-zinc-400 dark:text-zinc-500' 
+                            : 'text-white';
+                         
+                         return (
+                            <div 
+                                key={idx} 
+                                style={{ flex: `${segment.computedWeight} 1 0%` }}
+                                className={cn(
+                                    "h-full flex flex-col justify-center items-center relative transition-all duration-700 ease-in-out group first:rounded-l-md last:rounded-r-md", 
+                                    activeBg
+                                )}
+                            >
+                                <div className="flex flex-col items-center gap-0.5 text-center w-full truncate px-2">
+                                    <div className="flex items-center gap-1.5 justify-center">
+                                        <span className={cn("text-[10px] font-bold leading-tight truncate tracking-wide uppercase", textColor)}>
+                                            {segment.name}
+                                        </span>
+                                        {segment.isRunning && <Clock className={cn("w-3 h-3 animate-spin", textColor)} />}
+                                    </div>
+                                    
+                                    {segment.durationDisplay && (
+                                        <span className={cn("text-[9px] font-medium opacity-80 font-mono", textColor)}>
+                                            {segment.durationDisplay}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                         );
+                    })
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 rounded-lg">
+                        <span className="text-zinc-400 text-xs">Initializing...</span>
+                    </div>
+                )}
+             </div>
+          </div>
 
-                      {/* Horizontal Ribbon for Data Points - CLEAN STYLE */}
-                      <div className="space-y-4">
-                           <div className="flex items-center justify-between">
-                                <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/50">Data Points</label>
-                           </div>
-                           
-                           <div className="flex overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide mask-fade-right">
-                               {/* Render Inputs */}
-                               {data.input_data?._info_fields?.map((field: any, i: number) => (
-                                   <div key={i} className="flex-none flex flex-col justify-center gap-1.5 pr-8 mr-8 border-r border-border/40 last:border-0 last:mr-0 min-w-[120px]">
-                                       <span className="text-[10px] uppercase font-bold text-muted-foreground/50 truncate w-full tracking-wide" title={field.label}>
-                                           {field.label}
-                                       </span>
-                                       <span className="text-sm font-medium text-foreground w-full truncate" title={field.value}>
-                                           {field.value}
-                                       </span>
-                                   </div>
-                               ))}
-                               
-                               {(!data.input_data._info_fields || data.input_data._info_fields.length === 0) && (
-                                   <div className="text-sm text-muted-foreground italic">
-                                       No additional data.
-                                   </div>
-                               )}
-                           </div>
+          {/* 2. THREE-COLUMN LAYOUT - Compact Gap */}
+          <div className="flex-1 grid grid-cols-12 gap-5 min-h-0">
+              
+              {/* COLUMN 1: Activity Log (42%) */}
+              <div className="col-span-12 lg:col-span-5 flex flex-col h-full rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
+                  <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
+                        <div className="flex items-center gap-2.5">
+                            <Activity className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
+                            <div>
+                                <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Activity Log</h2>
+                            </div>
+                        </div>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
+                      <div className="relative border-l border-zinc-200 dark:border-zinc-800 pl-6 ml-2 space-y-12 py-2">
+                            {data.activities?.map((activity, i) => (
+                                <div key={i} className="relative group">
+                                    {/* Timeline Node - Monochrome */}
+                                    <div className={cn(
+                                        "absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-zinc-950 z-10 transition-all duration-300",
+                                        activity.status === 'COMPLETED' ? 'bg-zinc-900 dark:bg-zinc-100' :
+                                        activity.status === 'RUNNING' ? 'bg-zinc-900 dark:bg-zinc-100 animate-pulse' :
+                                        'bg-zinc-300 dark:bg-zinc-700'
+                                    )} />
+                                    
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex items-baseline justify-between">
+                                            <span className={cn(
+                                                "text-xs font-semibold transition-colors truncate max-w-[200px] text-zinc-900 dark:text-zinc-200"
+                                            )}>
+                                                {activity.name}
+                                            </span>
+                                            <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
+                                                {new Date(activity.started_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                            </span>
+                                        </div>
+                                        
+                                        {/* Activity Content - Pure Monochrome */}
+                                        <div className={cn(
+                                            "p-4 rounded-xl text-xs leading-relaxed border transition-all duration-200 bg-zinc-50 dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800"
+                                        )}>
+                                           {activity.type === 'human_action' ? (
+                                                <div className="flex flex-col gap-3">
+                                                    <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 font-bold text-[10px] uppercase tracking-wide">
+                                                        <AlertCircle className="w-3.5 h-3.5" />
+                                                        Action Required
+                                                    </div>
+                                                    <p className="text-zinc-700 dark:text-zinc-300 font-medium">Review compliance docs for <strong>{data.input_data?.driver_name}</strong>.</p>
+                                                    <div className="flex gap-2 pt-1">
+                                                        <Button size="sm" className="h-7 text-[10px] bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200 shadow-sm px-4 rounded-lg border-0">
+                                                            Approve
+                                                        </Button>
+                                                        <Button size="sm" variant="outline" className="h-7 text-[10px] bg-white dark:bg-transparent border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 shadow-sm px-4 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                                            Reject
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-start gap-2">
+                                                    <p className="text-zinc-600 dark:text-zinc-400">{activity.description || "System updated state."}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                       </div>
                   </div>
               </div>
-          </div>
 
 
-          {/* Middle Column: Timeline & Pipeline (Expanded) */}
-          <div className="col-span-9 grid grid-cols-3 gap-6 overflow-hidden h-full min-h-0">
-               
-               {/* LEFT COLUMN: Pipeline + Timeline */}
-               <div className="col-span-2 flex flex-col gap-4 h-full overflow-hidden min-h-0">
-                   
+              {/* COLUMN 2: Discussion (25%) */}
+              <div className="col-span-12 lg:col-span-3 flex flex-col h-full rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
+                  <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
+                        <div className="flex items-center gap-2.5">
+                            <MessageSquare className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
+                            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Discussion</h2>
+                        </div>
+                        <Badge variant="secondary" className="h-5 px-1.5 text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">2</Badge>
+                  </div>
 
-                   
-
-                    {/* Progress Pipeline Bar */}
-                    <div className="w-full rounded-[20px] bg-white dark:bg-zinc-900 border border-border shadow-none shrink-0 overflow-hidden flex h-16 p-2">
-                        <div className="flex-1 flex h-full w-full rounded-[14px] overflow-hidden gap-1">
-                            {/* Map Activities to Segments */}
-                            {(() => {
-                                const allActivities = [...(data.activities || [])];
-                                const hasActivities = allActivities.length > 0;
-                                
-                                // Calculate Durations for Proportional Sizing
-                                const activitiesWithDuration = allActivities.map((act, idx) => {
-                                    const start = new Date(act.started_at).getTime();
-                                    let end = new Date().getTime(); 
-                                    
-                                    if (allActivities[idx + 1]) {
-                                        end = new Date(allActivities[idx+1].started_at).getTime();
-                                    } else if (act.status === 'COMPLETED') {
-                                        end = start + (15 * 60 * 1000); 
-                                    }
-                                    
-                                    let durationMs = Math.max(end - start, 60000); 
-                                    return { ...act, durationMs };
-                                });
-
-                                const pendingWeight = 300000; 
-
-                                return allActivities.map((act, idx) => {
-                                    const isDone = act.status === 'COMPLETED';
-                                    const isRunning = act.status === 'RUNNING';
-                                    const isPending = !isDone && !isRunning;
-
-                                    let durationDisplay = "";
-                                    let computedWeight = pendingWeight;
-
-                                    if (!isPending) {
-                                        const ad = activitiesWithDuration[idx];
-                                        computedWeight = ad ? ad.durationMs : pendingWeight;
-                                        
-                                        const diffMins = Math.floor(computedWeight / 60000);
-                                         if (diffMins < 1) durationDisplay = "< 1m";
-                                        else if (diffMins < 60) durationDisplay = `${diffMins}m`;
-                                        else durationDisplay = `${Math.floor(diffMins/60)}h ${diffMins%60}m`;
-                                    }
-
-                                    // Colors
-                                    const activeBg = isPending ? 'bg-muted/30' : (isDone ? 'bg-emerald-500' : 'bg-blue-500'); 
-                                    const textColor = isPending ? 'text-muted-foreground' : 'text-white';
-
-                                    const flexStyle = { flex: `${computedWeight} 1 0%` };
-                                    
-                                    return (
-                                        <div 
-                                            key={idx} 
-                                            style={flexStyle}
-                                            className={`h-full flex flex-col justify-center items-center p-2 relative rounded-xl transition-all duration-500 ${activeBg}`}
-                                        >
-                                           <div className={`flex flex-col items-center gap-0.5 text-center w-full truncate px-1`}>
-                                                <div className="flex items-center gap-1.5 justify-center">
-                                                    <span className={`text-[10px] font-bold leading-tight truncate ${textColor}`}>
-                                                        {act.name}
-                                                    </span>
-                                                    {isDone && <Check className="w-3 h-3 text-white/90" />}
-                                                    {isRunning && <Clock className="w-3 h-3 text-white/90 animate-spin" />}
-                                                </div>
-                                                
-                                                {durationDisplay && (
-                                                    <span className={`text-[9px] font-medium opacity-80 ${textColor}`}>
-                                                        {durationDisplay}
-                                                    </span>
-                                                )}
-                                           </div>
-                                        </div>
-                                    );
-                                });
-                            })()}
-                             
-                             {(!data.activities || data.activities.length < 5) && (
-                                <div className="flex-[0.5] h-full bg-muted/10 rounded-xl flex items-center justify-center">
-                                    <span className="text-[9px] text-muted-foreground/40">...</span>
+                  <div className="flex-1 flex flex-col overflow-hidden">
+                      <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
+                            {/* Comment 1 */}
+                            <div className="flex gap-3">
+                                <Avatar className="w-7 h-7 border border-zinc-100 dark:border-zinc-800 mt-1">
+                                    <AvatarFallback className="text-[9px] bg-zinc-900 text-white dark:bg-white dark:text-black">S</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100">Sarah</span>
+                                        <span className="text-[9px] text-zinc-400 dark:text-zinc-500">10:42 AM</span>
+                                    </div>
+                                    <p className="text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 p-2 rounded-lg rounded-tl-none">
+                                        Checking compliance docs now.
+                                    </p>
                                 </div>
-                             )}
+                            </div>
+
+                            {/* Comment 2 */}
+                            <div className="flex gap-3">
+                                <Avatar className="w-7 h-7 border border-zinc-100 dark:border-zinc-800 mt-1">
+                                    <AvatarFallback className="text-[9px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">M</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100">Mike</span>
+                                        <span className="text-[9px] text-zinc-400 dark:text-zinc-500">10:45 AM</span>
+                                    </div>
+                                    <p className="text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 p-2 rounded-lg rounded-tl-none">
+                                        Noted, thanks Sarah.
+                                    </p>
+                                </div>
+                            </div>
+                      </div>
+                       
+                       <div className="p-4 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/20">
+                            <div className="relative">
+                                <textarea 
+                                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-3 pr-9 py-2.5 text-xs placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-900/10 dark:focus:ring-white/10 transition-all resize-none min-h-[42px]"
+                                    placeholder="Add a note..."
+                                    rows={1}
+                                />
+                                <Button size="icon" className="absolute right-1 top-1 h-8 w-8 rounded-lg bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-none">
+                                    <Send className="w-3.5 h-3.5" />
+                                </Button>
+                            </div>
+                       </div>
+                  </div>
+              </div>
+
+
+              {/* COLUMN 3: Intelligence (33%) */}
+              <div className="col-span-12 lg:col-span-4 flex flex-col h-full gap-5">
+                
+                {/* DATA POINTS */}
+                <div className="flex-1 max-h-[45%] flex flex-col rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
+                    <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
+                         <div className="flex items-center gap-2.5">
+                            <LayoutGrid className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
+                            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Data Points</h2>
                         </div>
                     </div>
 
-                    {/* Activity Timeline Card */}
-                    <div className="flex-1 flex flex-col bg-white dark:bg-zinc-900 rounded-[24px] border border-border shadow-none overflow-hidden min-h-0">
-                        <div className="p-6 pb-4 border-b border-border/40">
-                             <div className="flex items-center justify-between">
-                                 <h2 className="text-base font-bold">Activity Timeline</h2>
-                                 <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2">
-                                    View Logs
-                                 </Button>
-                            </div>
-                        </div>
-                        
-                        <div className="flex-1 flex flex-row min-h-0 overflow-hidden">
-                            {/* Left Pane: Timeline List */}
-                            <div className="flex-1 overflow-y-auto p-6 pt-4">
-                                <div className="relative border-l-2 border-muted/50 pl-6 ml-3 space-y-8">
-                                    {data.activities?.map((activity, i) => (
-                                        <div key={i} className="relative group">
-                                            <div className={`absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full border-[3px] border-background ring-1 ring-border/20 ${
-                                                activity.status === 'COMPLETED' ? 'bg-emerald-500' :
-                                                activity.status === 'RUNNING' ? 'bg-blue-500 animate-pulse' :
-                                                'bg-muted'
-                                            }`} />
-                                            
-                                            <div className="flex flex-col gap-1.5">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-xs font-bold text-foreground group-hover:text-blue-600 transition-colors">
-                                                        {activity.name || "System Event"}
-                                                    </span>
-                                                    <span className="text-[10px] font-mono text-muted-foreground">
-                                                        {new Date(activity.started_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                                    </span>
-                                                </div>
-                                                
-                                                <div className="p-3 rounded-lg bg-muted/20 border border-border/40 text-xs text-foreground/80 leading-relaxed hover:bg-muted/30 transition-colors cursor-pointer">
-                                                    {activity.type === 'human_action' ? (
-                                                        <div className="flex items-start gap-2.5">
-                                                            <Avatar className="w-5 h-5 mt-0.5 rounded-md">
-                                                                <AvatarFallback className="text-[8px] rounded-md bg-background border">H</AvatarFallback>
-                                                            </Avatar>
-                                                            <div>
-                                                                <p>Human Action Required: Check updated driver parameters.</p>
-                                                                {activity.status === 'RUNNING' && (
-                                                                    <Button size="sm" className="mt-2 h-6 text-[10px] bg-foreground text-background hover:bg-foreground/80 px-3">
-                                                                        Respond
-                                                                    </Button>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    ) : (
-                                                        <p>System processed updated variables.</p>
-                                                    )}
-                                                </div>
-                                            </div>
+                    <div className="flex-1 overflow-y-auto p-5 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
+                        <div className="space-y-6">
+                             {/* REMOVED DESCRIPTION FROM HERE */}
+
+                             { data.input_data?._info_fields?.length > 0 ? (
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                                    {data.input_data._info_fields.map((field: any, i: number) => (
+                                        <div key={i} className="flex flex-col gap-1 p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                                            <span className="text-[9px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider truncate w-full" title={field.label}>{field.label}</span>
+                                            <span className="text-xs text-zinc-900 dark:text-zinc-100 font-medium truncate w-full" title={field.value}>{field.value}</span>
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="text-xs text-zinc-400 italic">No data fields available.</div>
+                            )}
+                        </div>
+                    </div>
+                </div>
 
-                             {/* Right Pane: User Comments */}
-                             <div className="w-[300px] border-l border-border/40 bg-muted/5 flex flex-col">
-                                <div className="p-4 border-b border-border/40">
-                                    <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
-                                        <div className="w-1 h-1 rounded-full bg-indigo-500" />
-                                        User Comments
-                                    </h3>
-                                </div>
-                                
-                                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                                     <div className="text-[11px] p-3 rounded-lg bg-white border border-border/40 shadow-sm">
-                                        <div className="flex items-center gap-2 mb-1.5 opacity-80">
-                                            <span className="font-semibold text-foreground">Sarah Admin</span>
-                                            <span className="text-[9px] text-muted-foreground">10:42 AM</span>
-                                        </div>
-                                        <p className="text-muted-foreground/90 leading-relaxed">Checking compliance docs now. Will update status shortly.</p>
-                                     </div>
-                                      <div className="text-[11px] p-3 rounded-lg bg-white border border-border/40 shadow-sm">
-                                        <div className="flex items-center gap-2 mb-1.5 opacity-80">
-                                            <span className="font-semibold text-foreground">Mike Ops</span>
-                                            <span className="text-[9px] text-muted-foreground">10:45 AM</span>
-                                        </div>
-                                        <p className="text-muted-foreground/90 leading-relaxed">Noted, thanks Sarah.</p>
-                                     </div>
-                                </div>
+                {/* AI Assistant - Monochrome */}
+                <div className="flex-1 flex flex-col min-h-[350px] rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
+                     <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
+                         <div className="flex items-center gap-2.5">
+                            <Sparkles className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
+                            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">AI Copilot</h2>
+                        </div>
+                    </div>
 
-                                <div className="p-3 border-t border-border/40 bg-white/50">
-                                    <div className="relative">
-                                        <input 
-                                            type="text" 
-                                            placeholder="Add a note..." 
-                                            className="w-full bg-white dark:bg-zinc-900 border border-border/50 rounded-lg pl-3 pr-8 py-2 text-[11px] focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all shadow-sm"
-                                        />
-                                        <Button size="icon" variant="ghost" className="absolute right-1 top-0.5 h-7 w-7 text-indigo-500 rounded-md">
-                                            <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
-                                        </Button>
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                        <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
+                             {/* AI Message */}
+                            <div className="flex gap-3">
+                                 <div className="w-7 h-7 rounded-lg bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                                     <Sparkles className="w-3.5 h-3.5 text-white dark:text-black" />
+                                 </div>
+                                 <div className="space-y-1 max-w-[90%]">
+                                    <div className="text-[11px] leading-relaxed text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-2xl rounded-tl-none border border-zinc-100 dark:border-zinc-800">
+                                        I've analyzed the driver data. <strong>Phi Tran</strong> has flagged <span className="font-bold">3 critical risk factors</span>.
                                     </div>
-                                </div>
+                                 </div>
                             </div>
-                        </div>
-                    </div>
-               </div>
 
-               {/* RIGHT COLUMN: AI CHAT (Full Height) */}
-               <div className="col-span-1 flex flex-col bg-white dark:bg-zinc-900 rounded-[24px] border border-border shadow-none overflow-hidden h-full">
-                    <div className="p-4 border-b border-border/40 flex items-center justify-between bg-white dark:bg-zinc-900/50">
-                        <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-md bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                               {/* Sparkles Icon Replacement */}
-                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                             {/* User Message */}
+                             <div className="flex gap-3 flex-row-reverse">
+                                 <Avatar className="w-7 h-7 rounded-lg mt-0.5 border border-zinc-200 dark:border-zinc-700">
+                                     <AvatarFallback className="text-[9px] bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200">ME</AvatarFallback>
+                                 </Avatar>
+                                 <div className="space-y-1 max-w-[90%] text-right">
+                                    <div className="p-3 bg-zinc-900 dark:bg-zinc-100 rounded-2xl rounded-tr-none text-[11px] leading-relaxed text-white dark:text-black text-left shadow-sm">
+                                        Highlight the specific risk factors please.
+                                    </div>
+                                 </div>
                             </div>
-                            <h2 className="text-sm font-semibold">AI Assistant</h2>
                         </div>
-                    </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        {/* AI Message */}
-                        <div className="flex gap-3 max-w-[90%]">
-                            <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white text-[10px] shrink-0 mt-0.5">
-                                AI
-                            </div>
-                            <div className="space-y-1">
-                                <div className="p-3 rounded-2xl rounded-tl-none bg-muted/20 border border-border/50 text-xs shadow-sm">
-                                    <p className="leading-relaxed">
-                                        I've analyzed the driver data. <strong>Phi Tran</strong> has flagged 3 critical risk factors in the last 24 hours. Recommended action: Verify documents immediately.
-                                    </p>
-                                </div>
-                                <span className="text-[10px] text-muted-foreground pl-1">Just now</span>
-                            </div>
-                        </div>
-                        
-                        {/* User Message Mock */}
-                         <div className="flex gap-3 max-w-[90%] ml-auto flex-row-reverse">
-                            <Avatar className="w-6 h-6 mt-0.5">
-                                <AvatarFallback className="text-[9px]">JD</AvatarFallback>
-                            </Avatar>
-                            <div className="space-y-1 text-right">
-                                <div className="p-3 rounded-2xl rounded-tr-none bg-blue-500 text-white text-xs shadow-sm text-left">
-                                    <p className="leading-relaxed">
-                                        Can you highlight the specific risk factors?
-                                    </p>
-                                </div>
-                                <span className="text-[10px] text-muted-foreground pr-1">2m ago</span>
+                        <div className="p-4 pt-2 bg-gradient-to-t from-white via-white to-transparent dark:from-zinc-950 dark:via-zinc-950 dark:to-transparent">
+                             <div className="relative flex items-center">
+                                <input 
+                                    className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-4 pr-10 py-3 text-xs placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-900/10 dark:focus:ring-white/10 transition-all shadow-sm"
+                                    placeholder="Ask for insights..."
+                                />
+                                <Button size="icon" className="absolute right-1.5 h-7 w-7 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white shadow-none">
+                                    <ArrowLeft className="w-3.5 h-3.5 rotate-90" />
+                                </Button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div className="p-4 border-t border-border/40 bg-white dark:bg-zinc-900/50">
-                        <div className="relative">
-                            <input 
-                                type="text" 
-                                placeholder="Ask about this flow..." 
-                                className="w-full bg-muted/30 border border-border/50 rounded-xl pl-4 pr-10 py-3 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all shadow-sm"
-                            />
-                            <Button size="icon" variant="ghost" className="absolute right-1.5 top-1.5 h-8 w-8 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg">
-                                <ArrowLeft className="w-4 h-4 rotate-180" />
-                            </Button>
-                        </div>
-                    </div>
-               </div>
+              </div>
           </div>
+
       </div>
     </div>
   );
