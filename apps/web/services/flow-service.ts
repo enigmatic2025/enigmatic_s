@@ -1,5 +1,6 @@
-// Direct API path, handled by Next.js Rewrites to Backend
-const API_BASE_URL = '/api';
+import { apiClient } from "@/lib/api-client";
+
+// API_BASE_URL handled by apiClient
 
 export interface FlowData {
     org_id: string;
@@ -12,7 +13,7 @@ export interface FlowData {
 
 export const flowService = {
     async getFlow(flowId: string) {
-        const res = await fetch(`${API_BASE_URL}/flows/${flowId}`);
+        const res = await apiClient.get(`/flows/${flowId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch flow");
         }
@@ -21,18 +22,15 @@ export const flowService = {
 
     async saveFlow(flowId: string | undefined, flowData: FlowData) {
         const url = flowId
-            ? `${API_BASE_URL}/flows/${flowId}`
-            : `${API_BASE_URL}/flows`;
+            ? `/flows/${flowId}`
+            : `/flows`;
 
-        const method = flowId ? 'PUT' : 'POST';
-
-        const response = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(flowData),
-        });
+        let response;
+        if (flowId) {
+            response = await apiClient.put(url, flowData);
+        } else {
+            response = await apiClient.post(url, flowData);
+        }
 
         if (!response.ok) {
             throw new Error('Failed to save flow');
@@ -42,9 +40,7 @@ export const flowService = {
     },
 
     async deleteFlow(flowId: string) {
-        const response = await fetch(`${API_BASE_URL}/flows/${flowId}`, {
-            method: 'DELETE',
-        });
+        const response = await apiClient.delete(`/flows/${flowId}`);
 
         if (!response.ok) {
             throw new Error('Failed to delete flow');
@@ -54,13 +50,7 @@ export const flowService = {
     },
 
     async renameFlow(flowId: string, name: string) {
-        const response = await fetch(`${API_BASE_URL}/flows/${flowId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name }),
-        });
+        const response = await apiClient.put(`/flows/${flowId}`, { name });
 
         if (!response.ok) {
             throw new Error('Failed to rename flow');
@@ -84,13 +74,7 @@ export const flowService = {
             }
         };
 
-        const response = await fetch(`${API_BASE_URL}/test/node`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
+        const response = await apiClient.post(`/test/node`, payload);
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -101,16 +85,10 @@ export const flowService = {
     },
 
     async testFlow(flowDefinition: any, flowId?: string, inputPayload?: any) {
-        const response = await fetch(`${API_BASE_URL}/test/flow`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                flow_definition: flowDefinition,
-                flow_id: flowId,
-                input: inputPayload
-            }),
+        const response = await apiClient.post(`/test/flow`, {
+            flow_definition: flowDefinition,
+            flow_id: flowId,
+            input: inputPayload
         });
 
         if (!response.ok) {
@@ -122,7 +100,7 @@ export const flowService = {
     },
 
     async getFlowResult(workflowId: string, runId: string) {
-        const response = await fetch(`${API_BASE_URL}/test/flow/${runId}?workflow_id=${workflowId}`);
+        const response = await apiClient.get(`/test/flow/${runId}?workflow_id=${workflowId}`);
         if (!response.ok) {
             // verification: avoid throwing if it's just not found yet (race condition), but 404 usually means not found.
             // Let's just return null or throw.
@@ -132,13 +110,7 @@ export const flowService = {
     },
 
     async cancelFlow(workflowId: string, runId: string) {
-        const response = await fetch(`${API_BASE_URL}/test/flow/cancel`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ workflow_id: workflowId, run_id: runId }),
-        });
+        const response = await apiClient.post(`/test/flow/cancel`, { workflow_id: workflowId, run_id: runId });
 
         if (!response.ok) {
             throw new Error('Failed to cancel flow');
@@ -147,9 +119,7 @@ export const flowService = {
     },
 
     async publishFlow(flowId: string) {
-        const response = await fetch(`${API_BASE_URL}/flows/${flowId}/publish`, {
-            method: 'POST',
-        });
+        const response = await apiClient.post(`/flows/${flowId}/publish`, {});
 
         if (!response.ok) {
             throw new Error('Failed to publish flow');
@@ -158,7 +128,9 @@ export const flowService = {
     },
 
     async getActionFlow(id: string) {
-        const response = await fetch(`${API_BASE_URL}/action-flows/${id}`, { cache: 'no-store' });
+        // Use generic handler for get to bypass cache logic if needed, or pass options?
+        // apiClient.fetch handles options.
+        const response = await apiClient.fetch(`/action-flows/${id}`, { cache: 'no-store' });
         if (!response.ok) {
             throw new Error('Failed to fetch action flow details');
         }

@@ -110,3 +110,25 @@ func (h *OrganizationHandler) CreateTeam(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result[0])
 }
+
+// GetOrgBySlug looks up org ID by slug
+func (h *OrganizationHandler) GetOrgBySlug(w http.ResponseWriter, r *http.Request) {
+	slug := r.URL.Query().Get("slug")
+	if slug == "" {
+		http.Error(w, "Slug required", http.StatusBadRequest)
+		return
+	}
+
+	client := database.GetClient()
+	var org []struct {
+		ID string `json:"id"`
+	}
+	err := client.DB.From("organizations").Select("id").Eq("slug", slug).Execute(&org)
+	if err != nil || len(org) == 0 {
+		http.Error(w, "Org not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(org[0])
+}

@@ -1,3 +1,4 @@
+import { apiClient } from "@/lib/api-client";
 
 export interface OrganizationMember {
     user_id: string;
@@ -20,23 +21,25 @@ export interface Team {
 
 export const organizationService = {
     getMembers: async (orgId: string): Promise<OrganizationMember[]> => {
-        const res = await fetch(`/api/orgs/${orgId}/members`);
+        // Note: apiClient automatically handles /api prefix if we use the helper logic, 
+        // but our client logic above handles endpoints starting with /api correctly too.
+        // Let's pass the relative path without /api to rely on apiClient's base url logic
+        // OR pass full path if that's what apiClient expects. 
+        // Our apiClient implementation checks: "endpoint.startsWith('/api') ? endpoint : url"
+        // So passing full path works.
+        const res = await apiClient.get(`/api/orgs/${orgId}/members`);
         if (!res.ok) throw new Error("Failed to fetch members");
         return res.json();
     },
 
     getTeams: async (orgId: string): Promise<Team[]> => {
-        const res = await fetch(`/api/orgs/${orgId}/teams`);
+        const res = await apiClient.get(`/api/orgs/${orgId}/teams`);
         if (!res.ok) throw new Error("Failed to fetch teams");
         return res.json();
     },
 
     createTeam: async (orgId: string, data: { name: string; description: string }): Promise<Team> => {
-        const res = await fetch(`/api/orgs/${orgId}/teams`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
+        const res = await apiClient.post(`/api/orgs/${orgId}/teams`, data);
         if (!res.ok) throw new Error("Failed to create team");
         return res.json();
     },

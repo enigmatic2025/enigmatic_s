@@ -1,6 +1,8 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
+import { apiClient } from "@/lib/api-client";
 import { 
   Users, 
   Shield, 
@@ -90,11 +92,9 @@ export default function OrganizationPage() {
              // `layout.tsx` likely fetches it.
              // Can I use `useOutletContext`? 
              
-             // For now, I will hardcode fetching from a new endpoint I will CREATE in the backend handler: GetOrgBySlug.
-             // For now, I will hardcode fetching from a new endpoint explicitly.
              // NOTE: If this fails with syntax error, it's likely the backend is returning the "Hello World" text 200 OK 
              // because the new route isn't registered yet (restart backend!).
-             const orgRes = await fetch(`/api/orgs/lookup?slug=${slug}`);
+             const orgRes = await apiClient.get(`/api/orgs/lookup?slug=${slug}`);
              
              if(orgRes.ok) {
                  const contentType = orgRes.headers.get("content-type");
