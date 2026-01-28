@@ -3,10 +3,11 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { flowService } from "@/services/flow-service";
-import { ArrowLeft, MoreHorizontal, Check, Clock, MousePointer2, AlertCircle, Info, Send, User, MessageSquare, LayoutGrid, Sparkles, Activity } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Check, Clock, MousePointer2, AlertCircle, Info, Send, User, MessageSquare, LayoutGrid, Sparkles, Activity, X, FileText, Download, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import DashboardLoading from "../../loading";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,52 @@ export default function ActionFlowDetailPage() {
   const router = useRouter();
   const [data, setData] = useState<ActionFlowDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNatalieOpen, setIsNatalieOpen] = useState(false);
+  
+  // File Upload State
+  const [files, setFiles] = useState([
+    { name: "Driver_Contract.pdf", size: "2.4 MB", type: "PDF" },
+    { name: "License_Front.jpg", size: "1.8 MB", type: "JPG" },
+    { name: "License_Back.jpg", size: "1.9 MB", type: "JPG" }
+  ]);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+       const newFiles = Array.from(e.dataTransfer.files).map(file => ({
+           name: file.name,
+           size: (file.size / (1024 * 1024)).toFixed(1) + " MB",
+           type: file.name.split('.').pop()?.toUpperCase() || "FILE"
+       }));
+       setFiles(prev => [...newFiles, ...prev]);
+       toast.success("Files uploaded successfully");
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files.length > 0) {
+        const newFiles = Array.from(e.target.files).map(file => ({
+            name: file.name,
+            size: (file.size / (1024 * 1024)).toFixed(1) + " MB",
+            type: file.name.split('.').pop()?.toUpperCase() || "FILE"
+        }));
+        setFiles(prev => [...newFiles, ...prev]);
+        toast.success("Files uploaded successfully");
+     }
+  };
 
   useEffect(() => {
     if (flowId) {
@@ -106,7 +153,7 @@ export default function ActionFlowDetailPage() {
   const isFailed = data.status === "FAILED";
 
   return (
-    <div className="flex flex-col h-full w-full bg-white dark:bg-black p-6 gap-5 overflow-hidden font-sans transition-colors duration-300">
+    <div className="flex flex-col h-full w-full bg-white dark:bg-black p-6 gap-5 overflow-hidden font-sans transition-colors duration-300 relative">
       
       {/* HEADER SECTION */}
       <div className="flex items-start justify-between shrink-0">
@@ -114,10 +161,10 @@ export default function ActionFlowDetailPage() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-auto p-0 text-muted-foreground hover:text-foreground hover:bg-transparent transition-colors group"
+                className="h-auto p-0 text-muted-foreground hover:text-foreground hover:bg-transparent transition-colors group text-xs"
                 onClick={() => router.back()}
               >
-                <ArrowLeft className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" />
+                <ArrowLeft className="h-3.5 w-3.5 mr-1.5 transition-transform group-hover:-translate-x-1" />
                 <span>Back to Flows</span>
               </Button>
               
@@ -126,12 +173,11 @@ export default function ActionFlowDetailPage() {
                     {data.title || data.flow_name || "Untitled Action Flow"}
                  </h1>
                  <div className="flex items-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
-                    <span className="font-mono text-[10px] tracking-wider uppercase opacity-70">{data.id}</span>
+                    <span className="font-mono text-xs tracking-wider uppercase opacity-70">{data.id}</span>
                     <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-                    <span className="font-medium">{new Date(data.started_at).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+                    <span className="font-medium text-sm">{new Date(data.started_at).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</span>
                  </div>
                  
-                 {/* MOVED DESCRIPTION HERE */}
                  {data.input_data?.description && (
                     <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed pt-1 max-w-2xl">
                         {data.input_data.description}
@@ -141,41 +187,49 @@ export default function ActionFlowDetailPage() {
           </div>
 
           <div className="flex items-center gap-4">
-               {/* STATUS BADGE - MONOCHROME */}
+               {/* STATUS BADGE - BORDER ONLY, NO SHADOW */}
                <div className={cn(
-                   "pl-1.5 pr-3 py-1 rounded-full border flex items-center gap-2 shadow-sm transition-all",
-                   // Pure Black/White/Gray
+                   "pl-2 pr-4 py-1.5 rounded-full border flex items-center gap-2.5 transition-all",
                    'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100'
                )}>
                     <div className={cn(
-                        "w-2 h-2 rounded-full",
+                        "w-2.5 h-2.5 rounded-full",
                          isSuccess ? 'bg-zinc-900 dark:bg-zinc-100' :
                          isFailed ? 'bg-zinc-500' :
                         'bg-zinc-900 dark:bg-zinc-100 animate-pulse'
                     )} />
-                    <span className="text-[11px] font-semibold tracking-wide uppercase">
+                    <span className="text-xs font-semibold tracking-wide uppercase">
                         {data.status === "RUNNING" ? "Running" : data.status}
                     </span>
               </div>
 
-               <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 shadow-sm transition-all">
+               <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-none">
                   <MoreHorizontal className="h-4 w-4 text-zinc-900 dark:text-zinc-400" />
                </Button>
-               <Button className="rounded-full px-6 h-10 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-black dark:hover:bg-zinc-200 font-medium shadow-sm transition-all hover:scale-[1.02]">
-                  Primary Action
+               
+               {/* NATALIE BUTTON - NO SHADOW */}
+               <Button 
+                    onClick={() => setIsNatalieOpen(!isNatalieOpen)}
+                    className={cn(
+                        "rounded-full px-8 h-11 font-medium transition-all flex items-center gap-2 text-sm shadow-none",
+                        isNatalieOpen 
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                            : "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-black dark:hover:bg-zinc-200"
+                    )}
+                >
+                  Natalie
                </Button>
           </div>
       </div>
 
-      {/* BODY SECTION */}
-      <div className="flex-1 flex flex-col min-h-0 gap-5">
+      {/* BODY SECTION (Relative for Natalie Drawer) */}
+      <div className="flex-1 flex flex-col min-h-0 gap-5 relative">
 
-          {/* 1. PROGRESS BAR (COLORFUL) */}
+          {/* 1. PROGRESS BAR - BORDER ONLY */}
           <div className="w-full h-16 shrink-0 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-1.5 flex flex-col justify-center">
              <div className="flex w-full h-full rounded-lg overflow-hidden gap-1">
                 {activitySegments.length > 0 ? (
                     activitySegments.map((segment: any, idx: number) => {
-                         // KEEPING COLORS
                          const activeBg = segment.isPending 
                             ? 'bg-zinc-200 dark:bg-zinc-800' 
                             : (segment.isDone ? 'bg-emerald-500' : 'bg-blue-500'); 
@@ -218,11 +272,116 @@ export default function ActionFlowDetailPage() {
              </div>
           </div>
 
-          {/* 2. THREE-COLUMN LAYOUT - Compact Gap */}
+          {/* 2. THREE-COLUMN LAYOUT REORDERED */}
           <div className="flex-1 grid grid-cols-12 gap-5 min-h-0">
               
-              {/* COLUMN 1: Activity Log (42%) */}
-              <div className="col-span-12 lg:col-span-5 flex flex-col h-full rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
+              {/* COLUMN 1: DATA POINTS (LEFT) - WITH TABS */}
+              <div className="col-span-12 lg:col-span-4 flex flex-col h-full rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-hidden">
+                    <Tabs defaultValue="data" className="flex flex-col h-full">
+                        <div className="px-5 pt-5 pb-2 border-b border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/20">
+                             <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2.5">
+                                    <LayoutGrid className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
+                                    <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Context</h2>
+                                </div>
+                             </div>
+                             <TabsList className="w-full bg-zinc-100 dark:bg-zinc-800/50 p-1 rounded-lg grid grid-cols-2">
+                                <TabsTrigger 
+                                    value="data" 
+                                    className="text-xs rounded-md py-1.5 transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-none data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-700 font-medium text-zinc-500"
+                                >
+                                    Data Points
+                                </TabsTrigger>
+                                <TabsTrigger 
+                                    value="files" 
+                                    className="text-xs rounded-md py-1.5 transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-950 data-[state=active]:text-zinc-900 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-none data-[state=active]:border data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-700 font-medium text-zinc-500"
+                                >
+                                    Files
+                                </TabsTrigger>
+                             </TabsList>
+                        </div>
+
+                        <div className="flex-1 flex flex-col overflow-hidden">
+                             <TabsContent value="data" className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 m-0 focus-visible:ring-0 focus-visible:outline-none">
+                                <div className="space-y-6">
+                                     { data.input_data?._info_fields?.length > 0 ? (
+                                        <div className="grid grid-cols-2 gap-x-6 gap-y-6">
+                                            {data.input_data._info_fields.map((field: any, i: number) => (
+                                                <div key={i} className="flex flex-col gap-1.5 p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                                                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider truncate w-full" title={field.label}>{field.label}</span>
+                                                    <span className="text-sm text-zinc-900 dark:text-zinc-100 font-medium truncate w-full leading-none" title={field.value}>{field.value}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-zinc-400 italic">No data fields available.</div>
+                                    )}
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="files" className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 m-0 focus-visible:ring-0 focus-visible:outline-none">
+                                <div className="space-y-4">
+                                    {/* DROP ZONE */}
+                                    <div 
+                                        className={cn(
+                                            "border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer",
+                                            isDragging 
+                                                ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10" 
+                                                : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                                        )}
+                                        onDragOver={handleDragOver}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={handleDrop}
+                                        onClick={() => document.getElementById('file-upload')?.click()}
+                                    >
+                                        <input 
+                                            id="file-upload" 
+                                            type="file" 
+                                            className="hidden" 
+                                            multiple 
+                                            onChange={handleFileInput}
+                                        />
+                                        <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                                            <UploadCloud className="w-5 h-5 text-zinc-500" />
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Click or drag to upload</p>
+                                            <p className="text-[10px] text-zinc-400">PDF, PNG, JPG up to 10MB</p>
+                                        </div>
+                                    </div>
+
+                                    {/* FILE LIST */}
+                                    <div className="space-y-3">
+                                        {files.map((file, idx) => (
+                                            <div key={idx} className="flex items-center justify-between p-3 rounded-xl border border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors group">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={cn(
+                                                        "w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold",
+                                                        file.type === 'PDF' ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400" :
+                                                        file.type === 'JPG' || file.type === 'PNG' ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
+                                                        "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                                                    )}>
+                                                        {file.type === 'PDF' || file.type === 'JPG' || file.type === 'PNG' ? <FileText className="w-5 h-5" /> : file.type.slice(0,3)}
+                                                    </div>
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[150px]" title={file.name}>{file.name}</span>
+                                                        <span className="text-[10px] text-zinc-400">{file.size} • {file.type}</span>
+                                                    </div>
+                                                </div>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
+                                                    <Download className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </div>
+                    </Tabs>
+              </div>
+
+              {/* COLUMN 2: ACTIVITY LOG (CENTER) - NO SHADOW */}
+              <div className="col-span-12 lg:col-span-4 flex flex-col h-full rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-hidden">
                   <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
                         <div className="flex items-center gap-2.5">
                             <Activity className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
@@ -236,7 +395,6 @@ export default function ActionFlowDetailPage() {
                       <div className="relative border-l border-zinc-200 dark:border-zinc-800 pl-6 ml-2 space-y-12 py-2">
                             {data.activities?.map((activity, i) => (
                                 <div key={i} className="relative group">
-                                    {/* Timeline Node - Monochrome */}
                                     <div className={cn(
                                         "absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-zinc-950 z-10 transition-all duration-300",
                                         activity.status === 'COMPLETED' ? 'bg-zinc-900 dark:bg-zinc-100' :
@@ -247,18 +405,17 @@ export default function ActionFlowDetailPage() {
                                     <div className="flex flex-col gap-3">
                                         <div className="flex items-baseline justify-between">
                                             <span className={cn(
-                                                "text-xs font-semibold transition-colors truncate max-w-[200px] text-zinc-900 dark:text-zinc-200"
+                                                "text-sm font-semibold transition-colors truncate max-w-[200px] text-zinc-900 dark:text-zinc-200"
                                             )}>
                                                 {activity.name}
                                             </span>
-                                            <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
+                                            <span className="text-xs font-mono text-zinc-400 dark:text-zinc-500">
                                                 {new Date(activity.started_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                                             </span>
                                         </div>
                                         
-                                        {/* Activity Content - Pure Monochrome */}
                                         <div className={cn(
-                                            "p-4 rounded-xl text-xs leading-relaxed border transition-all duration-200 bg-zinc-50 dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800"
+                                            "p-4 rounded-xl text-sm leading-relaxed border transition-all duration-200 bg-zinc-50 dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800"
                                         )}>
                                            {activity.type === 'human_action' ? (
                                                 <div className="flex flex-col gap-3">
@@ -268,10 +425,10 @@ export default function ActionFlowDetailPage() {
                                                     </div>
                                                     <p className="text-zinc-700 dark:text-zinc-300 font-medium">Review compliance docs for <strong>{data.input_data?.driver_name}</strong>.</p>
                                                     <div className="flex gap-2 pt-1">
-                                                        <Button size="sm" className="h-7 text-[10px] bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200 shadow-sm px-4 rounded-lg border-0">
+                                                        <Button size="sm" className="h-8 text-xs bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200 shadow-sm px-4 rounded-lg border-0">
                                                             Approve
                                                         </Button>
-                                                        <Button size="sm" variant="outline" className="h-7 text-[10px] bg-white dark:bg-transparent border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 shadow-sm px-4 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                                        <Button size="sm" variant="outline" className="h-8 text-xs bg-white dark:bg-transparent border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 shadow-sm px-4 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800">
                                                             Reject
                                                         </Button>
                                                     </div>
@@ -290,8 +447,8 @@ export default function ActionFlowDetailPage() {
               </div>
 
 
-              {/* COLUMN 2: Discussion (25%) */}
-              <div className="col-span-12 lg:col-span-3 flex flex-col h-full rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
+              {/* COLUMN 3: Discussion (RIGHT) - NO SHADOW */}
+              <div className="col-span-12 lg:col-span-4 flex flex-col h-full rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-hidden">
                   <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
                         <div className="flex items-center gap-2.5">
                             <MessageSquare className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
@@ -302,33 +459,31 @@ export default function ActionFlowDetailPage() {
 
                   <div className="flex-1 flex flex-col overflow-hidden">
                       <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
-                            {/* Comment 1 */}
                             <div className="flex gap-3">
-                                <Avatar className="w-7 h-7 border border-zinc-100 dark:border-zinc-800 mt-1">
-                                    <AvatarFallback className="text-[9px] bg-zinc-900 text-white dark:bg-white dark:text-black">S</AvatarFallback>
+                                <Avatar className="w-8 h-8 border border-zinc-100 dark:border-zinc-800 mt-0.5">
+                                    <AvatarFallback className="text-[10px] bg-zinc-900 text-white dark:bg-white dark:text-black">S</AvatarFallback>
                                 </Avatar>
-                                <div className="flex-1 space-y-1.5">
+                                <div className="flex-1 space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100">Sarah</span>
-                                        <span className="text-[9px] text-zinc-400 dark:text-zinc-500">10:42 AM</span>
+                                        <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Sarah</span>
+                                        <span className="text-[10px] text-zinc-400 dark:text-zinc-500">10:42 AM</span>
                                     </div>
-                                    <p className="text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 p-2 rounded-lg rounded-tl-none">
+                                    <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg rounded-tl-none">
                                         Checking compliance docs now.
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Comment 2 */}
                             <div className="flex gap-3">
-                                <Avatar className="w-7 h-7 border border-zinc-100 dark:border-zinc-800 mt-1">
-                                    <AvatarFallback className="text-[9px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">M</AvatarFallback>
+                                <Avatar className="w-8 h-8 border border-zinc-100 dark:border-zinc-800 mt-0.5">
+                                    <AvatarFallback className="text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">M</AvatarFallback>
                                 </Avatar>
-                                <div className="flex-1 space-y-1.5">
+                                <div className="flex-1 space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100">Mike</span>
-                                        <span className="text-[9px] text-zinc-400 dark:text-zinc-500">10:45 AM</span>
+                                        <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Mike</span>
+                                        <span className="text-[10px] text-zinc-400 dark:text-zinc-500">10:45 AM</span>
                                     </div>
-                                    <p className="text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 p-2 rounded-lg rounded-tl-none">
+                                    <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg rounded-tl-none">
                                         Noted, thanks Sarah.
                                     </p>
                                 </div>
@@ -338,103 +493,77 @@ export default function ActionFlowDetailPage() {
                        <div className="p-4 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/20">
                             <div className="relative">
                                 <textarea 
-                                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-3 pr-9 py-2.5 text-xs placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-900/10 dark:focus:ring-white/10 transition-all resize-none min-h-[42px]"
+                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-3 pr-9 py-2.5 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-900/10 dark:focus:ring-white/10 transition-all resize-none min-h-[42px]"
                                     placeholder="Add a note..."
                                     rows={1}
                                 />
                                 <Button size="icon" className="absolute right-1 top-1 h-8 w-8 rounded-lg bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-none">
-                                    <Send className="w-3.5 h-3.5" />
+                                    <Send className="w-4 h-4" />
                                 </Button>
                             </div>
                        </div>
                   </div>
               </div>
 
+          </div>
 
-              {/* COLUMN 3: Intelligence (33%) */}
-              <div className="col-span-12 lg:col-span-4 flex flex-col h-full gap-5">
-                
-                {/* DATA POINTS */}
-                <div className="flex-1 max-h-[45%] flex flex-col rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
-                    <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
-                         <div className="flex items-center gap-2.5">
-                            <LayoutGrid className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
-                            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Data Points</h2>
+          {/* NATALIE LAYERS OVER EVERYTHING - SHADOW RESTORED FOR HOVER EFFECT */}
+          {isNatalieOpen && (
+                 <div className="absolute right-0 top-0 bottom-0 w-[550px] bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 flex flex-col overflow-hidden animate-in slide-in-from-right-5 fade-in duration-300">
+                     <div className="p-4 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
+                         <div className="flex items-center gap-2">
+                            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 pl-1">Natalie</h2>
                         </div>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto p-5 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
-                        <div className="space-y-6">
-                             {/* REMOVED DESCRIPTION FROM HERE */}
-
-                             { data.input_data?._info_fields?.length > 0 ? (
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
-                                    {data.input_data._info_fields.map((field: any, i: number) => (
-                                        <div key={i} className="flex flex-col gap-1 p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                                            <span className="text-[9px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider truncate w-full" title={field.label}>{field.label}</span>
-                                            <span className="text-xs text-zinc-900 dark:text-zinc-100 font-medium truncate w-full" title={field.value}>{field.value}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-xs text-zinc-400 italic">No data fields available.</div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* AI Assistant - Monochrome */}
-                <div className="flex-1 flex flex-col min-h-[350px] rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none overflow-hidden">
-                     <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
-                         <div className="flex items-center gap-2.5">
-                            <Sparkles className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
-                            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">AI Copilot</h2>
-                        </div>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                            onClick={() => setIsNatalieOpen(false)}
+                        >
+                            <X className="w-3 h-3 text-zinc-500" />
+                        </Button>
                     </div>
 
                     <div className="flex-1 flex flex-col overflow-hidden">
-                        <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
-                             {/* AI Message */}
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
                             <div className="flex gap-3">
-                                 <div className="w-7 h-7 rounded-lg bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                                     <Sparkles className="w-3.5 h-3.5 text-white dark:text-black" />
+                                 <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm text-xs font-bold text-white">
+                                     N
                                  </div>
-                                 <div className="space-y-1 max-w-[90%]">
-                                    <div className="text-[11px] leading-relaxed text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-2xl rounded-tl-none border border-zinc-100 dark:border-zinc-800">
-                                        I've analyzed the driver data. <strong>Phi Tran</strong> has flagged <span className="font-bold">3 critical risk factors</span>.
+                                 <div className="space-y-1">
+                                    <div className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 p-4 rounded-2xl rounded-tl-none border border-zinc-100 dark:border-zinc-800">
+                                        I've analyzed the driver data. <strong>Phi Tran</strong> has flagged <span className="font-bold text-indigo-600 dark:text-indigo-400">3 critical risk factors</span>.
                                     </div>
                                  </div>
                             </div>
-
-                             {/* User Message */}
-                             <div className="flex gap-3 flex-row-reverse">
-                                 <Avatar className="w-7 h-7 rounded-lg mt-0.5 border border-zinc-200 dark:border-zinc-700">
-                                     <AvatarFallback className="text-[9px] bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200">ME</AvatarFallback>
-                                 </Avatar>
-                                 <div className="space-y-1 max-w-[90%] text-right">
-                                    <div className="p-3 bg-zinc-900 dark:bg-zinc-100 rounded-2xl rounded-tr-none text-[11px] leading-relaxed text-white dark:text-black text-left shadow-sm">
-                                        Highlight the specific risk factors please.
+                            
+                            <div className="flex gap-3 flex-row-reverse">
+                                 <div className="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
+                                    <User className="w-4 h-4 text-zinc-500" />
+                                 </div>
+                                 <div className="space-y-1">
+                                    <div className="text-sm leading-relaxed text-zinc-100 bg-zinc-900 dark:bg-white dark:text-black p-4 rounded-2xl rounded-tr-none">
+                                        Highlight the specific risk factors.
                                     </div>
                                  </div>
                             </div>
                         </div>
 
-                        <div className="p-4 pt-2 bg-gradient-to-t from-white via-white to-transparent dark:from-zinc-950 dark:via-zinc-950 dark:to-transparent">
+                        <div className="p-4 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800">
                              <div className="relative flex items-center">
                                 <input 
-                                    className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-4 pr-10 py-3 text-xs placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-900/10 dark:focus:ring-white/10 transition-all shadow-sm"
-                                    placeholder="Ask for insights..."
+                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-4 pr-10 py-3 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/20 transition-all shadow-sm"
+                                    placeholder="Ask Natalie..."
+                                    autoFocus
                                 />
-                                <Button size="icon" className="absolute right-1.5 h-7 w-7 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white shadow-none">
-                                    <ArrowLeft className="w-3.5 h-3.5 rotate-90" />
+                                <Button size="icon" className="absolute right-1.5 w-8 h-8 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-none">
+                                    <ArrowLeft className="w-4 h-4 rotate-90" />
                                 </Button>
                             </div>
                         </div>
                     </div>
-                </div>
-
-              </div>
-          </div>
+                 </div>
+              )}
 
       </div>
     </div>
