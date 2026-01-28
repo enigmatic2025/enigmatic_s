@@ -91,8 +91,16 @@ export default function OrganizationPage() {
              // Can I use `useOutletContext`? 
              
              // For now, I will hardcode fetching from a new endpoint I will CREATE in the backend handler: GetOrgBySlug.
+             // For now, I will hardcode fetching from a new endpoint explicitly.
+             // NOTE: If this fails with syntax error, it's likely the backend is returning the "Hello World" text 200 OK 
+             // because the new route isn't registered yet (restart backend!).
              const orgRes = await fetch(`/api/orgs/lookup?slug=${slug}`);
+             
              if(orgRes.ok) {
+                 const contentType = orgRes.headers.get("content-type");
+                 if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Backend returned non-JSON response. Please restart your backend server to apply the new routes.");
+                 }
                  const orgData = await orgRes.json();
                  setOrgId(orgData.id);
                  
