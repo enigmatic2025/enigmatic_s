@@ -89,7 +89,7 @@ export default function ActionFlowDetailPage() {
                         variant="ghost" 
                         size="sm" 
                         className="h-8 -ml-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 px-2 text-sm font-medium"
-                        onClick={() => router.back()}
+                        onClick={() => router.push(`/nodal/${slug}/dashboard/action-flows`)}
                       >
                         <ArrowLeft className="h-4 w-4 mr-1" />
                         Back

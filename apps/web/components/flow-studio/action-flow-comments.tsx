@@ -39,13 +39,26 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
   const fetchComments = async () => {
     try {
       setLoading(true);
+      console.log("Fetching comments for:", actionFlowId);
       const res = await fetch(`/api/comments?action_flow_id=${actionFlowId}`);
-      if (!res.ok) throw new Error("Failed to fetch comments");
-      const data = await res.json();
-      setComments(data);
+      
+      if (!res.ok) {
+          const text = await res.text();
+          console.error("Fetch failed:", res.status, text);
+          throw new Error(`Failed to fetch comments: ${res.status} ${text}`);
+      }
+      
+      const text = await res.text();
+      try {
+          const data = JSON.parse(text);
+          setComments(data);
+      } catch (jsonErr) {
+          console.error("JSON Parse Error:", jsonErr, "Response text:", text);
+          throw new Error("Invalid JSON response");
+      }
     } catch (e) {
-      console.error(e);
-      // toast.error("Failed to load comments"); // Optional: don't annoy user if just empty
+      console.error("Comment Fetch Error:", e);
+      // toast.error("Failed to load comments"); 
     } finally {
       setLoading(false);
     }
