@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import {
   Sheet,
   SheetContent,
@@ -44,6 +45,8 @@ export function NodeConfigurationSheet({
   const [isExecuting, setIsExecuting] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
   const [prevNodeId, setPrevNodeId] = useState<string | null>(null);
+  const t = useTranslations("ConfigDrawer");
+  const tNodes = useTranslations("FlowNodes");
 
   const executionTrace = useFlowStore((state) => state.executionTrace);
 
@@ -84,7 +87,7 @@ export function NodeConfigurationSheet({
       const label = formData.label?.trim();
       
       if (!label) {
-        toast.error("Title cannot be empty");
+        toast.error(t("messages.titleEmpty"));
         return;
       }
 
@@ -95,7 +98,7 @@ export function NodeConfigurationSheet({
       );
 
       if (isDuplicate) {
-        toast.error("A node with this title already exists");
+        toast.error(t("messages.duplicateTitle"));
         return;
       }
 
@@ -123,14 +126,14 @@ export function NodeConfigurationSheet({
       if (validationErrors.length > 0) {
           const uniqueErrors = Array.from(new Set(validationErrors));
           // Just show the first few to avoid screen clutter
-          toast.error(`Validation Failed: ${uniqueErrors[0]}`); 
+          toast.error(`${t("messages.validationFailed")}: ${uniqueErrors[0]}`); 
           return;
       }
 
       // -----------------------------
 
       onUpdate(selectedNode.id, formData);
-      toast.success("Node configuration saved");
+      toast.success(t("messages.configSaved"));
       // For Sheet, we often auto-save or save without closing, but let's stick to closing on Explicit Save
       // Actually, user requested "non-blocking", implied maybe stay open? 
       // But standard Sheet "Save & Close" is also common. Let's keep existing behavior for now.
@@ -166,11 +169,11 @@ export function NodeConfigurationSheet({
       onUpdate(selectedNode.id, updatedData);
       
       setTestResult(result);
-      toast.success("Step executed successfully");
+      toast.success(t("messages.stepExecutedSuccess"));
     } catch (error) {
       console.error(error);
-      toast.error("Step execution failed");
-      setTestResult({ Error: "Failed to execute step" });
+      toast.error(t("messages.stepExecutedFailed"));
+      setTestResult({ Error: t("messages.failedToExecute") });
     } finally {
       setIsExecuting(false);
     }
@@ -197,18 +200,22 @@ export function NodeConfigurationSheet({
             const type = selectedNode.data?.subtype || selectedNode.type;
             const metadata = NODE_METADATA[type] || NODE_METADATA['action'];
             
+            // Get translated title and description
+            const translatedTitle = tNodes(`types.${type}`, { defaultValue: metadata.title });
+            const translatedDescription = tNodes(`descriptions.${type}`, { defaultValue: metadata.description });
+            
             return (
                 <SheetHeader className="p-6 pb-4 border-b flex-none bg-background z-10">
                   <SheetTitle className="flex items-center gap-2">
                     <span className="truncate max-w-[400px]">
-                        {metadata.title}
+                        {translatedTitle}
                     </span>
                     <span className="text-[10px] font-normal uppercase text-muted-foreground bg-muted px-2 py-0.5 rounded-full border">
                         {selectedNode.type}
                     </span>
                   </SheetTitle>
                   <SheetDescription>
-                    {metadata.description}
+                    {translatedDescription}
                   </SheetDescription>
                 </SheetHeader>
             );
@@ -225,19 +232,19 @@ export function NodeConfigurationSheet({
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Label <span className="text-red-500">*</span></Label>
+                                            <Label>{t("general.label")} <span className="text-red-500">*</span></Label>
                                             <Input
                                                 value={formData.label || ""}
                                                 onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                                                placeholder="Step Name"
+                                                placeholder={t("general.stepNamePlaceholder")}
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Description <span className="text-red-500">*</span></Label>
+                                            <Label>{t("general.description")} <span className="text-red-500">*</span></Label>
                                             <Textarea
                                                 value={formData.description || ""}
                                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                                placeholder="What does this step do?"
+                                                placeholder={t("general.descriptionPlaceholder")}
                                                 rows={2}
                                                 className="resize-none font-mono text-xs"
                                             />
@@ -250,7 +257,7 @@ export function NodeConfigurationSheet({
                     <div className="space-y-4">
                         {selectedNode.type !== 'api-trigger' && (
                             <h4 className="text-sm font-medium border-b pb-2 flex items-center justify-between">
-                                <span>Configuration</span>
+                                <span>{t("general.configuration")}</span>
                             </h4>
                         )}
                         {(() => {
@@ -280,7 +287,7 @@ export function NodeConfigurationSheet({
 
                             return (
                                 <div className="p-4 border border-dashed rounded-md text-center text-sm text-muted-foreground">
-                                    No additional configuration needed for this step.
+                                    {t("general.noConfigNeeded")}
                                 </div>
                             );
                         })()}
@@ -300,7 +307,7 @@ export function NodeConfigurationSheet({
         <SheetFooter className="p-4 border-t bg-background flex-none flex flex-row items-center justify-between sm:justify-between gap-2">
            {/* Left: Close without saving */}
            <Button variant="ghost" onClick={onClose} className="text-muted-foreground hover:text-foreground">
-             Cancel
+             {t("buttons.cancel")}
            </Button>
            
            {/* Right: Actions */}
@@ -318,7 +325,7 @@ export function NodeConfigurationSheet({
                                 title="Show previous output"
                             >
                                 <CheckCircle2 className="h-3 w-3 mr-1" />
-                                Output
+                                {t("buttons.output")}
                             </Button>
                         )}
                         
@@ -329,13 +336,13 @@ export function NodeConfigurationSheet({
                             className="gap-2 border bg-background hover:bg-muted"
                         >
                             {isExecuting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
-                            {isExecuting ? "Running Step..." : "Test Step"}
+                            {isExecuting ? t("buttons.runningStep") : t("buttons.testStep")}
                         </Button>
                     </div>
                 )}
 
                <Button onClick={handleSave} className="min-w-[100px]">
-                 Save
+                 {t("buttons.save")}
                </Button>
            </div>
         </SheetFooter>

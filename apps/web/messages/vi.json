@@ -269,5 +269,173 @@
       "tryAgain": "Thử lại",
       "success": "MFA đã được kích hoạt thành công!"
     }
+  },
+  "FlowDesigner": {
+    "toolbar": {
+      "untitled": "Chưa đặt tên",
+      "renamePlaceholder": "Nhấp đúp để đổi tên",
+      "lastSaved": "Đã lưu",
+      "unsavedChanges": "Có thay đổi chưa lưu"
+    },
+    "status": {
+      "draft": "Bản nháp",
+      "published": "Đã xuất bản",
+      "unpublishedChanges": "Có thay đổi chưa xuất bản"
+    },
+    "tooltips": {
+      "magicOrganize": "Sắp xếp tự động",
+      "clearTestResults": "Xóa kết quả kiểm tra",
+      "openConsole": "Mở bảng điều khiển",
+      "newLogsAvailable": "Có nhật ký mới",
+      "runFlow": "Chạy luồng",
+      "stopExecution": "Dừng thực thi",
+      "saveDraft": "Lưu bản nháp",
+      "publishToProduction": "Xuất bản lên môi trường thực",
+      "deleteFlow": "Xóa luồng"
+    },
+    "messages": {
+      "startingFlow": "Đang bắt đầu thực thi luồng...",
+      "workflowCompleted": "Luồng công việc đã hoàn thành",
+      "workflowCanceled": "Luồng công việc đã bị hủy",
+      "workflowCanceledByUser": "Luồng công việc đã bị người dùng hủy",
+      "workflowFailed": "Luồng công việc thất bại",
+      "stoppingWorkflow": "Đang dừng luồng công việc...",
+      "workflowStopped": "Luồng công việc đã dừng.",
+      "stopSignalSent": "Đã gửi tín hiệu dừng thành công",
+      "failedToStop": "Không thể dừng luồng công việc",
+      "failedToSendStop": "Không thể gửi tín hiệu dừng",
+      "stepExecuted": "Bước '{{stepName}}' đã thực thi",
+      "publishSuccess": "Luồng đã được xuất bản lên môi trường thực!",
+      "publishError": "Không thể xuất bản luồng"
+    }
+  },
+  "FlowNodes": {
+    "types": {
+      "http": "Yêu cầu HTTP",
+      "apiTrigger": "Webhook đến",
+      "api-trigger": "Webhook đến",
+      "manualTrigger": "Kích hoạt thủ công",
+      "manual-trigger": "Kích hoạt thủ công",
+      "condition": "Điều kiện",
+      "filter": "Lọc dữ liệu",
+      "loop": "Vòng lặp",
+      "variable": "Đặt biến",
+      "switch": "Chuyển đổi",
+      "map": "Ánh xạ dữ liệu",
+      "humanTask": "Tác vụ con người",
+      "human-task": "Tác vụ con người",
+      "action": "Hành động"
+    },
+    "descriptions": {
+      "http": "Gửi yêu cầu HTTP đến bất kỳ điểm cuối API hoặc dịch vụ nào.",
+      "apiTrigger": "Bắt đầu chạy luồng mới khi nhận được dữ liệu qua URL được tạo.",
+      "api-trigger": "Bắt đầu chạy luồng mới khi nhận được dữ liệu qua URL được tạo.",
+      "manualTrigger": "Khởi động luồng thủ công từ bảng điều khiển để kiểm tra.",
+      "manual-trigger": "Khởi động luồng thủ công từ bảng điều khiển để kiểm tra.",
+      "condition": "Phân nhánh luồng dựa trên các quy tắc logic (If/Else).",
+      "filter": "Dừng thực thi luồng nếu không đáp ứng điều kiện.",
+      "loop": "Lặp qua danh sách các mục và chạy các bước cho từng mục.",
+      "variable": "Tạo hoặc cập nhật biến để sử dụng trong các bước sau.",
+      "switch": "Định tuyến luồng vào các đường dẫn khác nhau dựa trên giá trị.",
+      "map": "Chuyển đổi cấu trúc dữ liệu từ định dạng này sang định dạng khác.",
+      "humanTask": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
+      "human-task": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
+      "action": "Thực hiện một hành động chung."
+    },
+    "labels": {
+      "startEvent": "SỰ KIỆN BẮT ĐẦU",
+      "humanAction": "Hành động con người",
+      "actionRequired": "Yêu cầu hành động",
+      "incomingWebhook": "Webhook đến",
+      "ready": "Sẵn sàng",
+      "notConfigured": "Chưa cấu hình",
+      "taskConfigured": "Tác vụ đã cấu hình",
+      "startsNewFlowRun": "Bắt đầu chạy luồng mới khi nhận được dữ liệu."
+    }
+  },
+  "ConfigDrawer": {
+    "general": {
+      "label": "Nhãn",
+      "description": "Mô tả",
+      "configuration": "Cấu hình",
+      "stepNamePlaceholder": "Tên bước",
+      "descriptionPlaceholder": "Bước này làm gì?",
+      "noConfigNeeded": "Không cần cấu hình bổ sung cho bước này."
+    },
+    "buttons": {
+      "cancel": "Hủy",
+      "save": "Lưu",
+      "testStep": "Kiểm tra bước",
+      "runningStep": "Đang chạy bước...",
+      "output": "Kết quả"
+    },
+    "messages": {
+      "titleEmpty": "Tiêu đề không được để trống",
+      "duplicateTitle": "Đã tồn tại một nút với tiêu đề này",
+      "validationFailed": "Xác thực thất bại",
+      "configSaved": "Đã lưu cấu hình nút",
+      "stepExecutedSuccess": "Bước đã thực thi thành công",
+      "stepExecutedFailed": "Thực thi bước thất bại",
+      "failedToExecute": "Không thể thực thi bước"
+    },
+    "humanTask": {
+      "actionTitle": "Tiêu đề hành động",
+      "actionTitlePlaceholder": "ví dụ: Xem xét đơn xin việc",
+      "actionTitleHelp": "Tên của tác vụ hiển thị cho người được giao. Hỗ trợ biến.",
+      "assignee": "Người được giao (Email hoặc Vai trò)",
+      "assigneePlaceholder": "ví dụ: nguoidung@example.com hoặc nhom-tai-chinh",
+      "requiredInfo": "Thông tin bắt buộc",
+      "newQuestion": "Câu hỏi mới",
+      "addField": "Thêm trường",
+      "noFieldsDefined": "Chưa định nghĩa trường nào. AI sẽ chỉ yêu cầu xác nhận.",
+      "fieldLabelPlaceholder": "Nhãn trường (Câu hỏi)",
+      "removeField": "Xóa trường",
+      "optionsSelectOne": "Tùy chọn (Chọn một)",
+      "optionsSelectMany": "Tùy chọn (Chọn nhiều)",
+      "optionPlaceholder": "Tùy chọn",
+      "addOption": "Thêm tùy chọn",
+      "required": "Bắt buộc",
+      "fieldTypes": {
+        "shortText": "Văn bản ngắn",
+        "longText": "Văn bản dài",
+        "number": "Số",
+        "multiChoice": "Nhiều lựa chọn",
+        "checkboxes": "Hộp kiểm",
+        "rating": "Đánh giá (1-5)",
+        "yesNo": "Có/Không",
+        "dateOnly": "Chỉ ngày",
+        "timeOnly": "Chỉ giờ",
+        "dateTime": "Ngày & Giờ",
+        "fileUpload": "Tải lên tệp",
+        "signature": "Chữ ký"
+      }
+    },
+    "apiTrigger": {
+      "name": "Tên",
+      "description": "Mô tả",
+      "stepNamePlaceholder": "Tên bước (ví dụ: Kích hoạt người dùng mới)",
+      "descriptionPlaceholder": "Mô tả nội bộ cho người thiết kế luồng...",
+      "configuration": "Cấu hình",
+      "endpointUrl": "URL điểm cuối",
+      "live": "Hoạt động",
+      "saveToGenerate": "Lưu để tạo",
+      "copyUrl": "Sao chép URL",
+      "sendPostRequest": "Gửi yêu cầu POST với nội dung JSON được định nghĩa bên dưới.",
+      "dynamicUrlInfo": "URL này là động dựa trên môi trường hiện tại của bạn. Khi triển khai lên môi trường thực (Koyeb), nó sẽ tự động hiển thị tên miền chính thức của bạn. URL kiểm tra cục bộ (localhost) không được lưu.",
+      "expectedPayload": "Tải trọng mong đợi (Lược đồ)",
+      "addField": "Thêm trường",
+      "noSchemaTitle": "Chưa định nghĩa lược đồ đầu ra",
+      "noSchemaDescription": "Bất kỳ nội dung JSON nào được gửi đến webhook sẽ được chấp nhận.",
+      "fieldNamePlaceholder": "tên_trường",
+      "typeString": "Chuỗi",
+      "typeNumber": "Số",
+      "typeBoolean": "Boolean",
+      "typeObject": "Đối tượng",
+      "typeArray": "Mảng",
+      "required": "Bắt buộc",
+      "optional": "Tùy chọn",
+      "actionFlowInfo": "THÔNG TIN LUỒNG HÀNH ĐỘNG",
+      "actionFlowDescription": "Xác định cách kích hoạt này tích hợp vào Bảng điều khiển Luồng Hành động."
+    }
   }
 }

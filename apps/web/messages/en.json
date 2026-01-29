@@ -269,5 +269,173 @@
       "tryAgain": "Try Again",
       "success": "MFA enabled successfully!"
     }
+  },
+  "FlowDesigner": {
+    "toolbar": {
+      "untitled": "Untitled",
+      "renamePlaceholder": "Double-click to rename",
+      "lastSaved": "Last saved",
+      "unsavedChanges": "Unsaved changes"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "unpublishedChanges": "Unpublished Changes"
+    },
+    "tooltips": {
+      "magicOrganize": "Magic Organize",
+      "clearTestResults": "Clear Test Results",
+      "openConsole": "Open Console",
+      "newLogsAvailable": "New logs available",
+      "runFlow": "Run Flow",
+      "stopExecution": "Stop Execution",
+      "saveDraft": "Save Draft",
+      "publishToProduction": "Publish to Production",
+      "deleteFlow": "Delete Flow"
+    },
+    "messages": {
+      "startingFlow": "Starting flow execution...",
+      "workflowCompleted": "Workflow Completed",
+      "workflowCanceled": "Workflow Canceled",
+      "workflowCanceledByUser": "Workflow Canceled by user",
+      "workflowFailed": "Workflow Failed",
+      "stoppingWorkflow": "Stopping workflow...",
+      "workflowStopped": "Workflow stopped.",
+      "stopSignalSent": "Stop signal sent successfully",
+      "failedToStop": "Failed to stop workflow",
+      "failedToSendStop": "Failed to send stop signal",
+      "stepExecuted": "Step '{{stepName}}' executed",
+      "publishSuccess": "Flow published to production!",
+      "publishError": "Failed to publish flow"
+    }
+  },
+  "FlowNodes": {
+    "types": {
+      "http": "HTTP Request",
+      "apiTrigger": "Incoming Webhook",
+      "api-trigger": "Incoming Webhook",
+      "manualTrigger": "Manual Trigger",
+      "manual-trigger": "Manual Trigger",
+      "condition": "Condition",
+      "filter": "Filter Data",
+      "loop": "Loop",
+      "variable": "Set Variable",
+      "switch": "Switch",
+      "map": "Map Data",
+      "humanTask": "Human Task",
+      "human-task": "Human Task",
+      "action": "Action"
+    },
+    "descriptions": {
+      "http": "Send an HTTP request to any API endpoint or service.",
+      "apiTrigger": "Starts a new flow run when data is received via the generated URL.",
+      "api-trigger": "Starts a new flow run when data is received via the generated URL.",
+      "manualTrigger": "Start the flow manually from the dashboard for testing.",
+      "manual-trigger": "Start the flow manually from the dashboard for testing.",
+      "condition": "Branch the flow based on logical rules (If/Else).",
+      "filter": "Stop the flow execution if conditions are not met.",
+      "loop": "Iterate over a list of items and run steps for each.",
+      "variable": "Create or update a variable for use in later steps.",
+      "switch": "Route the flow into different paths based on values.",
+      "map": "Transform data structures from one format to another.",
+      "humanTask": "Pause the flow and wait for human approval or input.",
+      "human-task": "Pause the flow and wait for human approval or input.",
+      "action": "Perform a generic action."
+    },
+    "labels": {
+      "startEvent": "START EVENT",
+      "humanAction": "Human Action",
+      "actionRequired": "Action Required",
+      "incomingWebhook": "Incoming Webhook",
+      "ready": "Ready",
+      "notConfigured": "Not configured",
+      "taskConfigured": "Task configured",
+      "startsNewFlowRun": "Starts a new flow run when data is received."
+    }
+  },
+  "ConfigDrawer": {
+    "general": {
+      "label": "Label",
+      "description": "Description",
+      "configuration": "Configuration",
+      "stepNamePlaceholder": "Step Name",
+      "descriptionPlaceholder": "What does this step do?",
+      "noConfigNeeded": "No additional configuration needed for this step."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "testStep": "Test Step",
+      "runningStep": "Running Step...",
+      "output": "Output"
+    },
+    "messages": {
+      "titleEmpty": "Title cannot be empty",
+      "duplicateTitle": "A node with this title already exists",
+      "validationFailed": "Validation Failed",
+      "configSaved": "Node configuration saved",
+      "stepExecutedSuccess": "Step executed successfully",
+      "stepExecutedFailed": "Step execution failed",
+      "failedToExecute": "Failed to execute step"
+    },
+    "humanTask": {
+      "actionTitle": "Action Title",
+      "actionTitlePlaceholder": "e.g. Review Driver Application",
+      "actionTitleHelp": "The name of the task shown to the assignee. Supports variables.",
+      "assignee": "Assignee (Email or Role)",
+      "assigneePlaceholder": "e.g. user@example.com or finance-team",
+      "requiredInfo": "Required Info",
+      "newQuestion": "New Question",
+      "addField": "Add Field",
+      "noFieldsDefined": "No fields defined. The AI will just ask for confirmation.",
+      "fieldLabelPlaceholder": "Field Label (Question)",
+      "removeField": "Remove Field",
+      "optionsSelectOne": "Options (Select One)",
+      "optionsSelectMany": "Options (Select Many)",
+      "optionPlaceholder": "Option",
+      "addOption": "Add Option",
+      "required": "Required",
+      "fieldTypes": {
+        "shortText": "Short Text",
+        "longText": "Long Text",
+        "number": "Number",
+        "multiChoice": "Multiple Choice",
+        "checkboxes": "Checkboxes",
+        "rating": "Rating (1-5)",
+        "yesNo": "Yes/No",
+        "dateOnly": "Date only",
+        "timeOnly": "Time only",
+        "dateTime": "Date & Time",
+        "fileUpload": "File Upload",
+        "signature": "Signature"
+      }
+    },
+    "apiTrigger": {
+      "name": "Name",
+      "description": "Description",
+      "stepNamePlaceholder": "Step Name (e.g. New User Trigger)",
+      "descriptionPlaceholder": "Internal description for flow designers...",
+      "configuration": "Configuration",
+      "endpointUrl": "Endpoint URL",
+      "live": "Live",
+      "saveToGenerate": "Save to Generate",
+      "copyUrl": "Copy URL",
+      "sendPostRequest": "Send a POST request with the JSON body defined below.",
+      "dynamicUrlInfo": "This URL is dynamic based on your current environment. When deployed to production (Koyeb), it will automatically show your official domain. Local testing URLs (localhost) are not saved.",
+      "expectedPayload": "Expected Payload (Schema)",
+      "addField": "Add Field",
+      "noSchemaTitle": "No output schema defined",
+      "noSchemaDescription": "Any JSON body sent to the webhook will be accepted.",
+      "fieldNamePlaceholder": "field_name",
+      "typeString": "String",
+      "typeNumber": "Number",
+      "typeBoolean": "Boolean",
+      "typeObject": "Object",
+      "typeArray": "Array",
+      "required": "Req",
+      "optional": "Opt",
+      "actionFlowInfo": "ACTION FLOW INFORMATION",
+      "actionFlowDescription": "Define how this trigger integrates into the Action Flow Dashboard."
+    }
   }
 }

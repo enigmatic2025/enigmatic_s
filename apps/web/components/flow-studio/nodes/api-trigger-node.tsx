@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { NodeCard } from './node-card';
 import { NodeStatus } from './node-status';
+import { useTranslations } from 'next-intl';
 
 const ApiTriggerNode = memo(({ id, data, isConnectable }: any) => {
   const { setNodes } = useReactFlow();
+  const t = useTranslations("FlowNodes");
 
   const onDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -28,9 +30,9 @@ const ApiTriggerNode = memo(({ id, data, isConnectable }: any) => {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-              Start Event
+              {t("labels.startEvent")}
             </span>
-            <CardTitle className="text-sm font-medium leading-none truncate" title={data.label}>{data.label || 'Incoming Webhook'}</CardTitle>
+            <CardTitle className="text-sm font-medium leading-none truncate" title={data.label}>{data.label || t("labels.incomingWebhook")}</CardTitle>
           </div>
         </div>
         <Button
@@ -50,7 +52,7 @@ const ApiTriggerNode = memo(({ id, data, isConnectable }: any) => {
             configuredContent={
                 <div className="flex flex-col gap-2">
                     <div className="truncate">
-                        {data.description || 'Starts a new flow run when data is received.'}
+                        {data.description || t("labels.startsNewFlowRun")}
                     </div>
                     <div className="flex items-center gap-2 p-2 rounded bg-muted/50 border border-border/30">
                         <Zap className="w-3 h-3 text-emerald-500 shrink-0" />

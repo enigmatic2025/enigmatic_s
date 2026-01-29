@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type, Clock, PenTool } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface SchemaField {
   key: string;
@@ -24,12 +25,13 @@ interface HumanTaskConfigProps {
 export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
   const currentConfig = data || {};
   const schema = (currentConfig.schema || []) as SchemaField[];
+  const t = useTranslations("ConfigDrawer.humanTask");
 
   const addField = () => {
     const newField: SchemaField = {
       key: `field_${schema.length + 1}`,
       type: 'text',
-      label: 'New Question',
+      label: t("newQuestion"),
       required: true
     };
     onUpdate({ ...currentConfig, schema: [...schema, newField] });
@@ -52,21 +54,21 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
       {/* General Settings */}
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>Action Title <span className="text-red-500">*</span></Label>
+          <Label>{t("actionTitle")} <span className="text-red-500">*</span></Label>
           <Input 
             value={currentConfig.title || ''} 
             onChange={(e) => onUpdate({ ...currentConfig, title: e.target.value })}
-            placeholder="e.g. Review {{ steps.trigger.data.name }}"
+            placeholder={t("actionTitlePlaceholder")}
           />
-          <p className="text-[11px] text-muted-foreground">The name of the task shown to the assignee. Supports variables.</p>
+          <p className="text-[11px] text-muted-foreground">{t("actionTitleHelp")}</p>
         </div>
 
         <div className="space-y-2">
-          <Label>Assignee (Email or Role) <span className="text-red-500">*</span></Label>
+          <Label>{t("assignee")} <span className="text-red-500">*</span></Label>
           <Input 
             value={currentConfig.assignee || ''} 
             onChange={(e) => onUpdate({ ...currentConfig, assignee: e.target.value })}
-            placeholder="e.g. {{ trigger.email }} or finance-team"
+            placeholder={t("assigneePlaceholder")}
           />
         </div>
       </div>
@@ -76,16 +78,16 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
       {/* Required Information (Schema) */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Required Info</h3>
+          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t("requiredInfo")}</h3>
           <Button variant="outline" size="sm" onClick={addField} className="h-7 text-xs">
-            <Plus className="w-3.5 h-3.5 mr-1" /> Add Field
+            <Plus className="w-3.5 h-3.5 mr-1" /> {t("addField")}
           </Button>
         </div>
 
         <div className="space-y-3">
           {schema.length === 0 && (
             <div className="text-center py-6 border-2 border-dashed border-muted rounded-lg text-sm text-muted-foreground">
-              No fields defined. The AI will just ask for confirmation.
+              {t("noFieldsDefined")}
             </div>
           )}
 
@@ -118,7 +120,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                           }
                           updateField(index, updates);
                         }}
-                        placeholder="Field Label (Question)"
+                        placeholder={t("fieldLabelPlaceholder")}
                         className="h-8 text-sm font-medium border-transparent bg-transparent hover:bg-background hover:border-input focus:bg-background focus:border-input px-2 -ml-2 transition-all" 
                       />
                     </div>
@@ -130,22 +132,22 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="text"><div className="flex items-center gap-2"><Type className="w-3 h-3"/> Short Text</div></SelectItem>
-                        <SelectItem value="long-text"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> Long Text</div></SelectItem>
-                        <SelectItem value="number"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">123</span> Number</div></SelectItem>
+                        <SelectItem value="text"><div className="flex items-center gap-2"><Type className="w-3 h-3"/> {t("fieldTypes.shortText")}</div></SelectItem>
+                        <SelectItem value="long-text"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> {t("fieldTypes.longText")}</div></SelectItem>
+                        <SelectItem value="number"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">123</span> {t("fieldTypes.number")}</div></SelectItem>
                         
-                        <SelectItem value="multi-choice"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Multiple Choice</div></SelectItem>
-                        <SelectItem value="checkboxes"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Checkboxes</div></SelectItem>
+                        <SelectItem value="multi-choice"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> {t("fieldTypes.multiChoice")}</div></SelectItem>
+                        <SelectItem value="checkboxes"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> {t("fieldTypes.checkboxes")}</div></SelectItem>
                         
-                        <SelectItem value="rating"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">★</span> Rating (1-5)</div></SelectItem>
-                        <SelectItem value="boolean"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> Yes/No</div></SelectItem>
+                        <SelectItem value="rating"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">★</span> {t("fieldTypes.rating")}</div></SelectItem>
+                        <SelectItem value="boolean"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> {t("fieldTypes.yesNo")}</div></SelectItem>
                         
-                        <SelectItem value="date"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> Date only</div></SelectItem>
-                        <SelectItem value="time"><div className="flex items-center gap-2"><Clock className="w-3 h-3"/> Time only</div></SelectItem>
-                        <SelectItem value="datetime"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> Date & Time</div></SelectItem>
+                        <SelectItem value="date"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> {t("fieldTypes.dateOnly")}</div></SelectItem>
+                        <SelectItem value="time"><div className="flex items-center gap-2"><Clock className="w-3 h-3"/> {t("fieldTypes.timeOnly")}</div></SelectItem>
+                        <SelectItem value="datetime"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> {t("fieldTypes.dateTime")}</div></SelectItem>
 
-                        <SelectItem value="file"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> File Upload</div></SelectItem>
-                        <SelectItem value="signature"><div className="flex items-center gap-2"><PenTool className="w-3 h-3"/> Signature</div></SelectItem>
+                        <SelectItem value="file"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> {t("fieldTypes.fileUpload")}</div></SelectItem>
+                        <SelectItem value="signature"><div className="flex items-center gap-2"><PenTool className="w-3 h-3"/> {t("fieldTypes.signature")}</div></SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -154,7 +156,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                       size="icon" 
                       className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
                       onClick={() => removeField(index)}
-                      title="Remove Field"
+                      title={t("removeField")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -164,7 +166,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                   {(field.type === 'multi-choice' || field.type === 'checkboxes') && (
                       <div className="pl-4 border-l-2 border-muted-foreground/20 space-y-2">
                           <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">
-                            {field.type === 'multi-choice' ? 'Options (Select One)' : 'Options (Select Many)'}
+                            {field.type === 'multi-choice' ? t("optionsSelectOne") : t("optionsSelectMany")}
                           </Label>
                           <div className="grid grid-cols-1 gap-2">
                               {(field.options || []).map((option, optIndex) => (
@@ -208,7 +210,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                                       updateField(index, { options: newOptions });
                                   }}
                               >
-                                  <Plus className="w-3 h-3 mr-1" /> Add Option
+                                  <Plus className="w-3 h-3 mr-1" /> {t("addOption")}
                               </Button>
                           </div>
                       </div>
@@ -236,7 +238,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                         onCheckedChange={(checked) => updateField(index, { required: checked })}
                         className="scale-75"
                       />
-                      <span className="text-muted-foreground whitespace-nowrap">Required</span>
+                      <span className="text-muted-foreground whitespace-nowrap">{t("required")}</span>
                     </div>
                   </div>
                 </div>

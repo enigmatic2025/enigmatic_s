@@ -9,6 +9,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal, Loader2, Eraser } from "lucide-react";
@@ -40,6 +41,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const router = useRouter();
   const params = useParams();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const t = useTranslations("FlowDesigner");
   
   // State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -217,7 +219,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const handleNameBlur = () => {
     setIsEditingName(false);
     if (flowName.trim() === "") {
-      setFlowName("Untitled");
+      setFlowName(t("toolbar.untitled"));
     }
   };
 
@@ -265,7 +267,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     // Start generic loading state (isPolling=true but currentRun=null implies "Starting")
     setIsPolling(true);
     clearLogs(); // Clear logs before starting
-    addLog({ message: "Starting flow execution...", type: "info" });
+    addLog({ message: t("messages.startingFlow"), type: "info" });
     
     try {
       clearExecutionTrace(); // Clear previous results
@@ -408,10 +410,10 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                   } else if (data && (data.status === "FAILED" || data.status === "CANCELED")) {
                        setIsPolling(false);
                        if (data.status === "CANCELED") {
-                           toast.info("Workflow Canceled", { id: TEST_TOAST_ID });
-                           addLog({ message: "Workflow Canceled by user", type: "warning" });
+                           toast.info(t("messages.workflowCanceled"), { id: TEST_TOAST_ID });
+                           addLog({ message: t("messages.workflowCanceledByUser"), type: "warning" });
                        } else {
-                           const errorMsg = data.output?.error || "Workflow Failed";
+                           const errorMsg = data.output?.error || t("messages.workflowFailed");
                            toast.error(errorMsg, { id: TEST_TOAST_ID });
                            addLog({ message: `Workflow Failed: ${errorMsg}`, type: "error", details: data.output });
                        }
@@ -451,17 +453,17 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
   const handleStop = async () => {
     if (!currentRun) return;
-    toast.loading("Stopping workflow...", { id: TEST_TOAST_ID });
+    toast.loading(t("messages.stoppingWorkflow"), { id: TEST_TOAST_ID });
     
     try {
       await flowService.cancelFlow(currentRun.workflowId, currentRun.runId);
       setIsPolling(false);
-      toast.success("Workflow stopped.", { id: TEST_TOAST_ID });
-      addLog({ message: "Stop signal sent successfully", type: "info" });
+      toast.success(t("messages.workflowStopped"), { id: TEST_TOAST_ID });
+      addLog({ message: t("messages.stopSignalSent"), type: "info" });
     } catch (error) {
       console.error("Stop error:", error);
-      toast.error("Failed to stop workflow", { id: TEST_TOAST_ID });
-      addLog({ message: "Failed to send stop signal", type: "error", details: error });
+      toast.error(t("messages.failedToStop"), { id: TEST_TOAST_ID });
+      addLog({ message: t("messages.failedToSendStop"), type: "error", details: error });
     }
   };
 
@@ -495,31 +497,31 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
               <h2 
                 className="text-sm font-semibold cursor-text hover:underline decoration-dashed underline-offset-4 w-[300px] truncate"
                 onDoubleClick={() => setIsEditingName(true)}
-                title="Double-click to rename"
+                title={t("toolbar.renamePlaceholder")}
               >
                 {flowName}
               </h2>
             )}
             <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">
-                {flowId ? "Last saved 2 mins ago" : "Unsaved changes"}
+                {flowId ? t("toolbar.lastSaved") : t("toolbar.unsavedChanges")}
                 </span>
                 
                 {publishStatus === 'published' && (
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-green-500/10 text-green-600 border-green-500/20 hover:bg-green-500/20 gap-1">
                         <span className="w-1 h-1 rounded-full bg-green-500 inline-block" />
-                        Published
+                        {t("status.published")}
                     </Badge>
                 )}
                 {publishStatus === 'changed' && (
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-yellow-500/10 text-yellow-600 border-yellow-500/20 hover:bg-yellow-500/20 gap-1">
                          <span className="w-1 h-1 rounded-full bg-yellow-500 inline-block" />
-                         Unpublished Changes
+                         {t("status.unpublishedChanges")}
                     </Badge>
                 )}
                 {publishStatus === 'draft' && (
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-slate-500/10 text-slate-600 border-slate-500/20 hover:bg-slate-500/20">
-                        Draft
+                        {t("status.draft")}
                     </Badge>
                 )}
             </div>
@@ -540,7 +542,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Magic Organize</p>
+                    <p>{t("tooltips.magicOrganize")}</p>
                 </TooltipContent>
             </Tooltip>
 
@@ -561,7 +563,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Clear Test Results</p>
+                    <p>{t("tooltips.clearTestResults")}</p>
                 </TooltipContent>
             </Tooltip>
 
@@ -586,7 +588,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>{unreadLogs ? "New logs available" : "Open Console"}</p>
+                    <p>{unreadLogs ? t("tooltips.newLogsAvailable") : t("tooltips.openConsole")}</p>
                 </TooltipContent>
             </Tooltip>
 
@@ -607,7 +609,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{isPolling ? "Stop Execution" : "Run Flow"}</p>
+                <p>{isPolling ? t("tooltips.stopExecution") : t("tooltips.runFlow")}</p>
               </TooltipContent>
             </Tooltip>
 
@@ -618,7 +620,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Save Draft</p>
+                <p>{t("tooltips.saveDraft")}</p>
               </TooltipContent>
             </Tooltip>
 
@@ -636,7 +638,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Publish to Production</p>
+                    <p>{t("tooltips.publishToProduction")}</p>
                 </TooltipContent>
                 </Tooltip>
             )}
@@ -654,7 +656,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Delete Flow</p>
+                  <p>{t("tooltips.deleteFlow")}</p>
                 </TooltipContent>
               </Tooltip>
             )}

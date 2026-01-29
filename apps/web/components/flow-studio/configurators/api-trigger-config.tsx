@@ -6,6 +6,7 @@ import { ValidatedTextarea } from '../inputs/validated-textarea';
 import { useReactFlow } from 'reactflow';
 import { Copy, Check, Plus, Trash2, Info } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface ApiTriggerConfigProps {
   nodeId: string;
@@ -23,6 +24,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
   const params = useParams();
   const flowId = params?.id as string;
   const [copied, setCopied] = useState(false);
+  const t = useTranslations("ConfigDrawer.apiTrigger");
   
   // Default schema logic
   const schema: SchemaField[] = data.schema || [];
@@ -64,13 +66,13 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         {/* Node Label Input (Editable) */}
         <div>
             <label className="text-sm font-medium text-foreground block mb-2">
-                Name
+                {t("name")}
             </label>
             <input
                 type="text"
                 value={data.label || ''}
                 onChange={(e) => onUpdate({ ...data, label: e.target.value })}
-                placeholder="Step Name (e.g. New User Trigger)"
+                placeholder={t("stepNamePlaceholder")}
                 className="w-full bg-background border border-input rounded-md px-3 h-9 text-sm focus:ring-1 focus:ring-primary outline-none transition-all hover:border-accent-foreground/50"
             />
         </div>
@@ -78,12 +80,12 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         {/* Node Description (Designer Description) */}
         <div>
             <label className="text-sm font-medium text-foreground block mb-2">
-                Description <span className="text-red-500">*</span>
+                {t("description")} <span className="text-red-500">*</span>
             </label>
             <textarea
                 value={data.description || ''}
                 onChange={(e) => onUpdate({ ...data, description: e.target.value })}
-                placeholder="Internal description for flow designers..."
+                placeholder={t("descriptionPlaceholder")}
                 className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm h-24 resize-none focus:ring-1 focus:ring-primary outline-none transition-all"
             />
         </div>
@@ -94,7 +96,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
       {/* SECTION 2: Configuration (API) */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground tracking-tight">
-            Configuration
+            {t("configuration")}
         </h3>
 
         {/* Endpoint URL */}
@@ -102,12 +104,12 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Info className="w-4 h-4 text-blue-500" />
-                    <span className="text-sm font-medium">Endpoint URL</span>
+                    <span className="text-sm font-medium">{t("endpointUrl")}</span>
                 </div>
                 {flowId ? (
-                    <span className="text-[10px] text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">Live</span>
+                    <span className="text-[10px] text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">{t("live")}</span>
                 ) : (
-                    <span className="text-[10px] text-amber-600 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-medium">Save to Generate</span>
+                    <span className="text-[10px] text-amber-600 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-medium">{t("saveToGenerate")}</span>
                 )}
             </div>
             
@@ -118,22 +120,20 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                 <button
                     onClick={copyToClipboard}
                     className="p-2 bg-background border border-border hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground active:scale-95"
-                    title="Copy URL"
+                    title={t("copyUrl")}
                 >
                     {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                 </button>
             </div>
             
             <p className="text-xs text-muted-foreground leading-relaxed">
-                Send a POST request with the JSON body defined below.
+                {t("sendPostRequest")}
             </p>
             
             <div className="flex items-start gap-2 pt-2 border-t border-border/50">
                 <Info className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0 mt-0.5" />
                 <p className="text-[10px] text-muted-foreground/70 leading-relaxed">
-                    This URL is dynamic based on your current environment. 
-                    When deployed to production (Koyeb), it will automatically show your official domain. 
-                    Local testing URLs (localhost) are not saved.
+                    {t("dynamicUrlInfo")}
                 </p>
             </div>
         </div>
@@ -142,22 +142,22 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
         <div className="pt-2">
             <div className="flex items-center justify-between mb-4">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Expected Payload (Schema)
+                  {t("expectedPayload")}
                 </label>
                 <button
                     onClick={handleAddField}
                     className="text-xs flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md transition-colors font-medium"
                 >
                     <Plus className="w-3.5 h-3.5" />
-                    Add Field
+                    {t("addField")}
                 </button>
             </div>
             
             <div className="space-y-2.5">
                 {schema.length === 0 ? (
                     <div className="text-center py-8 border border-dashed border-border rounded-lg bg-muted/10">
-                        <p className="text-sm text-foreground font-medium mb-1">No output schema defined</p>
-                        <p className="text-xs text-muted-foreground">Any JSON body sent to the webhook will be accepted.</p>
+                        <p className="text-sm text-foreground font-medium mb-1">{t("noSchemaTitle")}</p>
+                        <p className="text-xs text-muted-foreground">{t("noSchemaDescription")}</p>
                     </div>
                 ) : (
                     schema.map((field, index) => (
@@ -167,7 +167,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                                     type="text"
                                     value={field.key}
                                     onChange={(e) => handleUpdateField(index, { key: e.target.value })}
-                                    placeholder="field_name"
+                                    placeholder={t("fieldNamePlaceholder")}
                                     className="w-full bg-background border border-border rounded px-3 py-2 text-sm font-mono focus:ring-1 focus:ring-primary outline-none"
                                 />
                             </div>
@@ -177,18 +177,18 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                                     onChange={(e) => handleUpdateField(index, { type: e.target.value as any })}
                                     className="w-full bg-background border border-border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none appearance-none"
                                 >
-                                    <option value="string">String</option>
-                                    <option value="number">Number</option>
-                                    <option value="boolean">Boolean</option>
-                                    <option value="object">Object</option>
-                                    <option value="array">Array</option>
+                                    <option value="string">{t("typeString")}</option>
+                                    <option value="number">{t("typeNumber")}</option>
+                                    <option value="boolean">{t("typeBoolean")}</option>
+                                    <option value="object">{t("typeObject")}</option>
+                                    <option value="array">{t("typeArray")}</option>
                                 </select>
                             </div>
                             <button
                                 onClick={() => handleUpdateField(index, { required: !field.required })}
                                 className={`px-3 py-1.5 text-xs text-center border rounded font-medium min-w-[3rem] transition-colors ${field.required ? 'bg-red-500/10 border-red-500/20 text-red-600' : 'bg-muted border-border text-muted-foreground'}`}
                             >
-                                {field.required ? 'Req' : 'Opt'}
+                                {field.required ? t("required") : t("optional")}
                             </button>
                             <button
                                 onClick={() => handleRemoveField(index)}

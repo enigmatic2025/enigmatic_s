@@ -6,9 +6,11 @@ import { cn } from '@/lib/utils';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { NodeStatus } from './node-status';
+import { useTranslations } from 'next-intl';
 
 const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
   const { setNodes } = useReactFlow();
+  const t = useTranslations("FlowNodes");
   
   const onDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -42,10 +44,10 @@ const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-              Human Action
+              {t("labels.humanAction")}
             </span>
             <CardTitle className="text-sm font-medium leading-none truncate" title={data.label || data.title}>
-               {data.label || data.title || 'Action Required'}
+               {data.label || data.title || t("labels.actionRequired")}
             </CardTitle>
           </div>
         </div>
@@ -67,7 +69,7 @@ const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
           return (
             <NodeStatus 
               isConfigured={isConfigured}
-              configuredContent={data.description || 'Task configured'}
+              configuredContent={data.description || t("labels.taskConfigured")}
             />
           );
         })()}

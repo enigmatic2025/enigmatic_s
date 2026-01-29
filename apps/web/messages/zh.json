@@ -269,5 +269,173 @@
       "tryAgain": "重試",
       "success": "MFA 已成功啟用！"
     }
+  },
+  "FlowDesigner": {
+    "toolbar": {
+      "untitled": "未命名",
+      "renamePlaceholder": "雙擊以重新命名",
+      "lastSaved": "已儲存",
+      "unsavedChanges": "有未儲存的變更"
+    },
+    "status": {
+      "draft": "草稿",
+      "published": "已發布",
+      "unpublishedChanges": "有未發布的變更"
+    },
+    "tooltips": {
+      "magicOrganize": "自動整理",
+      "clearTestResults": "清除測試結果",
+      "openConsole": "開啟控制台",
+      "newLogsAvailable": "有新的日誌",
+      "runFlow": "執行流程",
+      "stopExecution": "停止執行",
+      "saveDraft": "儲存草稿",
+      "publishToProduction": "發布至生產環境",
+      "deleteFlow": "刪除流程"
+    },
+    "messages": {
+      "startingFlow": "正在開始執行流程...",
+      "workflowCompleted": "工作流程已完成",
+      "workflowCanceled": "工作流程已取消",
+      "workflowCanceledByUser": "工作流程已被使用者取消",
+      "workflowFailed": "工作流程失敗",
+      "stoppingWorkflow": "正在停止工作流程...",
+      "workflowStopped": "工作流程已停止。",
+      "stopSignalSent": "已成功發送停止訊號",
+      "failedToStop": "無法停止工作流程",
+      "failedToSendStop": "無法發送停止訊號",
+      "stepExecuted": "步驟 '{{stepName}}' 已執行",
+      "publishSuccess": "流程已發布至生產環境！",
+      "publishError": "無法發布流程"
+    }
+  },
+  "FlowNodes": {
+    "types": {
+      "http": "HTTP 請求",
+      "apiTrigger": "傳入 Webhook",
+      "api-trigger": "傳入 Webhook",
+      "manualTrigger": "手動觸發",
+      "manual-trigger": "手動觸發",
+      "condition": "條件",
+      "filter": "篩選資料",
+      "loop": "迴圈",
+      "variable": "設定變數",
+      "switch": "切換",
+      "map": "映射資料",
+      "humanTask": "人工任務",
+      "human-task": "人工任務",
+      "action": "動作"
+    },
+    "descriptions": {
+      "http": "向任何 API 端點或服務發送 HTTP 請求。",
+      "apiTrigger": "當透過生成的 URL 接收到資料時啟動新的流程執行。",
+      "api-trigger": "當透過生成的 URL 接收到資料時啟動新的流程執行。",
+      "manualTrigger": "從儀表板手動啟動流程以進行測試。",
+      "manual-trigger": "從儀表板手動啟動流程以進行測試。",
+      "condition": "根據邏輯規則（If/Else）分支流程。",
+      "filter": "如果不滿足條件則停止流程執行。",
+      "loop": "遍歷項目列表並為每個項目執行步驟。",
+      "variable": "建立或更新變數以供後續步驟使用。",
+      "switch": "根據值將流程路由到不同的路徑。",
+      "map": "將資料結構從一種格式轉換為另一種格式。",
+      "humanTask": "暫停流程並等待人工批准或輸入。",
+      "human-task": "暫停流程並等待人工批准或輸入。",
+      "action": "執行通用動作。"
+    },
+    "labels": {
+      "startEvent": "開始事件",
+      "humanAction": "人工動作",
+      "actionRequired": "需要動作",
+      "incomingWebhook": "傳入 Webhook",
+      "ready": "就緒",
+      "notConfigured": "未配置",
+      "taskConfigured": "任務已配置",
+      "startsNewFlowRun": "當接收到資料時啟動新的流程執行。"
+    }
+  },
+  "ConfigDrawer": {
+    "general": {
+      "label": "標籤",
+      "description": "描述",
+      "configuration": "配置",
+      "stepNamePlaceholder": "步驟名稱",
+      "descriptionPlaceholder": "此步驟的作用是什麼？",
+      "noConfigNeeded": "此步驟不需要額外配置。"
+    },
+    "buttons": {
+      "cancel": "取消",
+      "save": "儲存",
+      "testStep": "測試步驟",
+      "runningStep": "正在執行步驟...",
+      "output": "輸出"
+    },
+    "messages": {
+      "titleEmpty": "標題不能為空",
+      "duplicateTitle": "已存在具有此標題的節點",
+      "validationFailed": "驗證失敗",
+      "configSaved": "節點配置已儲存",
+      "stepExecutedSuccess": "步驟執行成功",
+      "stepExecutedFailed": "步驟執行失敗",
+      "failedToExecute": "無法執行步驟"
+    },
+    "humanTask": {
+      "actionTitle": "動作標題",
+      "actionTitlePlaceholder": "例如：審查駕駛申請",
+      "actionTitleHelp": "顯示給受讓人的任務名稱。支援變數。",
+      "assignee": "受讓人（電子郵件或角色）",
+      "assigneePlaceholder": "例如：user@example.com 或 finance-team",
+      "requiredInfo": "必填資訊",
+      "newQuestion": "新問題",
+      "addField": "新增欄位",
+      "noFieldsDefined": "未定義欄位。AI 將只要求確認。",
+      "fieldLabelPlaceholder": "欄位標籤（問題）",
+      "removeField": "移除欄位",
+      "optionsSelectOne": "選項（選擇一個）",
+      "optionsSelectMany": "選項（選擇多個）",
+      "optionPlaceholder": "選項",
+      "addOption": "新增選項",
+      "required": "必填",
+      "fieldTypes": {
+        "shortText": "短文字",
+        "longText": "長文字",
+        "number": "數字",
+        "multiChoice": "多選題",
+        "checkboxes": "核取方塊",
+        "rating": "評分（1-5）",
+        "yesNo": "是/否",
+        "dateOnly": "僅日期",
+        "timeOnly": "僅時間",
+        "dateTime": "日期與時間",
+        "fileUpload": "檔案上傳",
+        "signature": "簽名"
+      }
+    },
+    "apiTrigger": {
+      "name": "名稱",
+      "description": "描述",
+      "stepNamePlaceholder": "步驟名稱（例如：新使用者觸發）",
+      "descriptionPlaceholder": "流程設計師的內部描述...",
+      "configuration": "配置",
+      "endpointUrl": "端點 URL",
+      "live": "運行中",
+      "saveToGenerate": "儲存以生成",
+      "copyUrl": "複製 URL",
+      "sendPostRequest": "使用下面定義的 JSON 主體發送 POST 請求。",
+      "dynamicUrlInfo": "此 URL 根據您當前的環境而動態變化。當部署到生產環境（Koyeb）時，它將自動顯示您的官方域名。本地測試 URL（localhost）不會被儲存。",
+      "expectedPayload": "預期載荷（架構）",
+      "addField": "新增欄位",
+      "noSchemaTitle": "未定義輸出架構",
+      "noSchemaDescription": "發送到 webhook 的任何 JSON 主體都將被接受。",
+      "fieldNamePlaceholder": "欄位名稱",
+      "typeString": "字串",
+      "typeNumber": "數字",
+      "typeBoolean": "布林值",
+      "typeObject": "物件",
+      "typeArray": "陣列",
+      "required": "必填",
+      "optional": "選填",
+      "actionFlowInfo": "動作流程資訊",
+      "actionFlowDescription": "定義此觸發器如何整合到動作流程儀表板中。"
+    }
   }
 }
