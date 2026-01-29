@@ -68,6 +68,7 @@ export default function ActionFlowDetailPage() {
 
   // No selection state needed for global comments, but keeping logic just in case
   const [selectedActionId, setSelectedActionId] = useState<string | null>(null);
+  const [isKeyDataExpanded, setIsKeyDataExpanded] = useState(false);
 
   // Removed manual useEffect fetch
 
@@ -189,7 +190,7 @@ export default function ActionFlowDetailPage() {
               {/* Data Summary - Dynamic Chunked Rows */ }
               <div className="space-y-3">
                   <h3 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">Key Data</h3>
-                  <div className="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden bg-white dark:bg-zinc-950">
+                  <div className="space-y-3">
                       {/* Render Key Data dynamically from backend */}
                       {(() => {
                           // Map key_data to dataPoints
@@ -197,12 +198,12 @@ export default function ActionFlowDetailPage() {
                           const dataPoints = Object.entries(rawKeyData).map(([key, value]) => ({
                               label: key,
                               value: String(value),
-                              font: "font-medium" // Default font
+                              font: "font-medium"
                           }));
 
                           if (dataPoints.length === 0) {
                               return (
-                                  <div className="p-4 text-center text-xs text-zinc-400 italic">
+                                  <div className="p-4 text-center text-xs text-zinc-400 italic border border-zinc-200 dark:border-zinc-800 rounded-lg">
                                       No key data available.
                                   </div>
                               );
@@ -214,29 +215,56 @@ export default function ActionFlowDetailPage() {
                               chunks.push(dataPoints.slice(i, i + chunkSize));
                           }
 
-                          return chunks.map((chunk, idx) => (
-                              <div key={idx} className={`${idx > 0 ? 'border-t border-zinc-200 dark:border-zinc-800' : ''}`}>
-                                  {/* Header Row */}
-                                  <div className="grid grid-cols-4 bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800">
-                                      {chunk.map((item, i) => (
-                                          <div key={i} className="px-4 py-2 text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider truncate" title={item.label}>
-                                              {item.label}
+                          // Expansion Logic
+                          const INITIAL_VISIBLE_CHUNKS = 2; // Show first 2 rows by default
+                          const visibleChunks = isKeyDataExpanded ? chunks : chunks.slice(0, INITIAL_VISIBLE_CHUNKS);
+                          const hasHiddenChunks = chunks.length > INITIAL_VISIBLE_CHUNKS;
+
+                          return (
+                              <div className="space-y-3">
+                                  {visibleChunks.map((chunk, idx) => (
+                                      <div key={idx} className="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden bg-white dark:bg-zinc-950">
+                                          {/* Header Row */}
+                                          <div className="grid grid-cols-4 bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800">
+                                              {chunk.map((item, i) => (
+                                                  <div key={i} className="px-4 py-2 text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider truncate" title={item.label}>
+                                                      {item.label}
+                                                  </div>
+                                              ))}
+                                              {/* Fill empty cells */}
+                                              {[...Array(chunkSize - chunk.length)].map((_, i) => <div key={`empty-h-${i}`} />)}
                                           </div>
-                                      ))}
-                                      {/* Fill empty cells if last chunk is incomplete */}
-                                      {[...Array(chunkSize - chunk.length)].map((_, i) => <div key={`empty-h-${i}`} />)}
-                                  </div>
-                                  {/* Value Row */}
-                                  <div className="grid grid-cols-4 bg-white dark:bg-zinc-950">
-                                      {chunk.map((item, i) => (
-                                          <div key={i} className={`px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 truncate ${item.font || ''}`} title={item.value}>
-                                              {item.value}
+                                          {/* Value Row */}
+                                          <div className="grid grid-cols-4 bg-white dark:bg-zinc-950">
+                                              {chunk.map((item, i) => (
+                                                  <div key={i} className={`px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 truncate ${item.font || ''}`} title={item.value}>
+                                                      {item.value}
+                                                  </div>
+                                              ))}
+                                              {[...Array(chunkSize - chunk.length)].map((_, i) => <div key={`empty-v-${i}`} />)}
                                           </div>
-                                      ))}
-                                      {[...Array(chunkSize - chunk.length)].map((_, i) => <div key={`empty-v-${i}`} />)}
-                                  </div>
+                                      </div>
+                                  ))}
+                                  
+                                  {hasHiddenChunks && (
+                                     <div className="flex justify-center">
+                                          <Button 
+                                              variant="ghost" 
+                                              size="sm" 
+                                              onClick={() => setIsKeyDataExpanded(!isKeyDataExpanded)}
+                                              className="text-xs text-muted-foreground hover:text-foreground h-7"
+                                          >
+                                              {isKeyDataExpanded ? (
+                                                  <>Hide <ChevronDown className="ml-1 w-3 h-3 rotate-180" /></>
+                                              ) : (
+                                                  <>Show All <ChevronDown className="ml-1 w-3 h-3" /></>
+                                              )}
+                                          </Button>
+                                     </div>
+                                  )}
                               </div>
-                          ));
+                          );
+
                       })()}
                   </div>
               </div>
