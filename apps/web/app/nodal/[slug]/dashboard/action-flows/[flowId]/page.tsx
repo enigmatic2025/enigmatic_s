@@ -70,15 +70,13 @@ export default function ActionFlowDetailPage() {
   // Filter for Human Actions as requested
   const visibleActivities = data.activities?.filter(act => act.type === 'human_action') || [];
   const assignees = ["Retention Team", "Sam Tran"]; 
-  const selectedAction = data.activities?.find(a => a.id === selectedActionId);
-
   return (
-    <div className="flex h-[calc(100vh-64px)] w-full bg-white text-zinc-950 font-sans overflow-hidden border-t border-zinc-200">
+    <div className="flex h-[calc(100vh-75px)] w-full bg-white text-zinc-950 font-sans overflow-hidden border-t border-zinc-200">
       
       {/* 50% LEFT PANEL: DASHBOARD CONTENT */}
       {/* COMPACT MODE: Reduced padding, standard text sizes, monochrome */}
       <div className="w-1/2 flex flex-col h-full border-r border-zinc-200 overflow-y-auto custom-scrollbar">
-          <div className="p-6 space-y-6 max-w-3xl mx-auto w-full">
+          <div className="p-4 space-y-4 max-w-3xl mx-auto w-full">
               
               {/* Header: Clean, Minimal */}
               <div className="space-y-4">
@@ -126,23 +124,76 @@ export default function ActionFlowDetailPage() {
 
               <div className="h-px bg-zinc-100 w-full my-4" />
 
-              {/* Data Summary Grid - Compact Table */}
-              <div>
-                   <h3 className="text-xs font-semibold text-zinc-900 uppercase tracking-wider mb-3">Key Data</h3>
-                   <div className="rounded-md border border-zinc-200 overflow-hidden text-sm">
-                        <div className="grid grid-cols-4 bg-zinc-50 border-b border-zinc-200 divide-x divide-zinc-200">
-                            <div className="px-3 py-2 text-[11px] font-medium text-zinc-500 uppercase">Driver Name</div>
-                            <div className="px-3 py-2 text-[11px] font-medium text-zinc-500 uppercase">Tenure</div>
-                            <div className="px-3 py-2 text-[11px] font-medium text-zinc-500 uppercase">Risk Score</div>
-                            <div className="px-3 py-2 text-[11px] font-medium text-zinc-500 uppercase">Last Contact</div>
-                        </div>
-                        <div className="grid grid-cols-4 divide-x divide-zinc-200 bg-white">
-                            <div className="px-3 py-2.5 font-medium text-zinc-900 truncate">{data.input_data?.driver_name || "John Smith"}</div>
-                            <div className="px-3 py-2.5 text-zinc-700">{data.input_data?.tenure || "3.5 Years"}</div>
-                            <div className="px-3 py-2.5 font-mono text-zinc-900">{data.input_data?.risk_score || "85/100"}</div>
-                             <div className="px-3 py-2.5 text-zinc-700">{data.input_data?.last_contact || "2 days ago"}</div>
-                        </div>
-                   </div>
+              {/* Data Summary - Dynamic Chunked Rows */ }
+              <div className="space-y-3">
+                  <h3 className="text-xs font-semibold text-zinc-900 uppercase tracking-wider">Key Data</h3>
+                  <div className="border border-zinc-200 rounded-lg overflow-hidden bg-white">
+                      {/* 
+                          LOGIC: Chunk data into groups of 4. 
+                          Each chunk gets a Header Row (Gray) followed by a Value Row (White).
+                      */}
+                      {(() => {
+                          const dataPoints = [
+                              { label: "Driver Name", value: data.input_data?.driver_name || "John Smith", font: "font-medium" },
+                              { label: "Tenure", value: data.input_data?.tenure || "3.5 Years", font: "font-normal" },
+                              { label: "Risk Score", value: data.input_data?.risk_score || "85/100", font: "font-mono font-medium" },
+                              { label: "Last Contact", value: data.input_data?.last_contact || "2 days ago", font: "font-normal" },
+                              // Demo Extra Data
+                              { label: "Vehicle ID", value: "VOL-29384", font: "font-mono" },
+                              { label: "Region", value: "Southwest", font: "font-normal" },
+                              { label: "License Status", value: "Valid (CDL-A)", font: "font-medium text-emerald-600" },
+                              { label: "Compliance", value: "Up to Date", font: "font-normal" },
+                              
+                              // Row 3
+                              { label: "Current Route", value: "I-40 Westbound", font: "font-medium text-zinc-900" },
+                              { label: "Cargo Type", value: "Refrigerated Goods", font: "font-normal" },
+                              { label: "Gross Weight", value: "42,500 lbs", font: "font-mono" },
+                              { label: "ETA Destination", value: "Tonight, 8:00 PM", font: "font-medium text-blue-600" },
+
+                              // Row 4
+                              { label: "Fuel Efficiency", value: "6.8 MPG", font: "font-normal" },
+                              { label: "Idle Time", value: "14% (High)", font: "font-medium text-amber-600" },
+                              { label: "Next Service", value: "In 3,000 miles", font: "font-normal" },
+                              { label: "Maintenance", value: "No Open Tickets", font: "font-normal text-zinc-500" },
+
+                              // Row 5
+                              { label: "Supervisor", value: "Sarah Jenkins", font: "font-medium" },
+                              { label: "Shift Pattern", value: "2 Weeks On / 2 Off", font: "font-normal" },
+                              { label: "Last drug test", value: "Passed (Jan 10)", font: "font-normal text-emerald-600" },
+                              { label: "Contract Type", value: "Full-Time W2", font: "font-normal" }
+                          ];
+
+                          const chunkSize = 4;
+                          const chunks = [];
+                          for (let i = 0; i < dataPoints.length; i += chunkSize) {
+                              chunks.push(dataPoints.slice(i, i + chunkSize));
+                          }
+
+                          return chunks.map((chunk, idx) => (
+                              <div key={idx} className={`${idx > 0 ? 'border-t border-zinc-200' : ''}`}>
+                                  {/* Header Row */}
+                                  <div className="grid grid-cols-4 bg-zinc-50 border-b border-zinc-200">
+                                      {chunk.map((item, i) => (
+                                          <div key={i} className="px-4 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                                              {item.label}
+                                          </div>
+                                      ))}
+                                      {/* Fill empty cells if last chunk is incomplete */}
+                                      {[...Array(chunkSize - chunk.length)].map((_, i) => <div key={`empty-h-${i}`} />)}
+                                  </div>
+                                  {/* Value Row */}
+                                  <div className="grid grid-cols-4 bg-white">
+                                      {chunk.map((item, i) => (
+                                          <div key={i} className={`px-4 py-3 text-sm text-zinc-900 truncate ${item.font || ''}`}>
+                                              {item.value}
+                                          </div>
+                                      ))}
+                                      {[...Array(chunkSize - chunk.length)].map((_, i) => <div key={`empty-v-${i}`} />)}
+                                  </div>
+                              </div>
+                          ));
+                      })()}
+                  </div>
               </div>
 
               {/* Metrics Row - Dense */}
@@ -222,29 +273,47 @@ export default function ActionFlowDetailPage() {
                   {/* DISCUSSION PANEL (Compact) */}
                   <div className="col-span-7 pl-4 border-l border-zinc-100">
                       <div className="flex flex-col h-[500px]">
-                          <div className="mb-4 flex items-center justify-between">
+                          <div className="mb-3 flex items-center justify-between">
                               <h3 className="text-sm font-semibold text-zinc-900">Discussion</h3>
                               <span className="text-[10px] text-zinc-400 bg-zinc-50 px-2 py-1 rounded-full border border-zinc-100">
                                   Global Context
                               </span>
                           </div>
+                           
+                          {/* Top Input Area */}
+                          <div className="mb-4">
+                               <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 focus-within:ring-1 focus-within:ring-zinc-900 focus-within:border-zinc-900 transition-all">
+                                   <Input 
+                                      className="border-0 bg-transparent h-auto p-0 text-sm placeholder:text-zinc-400 focus-visible:ring-0"
+                                      placeholder="Reply to thread..."
+                                   />
+                                   <div className="flex items-center gap-1">
+                                       <Button size="icon" variant="ghost" className="h-6 w-6 text-zinc-400 hover:text-zinc-900">
+                                           <AtSign className="w-3.5 h-3.5" />
+                                       </Button>
+                                       <Button size="icon" variant="ghost" className="h-6 w-6 text-zinc-400 hover:text-zinc-900">
+                                           <Hash className="w-3.5 h-3.5" />
+                                       </Button>
+                                   </div>
+                               </div>
+                          </div>
 
                           <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
-                              {/* Comment Thread - Clean */}
+                              {/* Comment Thread - Clean - Newest First */}
                               <div className="space-y-4">
                                   
-                                  {/* System Log Item */}
+                                  {/* User Comment (Newest) */}
                                   <div className="flex gap-3">
-                                      <div className="w-6 h-6 rounded bg-zinc-50 border border-zinc-200 flex items-center justify-center shrink-0 mt-0.5">
-                                           <Hash className="w-3 h-3 text-zinc-400" />
+                                      <div className="w-6 h-6 rounded bg-zinc-200 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 text-[10px] font-bold">
+                                           LM
                                       </div>
                                       <div className="space-y-1">
                                           <div className="flex items-center gap-2">
-                                              <span className="text-xs font-semibold text-zinc-800">System</span>
-                                              <span className="text-[10px] text-zinc-400">9:30 AM</span>
+                                              <span className="text-xs font-semibold text-zinc-900">Lisa M.</span>
+                                              <span className="text-[10px] text-zinc-400">10:15 AM</span>
                                           </div>
-                                          <p className="text-sm text-zinc-600 leading-snug">
-                                              Workflow initiated. Risk Score <span className="font-mono text-zinc-900">85</span>.
+                                          <p className="text-sm text-zinc-800 leading-snug">
+                                              Approved. Check for maintenance delays mentioned in the last haul report.
                                           </p>
                                       </div>
                                   </div>
@@ -266,40 +335,23 @@ export default function ActionFlowDetailPage() {
                                       </div>
                                   </div>
 
-                                  {/* User Comment */}
+                                  {/* System Log Item (Oldest) */}
                                   <div className="flex gap-3">
-                                      <div className="w-6 h-6 rounded bg-zinc-200 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600 text-[10px] font-bold">
-                                           LM
+                                      <div className="w-6 h-6 rounded bg-zinc-50 border border-zinc-200 flex items-center justify-center shrink-0 mt-0.5">
+                                           <Hash className="w-3 h-3 text-zinc-400" />
                                       </div>
                                       <div className="space-y-1">
                                           <div className="flex items-center gap-2">
-                                              <span className="text-xs font-semibold text-zinc-900">Lisa M.</span>
-                                              <span className="text-[10px] text-zinc-400">10:15 AM</span>
+                                              <span className="text-xs font-semibold text-zinc-800">System</span>
+                                              <span className="text-[10px] text-zinc-400">9:30 AM</span>
                                           </div>
-                                          <p className="text-sm text-zinc-800 leading-snug">
-                                              Approved. Check for maintenance delays mentioned in the last haul report.
+                                          <p className="text-sm text-zinc-600 leading-snug">
+                                              Workflow initiated. Risk Score <span className="font-mono text-zinc-900">85</span>.
                                           </p>
                                       </div>
                                   </div>
 
                               </div>
-                          </div>
-
-                          <div className="mt-4 pt-3 border-t border-zinc-100">
-                               <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 focus-within:ring-1 focus-within:ring-zinc-900 focus-within:border-zinc-900 transition-all">
-                                   <Input 
-                                      className="border-0 bg-transparent h-auto p-0 text-sm placeholder:text-zinc-400 focus-visible:ring-0"
-                                      placeholder="Reply to thread..."
-                                   />
-                                   <div className="flex items-center gap-1">
-                                       <Button size="icon" variant="ghost" className="h-6 w-6 text-zinc-400 hover:text-zinc-900">
-                                           <AtSign className="w-3.5 h-3.5" />
-                                       </Button>
-                                       <Button size="icon" variant="ghost" className="h-6 w-6 text-zinc-400 hover:text-zinc-900">
-                                           <Hash className="w-3.5 h-3.5" />
-                                       </Button>
-                                   </div>
-                               </div>
                           </div>
                       </div>
                   </div>
@@ -310,20 +362,22 @@ export default function ActionFlowDetailPage() {
       {/* 50% RIGHT PANEL: AI CHAT - Monochrome & Clean */}
       <div className="w-1/2 flex flex-col h-full bg-zinc-50 border-l border-zinc-200">
           {/* Chat Header */}
-          <div className="h-14 border-b border-zinc-200 bg-white px-6 flex items-center justify-between shrink-0">
+          {/* Chat Header */}
+          <div className="h-12 border-b border-zinc-200 bg-white px-4 flex items-center justify-between shrink-0">
                <div className="flex items-center gap-3">
-                   <div className="w-7 h-7 bg-zinc-900 text-white rounded flex items-center justify-center">
-                       <Bot className="w-4 h-4" />
+                   <div className="w-6 h-6 bg-zinc-900 text-white rounded flex items-center justify-center">
+                       <Bot className="w-3.5 h-3.5" />
                    </div>
                    <span className="text-sm font-semibold text-zinc-900">Assistant</span>
                </div>
-               <Button variant="ghost" size="sm" className="text-xs text-zinc-500 hover:text-zinc-900 h-8">
+               <Button variant="ghost" size="sm" className="text-[10px] text-zinc-500 hover:text-zinc-900 h-7 px-2">
                    Clear Context
                </Button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
               
               {/* Bot Msg */}
               <div className="flex gap-4 max-w-2xl">
