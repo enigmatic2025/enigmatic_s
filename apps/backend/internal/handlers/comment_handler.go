@@ -127,43 +127,71 @@ func (h *CommentHandler) ListComments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hydrate User Info
+	// Hydrate User Info AND Likes
 	var enrichedComments []map[string]interface{}
 
 	if len(comments) > 0 {
 		userIDs := make([]string, 0)
+		commentIDs := make([]string, 0)
 		seen := make(map[string]bool)
 		for _, c := range comments {
 			if !seen[c.UserID] {
 				userIDs = append(userIDs, c.UserID)
 				seen[c.UserID] = true
 			}
+			commentIDs = append(commentIDs, c.ID)
 		}
 
+		// 1. Fetch User Profiles
 		userMap := make(map[string]string) // ID -> Name
-
-		for _, uid := range userIDs {
-			// Fetch minimal profile data
+		if len(userIDs) > 0 {
 			var p []struct {
+				ID       string `json:"id"`
 				FullName string `json:"full_name"`
 			}
-			client.DB.From("profiles").Select("full_name").Eq("id", uid).Execute(&p)
-			if len(p) > 0 {
-				userMap[uid] = p[0].FullName
-			} else {
-				userMap[uid] = "Unknown User"
+			client.DB.From("profiles").Select("id, full_name").In("id", userIDs).Execute(&p)
+			for _, profile := range p {
+				userMap[profile.ID] = profile.FullName
+			}
+		}
+
+		// 2. Fetch Likes for these comments
+		var likes []struct {
+			CommentID string `json:"comment_id"`
+			UserID    string `json:"user_id"`
+		}
+		// Note: Supabase/PostgREST 'In' query usually takes a comma-separated string for array
+		// We need to implement this correctly. The client.DB.In() should handle slice or we join.
+		// Assuming Execute with In takes slice.
+		client.DB.From("comment_likes").Select("comment_id, user_id").In("comment_id", commentIDs).Execute(&likes)
+
+		likeCounts := make(map[string]int)
+		userLiked := make(map[string]bool)
+		currentUserID, _ := r.Context().Value(middleware.UserIDKey).(string)
+
+		for _, l := range likes {
+			likeCounts[l.CommentID]++
+			if l.UserID == currentUserID {
+				userLiked[l.CommentID] = true
 			}
 		}
 
 		// Build Response
 		for _, c := range comments {
+			uName := userMap[c.UserID]
+			if uName == "" {
+				uName = "Unknown User"
+			}
+
 			enriched := map[string]interface{}{
 				"id":         c.ID,
 				"content":    c.Content,
 				"user_id":    c.UserID,
 				"parent_id":  c.ParentID,
 				"created_at": c.CreatedAt,
-				"user_name":  userMap[c.UserID],
+				"user_name":  uName,
+				"like_count": likeCounts[c.ID],
+				"is_liked":   userLiked[c.ID],
 			}
 			enrichedComments = append(enrichedComments, enriched)
 		}
@@ -177,8 +205,55 @@ func (h *CommentHandler) ListComments(w http.ResponseWriter, r *http.Request) {
 
 // ToggleLike handles POST /api/comments/{id}/like
 func (h *CommentHandler) ToggleLike(w http.ResponseWriter, r *http.Request) {
-	// Implementation dependent on if we want to toggle.
-	// For simplicity, let's just create a like if not exists.
-	// ... logic skipped for brevity unless requested ...
+	commentID := r.PathValue("id")
+	if commentID == "" {
+		http.Error(w, "Missing comment ID", http.StatusBadRequest)
+		return
+	}
+
+	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
+	if !ok || userID == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	client := database.GetClient()
+
+	// Check if like exists
+	// Assuming table 'comment_likes' exists with comment_id, user_id
+	var likes []map[string]interface{}
+	err := client.DB.From("comment_likes").
+		Select("user_id").
+		Eq("comment_id", commentID).
+		Eq("user_id", userID).
+		Execute(&likes)
+
+	if err != nil {
+		// Table might not exist or other DB error
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(likes) > 0 {
+		// Unlike
+		err = client.DB.From("comment_likes").
+			Delete().
+			Eq("comment_id", commentID).
+			Eq("user_id", userID).
+			Execute(nil)
+	} else {
+		// Like
+		likeRecord := map[string]string{
+			"comment_id": commentID,
+			"user_id":    userID,
+		}
+		err = client.DB.From("comment_likes").Insert(likeRecord).Execute(nil)
+	}
+
+	if err != nil {
+		http.Error(w, "Failed to toggle like: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }

@@ -16,7 +16,9 @@ interface Comment {
   created_at: string;
   user_name: string;
   like_count?: number;
+  is_liked?: boolean;
 }
+
 
 interface ActionFlowCommentsProps {
   actionFlowId: string;
@@ -89,9 +91,21 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
     }
   };
 
+  const handleLike = async (commentId: string) => {
+    try {
+        // Optimistic update could happen here but let's just trigger API + Revalidate
+        const res = await apiClient.post(`/comments/${commentId}/like`, {});
+        if (!res.ok) throw new Error("Failed to like");
+        mutate(`/comments?action_flow_id=${actionFlowId}`); 
+    } catch (e: any) {
+        toast.error("Failed to like comment");
+    }
+  };
+
   // Group comments by parent
-  const rootComments = comments.filter(c => !c.parent_id).sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); // Newest first
-  const getReplies = (parentId: string) => comments.filter(c => c.parent_id === parentId).sort((a,b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()); // Oldest first for replies usually
+  // Sorting: Newest first (descending) for both root and replies as requested
+  const rootComments = comments.filter(c => !c.parent_id).sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); 
+  const getReplies = (parentId: string) => comments.filter(c => c.parent_id === parentId).sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return (
     <div className="flex flex-col h-full">
@@ -154,12 +168,14 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
                           replyContent={replyContent}
                           setReplyContent={setReplyContent}
                           handlePostComment={handlePostComment}
+                          handleLike={handleLike}
                           submitting={submitting}
                         />
                     ))
                 )}
             </div>
         </ScrollArea>
+
     </div>
   );
 }
@@ -174,6 +190,7 @@ function CommentItem({
   replyContent, 
   setReplyContent, 
   handlePostComment, 
+  handleLike,
   submitting 
 }: { 
   comment: Comment, 
@@ -184,6 +201,7 @@ function CommentItem({
   replyContent: string, 
   setReplyContent: (v: string) => void, 
   handlePostComment: (parentId?: string, content?: string) => void, 
+  handleLike: (id: string) => void, 
   submitting: boolean 
 }) {
     const isReplying = replyTo === comment.id;
@@ -210,10 +228,16 @@ function CommentItem({
             </p>
 
             <div className="flex items-center gap-3 pt-1">
-                <Button variant="ghost" size="sm" className="h-5 px-1 text-[10px] text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200">
-                    <ThumbsUp className="w-3 h-3 mr-1" />
-                    Like
+                <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={`h-5 px-1 text-[10px] ${comment.is_liked ? 'text-primary font-medium bg-primary/5 hover:bg-primary/10 hover:text-primary' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'}`}
+                    onClick={() => handleLike(comment.id)}
+                >
+                    <ThumbsUp className={`w-3 h-3 mr-1 ${comment.is_liked ? 'fill-current' : ''}`} />
+                    Like {comment.like_count && comment.like_count > 0 ? `(${comment.like_count})` : ''}
                 </Button>
+
                 {!isReply && (
                     <Button 
                         variant="ghost" 
@@ -260,6 +284,7 @@ function CommentItem({
                           replyContent={replyContent}
                           setReplyContent={setReplyContent}
                           handlePostComment={handlePostComment}
+                          handleLike={handleLike}
                           submitting={submitting}
                         />
                     ))}
