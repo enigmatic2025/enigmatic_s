@@ -55,6 +55,8 @@ func NewServer() *http.Server {
 func (s *Server) RegisterRoutes() http.Handler {
 	mux := http.NewServeMux()
 
+	log.Println("Registering routes...")
+
 	// Health Check
 	mux.HandleFunc("/", s.HelloWorldHandler)
 
