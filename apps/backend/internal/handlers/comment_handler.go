@@ -65,10 +65,7 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 4. Insert into DB
-	var results []map[string]interface {
-		// Map the return fields
-	}
-	// We need to fetch the inserted record to return it, requiring 'Select' or Return representation
+	var results []map[string]interface{}
 	// PostgREST Insert automatically returns the created objects if we ask, usually via headers or default.
 	// Supabase Go client behavior:
 	err := client.DB.From("comments").Insert(comment).Execute(&results)
