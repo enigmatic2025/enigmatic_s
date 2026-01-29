@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
 )
 
 type CommentHandler struct{}
@@ -37,16 +38,11 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. Get User ID from Context (Assuming Auth Middleware)
-	userID := r.Header.Get("X-User-Id")
-	if userID == "" {
-		// Fallback for dev/testing if header not set by middleware
-		// For now, return unauthorized if strictly enforcing
-		// http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		// return
-		// Use a dummy UUID or existing logic?
-		// Note: The middleware.Auth should ensure X-User-Id is set if fully implemented.
-		// If testing via Curl without header, this fails.
+	// 2. Get User ID from Context (Set by Auth Middleware)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
+	if !ok || userID == "" {
+		http.Error(w, "Unauthorized: User ID not found", http.StatusUnauthorized)
+		return
 	}
 
 	client := database.GetClient()
