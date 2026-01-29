@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useSWR from "swr";
+
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "@/navigation";
 import { useAuth } from "@/components/auth-provider";
@@ -27,51 +29,63 @@ export default function LoginPage() {
   const { user, loading: authLoading } = useAuth();
   const t = useTranslations("Login");
 
-  // Redirect if already logged in
-  useEffect(() => {
-    const checkAndRedirect = async () => {
-      if (authLoading) return; // Wait for auth to load
-
-      if (user) {
+  // useSWR for Check and Redirect logic
+  const { data: loginCheck, isLoading: isChecking } = useSWR(
+    user && !authLoading ? 'login-check' : null,
+    async () => {
         // Check if user has MFA enabled but only AAL1 session
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         const { data: factors } = await supabase.auth.mfa.listFactors();
 
         const hasVerifiedMFA = factors?.totp?.some(
           (f) => f.status === "verified"
         );
 
+        let needsMFA = false;
         if (hasVerifiedMFA) {
           // Let's check the assurance level from the session
           const currentLevel = session?.user?.app_metadata?.aal || "aal1";
           if (currentLevel === "aal1") {
-            return; // Stop redirect, let MFA flow happen
+            needsMFA = true;
           }
         }
 
-        // User is already logged in (and satisfied MFA if needed), redirect to dashboard
+        // Fetch memberships for redirect
         const { data: memberships } = await supabase
           .from("memberships")
           .select("organizations(slug)")
           .limit(1);
+        
+        return { needsMFA, memberships };
+    },
+    {
+        shouldRetryOnError: false
+    }
+  );
 
-        if (
-          memberships &&
-          memberships.length > 0 &&
-          memberships[0].organizations
-        ) {
-          // @ts-ignore
-          router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`);
-        } else {
-          router.push("/nodal/admin");
-        }
-      }
-    };
+  // Redirect Effect based on Data
+  useEffect(() => {
+    if (!loginCheck) return;
 
-    checkAndRedirect();
-  }, [user, authLoading, router]);
+    if (loginCheck.needsMFA) {
+       // Stop redirect, let MFA flow happen (handled by UI state if we were showing it, but here we just return)
+       return; 
+    }
+
+    const { memberships } = loginCheck;
+    if (
+        memberships &&
+        memberships.length > 0 &&
+        memberships[0].organizations
+    ) {
+        // @ts-ignore
+        router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`);
+    } else {
+        router.push("/nodal/admin");
+    }
+
+  }, [loginCheck, router]);
+
 
   if (authLoading) {
     return (

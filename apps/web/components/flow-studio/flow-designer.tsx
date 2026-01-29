@@ -2,6 +2,8 @@
 
 import { Badge } from "@/components/ui/badge";
 import { useCallback, useRef, useState, useEffect } from 'react';
+import useSWR from 'swr';
+
 import ReactFlow, {
   Background,
   Controls,
@@ -106,32 +108,33 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
 
 
-  // Load Flow Data
-  useEffect(() => {
-    if (!flowId) {
-      setIsLoaded(true);
-      return;
+  // Load Flow Data with SWR
+  const { data: flowData, error: flowError, isLoading: isFlowLoading } = useSWR(
+    flowId ? `/flows/${flowId}` : null,
+    () => flowService.getFlow(flowId!),
+    {
+      revalidateOnFocus: false, // Don't overwrite unsaved work on focus
+      revalidateOnReconnect: false,
+      onSuccess: (data) => {
+         // This is still supported in many SWR versions, but if not, 
+         // we can move this logic to a useEffect. 
+         // To be safe and compliant with latest SWR patterns that discourage side-effects in render:
+      }
     }
+  );
 
-    const fetchFlow = async () => {
-      try {
-        const data = await flowService.getFlow(flowId);
-        
-        const loadedDefinition = data.draft_definition || data.definition; // Prioritize draft, fallback to legacy
+  // Sync Data to State Effect
+  useEffect(() => {
+    if (flowData) {
+        const loadedDefinition = flowData.draft_definition || flowData.definition;
         
         // Determine Status
-        if (!data.definition) {
-            setPublishStatus('draft'); // Never published
+        if (!flowData.definition) {
+            setPublishStatus('draft');
         } else {
-            // Compare draft vs definition
-            // Note: This simple stringify comparison relies on consistent key order. 
-            // Ideally backend returns a 'has_unpublished_changes' flag.
-            const draftStr = JSON.stringify(data.draft_definition);
-            const defStr = JSON.stringify(data.definition);
-            
-            // If we don't have a draft_definition separate from definition in DB, they might be equal.
-            // If draft_definition is undefined in data, it means it matches or hasn't been branched.
-            if (!data.draft_definition || draftStr === defStr) {
+            const draftStr = JSON.stringify(flowData.draft_definition);
+            const defStr = JSON.stringify(flowData.definition);
+            if (!flowData.draft_definition || draftStr === defStr) {
                 setPublishStatus('published');
             } else {
                 setPublishStatus('changed');
@@ -143,41 +146,48 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
           if (savedNodes) setNodes(savedNodes);
           if (savedEdges) setEdges(savedEdges);
         }
-        if (data.name) setFlowName(data.name);
+        if (flowData.name) setFlowName(flowData.name);
 
         // Load Global Variables
-        if (data.variables_schema && Array.isArray(data.variables_schema)) {
+        if (flowData.variables_schema && Array.isArray(flowData.variables_schema)) {
             const { setVariable } = useFlowStore.getState();
-            data.variables_schema.forEach((v: any) => {
+            flowData.variables_schema.forEach((v: any) => {
                 if (v.key) {
                    setVariable(v.key, v.value);
                 }
             });
         }
-      } catch (error) {
-        console.error("Error loading flow:", error);
-        toast.error("Failed to load flow data");
-      } finally {
+        
         setIsLoaded(true);
+    } else if (!flowId) {
+        // New Flow
+        setIsLoaded(true);
+    }
+  }, [flowData, flowId, setNodes, setEdges, setFlowName]);
+
+  // Error Handling
+  useEffect(() => {
+      if (flowError) {
+          console.error("Error loading flow:", flowError);
+          toast.error("Failed to load flow data");
+          setIsLoaded(true);
       }
-    };
+  }, [flowError]);
 
-    fetchFlow();
-
-    // Cleanup / Reset on Mount
-    // ensuring we don't show stale data from a previous flow or session
+  // Cleanup on Mount/Unmount
+  useEffect(() => {
     const { clearLogs, clearExecutionTrace, clearVariables } = useFlowStore.getState();
     clearLogs();
     clearExecutionTrace();
     clearVariables();
 
-    // Optional: Cleanup on unmount too if desired
     return () => {
         clearLogs();
         clearExecutionTrace();
         clearVariables();
     };
-  }, [flowId, setNodes, setEdges, setFlowName]);
+  }, []);
+
   
   const handlePublish = async () => {
       if (!flowId) return;

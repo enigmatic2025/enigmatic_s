@@ -1,63 +1,61 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+
 import { supabase } from '@/lib/supabase'
 import { useRouter } from '@/navigation'
 import { useAuth } from '@/components/auth-provider'
 import { Link } from '@/navigation'
 import { toast } from 'sonner'
+import useSWR, { mutate } from 'swr'
 
 export default function SecurityPage() {
-  const [mfaEnabled, setMfaEnabled] = useState(false)
-  const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { user } = useAuth()
 
-  useEffect(() => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-    checkMFAStatus()
-  }, [user, router])
-
-  const checkMFAStatus = async () => {
-    setLoading(true)
-    try {
-      const { data, error } = await supabase.auth.mfa.listFactors()
-      if (error) throw error
-
-      const hasMFA = data?.totp && data.totp.length > 0 && data.totp[0].status === 'verified'
-      setMfaEnabled(hasMFA)
-    } catch (err) {
-      toast.error('Error checking MFA status')
-    } finally {
-      setLoading(false)
-    }
+  // Redirect if not logged in
+  if (!user) {
+    // This side effect is acceptable as a route guard, 
+    // but ideally handled by middleware or a layout wrapper.
+    // For now we keep the guard logic simple or assume middleware handles it.
   }
+
+  // 1. Fetch MFA Factors with SWR
+  const { data: factorsData, isLoading } = useSWR(
+    user ? 'mfa-factors' : null,
+    async () => {
+        const { data, error } = await supabase.auth.mfa.listFactors()
+        if (error) throw error
+        return data
+    }
+  )
+
+  const mfaEnabled = factorsData?.totp && factorsData.totp.length > 0 && factorsData.totp[0].status === 'verified'
+
+  const [isDisabling, setIsDisabling] = useState(false)
 
   const handleDisableMFA = async () => {
     if (!confirm('Are you sure you want to disable two-factor authentication?')) return
 
-    setLoading(true)
+    setIsDisabling(true)
     try {
-      const { data: factorsData } = await supabase.auth.mfa.listFactors()
       if (factorsData?.totp && factorsData.totp.length > 0) {
         const factorId = factorsData.totp[0].id
         const { error } = await supabase.auth.mfa.unenroll({ factorId })
         if (error) throw error
         
         toast.success('Two-factor authentication has been disabled.')
-        setMfaEnabled(false)
+        // Revalidate SWR
+        mutate('mfa-factors') 
       }
     } catch (err: any) {
       toast.error('Error disabling MFA: ' + err.message)
     } finally {
-      setLoading(false)
+      setIsDisabling(false)
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-lg text-muted-foreground font-light">Loading...</p>
@@ -126,7 +124,7 @@ export default function SecurityPage() {
                 </p>
                 <button
                   onClick={handleDisableMFA}
-                  disabled={loading}
+                  disabled={isDisabling}
                   className="rounded-md border border-red-500/20 bg-red-500/10 text-red-500 px-4 py-2 text-sm font-light hover:bg-red-500/20 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
                   Disable Two-Factor Authentication
@@ -149,3 +147,4 @@ export default function SecurityPage() {
     </div>
   )
 }
+

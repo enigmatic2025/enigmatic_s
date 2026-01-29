@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import { Plus, Pencil, Trash, MoreHorizontal } from 'lucide-react'
 import { apiClient } from "@/lib/api-client"
 import { toast } from 'sonner'
@@ -26,31 +27,18 @@ import {
 import { CreateOrgDialog, UpdateOrgDialog } from "@/components/admin/org-dialogs"
 
 export function OrganizationsPanel() {
-  const [orgs, setOrgs] = useState<Organization[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: orgs = [], error, mutate, isLoading: loading } = useSWR<Organization[]>('/api/admin/orgs', (url: string) => apiClient.get(url).then(async res => {
+      if (!res.ok) throw new Error('Failed to fetch orgs');
+      return res.json();
+  }));
+
+
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null)
 
-  useEffect(() => {
-    fetchOrgs()
-  }, [])
+  // Removed useEffect and fetchOrgs
 
-  const fetchOrgs = async () => {
-    try {
-      const res = await apiClient.get('/api/admin/orgs')
-
-      if (!res.ok) throw new Error('Failed to fetch orgs')
-
-      const data = await res.json()
-      setOrgs(data)
-    } catch (error) {
-      console.error(error)
-      toast.error('Failed to fetch organizations')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleCreate = async (data: any) => {
     try {
@@ -59,7 +47,7 @@ export function OrganizationsPanel() {
       if (!res.ok) throw new Error('Failed to create org')
 
       setIsCreateOpen(false)
-      fetchOrgs()
+      mutate() // Refresh list
       toast.success('Organization created successfully')
     } catch (error) {
       toast.error('Error creating organization')
@@ -75,7 +63,7 @@ export function OrganizationsPanel() {
 
       setIsUpdateOpen(false)
       setSelectedOrg(null)
-      fetchOrgs()
+      mutate() // Refresh list
       toast.success('Organization updated successfully')
     } catch (error) {
       toast.error('Error updating organization')
@@ -96,7 +84,7 @@ export function OrganizationsPanel() {
           throw new Error('Failed to delete org')
       }
 
-      fetchOrgs()
+      mutate() // Refresh list
       toast.success('Organization deleted successfully')
     } catch (error) {
       toast.error('Error deleting organization')

@@ -1,7 +1,9 @@
 "use client";
 
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useSWR from "swr";
+
 import { apiClient } from "@/lib/api-client";
 import { 
   Users, 
@@ -48,78 +50,44 @@ export default function OrganizationPage() {
   
   const [activeTab, setActiveTab] = useState("members");
   const [searchQuery, setSearchQuery] = useState("");
-  const [members, setMembers] = useState<OrganizationMember[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [loading, setLoading] = useState(true);
   
   // New Team State
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [newTeamName, setNewTeamName] = useState("");
   const [newTeamDesc, setNewTeamDesc] = useState("");
 
-  // Helper to resolve org ID from slug (Quick Hack for MVP)
-  // Ideally this is in a context
-  const [orgId, setOrgId] = useState<string | null>(null);
-
-  useEffect(() => {
-      // Fetch Org ID by slug
-      // We can use the admin/orgs list filtered? No.
-      // Let's generic fetch "/api/admin/orgs" and find matches? (Inefficient)
-      // BETTER: Add an endpoint /api/orgs/by-slug/:slug.
-      // OR: Just assume the user context has it. 
-      // Let's try to fetch user profile, which has memberships, find the org with this slug.
-      // This is complicated for a single file edit.
-      // I will assume for now we can get it or I will query `flowService.getFlows` which returns flow data... no.
-      
-      // Let's just fetch all orgs (standard user might not be able to).
-      // I will add a special useEffect to "bootstrap" the org ID.
-      async function load() {
-          try {
-             // 1. Get Org ID
-             // Hack: use existing flows endpoint or similar to infer? 
-             // Or better: Use the `useFlowStore` or similar?
-             // Let's assume there is a `/api/organization/lookup?slug=` endpoint. 
-             // I'll add this endpoint quickly or just fetch specific known org.
-             // Wait, I can't easily add an endpoint without recompiling backend.
-             // Backend is Go. 
-             
-             // ALTERNATIVE: Use the `ActionFlowList` page logic? 
-             // It fetches `/api/action-flows`.
-             // Maybe I can fetch `/api/admin/orgs` if I'm admin? 
-             
-             // Simplest: Find org by Slug from the client side `currentOrg` if accessible?
-             // `sidebar-navigation` received `currentOrg` as prop.
-             // `layout.tsx` likely fetches it.
-             // Can I use `useOutletContext`? 
-             
-             // NOTE: If this fails with syntax error, it's likely the backend is returning the "Hello World" text 200 OK 
-             // because the new route isn't registered yet (restart backend!).
-             const orgRes = await apiClient.get(`/api/orgs/lookup?slug=${slug}`);
-             
-             if(orgRes.ok) {
-                 const contentType = orgRes.headers.get("content-type");
-                 if (!contentType || !contentType.includes("application/json")) {
-                    throw new Error("Backend returned non-JSON response. Please restart your backend server to apply the new routes.");
-                 }
-                 const orgData = await orgRes.json();
-                 setOrgId(orgData.id);
-                 
-                 // 2. Fetch Members & Teams
-                 const [m, t] = await Promise.all([
-                     organizationService.getMembers(orgData.id),
-                     organizationService.getTeams(orgData.id)
-                 ]);
-                 setMembers(m);
-                 setTeams(t);
-             }
-          } catch(e) {
-              console.error(e);
-          } finally {
-              setLoading(false);
+  // 1. Fetch Org ID by slug
+  const { data: orgId } = useSWR(
+      slug ? `/api/orgs/lookup?slug=${slug}` : null,
+      async (url) => {
+          // This is a "hack" fetcher as described in original code
+          const res = await apiClient.get(url);
+          if (res.ok) {
+             const data = await res.json();
+             return data.id as string;
           }
+          return null;
+      },
+      {
+          onError: () => toast.error("Failed to load organization")
       }
-      if(slug) load();
-  }, [slug]);
+  );
+
+  // 2. Fetch Members & Teams (Dependent on orgId)
+  const { data: members = [], isLoading: loadingMembers } = useSWR<OrganizationMember[]>(
+      orgId ? `/api/orgs/${orgId}/members` : null,
+      () => organizationService.getMembers(orgId!), 
+      { fallbackData: [] }
+  );
+
+  const { data: teams = [], isLoading: loadingTeams, mutate: mutateTeams } = useSWR<Team[]>(
+      orgId ? `/api/orgs/${orgId}/teams` : null,
+      () => organizationService.getTeams(orgId!),
+      { fallbackData: [] }
+  );
+  
+  const loading = !orgId || loadingMembers || loadingTeams;
+
 
   const handleCreateTeam = async () => {
       if(!orgId || !newTeamName) return;
@@ -128,8 +96,9 @@ export default function OrganizationPage() {
           toast.success("Team created");
           setIsTeamModalOpen(false);
           // Refresh
-          const t = await organizationService.getTeams(orgId);
-          setTeams(t);
+          mutateTeams();
+          // const t = await organizationService.getTeams(orgId); // Old way
+          // setTeams(t); // Old way
       } catch(e) {
           toast.error("Failed to create team");
       }

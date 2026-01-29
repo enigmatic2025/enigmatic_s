@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import { Plus, MoreHorizontal, Pencil, Trash, RotateCw, Shield, Lock, Ban, UserCog } from 'lucide-react'
 import { apiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
@@ -28,39 +29,26 @@ import { Button } from "@/components/ui/button"
 import { CreateUserDialog, UpdateUserDialog, ChangePasswordDialog, ChangeRoleDialog } from "@/components/admin/user-dialogs"
 
 export function UsersPanel() {
-  const [users, setUsers] = useState<User[]>([])
-  const [orgs, setOrgs] = useState<Organization[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: users = [], mutate: mutateUsers, isLoading: loadingUsers } = useSWR<User[]>('/api/admin/users', (url: string) => apiClient.get(url).then(async res => {
+      if (!res.ok) throw new Error('Failed to fetch users');
+      return res.json();
+  }));
+
+  const { data: orgs = [], isLoading: loadingOrgs } = useSWR<Organization[]>('/api/admin/orgs', (url: string) => apiClient.get(url).then(async res => {
+      if (!res.ok) throw new Error('Failed to fetch orgs');
+      return res.json();
+  }));
+
+  const loading = loadingUsers || loadingOrgs;
+
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false)
   const [isChangeRoleOpen, setIsChangeRoleOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
-  useEffect(() => {
-    fetchUsers()
-    fetchOrgs()
-  }, [])
+  // Removed useEffect
 
-  const fetchUsers = async () => {
-    try {
-      const res = await apiClient.get('/api/admin/users')
-      if (res.ok) setUsers(await res.json())
-    } catch (error) {
-      toast.error('Failed to fetch users')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchOrgs = async () => {
-    try {
-      const res = await apiClient.get('/api/admin/orgs')
-      if (res.ok) setOrgs(await res.json())
-    } catch (error) {
-      toast.error('Failed to fetch organizations')
-    }
-  }
 
   const handleCreate = async (data: any) => {
     try {
@@ -69,7 +57,7 @@ export function UsersPanel() {
       if (!res.ok) throw new Error('Failed to create user')
 
       setIsCreateOpen(false)
-      fetchUsers()
+      mutateUsers()
       toast.success("User created successfully")
     } catch (error) {
       toast.error('Error creating user')
@@ -85,7 +73,7 @@ export function UsersPanel() {
 
       setIsUpdateOpen(false)
       setSelectedUser(null)
-      fetchUsers()
+      mutateUsers()
       toast.success('User updated successfully')
     } catch (error) {
       toast.error('Error updating user')
@@ -100,7 +88,7 @@ export function UsersPanel() {
 
       if (!res.ok) throw new Error('Failed to delete user')
 
-      fetchUsers()
+      mutateUsers()
       toast.success('User deleted successfully')
     } catch (error) {
       toast.error('Error deleting user')
@@ -114,7 +102,7 @@ export function UsersPanel() {
         const res = await apiClient.post('/api/admin/promote', { user_id: user.id })
 
         if (!res.ok) throw new Error('Failed to promote')
-        fetchUsers()
+        mutateUsers()
         toast.success('User promoted successfully')
     } catch (error) {
         toast.error('Error promoting user')
@@ -129,7 +117,7 @@ export function UsersPanel() {
         const res = await apiClient.post(`/api/admin/users/${user.id}/block`, { blocked: !user.blocked })
 
         if (!res.ok) throw new Error(`Failed to ${action} user`)
-        fetchUsers()
+        mutateUsers()
         toast.success(`User ${action}ed successfully`)
     } catch (error) {
         toast.error(`Error: ${error}`)
@@ -171,7 +159,7 @@ export function UsersPanel() {
         if (!res.ok) throw new Error('Failed to change role')
 
         setIsChangeRoleOpen(false)
-        fetchUsers()
+        mutateUsers()
         toast.success('Role updated successfully')
     } catch (error) {
         toast.error('Error changing role')

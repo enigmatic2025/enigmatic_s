@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,33 +66,17 @@ import { useParams } from "next/navigation";
 export default function FlowStudioPage() {
   const params = useParams();
   const slug = params?.slug as string;
-  const [flows, setFlows] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (slug) {
-        fetchFlows();
+  const { data: flows = [], isLoading: loading } = useSWR(
+    slug ? `/flows?slug=${slug}` : null,
+    (url) => apiClient.get(url).then(async (res) => {
+        if (res.ok) return res.json();
+        throw new Error("Failed to load flows");
+    }),
+    {
+        onError: () => toast.error("Failed to load flows")
     }
-  }, [slug]);
+  );
 
-  const fetchFlows = async () => {
-    try {
-        setLoading(true);
-        const res = await apiClient.get(`/flows?slug=${slug}`);
-        if (res.ok) {
-            const data = await res.json();
-            setFlows(data);
-        } else {
-            console.error("Failed to load flows", res.status);
-            toast.error("Failed to load flows");
-        }
-    } catch (error) {
-        console.error("Error loading flows", error);
-        toast.error("Error loading flows");
-    } finally {
-        setLoading(false);
-    }
-  };
 
   return (
     <div className="h-full w-full space-y-6">
