@@ -31,7 +31,7 @@ const fetcher = (url: string) => apiClient.get(url).then(res => {
 });
 
 export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsProps) {
-  const { data: comments = [], error, isLoading } = useSWR<Comment[]>(
+  const { data: comments = [], error, isLoading, mutate } = useSWR<Comment[]>(
     actionFlowId ? `/comments?action_flow_id=${actionFlowId}` : null,
     fetcher,
     {
@@ -51,6 +51,9 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
   }
 
   const handlePostComment = async (parentId?: string, content?: string) => {
+    // ... existing implementation ... 
+    // I prefer not to replace the whole file if I can avoid it, but handlePostComment is long.
+    // I will replace handleLike instead in a separate chunk.
     const text = content || newComment;
     if (!text.trim()) return;
 
@@ -70,12 +73,9 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
         throw new Error(`Failed to post comment: ${res.status} ${errorText}`);
       }
 
-      await res.json(); // Consume body
+      await res.json(); 
+      mutate(); // Revalidate
       
-      // Mutate SWR cache to show new comment immediately
-      await mutate(`/comments?action_flow_id=${actionFlowId}`); 
-      
-      // Cleanup
       if (parentId) {
         setReplyTo(null);
         setReplyContent("");
@@ -92,13 +92,35 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
   };
 
   const handleLike = async (commentId: string) => {
+    // 1. Calculate Optimistic Data
+    const currentComments = comments;
+    const optimisticComments = comments.map(c => {
+        if (c.id === commentId) {
+            const isLiked = !!c.is_liked;
+            return {
+                ...c,
+                is_liked: !isLiked,
+                like_count: (c.like_count || 0) + (isLiked ? -1 : 1)
+            };
+        }
+        return c;
+    });
+
+    // 2. Update UI Immediately (Optimistic)
+    // 'false' means don't revalidate yet
+    mutate(optimisticComments, false);
+
     try {
-        // Optimistic update could happen here but let's just trigger API + Revalidate
+        // 3. Perform Actual API Call
         const res = await apiClient.post(`/comments/${commentId}/like`, {});
         if (!res.ok) throw new Error("Failed to like");
-        mutate(`/comments?action_flow_id=${actionFlowId}`); 
+        
+        // 4. Trigger validation to ensure server consistency
+        mutate(); 
     } catch (e: any) {
+        // 5. Rollback on Error
         toast.error("Failed to like comment");
+        mutate(currentComments, false);
     }
   };
 
