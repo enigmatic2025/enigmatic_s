@@ -37,6 +37,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	// 1. Find API Trigger Node configuration for Templating AND pre-populate node output
 	var titleTemplate, descTemplate string
 	var infoFieldsRaw []interface{}
+	priority := "medium" // Default
 
 	for _, node := range flowDefinition.Nodes {
 		// Populate the specific node ID with the input data (Flat, for variable constraints)
@@ -59,6 +60,17 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			if fields, ok := node.Data["infoFields"].([]interface{}); ok {
 				infoFieldsRaw = fields
 			}
+
+			// Priority Logic
+			// 1. Config Default
+			if p, ok := node.Data["defaultPriority"].(string); ok && p != "" {
+				priority = p
+			}
+			// 2. API Override (if "priority" is in top-level input)
+			if p, ok := inputData["priority"].(string); ok && p != "" {
+				priority = p
+			}
+
 			break
 		}
 	}
@@ -141,6 +153,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		InputData:   inputData,
 		Title:       titleTemplate,
 		Description: descTemplate,
+		Priority:    priority,
 		InfoFields:  infoFields,
 	}
 

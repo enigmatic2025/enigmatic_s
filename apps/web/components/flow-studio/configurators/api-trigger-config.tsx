@@ -245,6 +245,27 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                             Name the running instance dynamically using variables.
                         </p>
                     </div>
+
+                    {/* Default Priority */}
+                     <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">
+                            Default Priority
+                        </label>
+                        <select
+                            value={data.defaultPriority || 'medium'}
+                            onChange={(e) => onUpdate({ ...data, defaultPriority: e.target.value })}
+                            className="w-full bg-background border border-input rounded-md px-3 h-9 text-sm focus:ring-1 focus:ring-primary outline-none transition-all"
+                        >
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                            Priority to assign if not specified in API payload.
+                        </p>
+                    </div>
+
                     
                     {/* Information (Description) */}
                     <div className="space-y-2">

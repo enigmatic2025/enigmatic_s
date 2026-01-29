@@ -55,5 +55,11 @@ export const apiClient = {
         body: JSON.stringify(body),
     }),
 
+    patch: (endpoint: string, body: any) => apiClient.fetch(endpoint, {
+        method: 'PATCH',
+        body: JSON.stringify(body),
+    }),
+
     delete: (endpoint: string) => apiClient.fetch(endpoint, { method: 'DELETE' }),
+
 };

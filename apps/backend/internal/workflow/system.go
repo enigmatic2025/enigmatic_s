@@ -14,6 +14,7 @@ type RecordActionFlowParams struct {
 	InputData   map[string]interface{} `json:"input_data"`
 	Title       string                 `json:"title"`
 	Description string                 `json:"description"`
+	Priority    string                 `json:"priority"` // Added Priority
 	InfoFields  []map[string]string    `json:"info_fields"`
 }
 
@@ -39,7 +40,7 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 	if len(params.InfoFields) > 0 {
 		for _, field := range params.InfoFields {
 			if label, ok := field["label"]; ok {
-				// Use label as key, but might want to slugify it? 
+				// Use label as key, but might want to slugify it?
 				// For now, keying by label is what the UI likely expects or simple mapping
 				// Actually, `InfoFields` is a list of {label, value}.
 				// Let's store it as the backend received it, or simplify?
@@ -48,7 +49,7 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 			}
 		}
 	}
-	
+
 	// Persist Description in InputData since we might lack a dedicated column
 	if params.Description != "" {
 		finalInputData["description"] = params.Description
@@ -65,6 +66,7 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 		Status     string                 `json:"status"`
 		InputData  map[string]interface{} `json:"input_data"`
 		KeyData    map[string]interface{} `json:"key_data"`
+		Priority   string                 `json:"priority"`
 		StartedAt  time.Time              `json:"started_at"`
 	}{
 		FlowID:     flowIDPtr,
@@ -73,6 +75,7 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 		Status:     "RUNNING",
 		InputData:  finalInputData,
 		KeyData:    keyData,
+		Priority:   params.Priority,
 		StartedAt:  time.Now(),
 	}
 

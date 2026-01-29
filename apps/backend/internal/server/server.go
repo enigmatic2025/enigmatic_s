@@ -97,12 +97,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	actionFlowHandler := handlers.NewActionFlowHandler(s.temporalClient)
 	mux.Handle("GET /api/action-flows", middleware.Auth(http.HandlerFunc(actionFlowHandler.ListActionFlows)))
 	mux.Handle("GET /api/action-flows/{id}", middleware.Auth(http.HandlerFunc(actionFlowHandler.GetActionFlow)))
+	mux.Handle("PATCH /api/action-flows/{id}", middleware.Auth(http.HandlerFunc(actionFlowHandler.UpdateActionFlow))) // Added
 	mux.Handle("DELETE /api/action-flows/{id}", middleware.Auth(http.HandlerFunc(actionFlowHandler.DeleteActionFlow)))
 
 	// Execution Routes
 	if s.temporalClient != nil {
 		executeHandler := handlers.NewExecuteFlowHandler(s.temporalClient)
-		mux.Handle("POST /api/flows/{id}/execute", middleware.Auth(http.HandlerFunc(executeHandler.ExecuteFlow)))
+		mux.Handle("POST /api/flows/{id}/execute", http.HandlerFunc(executeHandler.ExecuteFlow))
 	}
 
 	// Task Routes

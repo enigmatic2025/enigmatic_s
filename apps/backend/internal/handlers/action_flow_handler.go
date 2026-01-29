@@ -34,6 +34,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		InputData          map[string]any `json:"input_data"`
 		StartedAt          string         `json:"started_at"`
 		Title              string         `json:"title"`
+		Priority           string         `json:"priority"`
 	}
 
 	var results []ActionFlowResult
@@ -89,6 +90,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		Status             string `json:"status"`
 		TemporalWorkflowID string `json:"temporal_workflow_id"`
 		StartedAt          string `json:"started_at"`
+		Priority           string `json:"priority"`
 	}
 
 	flatResults := make([]FlatResult, len(results))
@@ -109,7 +111,9 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 			Status:             r.Status,
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,
+			Priority:           r.Priority,
 		}
+
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -187,6 +191,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		KeyData            map[string]any `json:"key_data"` // Added KeyData
 		Output             map[string]any `json:"output"`
 		StartedAt          string         `json:"started_at"`
+		Priority           string         `json:"priority"`
 	}
 
 	var results []ActionFlowResult
@@ -303,10 +308,12 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		TemporalWorkflowID string         `json:"temporal_workflow_id"`
 		RunID              string         `json:"run_id"`
 		StartedAt          string         `json:"started_at"`
+		Priority           string         `json:"priority"`
 		InputData          map[string]any `json:"input_data"`
 		KeyData            map[string]any `json:"key_data"`
-		Output             map[string]any `json:"output"`
-		Activities         []Activity     `json:"activities"`
+
+		Output     map[string]any `json:"output"`
+		Activities []Activity     `json:"activities"`
 	}
 
 	// Use Dynamic Title or Fallback
@@ -334,12 +341,67 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		TemporalWorkflowID: af.TemporalWorkflowID,
 		RunID:              af.RunID,
 		StartedAt:          af.StartedAt,
+		Priority:           af.Priority,
 		InputData:          af.InputData,
 		KeyData:            af.KeyData,
-		Output:             af.Output,
-		Activities:         activities,
+
+		Output:     af.Output,
+		Activities: activities,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+// UpdateActionFlow handles PATCH /api/action-flows/{id}
+func (h *ActionFlowHandler) UpdateActionFlow(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "Missing ID", http.StatusBadRequest)
+		return
+	}
+
+	var payload struct {
+		Priority string `json:"priority"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	if payload.Priority == "" {
+		http.Error(w, "Nothing to update", http.StatusBadRequest)
+		return
+	}
+
+	// Validate Priority
+	valid := false
+	for _, p := range []string{"low", "medium", "high", "critical"} {
+		if p == payload.Priority {
+			valid = true
+			break
+		}
+	}
+	if !valid {
+		http.Error(w, "Invalid priority", http.StatusBadRequest)
+		return
+	}
+
+	client := database.GetClient()
+
+	// Update
+	var result []map[string]interface{}
+	err := client.DB.From("action_flows").
+		Update(map[string]interface{}{"priority": payload.Priority}).
+		Eq("id", id).
+		Execute(&result)
+
+	if err != nil {
+		http.Error(w, "Failed to update: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(result)
 }

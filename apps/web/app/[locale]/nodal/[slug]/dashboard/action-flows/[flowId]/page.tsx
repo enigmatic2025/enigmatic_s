@@ -3,7 +3,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
-import useSWR from "swr"; // Added SWR
+import useSWR, { useSWRConfig } from "swr"; // Added useSWRConfig
+
 import { useRouter } from "@/navigation";
 import { flowService } from "@/services/flow-service";
 import { apiClient } from "@/lib/api-client"; // Added apiClient
@@ -13,6 +14,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 
 import { toast } from "sonner";
 import DashboardLoading from "../../loading"; 
@@ -31,7 +39,9 @@ interface ActionFlowDetail {
   key_data: Record<string, any>; // Added key_data
   output: any;
   activities: any[];
+  priority?: string;
 }
+
 
 export default function ActionFlowDetailPage() {
   const { slug, flowId } = useParams();
@@ -50,6 +60,9 @@ export default function ActionFlowDetailPage() {
         refreshInterval: 10000, // Poll every 10s for status updates
     }
   );
+
+  const { mutate } = useSWRConfig(); // Need to import useSWRConfig or just destructure from return
+
 
   const loading = isLoading; // Alias for existing logic compatibility
 
@@ -105,9 +118,52 @@ export default function ActionFlowDetailPage() {
                            }`}>
                                {data.status}
                            </span>
-                           <span className="text-xs font-mono px-2 py-0.5 border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 rounded-full">
-                               HIGH PRIORITY
-                           </span>
+                           
+                           <DropdownMenu>
+
+                                <DropdownMenuTrigger asChild>
+                                    <button className={`text-xs font-mono px-2 py-0.5 border rounded-full uppercase transition-colors cursor-pointer hover:opacity-80 flex items-center gap-1 ${
+                                        (order => {
+                                            const p = (data.priority || 'medium').toLowerCase();
+                                            if (p === 'critical') return 'border-red-500/50 text-red-600 bg-red-50 dark:bg-red-900/20';
+                                            if (p === 'high') return 'border-orange-500/50 text-orange-600 bg-orange-50 dark:bg-orange-900/20';
+                                            if (p === 'low') return 'border-green-500/50 text-green-600 bg-green-50 dark:bg-green-900/20';
+                                            return 'border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400';
+                                        })()
+                                    }`}>
+                                        {data.priority || 'MEDIUM'}
+                                        <ChevronDown className="w-3 h-3 opacity-50" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    {['low', 'medium', 'high', 'critical'].map(p => (
+                                        <DropdownMenuItem 
+                                            key={p} 
+                                            className="uppercase text-xs font-mono cursor-pointer"
+                                            onClick={async () => {
+                                                try {
+                                                     // Optimistic Update
+                                                     const newData = { ...data, priority: p };
+                                                     await apiClient.patch(`/action-flows/${data.id}`, { priority: p });
+                                                     // Revalidate
+                                                     // mutate provided by useSWR hook call if we destructured it, 
+                                                     // but we didn't destructure 'mutate' from the hook call above.
+                                                     // We must destructure it first or import global mutate.
+                                                     // Let's modify the hook call next.
+                                                     toast.success(`Priority updated to ${p}`);
+                                                     mutate(`/action-flows/${data.id}`); 
+
+                                                } catch (e) {
+                                                    toast.error("Failed to update priority");
+                                                }
+                                            }}
+                                        >
+                                            {p}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                           </DropdownMenu>
+
                            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
                                <MoreHorizontal className="w-4 h-4" />
                            </Button>
