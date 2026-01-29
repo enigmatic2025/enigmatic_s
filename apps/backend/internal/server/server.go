@@ -108,6 +108,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("GET /api/tasks", middleware.Auth(http.HandlerFunc(taskHandler.GetTasksHandler)))
 	mux.Handle("POST /api/tasks/{id}/complete", middleware.Auth(http.HandlerFunc(taskHandler.CompleteTaskHandler)))
 
+	// Comment Routes
+	commentHandler := handlers.NewCommentHandler()
+	mux.Handle("GET /api/comments", middleware.Auth(http.HandlerFunc(commentHandler.ListComments)))
+	mux.Handle("POST /api/comments", middleware.Auth(http.HandlerFunc(commentHandler.CreateComment)))
+	mux.Handle("POST /api/comments/{id}/like", middleware.Auth(http.HandlerFunc(commentHandler.ToggleLike)))
+
 	// Test Routes (Dev only, but useful for frontend dev. Maybe keep public or optional? Let's protect them for consistency.)
 	testHandler := handlers.NewTestHandler(s.temporalClient)
 	mux.Handle("POST /api/test/node", middleware.Auth(http.HandlerFunc(handlers.TestNodeHandler)))

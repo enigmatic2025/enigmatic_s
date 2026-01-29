@@ -178,11 +178,13 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 
 	type ActionFlowResult struct {
 		ID                 string         `json:"id"`
+		OrgID              string         `json:"org_id"` // Added OrgID
 		FlowID             string         `json:"flow_id"`
 		Status             string         `json:"status"`
 		TemporalWorkflowID string         `json:"temporal_workflow_id"`
 		RunID              string         `json:"run_id"`
 		InputData          map[string]any `json:"input_data"`
+		KeyData            map[string]any `json:"key_data"` // Added KeyData
 		Output             map[string]any `json:"output"`
 		StartedAt          string         `json:"started_at"`
 	}
@@ -290,6 +292,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 	// Flatten Result
 	type FlatResult struct {
 		ID                 string         `json:"id"`
+		OrgID              string         `json:"org_id"` // Added OrgID
 		FlowID             string         `json:"flow_id"`
 		FlowName           string         `json:"flow_name"`
 		Title              string         `json:"title"`
@@ -298,6 +301,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		RunID              string         `json:"run_id"`
 		StartedAt          string         `json:"started_at"`
 		InputData          map[string]any `json:"input_data"`
+		KeyData            map[string]any `json:"key_data"`
 		Output             map[string]any `json:"output"`
 		Activities         []Activity     `json:"activities"`
 	}
@@ -313,6 +317,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 
 	response := FlatResult{
 		ID:                 af.ID,
+		OrgID:              af.OrgID, // Populate it
 		FlowID:             af.FlowID,
 		FlowName:           flowName,
 		Title:              displayTitle,
@@ -321,6 +326,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		RunID:              af.RunID,
 		StartedAt:          af.StartedAt,
 		InputData:          af.InputData,
+		KeyData:            af.KeyData,
 		Output:             af.Output,
 		Activities:         activities,
 	}

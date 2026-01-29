@@ -34,9 +34,21 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 	if finalInputData == nil {
 		finalInputData = make(map[string]interface{})
 	}
+	// Merge InfoFields into a clean Map for KeyData
+	keyData := make(map[string]interface{})
 	if len(params.InfoFields) > 0 {
-		finalInputData["_info_fields"] = params.InfoFields
+		for _, field := range params.InfoFields {
+			if label, ok := field["label"]; ok {
+				// Use label as key, but might want to slugify it? 
+				// For now, keying by label is what the UI likely expects or simple mapping
+				// Actually, `InfoFields` is a list of {label, value}.
+				// Let's store it as the backend received it, or simplify?
+				// To allow "Driver Name": "Phi Tran" in JSONB:
+				keyData[label] = field["value"]
+			}
+		}
 	}
+	
 	// Persist Description in InputData since we might lack a dedicated column
 	if params.Description != "" {
 		finalInputData["description"] = params.Description
@@ -52,14 +64,15 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 		RunID      string                 `json:"run_id"`
 		Status     string                 `json:"status"`
 		InputData  map[string]interface{} `json:"input_data"`
+		KeyData    map[string]interface{} `json:"key_data"`
 		StartedAt  time.Time              `json:"started_at"`
-		// Title removed as column does not exist in schema. Using InputData["title"] instead.
 	}{
 		FlowID:     flowIDPtr,
 		TemporalID: params.WorkflowID,
 		RunID:      params.RunID,
 		Status:     "RUNNING",
 		InputData:  finalInputData,
+		KeyData:    keyData,
 		StartedAt:  time.Now(),
 	}
 
