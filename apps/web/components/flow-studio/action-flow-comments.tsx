@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Reply, ThumbsUp, MoreHorizontal, Hash, AtSign, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { apiClient } from "@/lib/api-client";
 
 interface Comment {
   id: string;
@@ -40,7 +41,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
     try {
       setLoading(true);
       console.log("Fetching comments for:", actionFlowId);
-      const res = await fetch(`/api/comments?action_flow_id=${actionFlowId}`);
+      const res = await apiClient.get(`/comments?action_flow_id=${actionFlowId}`);
       
       if (!res.ok) {
           const text = await res.text();
@@ -77,11 +78,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
         parent_id: parentId,
       };
 
-      const res = await fetch("/api/comments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await apiClient.post("/comments", payload);
 
       if (!res.ok) throw new Error("Failed to post comment");
 
