@@ -209,15 +209,18 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 
 	af := results[0]
 
-	// Fetch Flow Name
+	// Fetch Flow Name and OrgID
 	var flowName string = "Unknown Flow"
+	var flowOrgID string = ""
 	if af.FlowID != "" {
 		var flows []struct {
-			Name string `json:"name"`
+			Name  string `json:"name"`
+			OrgID string `json:"org_id"`
 		}
-		client.DB.From("flows").Select("name").Eq("id", af.FlowID).Execute(&flows)
+		client.DB.From("flows").Select("name, org_id").Eq("id", af.FlowID).Execute(&flows)
 		if len(flows) > 0 {
 			flowName = flows[0].Name
+			flowOrgID = flows[0].OrgID
 		}
 	}
 
@@ -315,9 +318,15 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		displayTitle = flowName
 	}
 
+	// Use OrgID from Flow if not found in ActionFlow
+	finalOrgID := af.OrgID
+	if finalOrgID == "" {
+		finalOrgID = flowOrgID
+	}
+
 	response := FlatResult{
 		ID:                 af.ID,
-		OrgID:              af.OrgID, // Populate it
+		OrgID:              finalOrgID,
 		FlowID:             af.FlowID,
 		FlowName:           flowName,
 		Title:              displayTitle,

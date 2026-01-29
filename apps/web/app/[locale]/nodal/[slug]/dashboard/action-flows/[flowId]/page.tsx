@@ -3,8 +3,10 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
+import useSWR from "swr"; // Added SWR
 import { useRouter } from "@/navigation";
 import { flowService } from "@/services/flow-service";
+import { apiClient } from "@/lib/api-client"; // Added apiClient
 import { ArrowLeft, MoreHorizontal, Check, Clock, MousePointer2, Plus, User, Send, Bot, Sparkles, Paperclip, Mic, ChevronDown, Hash, AtSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,31 +36,31 @@ interface ActionFlowDetail {
 export default function ActionFlowDetailPage() {
   const { slug, flowId } = useParams();
   const router = useRouter();
-  const [data, setData] = useState<ActionFlowDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  
+  /* 
+   * Data Fetching with SWR 
+   * Replaced useEffect/useState with stale-while-revalidate strategy
+   */
+  const { data, error, isLoading } = useSWR<ActionFlowDetail>(
+    flowId ? `/action-flows/${flowId}` : null,
+    (url) => apiClient.get(url).then(async (res) => {
+        if (!res.ok) throw new Error("Failed to load details");
+        return res.json();
+    }),
+    {
+        refreshInterval: 10000, // Poll every 10s for status updates
+    }
+  );
+
+  const loading = isLoading; // Alias for existing logic compatibility
+
   // No selection state needed for global comments, but keeping logic just in case
   const [selectedActionId, setSelectedActionId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (flowId) {
-        fetchDetails();
-    }
-  }, [flowId]);
+  // Removed manual useEffect fetch
 
-  const fetchDetails = async () => {
-    try {
-        setLoading(true);
-        const res = await flowService.getActionFlow(flowId as string);
-        setData(res);
-    } catch (e) {
-        toast.error("Failed to load details");
-    } finally {
-        setLoading(false);
-    }
-  };
 
   if (loading) return <DashboardLoading />;
+  if (error) return <div className="p-8 text-center text-red-500 font-mono text-sm">Failed to load action flow details</div>;
   if (!data) return <div className="p-8 text-center text-zinc-500 dark:text-zinc-400 font-mono text-sm">Action Flow not found</div>;
 
   const isSuccess = data.status === "COMPLETED";

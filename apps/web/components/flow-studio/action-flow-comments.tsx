@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR, { mutate } from "swr";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Reply, ThumbsUp, MoreHorizontal, Hash, AtSign, Loader2 } from "lucide-react";
+import { Send, Reply, ThumbsUp, Hash, AtSign, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 
@@ -23,47 +23,30 @@ interface ActionFlowCommentsProps {
   orgId: string; // Needed for creating comments
 }
 
+const fetcher = (url: string) => apiClient.get(url).then(res => {
+  if (!res.ok) throw new Error("Failed to fetch comments");
+  return res.json();
+});
+
 export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: comments = [], error, isLoading } = useSWR<Comment[]>(
+    actionFlowId ? `/comments?action_flow_id=${actionFlowId}` : null,
+    fetcher,
+    {
+      refreshInterval: 5000, 
+      fallbackData: []
+    }
+  );
+
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (actionFlowId) {
-      fetchComments();
-    }
-  }, [actionFlowId]);
-
-  const fetchComments = async () => {
-    try {
-      setLoading(true);
-      console.log("Fetching comments for:", actionFlowId);
-      const res = await apiClient.get(`/comments?action_flow_id=${actionFlowId}`);
-      
-      if (!res.ok) {
-          const text = await res.text();
-          console.error("Fetch failed:", res.status, text);
-          throw new Error(`Failed to fetch comments: ${res.status} ${text}`);
-      }
-      
-      const text = await res.text();
-      try {
-          const data = JSON.parse(text);
-          setComments(data);
-      } catch (jsonErr) {
-          console.error("JSON Parse Error:", jsonErr, "Response text:", text);
-          throw new Error("Invalid JSON response");
-      }
-    } catch (e) {
-      console.error("Comment Fetch Error:", e);
-      // toast.error("Failed to load comments"); 
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Error handling effect
+  if (error) {
+     console.error("SWR Error:", error);
+  }
 
   const handlePostComment = async (parentId?: string, content?: string) => {
     const text = content || newComment;
@@ -80,13 +63,15 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
 
       const res = await apiClient.post("/comments", payload);
 
-      if (!res.ok) throw new Error("Failed to post comment");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Failed to post comment: ${res.status} ${errorText}`);
+      }
 
-      const created = await res.json();
+      await res.json(); // Consume body
       
-      // Optimistic update or refetch
-      // Let's refetch to be safe with sorting/timestamps
-      await fetchComments(); 
+      // Mutate SWR cache to show new comment immediately
+      await mutate(`/comments?action_flow_id=${actionFlowId}`); 
       
       // Cleanup
       if (parentId) {
@@ -96,8 +81,9 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
         setNewComment("");
       }
       toast.success("Comment posted");
-    } catch (e) {
-      toast.error("Failed to post comment");
+    } catch (e: any) {
+      console.error("Post Comment Error:", e);
+      toast.error(e.message || "Failed to post comment");
     } finally {
       setSubmitting(false);
     }
@@ -225,7 +211,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
 
         <ScrollArea className="flex-1 pr-4 -mr-4">
             <div className="space-y-6 pb-4">
-                {loading ? (
+                {isLoading ? (
                    <div className="flex justify-center py-4 text-zinc-400">
                        <Loader2 className="w-4 h-4 animate-spin" />
                    </div>
@@ -243,3 +229,4 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
     </div>
   );
 }
+
