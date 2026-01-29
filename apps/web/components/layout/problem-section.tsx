@@ -4,8 +4,29 @@ import React from "react";
 import { FileSpreadsheet, Unplug, TrendingDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { DottedIcon } from "@/components/ui/dotted-icon";
+import { useTranslations } from "next-intl";
 
 export function ProblemSection() {
+  const t = useTranslations("Problem");
+
+  const items = [
+    {
+      titleKey: "cards.manual",
+      descriptionKey: "cards.manualDesc",
+      pattern: manualWorkflowsPattern,
+    },
+    {
+      titleKey: "cards.disconnected",
+      descriptionKey: "cards.disconnectedDesc",
+      pattern: disconnectedPattern,
+    },
+    {
+      titleKey: "cards.reactive",
+      descriptionKey: "cards.reactiveDesc",
+      pattern: hiddenCostsPattern,
+    },
+  ];
+
   return (
     <section className="w-full min-h-dvh flex items-center justify-center py-16 md:py-24 px-4 md:px-6 bg-background">
       <div className="w-full max-w-7xl mx-auto px-6 text-foreground">
@@ -19,11 +40,10 @@ export function ProblemSection() {
               className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
             >
               <span className="text-foreground">
-                The Operational Fragmentation Problem.{" "}
+                {t("title")}{" "}
               </span>
               <span className="text-muted-foreground">
-                Modern industrial operations are breaking under the weight of outdated
-                tools and disconnected systems.
+                {t("description")}
               </span>
             </motion.h2>
           </div>
@@ -47,10 +67,10 @@ export function ProblemSection() {
                 </div>
 
                 <h3 className="text-xl md:text-2xl font-normal text-foreground mb-3">
-                  {item.title}
+                  {t(item.titleKey)}
                 </h3>
                 <p className="text-base text-muted-foreground leading-relaxed grow">
-                  {item.description}
+                  {t(item.descriptionKey)}
                 </p>
               </motion.div>
             ))}
@@ -106,25 +126,4 @@ const hiddenCostsPattern = [
   [0,0,0,0,0,1,1,0,0,0,0,0],
   [0,0,0,0,0,1,1,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0],
-];
-
-const items = [
-  {
-    title: "Manual Coordination",
-    description:
-      "Teams are still glued to spreadsheets, emails, and phone calls to coordinate complex operations. Critical updates get missed, schedules slip, and everyone works from different playbooks.",
-    pattern: manualWorkflowsPattern,
-  },
-  {
-    title: "Disconnected Data",
-    description:
-      "Silos between ERPs, specialized software, and field tools create blind spots. Data is double-entered, inaccurate, and trapped in systems that don't talk to each other.",
-    pattern: disconnectedPattern,
-  },
-  {
-    title: "Reactive Firefighting",
-    description:
-      "All this fragmentation forces your best people to spend their day chasing information and fixing errors instead of optimizing performance and driving growth.",
-    pattern: hiddenCostsPattern,
-  },
 ];

@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/navigation";
 import {
   Code2,
   LayoutDashboard,
@@ -18,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 
 interface NavItemProps {
   href: string;
@@ -90,6 +90,7 @@ interface SidebarNavigationProps {
 
 export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigationProps) {
   const pathname = usePathname();
+  const t = useTranslations("Sidebar");
 
   const isActive = (href: string) => {
     return href.endsWith("/dashboard")
@@ -111,7 +112,7 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
       >
         {sidebarOpen && (
           <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-            Workspace
+            {t("sections.workspace")}
           </h4>
         )}
         <nav
@@ -122,28 +123,28 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard`}
             icon={LayoutDashboard}
-            label="Overview"
+            label={t("items.overview")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard`)}
           />
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/natalie`}
             icon={MessageSquare}
-            label="Natalie"
+            label={t("items.natalie")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/natalie`)}
           />
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/action-flows`}
             icon={Workflow}
-            label="Action Flows"
+            label={t("items.actionFlows")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/action-flows`)}
           />
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/organization`}
             icon={Users}
-            label="Organization"
+            label={t("items.organization")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/organization`)}
           />
@@ -158,7 +159,7 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
       >
         {sidebarOpen && (
           <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-            Development
+            {t("sections.development")}
           </h4>
         )}
         <nav
@@ -169,21 +170,21 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/flow-studio`}
             icon={Code2}
-            label="Flow Studio"
+            label={t("items.flowStudio")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/flow-studio`)}
           />
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/integration`}
             icon={Blocks}
-            label="Integration"
+            label={t("items.integration")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/integration`)}
           />
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/knowledge-base`}
             icon={Library}
-            label="Knowledge Base"
+            label={t("items.knowledgeBase")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/knowledge-base`)}
           />

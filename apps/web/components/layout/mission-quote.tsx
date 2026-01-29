@@ -7,48 +7,51 @@ import {
   LucideIcon
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 type IndustryItem = {
-  name: string;
-  description: string;
+  nameKey: string;
+  descriptionKey: string;
   icon?: LucideIcon;
   image?: string;
 };
 
 const industries: IndustryItem[] = [
   {
-    name: "Transportations",
+    nameKey: "industries.transportation",
     image: "/images/home/transportation.svg",
-    description: "Unify carrier networks into a single command center for seamless execution."
+    descriptionKey: "industries.transportationDesc"
   },
   {
-    name: "Supply Chain",
+    nameKey: "industries.supplyChain",
     image: "/images/home/supply chain.svg",
-    description: "Replace manual tracking with intelligent orchestration to predict disruptions."
+    descriptionKey: "industries.supplyChainDesc"
   },
   {
-    name: "Manufacturing",
+    nameKey: "industries.manufacturing",
     image: "/images/home/manufacturing.svg",
-    description: "Synchronize material flows with production schedules for zero-delay operations."
+    descriptionKey: "industries.manufacturingDesc"
   },
   {
-    name: "Construction",
+    nameKey: "industries.construction",
     image: "/images/home/construction.svg",
-    description: "Streamline coordination between sites and suppliers for precise delivery."
+    descriptionKey: "industries.constructionDesc"
   },
   {
-    name: "Storage",
+    nameKey: "industries.storage",
     image: "/images/home/storage.svg",
-    description: "Accelerate fulfillment through intelligent workflows that optimize inventory."
+    descriptionKey: "industries.storageDesc"
   },
   {
-    name: "Energy",
+    nameKey: "industries.energy",
     image: "/images/home/energy.svg",
-    description: "Modernize compliance tracking to ensure safe, efficient infrastructure logistics."
+    descriptionKey: "industries.energyDesc"
   }
 ];
 
 export function MissionQuote() {
+  const t = useTranslations("Mission");
+
   return (
     <section className="w-full flex flex-col items-center justify-center pt-16 md:pt-24 bg-background overflow-hidden space-y-24">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-12 md:gap-24">
@@ -62,9 +65,9 @@ export function MissionQuote() {
             transition={{ duration: 0.5 }}
             className="text-2xl md:text-4xl font-normal tracking-tight text-left leading-[1.15] max-w-4xl"
           >
-            <span className="text-foreground">The Mission. </span>
+            <span className="text-foreground">{t("label")} </span>
             <span className="text-muted-foreground">
-              We architect your operational technology ecosystem to be more integrated, intelligent, and intuitive.
+              {t("description")}
             </span>
           </motion.h2>
         </div>
@@ -73,7 +76,7 @@ export function MissionQuote() {
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border border-y border-border overflow-hidden">
           {industries.map((item, i) => (
             <div
-              key={item.name}
+              key={item.nameKey}
               className="bg-background p-12"
             >
               <motion.div
@@ -87,7 +90,7 @@ export function MissionQuote() {
                    <div className="w-64 h-64 relative">
                      <img
                        src={item.image}
-                       alt={item.name}
+                       alt={t(item.nameKey)}
                        className="w-full h-full object-contain object-left"
                      />
                    </div>
@@ -97,8 +100,8 @@ export function MissionQuote() {
                   </div>
                 )}
                 <div>
-                  <h3 className="font-medium text-foreground text-lg">{item.name}</h3>
-                  <p className="text-base text-muted-foreground mt-2">{item.description}</p>
+                  <h3 className="font-medium text-foreground text-lg">{t(item.nameKey)}</h3>
+                  <p className="text-base text-muted-foreground mt-2">{t(item.descriptionKey)}</p>
                 </div>
               </motion.div>
             </div>
@@ -117,10 +120,10 @@ export function MissionQuote() {
             className="max-w-7xl mx-auto px-6 flex flex-col gap-4"
           >
             <span className="text-5xl md:text-6xl font-light tracking-tight text-foreground">
-              80%+
+              {t("stats.stat1")}
             </span>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              of industrial enterprises struggle with fragmented data across disconnected legacy systems.
+              {t("stats.desc1")}
             </p>
           </motion.div>
 
@@ -132,10 +135,10 @@ export function MissionQuote() {
             className="max-w-7xl mx-auto px-6 flex flex-col gap-4"
           >
             <span className="text-5xl md:text-6xl font-light tracking-tight text-foreground">
-              Up to 50%
+              {t("stats.stat2")}
             </span>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              of operational bandwidth is consumed by manual coordination between field and office.
+              {t("stats.desc2")}
             </p>
           </motion.div>
 
@@ -147,10 +150,10 @@ export function MissionQuote() {
             className="max-w-7xl mx-auto px-6 flex flex-col gap-4"
           >
             <span className="text-5xl md:text-6xl font-light tracking-tight text-foreground">
-              30–40%
+              {t("stats.stat3")}
             </span>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              of potential margin is eroded by reactive problem-solving instead of strategic planning.
+              {t("stats.desc3")}
             </p>
           </motion.div>
         </div>

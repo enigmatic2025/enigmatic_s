@@ -1,31 +1,21 @@
 "use client";
 
-import Link from "next/link";
+import { Link, usePathname } from "@/navigation";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { usePathname } from "next/navigation";
 import {
   Search,
   Book,
   PanelLeftClose,
   PanelLeftOpen,
-  Code2,
-  LayoutDashboard,
-  MessageSquare,
-  Blocks,
-  Library,
-  Workflow,
-  ChevronDown,
-  ChevronRight,
-  Clock,
-  Globe,
   Zap,
-  GitBranch,
   Split,
   ListFilter,
   Repeat,
   Braces,
   Table,
-  ClipboardList
+  ClipboardList,
+  Workflow,
+  Globe
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +30,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SidebarDraggableItem, SidebarSection } from "./sidebar-items";
 import { SidebarNavigation } from "./sidebar-navigation";
 import { SidebarVariables } from "./sidebar-variables";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
+
 interface SidebarProps {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
@@ -60,6 +53,7 @@ export function Sidebar({
   const [connectorsOpen, setConnectorsOpen] = useState(false);
   const [humanInLoopOpen, setHumanInLoopOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+  const t = useTranslations("Sidebar");
   
   // Resizable Sidebar State
   const [sidebarWidth, setSidebarWidth] = useState(400);
@@ -242,7 +236,7 @@ export function Sidebar({
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder={t("searchPlaceholder")}
               className="pl-8 h-8 bg-muted/50 border-transparent shadow-none focus:bg-background text-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -277,8 +271,8 @@ export function Sidebar({
             <Tabs defaultValue="nodes" className="w-full">
               <div className="px-3 mb-2">
                   <TabsList className="w-full grid grid-cols-2">
-                    <TabsTrigger value="nodes">Nodes</TabsTrigger>
-                    <TabsTrigger value="variables">Variables</TabsTrigger>
+                    <TabsTrigger value="nodes">{t("nodes")}</TabsTrigger>
+                    <TabsTrigger value="variables">{t("variables")}</TabsTrigger>
                   </TabsList>
               </div>
 
@@ -286,7 +280,7 @@ export function Sidebar({
                 <div className="flex flex-col">
                   {/* Triggers Section */}
                   <SidebarSection
-                    title="Triggers"
+                    title={t("sections.triggers")}
                     isOpen={triggersOpen}
                     onToggle={() => setTriggersOpen(!triggersOpen)}
                   >
@@ -294,7 +288,7 @@ export function Sidebar({
                       <div className="grid grid-cols-1 gap-2">
 
                         <SidebarDraggableItem
-                          label="Trigger: Create Flow"
+                          label={t("draggable.triggerCreateFlow")}
                           icon={Zap}
                           iconColorClass="text-emerald-500"
                           bgColorClass="bg-emerald-500/10"
@@ -306,14 +300,14 @@ export function Sidebar({
 
                   {/* Human in loop */}
                   <SidebarSection
-                    title="Human in loop"
+                    title={t("sections.humanInLoop")}
                     isOpen={humanInLoopOpen}
                     onToggle={() => setHumanInLoopOpen(!humanInLoopOpen)}
                   >
                     {(!searchQuery || "human task approval form".includes(searchQuery.toLowerCase())) && (
                       <div className="grid grid-cols-1 gap-2">
                         <SidebarDraggableItem
-                          label="Human Task"
+                          label={t("draggable.humanTask")}
                           icon={ClipboardList}
                           iconColorClass="text-teal-500"
                           bgColorClass="bg-teal-500/10"
@@ -325,7 +319,7 @@ export function Sidebar({
 
                   {/* Built-in tools */}
                   <SidebarSection
-                    title="Built-in tools"
+                    title={t("sections.builtInTools")}
                     isOpen={builtInToolsOpen}
                     onToggle={() => setBuiltInToolsOpen(!builtInToolsOpen)}
                   >
@@ -333,25 +327,25 @@ export function Sidebar({
                     {(!searchQuery || "filter data".includes(searchQuery.toLowerCase())) && (
                       <div>
                         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
-                          <ListFilter className="h-3 w-3" /> Data Operation
+                          <ListFilter className="h-3 w-3" /> {t("groups.dataOperation")}
                         </h4>
                         <div className="grid grid-cols-1 gap-2">
                           <SidebarDraggableItem
-                            label="Filter Data"
+                            label={t("draggable.filterData")}
                             icon={ListFilter}
                             iconColorClass="text-purple-500"
                             bgColorClass="bg-purple-500/10"
                             dataTransferType="action:filter"
                           />
                           <SidebarDraggableItem
-                            label="Set Variable"
+                            label={t("draggable.setVariable")}
                             icon={Braces}
                             iconColorClass="text-teal-500"
                             bgColorClass="bg-teal-500/10"
                             dataTransferType="variable"
                           />
                           <SidebarDraggableItem
-                            label="Map Data"
+                            label={t("draggable.mapData")}
                             icon={Table}
                             iconColorClass="text-indigo-500"
                             bgColorClass="bg-indigo-500/10"
@@ -365,25 +359,25 @@ export function Sidebar({
                     {(!searchQuery || "condition if else logic switch".includes(searchQuery.toLowerCase())) && (
                       <div>
                         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
-                           Logic
+                           {t("groups.logic")}
                         </h4>
                         <div className="grid grid-cols-1 gap-2">
                           <SidebarDraggableItem
-                            label="If / Else"
+                            label={t("draggable.ifElse")}
                             icon={Workflow} // Using Workflow icon or Split if available
                             iconColorClass="text-slate-500"
                             bgColorClass="bg-slate-500/10"
                             dataTransferType="condition"
                           />
                           <SidebarDraggableItem
-                            label="Loop"
+                            label={t("draggable.loop")}
                             icon={Repeat}
                             iconColorClass="text-blue-500"
                             bgColorClass="bg-blue-500/10"
                             dataTransferType="loop"
                           />
                           <SidebarDraggableItem
-                            label="Switch"
+                            label={t("draggable.switch")}
                             icon={Split}
                             iconColorClass="text-amber-500"
                             bgColorClass="bg-amber-500/10"
@@ -397,11 +391,11 @@ export function Sidebar({
                     {(!searchQuery || "http request".includes(searchQuery.toLowerCase())) && (
                       <div>
                         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
-                          <Globe className="h-3 w-3" /> Network
+                          <Globe className="h-3 w-3" /> {t("groups.network")}
                         </h4>
                         <div className="grid grid-cols-1 gap-2">
                           <SidebarDraggableItem
-                            label="HTTP Request"
+                            label={t("draggable.httpRequest")}
                             icon={Globe}
                             iconColorClass="text-orange-500"
                             bgColorClass="bg-orange-500/10"
@@ -414,12 +408,12 @@ export function Sidebar({
 
                   {/* Connectors */}
                   <SidebarSection
-                    title="Connectors"
+                    title={t("sections.connectors")}
                     isOpen={connectorsOpen}
                     onToggle={() => setConnectorsOpen(!connectorsOpen)}
                   >
                     <div className="text-xs text-muted-foreground">
-                      No connectors configured.
+                      {t("messages.noConnectors")}
                     </div>
                   </SidebarSection>
 
@@ -430,7 +424,7 @@ export function Sidebar({
               <TabsContent value="variables" className="mt-0 p-4">
                 <div className="space-y-4">
                   <div className="text-xs text-muted-foreground mb-4">
-                    Drag variables into node inputs to use data from previous steps.
+                    {t("messages.dragVariables")}
                   </div>
                   
                   {/* We need to fetch nodes from the store, but Sidebar doesn't have direct access to the store hooks inside this component structure easily if not careful.
@@ -448,7 +442,7 @@ export function Sidebar({
       {/* Footer */}
       <div className="p-3 space-y-2">
         <div className={!sidebarOpen ? "flex justify-center" : ""}>
-          <NavItem href="/docs" icon={Book} label="Docs" />
+          <NavItem href="/docs" icon={Book} label={t("docs")} />
         </div>
       </div>
     </aside>

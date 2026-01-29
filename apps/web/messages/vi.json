@@ -1,0 +1,273 @@
+{
+  "HomePage": {
+    "title": "Enigmatic",
+    "subtitle": "Hoạch định. Xây dựng. Làm chủ.",
+    "description": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua."
+  },
+  "Navigation": {
+    "dashboard": "Bảng điều khiển",
+    "collaborate": "Hợp tác",
+    "product": "Sản phẩm",
+    "company": "Công ty",
+    "insights": "Thông tin chi tiết",
+    "signIn": "Đăng nhập",
+    "loading": "Đang tải...",
+    "items": {
+      "nodal": "Nodal",
+      "nodalDesc": "Hệ điều hành trung tâm cho vận hành công nghiệp hiện đại",
+      "docs": "Tài liệu",
+      "docsDesc": "Hướng dẫn chi tiết và tài liệu tham khảo API",
+      "useCases": "Trường hợp sử dụng",
+      "useCasesDesc": "Khám phá cách Enigmatic giải quyết các vấn đề thực tế",
+      "about": "Về chúng tôi",
+      "aboutDesc": "Tìm hiểu về sứ mệnh và đội ngũ của chúng tôi",
+      "privacy": "Chính sách bảo mật",
+      "terms": "Điều khoản dịch vụ"
+    }
+  },
+  "Mission": {
+    "label": "Sứ mệnh.",
+    "description": "Chúng tôi kiến trúc lại hệ sinh thái công nghệ vận hành của bạn để trở nên tích hợp, thông minh và trực quan hơn.",
+    "industries": {
+      "transportation": "Vận tải",
+      "transportationDesc": "Hợp nhất mạng lưới nhà vận chuyển thành một trung tâm điều khiển duy nhất để vận hành liền mạch.",
+      "supplyChain": "Chuỗi cung ứng",
+      "supplyChainDesc": "Thay thế theo dõi thủ công bằng điều phối thông minh để dự đoán gián đoạn.",
+      "manufacturing": "Sản xuất",
+      "manufacturingDesc": "Đồng bộ hóa dòng nguyên liệu với lịch trình sản xuất để vận hành không chậm trễ.",
+      "construction": "Xây dựng",
+      "constructionDesc": "Hợp lý hóa sự phối hợp giữa các công trường và nhà cung cấp để giao hàng chính xác.",
+      "storage": "Kho bãi",
+      "storageDesc": "Tăng tốc hoàn tất đơn hàng thông qua quy trình làm việc thông minh tối ưu hóa tồn kho.",
+      "energy": "Năng lượng",
+      "energyDesc": "Hiện đại hóa việc theo dõi tuân thủ để đảm bảo hậu cần cơ sở hạ tầng an toàn và hiệu quả."
+    },
+    "stats": {
+      "stat1": "80%+",
+      "desc1": "doanh nghiệp công nghiệp gặp khó khăn với dữ liệu phân mảnh trên các hệ thống cũ rời rạc.",
+      "stat2": "Lên đến 50%",
+      "desc2": "băng thông vận hành bị tiêu tốn bởi sự phối hợp thủ công giữa hiện trường và văn phòng.",
+      "stat3": "30–40%",
+      "desc3": "biên lợi nhuận tiềm năng bị xói mòn do giải quyết vấn đề thụ động thay vì lập kế hoạch chiến lược."
+    }
+  },
+  "Problem": {
+    "title": "Vấn đề Phân mảnh Vận hành.",
+    "description": "Các hoạt động công nghiệp hiện đại đang bị phá vỡ dưới sức nặng của các công cụ lỗi thời và hệ thống không kết nối.",
+    "cards": {
+      "manual": "Phối hợp Thủ công",
+      "manualDesc": "Các đội ngũ vẫn bị gắn chặt với bảng tính, email và cuộc gọi điện thoại để phối hợp các hoạt động phức tạp. Các cập nhật quan trọng bị bỏ lỡ, lịch trình bị trượt và mọi người làm việc theo các quy trình khác nhau.",
+      "disconnected": "Dữ liệu Ngắt quãng",
+      "disconnectedDesc": "Các rào cản giữa ERP, phần mềm chuyên dụng và công cụ hiện trường tạo ra các điểm mù. Dữ liệu bị nhập hai lần, không chính xác và bị kẹt trong các hệ thống không giao tiếp với nhau.",
+      "reactive": "Chữa cháy Thụ động",
+      "reactiveDesc": "Sự phân mảnh này buộc những nhân sự giỏi nhất của bạn phải dành cả ngày để săn tìm thông tin và sửa lỗi thay vì tối ưu hóa hiệu suất và thúc đẩy tăng trưởng."
+    }
+  },
+  "Services": {
+    "title": "Điều phối Hoạt động của Bạn.",
+    "description": "Chuyển từ hỗn loạn sang rõ ràng. Enigmatic hợp nhất các công cụ và quy trình làm việc phân mảnh của bạn thành một hệ sinh thái kỹ thuật số thông minh duy nhất.",
+    "panels": {
+      "consulting": "Chuyển đổi Kỹ thuật số Chiến lược",
+      "consultingDesc": "Chúng tôi không chỉ vá lỗi. Chúng tôi tái thiết kế các quy trình vận hành cốt lõi của bạn, thay thế các nút thắt thủ công bằng các giải pháp tự động, có thể mở rộng phù hợp với cơ sở hạ tầng độc đáo của bạn.",
+      "nodal": "Hệ điều hành Nodal",
+      "nodalDesc": "Hệ thần kinh trung ương cho doanh nghiệp của bạn. Nodal kết nối các đội, công cụ và dữ liệu của bạn thành một giao diện thông minh duy nhất—thực hiện các hành động để bạn không phải làm."
+    },
+    "grid": {
+      "triggers": "Kích hoạt Thông minh",
+      "triggersDesc": "Tự động khởi xướng các quy trình phức tạp dựa trên tín hiệu thời gian thực—cho dù đó là email đến, cập nhật trạng thái hay sự kiện API.",
+      "human": "Kiểm soát Lấy Con người làm Trung tâm",
+      "humanDesc": "Khuếch đại lực lượng lao động của bạn. Định tuyến thông minh đảm bảo chỉ những ngoại lệ quan trọng mới đến được đội ngũ của bạn, trong khi các nhiệm vụ tiêu chuẩn được xử lý ngay lập tức.",
+      "connectivity": "Kết nối Toàn diện",
+      "connectivityDesc": "Thu hẹp khoảng cách giữa các hệ thống cũ và công cụ hiện đại. Hợp nhất dữ liệu từ ERP, thiết bị hiện trường và đối tác bên ngoài vào một nguồn sự thật duy nhất."
+    }
+  },
+  "NodalPlatform": {
+    "title": "Hợp nhất Hệ thống của Bạn.",
+    "description": "Nodal thêm một lớp điều phối mạnh mẽ lên trên các hệ thống cốt lõi và công cụ hiện có của bạn, mang lại sự nhất quán và khả năng hiển thị hoàn hảo mà không cần thay thế bất kỳ công cụ nào.",
+    "cards": {
+      "flow": "Điều phối với Luồng Hành động.",
+      "flowDesc": "Thiết kế các đường ống dẫn hướng người dùng qua các nhiệm vụ hàng ngày của họ. Cho dù đó là kích hoạt sự kiện từ TMS hay khởi động thủ công, Nodal đảm bảo mọi người tuân theo cùng một quy trình chuẩn hóa.",
+      "connect": "Kết nối & Tự động hóa.",
+      "connectDesc": "Tạo điều kiện cho các quy trình kinh doanh bằng cách kết nối các hệ thống khác biệt. Kích hoạt hành động tự động và giám sát việc thực thi trên toàn bộ hệ thống của bạn.",
+      "extend": "Mở rộng khả năng của bạn.",
+      "extendDesc": "Thêm các tính toán tùy chỉnh và cảnh báo tự động. Có được khả năng hiển thị đầy đủ vào dữ liệu của bạn mà không cần thay đổi hệ thống công nghệ hiện có.",
+      "human": "Kiểm soát con người trong vòng lặp.",
+      "humanDesc": "Định tuyến ngoại lệ liền mạch đến người vận hành. Đảm bảo các quyết định quan trọng nhận được sự chú ý của con người trong khi vẫn giữ cho phần còn lại của quy trình chạy tự động."
+    }
+  },
+  "Principles": {
+    "title": "Phần mềm chung chung bỏ qua thực tế vận hành.",
+    "description": "Để xây dựng một doanh nghiệp kiên cường, bạn cần nhiều hơn là chỉ công cụ. Bạn cần một triết lý kỹ thuật.",
+    "cards": {
+      "intelligence": "Trí tuệ, Được Khuếch đại",
+      "intelligenceDesc": "Tự động hóa không nên thay thế đội ngũ của bạn—nó nên nâng tầm họ. Chúng tôi xử lý việc thực thi lặp đi lặp lại để các chuyên gia của bạn có thể tập trung vào các quyết định giá trị cao.",
+      "precision": "Độ chính xác Cốt tử",
+      "precisionDesc": "Khi sai lầm tốn kém hàng triệu đô la, 'đủ tốt' không phải là một lựa chọn. Chúng tôi thiết kế các quy trình chịu lỗi được thiết kế để chịu được áp lực của hoạt động thực tế.",
+      "visibility": "Khả năng Hiển thị Toàn diện",
+      "visibilityDesc": "Không còn hộp đen hay dữ liệu cô lập. Chúng tôi hợp nhất bối cảnh vận hành của bạn thành một nguồn sự thật duy nhất, mang lại cho bạn sự rõ ràng để hành động trước khi vấn đề leo thang."
+    }
+  },
+  "CTA": {
+    "label": "Liên hệ",
+    "title": "Hiện đại hóa những gì vận chuyển thế giới.",
+    "description": "Giúp chúng tôi gỡ rối các hệ thống phức tạp nhất thế giới. Nếu bạn được thúc đẩy bởi các vấn đề thực tế và tác động thực tế, Enigmatic là nơi công việc của bạn có ý nghĩa.",
+    "button": "Hợp tác"
+  },
+  "Visualizations": {
+    "rateCalculation": "Tính toán cước phí",
+    "contractLogic": "Logic hợp đồng",
+    "checkCapacity": "Kiểm tra năng lực",
+    "carrierApi": "API nhà vận chuyển",
+    "full": "Đầy",
+    "available": "Có sẵn",
+    "dispatchDriver": "Điều phối tài xế",
+    "samsara": "Samsara",
+    "nextStep": "Bước tiếp theo",
+    "isShipmentDelayed": "Lô hàng bị trễ?",
+    "isTrue": "Đúng",
+    "notifyCustomer": "Thông báo cho khách hàng",
+    "email": "Email",
+    "isFalse": "Sai",
+    "selectBlock": "Chọn khối",
+    "calculateEta": "Tính ETA",
+    "consolidateLoads": "Gom hàng",
+    "updateTms": "Cập nhật TMS",
+    "exceptionReview": "Phê duyệt ngoại lệ",
+    "humanAction": "Hành động con người",
+    "rateVariance": "Phát hiện chênh lệch cước:",
+    "carrierInvoice": "Hóa đơn vận chuyển #INV-2024-001",
+    "approve": "Phê duyệt",
+    "reject": "Từ chối"
+  },
+  "Footer": {
+      "tagline": "Số hóa quy trình làm việc phức tạp và xây dựng các giải pháp tự động hóa thúc đẩy tương lai của vận hành công nghiệp.",
+      "copyright": "© {year} Enigmatic Technologies. Đã đăng ký bản quyền.",
+      "legal": "Pháp lý"
+  },
+  "UseCasesPage": {
+      "title": "Các Trường hợp Sử dụng.",
+      "description": "Xem cách Enigmatic và Nodal số hóa quy trình vận hành thủ công và điều phối vận hành phức tạp trên quy mô lớn.",
+      "ctaTitle": "Bạn có thách thức riêng biệt?",
+      "ctaDescription": "Đội ngũ kỹ sư của chúng tôi có thể xây dựng quy trình tùy chỉnh phù hợp với nhu cầu vận hành cụ thể của bạn.",
+      "cards": {
+          "onboarding": "Tuyển dụng & Đón nhận Tài xế",
+          "onboardingDesc": "Mọi đơn vị vận tải đều đối mặt với quy trình tuyển dụng hỗn loạn trải rộng trên Tenstreet, HRIS, email, bảng tính và kiểm tra an toàn. Nodal nén luồng công việc lộn xộn này thành một chế độ xem thống nhất, tự động hóa các bước tuân thủ và thu thập tài liệu.",
+          "maintenance": "Bảo trì & Kiểm tra Tài sản",
+          "maintenanceDesc": "Bảo trì thường mang tính phản ứng và rời rạc. Với Nodal, kỹ thuật viên gửi DVIR sẽ kích hoạt đặt hàng phụ tùng, phân công công việc và phê duyệt tự động, điều phối công việc liên đội ngũ bên ngoài TMS.",
+          "billing": "Xử lý Thanh toán & Khiếu nại",
+          "billingDesc": "Tăng tốc dòng tiền bằng cách giảm thất thoát. Nodal cung cấp chế độ xem quy trình làm việc duy nhất cho thanh toán và khiếu nại, xử lý các tác vụ, tệp đính kèm và xác thực trước khi gửi dữ liệu sạch đến TMS hoặc hệ thống kế toán của bạn.",
+          "predictive": "Vận hành Sản xuất Dự báo",
+          "predictiveDesc": "Kết nối phân xưởng với văn phòng quản lý. Thu thập dữ liệu cảm biến trực tiếp để phát hiện bất thường, tự động kích hoạt lệnh làm việc trong CMMS của bạn và lên lịch lại ca sản xuất trong ERP mà không cần can thiệp thủ công.",
+          "production": "Khả năng hiển thị Dây chuyền Sản xuất",
+          "productionDesc": "Giám sát thời gian thực đầu vào và đầu ra vật liệu. Khi hàng tồn kho giảm xuống dưới ngưỡng, các tác nhân AI của Nodal sẽ thương lượng bổ sung với nhà cung cấp ngay lập tức.",
+          "field": "Tích hợp Giao tiếp Thực địa",
+          "fieldDesc": "Thu hẹp khoảng cách giữa công trường và văn phòng hỗ trợ. Đốc công công trường có thể báo cáo vấn đề qua SMS hoặc Trò chuyện, Nodal dịch thành tài liệu RFI chính thức và yêu cầu vé.",
+          "construction": "Hậu cần Vật liệu Xây dựng",
+          "constructionDesc": "Giao hàng đúng lúc (Just-in-time) cho các công trường phức tạp. Phối hợp đổ bê tông và giao vật liệu bằng cách đồng bộ hóa yêu cầu công trường trực tiếp với trạm trộn và điều phối viên hậu cần."
+      }
+  },
+  "Sidebar": {
+    "searchPlaceholder": "Tìm kiếm...",
+    "docs": "Tài liệu",
+    "nodes": "Nút",
+    "variables": "Biến",
+    "sections": {
+      "workspace": "Không gian làm việc",
+      "development": "Phát triển",
+      "triggers": "Trình kích hoạt",
+      "humanInLoop": "Con người trong vòng lặp",
+      "builtInTools": "Công cụ tích hợp",
+      "connectors": "Trình kết nối"
+    },
+    "items": {
+      "overview": "Tổng quan",
+      "natalie": "Natalie",
+      "actionFlows": "Luồng hành động",
+      "organization": "Tổ chức",
+      "flowStudio": "Flow Studio",
+      "integration": "Tích hợp",
+      "knowledgeBase": "Cơ sở tri thức"
+    },
+    "draggable": {
+      "triggerCreateFlow": "Kích hoạt: Tạo luồng",
+      "humanTask": "Tác vụ con người",
+      "filterData": "Lọc dữ liệu",
+      "setVariable": "Đặt biến",
+      "mapData": "Ánh xạ dữ liệu",
+      "ifElse": "Nếu / Thì",
+      "loop": "Vòng lặp",
+      "switch": "Chuyển mạch",
+      "httpRequest": "Yêu cầu HTTP"
+    },
+    "groups": {
+      "dataOperation": "Thao tác dữ liệu",
+      "logic": "Logic",
+      "network": "Mạng"
+    },
+    "messages": {
+      "noConnectors": "Chưa định cấu hình trình kết nối.",
+      "dragVariables": "Kéo các biến vào đầu vào của nút để sử dụng dữ liệu từ các bước trước."
+    }
+  },
+  "AboutUs": {
+    "hero": {
+      "title": "Về Chúng Tôi.",
+      "subtitle": "Xây dựng tương lai của ngành logistics với trí tuệ và độ chính xác."
+    },
+    "team": {
+      "title": "Đội Ngũ Của Chúng Tôi",
+      "samRole": "Đối Tác Sáng Lập | Tầm Nhìn",
+      "samDescription": "Sam định hình tầm nhìn chiến lược cho bản sắc, sản phẩm và dịch vụ của Enigmatic, tập hợp những tài năng hàng đầu để tái tưởng tượng cơ bản hệ sinh thái công nghệ logistics.",
+      "chrisRole": "Đối Tác Sáng Lập | Kinh Doanh",
+      "chrisDescription": "Chris dẫn dắt hoạt động và quan hệ đối tác chiến lược, tập trung vào việc mở rộng sự hiện diện thị trường của Enigmatic và mang lại giá trị cho các bên liên quan chính trong ngành.",
+      "phiRole": "Đối Tác Sáng Lập | Công Nghệ",
+      "phiDescription": "Phi thiết kế nền tảng kỹ thuật của Enigmatic, dẫn dắt nghiên cứu và phát triển để cung cấp các giải pháp tiên tiến, vững chắc, vượt qua ranh giới của công nghệ logistics."
+    },
+    "story": {
+      "title": "Được Thành Lập Bởi Những Người Đam Mê Logistics.",
+      "description": "Chúng tôi là một đội ngũ những người kỳ cựu trong ngành logistics với hàng thập kỷ kinh nghiệm thực tế trong việc tối ưu hóa chuỗi cung ứng. Chúng tôi kết hợp chiều sâu vận hành này với chuyên môn kỹ thuật nghiêm túc để cung cấp tư vấn chiến lược và Nodal, nền tảng của chúng tôi để chuẩn hóa và điều phối các quy trình kinh doanh."
+    },
+    "cta": {
+      "title": "Tham gia hành trình của chúng tôi",
+      "description": "Quan tâm đến việc làm việc với chúng tôi hoặc tìm hiểu thêm về nền tảng của chúng tôi?"
+    }
+  },
+  "Login": {
+    "title": "Đăng nhập vào Nodal",
+    "subtitle": "Nhập thông tin đăng nhập của bạn để truy cập nền tảng",
+    "email": "Email",
+    "emailPlaceholder": "ten@example.com",
+    "password": "Mật khẩu",
+    "forgotPassword": "Quên mật khẩu?",
+    "signIn": "Đăng nhập",
+    "resetEmailSent": "Email đặt lại mật khẩu đã được gửi! Kiểm tra hộp thư của bạn.",
+    "enterEmailFirst": "Vui lòng nhập địa chỉ email của bạn trước.",
+    "loading": "Đang tải..."
+  },
+  "MFA": {
+    "verify": {
+      "title": "Xác Thực Hai Yếu Tố",
+      "subtitle": "Nhập mã 6 chữ số từ ứng dụng xác thực của bạn",
+      "codePlaceholder": "000000",
+      "verifying": "Đang xác minh...",
+      "verify": "Xác minh",
+      "backToLogin": "Quay lại đăng nhập",
+      "sessionExpired": "Phiên đã hết hạn. Vui lòng đăng nhập lại.",
+      "noFactorFound": "Không tìm thấy yếu tố MFA."
+    },
+    "setup": {
+      "title": "Bảo Mật Tài Khoản Của Bạn",
+      "subtitle": "Xác thực hai yếu tố là bắt buộc cho tất cả người dùng",
+      "scanInstructions": "Quét mã QR bằng ứng dụng xác thực của bạn để tiếp tục",
+      "manualEntry": "Không thể quét? Nhập mã này thủ công:",
+      "enterCode": "Nhập mã 6 chữ số",
+      "verifyAndContinue": "Xác minh và Tiếp tục",
+      "verifying": "Đang xác minh...",
+      "settingUp": "Đang thiết lập MFA...",
+      "setupError": "Lỗi Thiết Lập",
+      "setupErrorMessage": "Đã xảy ra sự cố khi thiết lập MFA",
+      "tryAgain": "Thử lại",
+      "success": "MFA đã được kích hoạt thành công!"
+    }
+  }
+}

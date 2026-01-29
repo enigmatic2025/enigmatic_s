@@ -7,7 +7,7 @@ import {
   Users,
   Loader2,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import React from "react";
 import { createPortal } from "react-dom";
 import { Logo } from "@/components/ui/logo";
@@ -24,18 +24,21 @@ import {
 import { useScroll } from "@/hooks/use-scroll";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { usePathname } from "next/navigation";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { usePathname } from "@/navigation"; 
 import { useAuth } from "@/components/auth-provider";
 import { supabase } from "@/lib/supabase";
+import { useTranslations } from "next-intl";
 
 type LinkItem = {
-  title: string;
+  titleKey: string;
   href: string;
   icon: LucideIcon;
-  description?: string;
+  descriptionKey: string;
 };
 
 export function Header({ transparent = false }: { transparent?: boolean }) {
+  const t = useTranslations("Navigation");
   const pathname = usePathname();
   const isArticlePage = pathname?.startsWith("/insights/articles/");
   const { user, loading } = useAuth();
@@ -47,6 +50,36 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   );
   const [lastScrollY, setLastScrollY] = React.useState(0);
   const scrolled = useScroll(10);
+
+  const productLinks: LinkItem[] = [
+    {
+      titleKey: "items.nodal",
+      href: "/login",
+      descriptionKey: "items.nodalDesc",
+      icon: GlobeIcon,
+    },
+    {
+      titleKey: "items.docs",
+      href: "#",
+      descriptionKey: "items.docsDesc",
+      icon: FileText,
+    },
+    {
+      titleKey: "items.useCases",
+      href: "/product/use-cases",
+      descriptionKey: "items.useCasesDesc",
+      icon: LayersIcon,
+    },
+  ];
+
+  const companyLinks: LinkItem[] = [
+    {
+      titleKey: "items.about",
+      href: "/company/about-us",
+      descriptionKey: "items.aboutDesc",
+      icon: Users,
+    },
+  ];
 
   // Get user's dashboard URL
   React.useEffect(() => {
@@ -134,7 +167,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent cursor-pointer">
-                  Product
+                  {t("product")}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="w-[400px] p-4">
@@ -145,10 +178,10 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                           className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
                         >
                           <div className="font-medium text-base mb-1">
-                            {item.title}
+                            {t(item.titleKey)}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {item.description}
+                            {t(item.descriptionKey)}
                           </div>
                         </Link>
                       </li>
@@ -158,7 +191,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent cursor-pointer">
-                  Company
+                  {t("company")}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="w-[400px] p-4">
@@ -169,10 +202,10 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                           className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
                         >
                           <div className="font-medium text-base mb-1">
-                            {item.title}
+                            {t(item.titleKey)}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {item.description}
+                            {t(item.descriptionKey)}
                           </div>
                         </Link>
                       </li>
@@ -185,7 +218,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                   className="rounded-md p-2 text-sm hover:bg-accent"
                   href="/insights"
                 >
-                  Insights
+                  {t("insights")}
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuList>
@@ -195,23 +228,24 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           {loading || (user && !dashboardUrl) ? (
             <Button variant="ghost" disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Loading...
+              {t("loading")}
             </Button>
           ) : user && dashboardUrl ? (
             <Button variant="ghost" asChild>
-              <Link href={dashboardUrl}>Dashboard</Link>
+              <Link href={dashboardUrl}>{t("dashboard")}</Link>
             </Button>
           ) : (
             <Button variant="ghost" asChild>
-              <Link href="/login">Sign In</Link>
+              <Link href="/login">{t("signIn")}</Link>
             </Button>
           )}
           <Button asChild>
             <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
-              Collaborate
+              {t("collaborate")}
             </Link>
           </Button>
           <ModeToggle />
+          <LanguageSwitcher />
         </div>
         <Button
           aria-controls="mobile-menu"
@@ -231,26 +265,26 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
       >
         <NavigationMenu className="max-w-full">
           <div className="flex w-full flex-col gap-y-2">
-            <span className="text-sm font-medium">Product</span>
+            <span className="text-sm font-medium">{t("product")}</span>
             {productLinks.map((link) => (
               <Link
-                key={link.title}
+                key={link.titleKey}
                 href={link.href}
                 className="px-3 py-2 text-sm rounded-md hover:bg-accent"
                 onClick={() => setOpen(false)}
               >
-                {link.title}
+                {t(link.titleKey)}
               </Link>
             ))}
-            <span className="text-sm font-medium mt-2">Company</span>
+            <span className="text-sm font-medium mt-2">{t("company")}</span>
             {companyLinks.map((link) => (
               <Link
-                key={link.title}
+                key={link.titleKey}
                 href={link.href}
                 className="px-3 py-2 text-sm rounded-md hover:bg-accent"
                 onClick={() => setOpen(false)}
               >
-                {link.title}
+                {t(link.titleKey)}
               </Link>
             ))}
             <Link
@@ -258,7 +292,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
               className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2"
               onClick={() => setOpen(false)}
             >
-              Insights
+              {t("insights")}
             </Link>
           </div>
         </NavigationMenu>
@@ -270,18 +304,18 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
               disabled
             >
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Loading...
+              {t("loading")}
             </Button>
           ) : user && dashboardUrl ? (
             <Button className="w-full bg-transparent" variant="outline" asChild>
               <Link href={dashboardUrl} onClick={() => setOpen(false)}>
-                Dashboard
+                {t("dashboard")}
               </Link>
             </Button>
           ) : (
             <Button className="w-full bg-transparent" variant="outline" asChild>
               <Link href="/login" onClick={() => setOpen(false)}>
-                Sign In
+                {t("signIn")}
               </Link>
             </Button>
           )}
@@ -290,11 +324,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
               href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry"
               onClick={() => setOpen(false)}
             >
-              Collaborate
+              {t("collaborate")}
             </Link>
           </Button>
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-4">
             <ModeToggle />
+            <LanguageSwitcher />
           </div>
         </div>
       </MobileMenu>
@@ -334,60 +369,3 @@ function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
     document.body
   );
 }
-
-function ListItem({
-  title,
-  description,
-  icon: Icon,
-  className,
-  href,
-  ...props
-}: React.ComponentProps<typeof NavigationMenuLink> & LinkItem) {
-  return (
-    <NavigationMenuLink
-      className={cn("w-full flex-row gap-x-2", className)}
-      {...props}
-      asChild
-    >
-      <a href={href}>
-        <div className="flex aspect-square size-12 items-center justify-center rounded-md border bg-background/40 shadow-sm">
-          <Icon className="size-5 text-foreground" />
-        </div>
-        <div className="flex flex-col items-start justify-center">
-          <span className="font-medium">{title}</span>
-          <span className="text-muted-foreground text-xs">{description}</span>
-        </div>
-      </a>
-    </NavigationMenuLink>
-  );
-}
-
-const productLinks: LinkItem[] = [
-  {
-    title: "Nodal",
-    href: "/login",
-    description: "The central operating system for modern industrial operations",
-    icon: GlobeIcon,
-  },
-  {
-    title: "Documentation",
-    href: "#",
-    description: "Comprehensive guides and API references",
-    icon: FileText,
-  },
-  {
-    title: "Use Cases",
-    href: "/product/use-cases",
-    description: "See how Enigmatic solves real-world problems",
-    icon: LayersIcon,
-  },
-];
-
-const companyLinks: LinkItem[] = [
-  {
-    title: "About Us",
-    href: "/company/about-us",
-    description: "Learn about our mission and team",
-    icon: Users,
-  },
-];

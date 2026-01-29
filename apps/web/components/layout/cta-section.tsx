@@ -3,9 +3,8 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface CTASectionProps {
   title?: string;
@@ -16,12 +15,19 @@ interface CTASectionProps {
 }
 
 export function CTASection({
-  title = "Modernize what moves the world.",
-  description = "Help us untangle the world’s most complex systems. If you’re driven by real problems and real impact, Enigmatic is where your work matters.",
-  label = "Get in Touch",
-  buttonText = "Collaborate",
+  title,
+  description,
+  label,
+  buttonText,
   buttonLink = "/careers",
 }: CTASectionProps) {
+  const t = useTranslations("CTA");
+  
+  const contentTitle = title || t("title");
+  const contentDescription = description || t("description");
+  const contentLabel = label || t("label");
+  const contentButtonText = buttonText || t("button");
+
   return (
     <section className="w-full bg-black text-white py-24 md:py-32 px-6 overflow-hidden relative min-h-[600px] flex items-center">
       <div className="w-full max-w-7xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
@@ -32,7 +38,7 @@ export function CTASection({
             viewport={{ once: true }}
             className="text-lg tracking-tight leading-[1.15] text-neutral-400"
           >
-            {label}
+            {contentLabel}
           </motion.span>
 
           <motion.h2
@@ -42,7 +48,7 @@ export function CTASection({
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-6xl tracking-tight leading-[1.15]"
           >
-            {title}
+            {contentTitle}
           </motion.h2>
 
           <motion.p
@@ -52,7 +58,7 @@ export function CTASection({
             transition={{ delay: 0.2 }}
             className="text-lg text-neutral-400 max-w-xl leading-relaxed"
           >
-            {description}
+            {contentDescription}
           </motion.p>
 
           <motion.div
@@ -63,7 +69,7 @@ export function CTASection({
           >
             <Button size="lg" className="text-base md:text-lg px-6 md:px-8 h-12 md:h-14 sm:w-auto bg-white text-black hover:bg-white" asChild>
               <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
-                Collaborate
+                {contentButtonText}
                 <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
               </Link>
             </Button>

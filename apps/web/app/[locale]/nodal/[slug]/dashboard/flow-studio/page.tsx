@@ -55,7 +55,7 @@ const templates = [
   },
 ];
 
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { FlowTable } from "@/components/flow-studio/flow-table";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "sonner";

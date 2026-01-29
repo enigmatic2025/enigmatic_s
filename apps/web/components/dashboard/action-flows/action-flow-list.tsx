@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Copy, ExternalLink, Play, RotateCcw, Terminal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/navigation";
 
 export interface ActionFlowExec {
   id: string; // The Action Flow ID (DB)

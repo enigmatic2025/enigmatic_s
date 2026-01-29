@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useRouter } from "@/navigation";
 import { flowService } from "@/services/flow-service";
 import { ArrowLeft, MoreHorizontal, Check, Clock, MousePointer2, Plus, User, Send, Bot, Sparkles, Paperclip, Mic, ChevronDown, Hash, AtSign } from "lucide-react";
 import { Button } from "@/components/ui/button";

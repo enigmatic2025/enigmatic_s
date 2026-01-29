@@ -2,6 +2,7 @@
   "name": "enigmatic_s-monorepo",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@10.9.0",
   "scripts": {
     "dev": "npm run dev --prefix apps/web",
     "build": "npm run build --prefix apps/web",

@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 
 export default function MFAVerifyPage() {
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const t = useTranslations("MFA.verify")
 
   useEffect(() => {
     // Check if we have the necessary session data
@@ -31,7 +33,7 @@ export default function MFAVerifyPage() {
       const password = sessionStorage.getItem('mfa_password')
 
       if (!email || !password) {
-        throw new Error('Session expired. Please log in again.')
+        throw new Error(t("sessionExpired"))
       }
 
       // First, sign in to get the session
@@ -47,7 +49,7 @@ export default function MFAVerifyPage() {
       if (factorsError) throw factorsError
 
       if (!factorsData?.totp || factorsData.totp.length === 0) {
-        throw new Error('No MFA factor found.')
+        throw new Error(t("noFactorFound"))
       }
 
       const factorId = factorsData.totp[0].id
@@ -103,10 +105,10 @@ export default function MFAVerifyPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-light tracking-tight text-foreground">
-            Two-Factor Authentication
+            {t("title")}
           </h1>
           <p className="mt-2 text-lg text-muted-foreground font-light">
-            Enter the 6-digit code from your authenticator app
+            {t("subtitle")}
           </p>
         </div>
 
@@ -122,7 +124,7 @@ export default function MFAVerifyPage() {
               required
               autoFocus
               className="relative block w-full rounded-md border border-border bg-background/50 px-3 py-4 text-foreground placeholder-muted-foreground focus:z-10 focus:outline-none focus:ring-0 text-center text-3xl tracking-widest font-light shadow-none"
-              placeholder="000000"
+              placeholder={t("codePlaceholder")}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
             />
@@ -140,7 +142,7 @@ export default function MFAVerifyPage() {
               disabled={loading || code.length !== 6}
               className="group relative flex w-full justify-center rounded-md border border-transparent bg-foreground text-background px-4 py-3 text-sm font-light hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
-              {loading ? 'Verifying...' : 'Verify'}
+              {loading ? t("verifying") : t("verify")}
             </button>
           </div>
 
@@ -154,7 +156,7 @@ export default function MFAVerifyPage() {
               }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Back to login
+              {t("backToLogin")}
             </button>
           </div>
         </form>

@@ -1,0 +1,273 @@
+{
+  "HomePage": {
+    "title": "Enigmatic",
+    "subtitle": "Map. Build. Own.",
+    "description": "We design, connect, and orchestrate the processes your core systems ignore."
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "collaborate": "Collaborate",
+    "product": "Product",
+    "company": "Company",
+    "insights": "Insights",
+    "signIn": "Sign In",
+    "loading": "Loading...",
+    "items": {
+      "nodal": "Nodal",
+      "nodalDesc": "The central operating system for modern industrial operations",
+      "docs": "Documentation",
+      "docsDesc": "Comprehensive guides and API references",
+      "useCases": "Use Cases",
+      "useCasesDesc": "See how Enigmatic solves real-world problems",
+      "about": "About Us",
+      "aboutDesc": "Learn about our mission and team",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
+  "Mission": {
+    "label": "The Mission.",
+    "description": "We architect your operational technology ecosystem to be more integrated, intelligent, and intuitive.",
+    "industries": {
+      "transportation": "Transportations",
+      "transportationDesc": "Unify carrier networks into a single command center for seamless execution.",
+      "supplyChain": "Supply Chain",
+      "supplyChainDesc": "Replace manual tracking with intelligent orchestration to predict disruptions.",
+      "manufacturing": "Manufacturing",
+      "manufacturingDesc": "Synchronize material flows with production schedules for zero-delay operations.",
+      "construction": "Construction",
+      "constructionDesc": "Streamline coordination between sites and suppliers for precise delivery.",
+      "storage": "Storage",
+      "storageDesc": "Accelerate fulfillment through intelligent workflows that optimize inventory.",
+      "energy": "Energy",
+      "energyDesc": "Modernize compliance tracking to ensure safe, efficient infrastructure logistics."
+    },
+    "stats": {
+      "stat1": "80%+",
+      "desc1": "of industrial enterprises struggle with fragmented data across disconnected legacy systems.",
+      "stat2": "Up to 50%",
+      "desc2": "of operational bandwidth is consumed by manual coordination between field and office.",
+      "stat3": "30–40%",
+      "desc3": "of potential margin is eroded by reactive problem-solving instead of strategic planning."
+    }
+  },
+  "Problem": {
+    "title": "The Operational Fragmentation Problem.",
+    "description": "Modern industrial operations are breaking under the weight of outdated tools and disconnected systems.",
+    "cards": {
+      "manual": "Manual Coordination",
+      "manualDesc": "Teams are still glued to spreadsheets, emails, and phone calls to coordinate complex operations. Critical updates get missed, schedules slip, and everyone works from different playbooks.",
+      "disconnected": "Disconnected Data",
+      "disconnectedDesc": "Silos between ERPs, specialized software, and field tools create blind spots. Data is double-entered, inaccurate, and trapped in systems that don't talk to each other.",
+      "reactive": "Reactive Firefighting",
+      "reactiveDesc": "All this fragmentation forces your best people to spend their day chasing information and fixing errors instead of optimizing performance and driving growth."
+    }
+  },
+  "Services": {
+    "title": "Orchestrate Your Operations.",
+    "description": "Move from chaos to clarity. Enigmatic unifies your fragmented tools and workflows into a single, intelligent digital ecosystem.",
+    "panels": {
+      "consulting": "Strategic Digital Transformation",
+      "consultingDesc": "We don't just patch holes. We re-engineer your core operational workflows, replacing manual bottlenecks with scalable, automated solutions tailored to your unique infrastructure.",
+      "nodal": "The Nodal Operating System",
+      "nodalDesc": "The central nervous system for your business. Nodal connects your teams, tools, and data into a single, intelligent interface—executing actions so you don't have to."
+    },
+    "grid": {
+      "triggers": "Intelligent Triggers",
+      "triggersDesc": "Automatically initiate complex workflows based on real-time signals—whether it's an incoming email, a status update, or an API event.",
+      "human": "Human-Centric Control",
+      "humanDesc": "Amplify your workforce. Intelligent routing ensures only critical exceptions reach your team, while standard tasks are handled instantly.",
+      "connectivity": "Total Connectivity",
+      "connectivityDesc": "Bridge the gap between legacy systems and modern tools. Unify data from ERPs, field devices, and external partners into one source of truth."
+    }
+  },
+  "NodalPlatform": {
+    "title": "Unify Your Systems.",
+    "description": "Nodal adds a powerful orchestration layer on top of your existing core systems and tools, giving you perfect consistency and visibility without replacing a single tool.",
+    "cards": {
+      "flow": "Orchestrate with Action Flows.",
+      "flowDesc": "Design pipelines that guide users through their daily tasks. Whether it's an event trigger from your TMS or a manual start, Nodal ensures everyone follows the same standardized process.",
+      "connect": "Connect & Automate.",
+      "connectDesc": "Facilitate business processes by connecting disparate systems. Trigger actions automatically and monitor execution across your entire stack.",
+      "extend": "Extend your capabilities.",
+      "extendDesc": "Add custom calculations and automated alerts. Get full visibility into your data without changing your existing tech stack.",
+      "human": "Human-in-the-loop control.",
+      "humanDesc": "Seamlessly route exceptions to operators. Ensure critical decisions get human attention while keeping the rest of your process running on autopilot."
+    }
+  },
+  "Principles": {
+    "title": "Generic software ignores operational reality.",
+    "description": "To build a resilient enterprise, you need more than just tools. You need a philosophy of engineering.",
+    "cards": {
+      "intelligence": "Intelligence, Amplified",
+      "intelligenceDesc": "Automation shouldn't replace your team—it should elevate them. We handle the repetitive execution so your experts can focus on high-value decisions.",
+      "precision": "Mission-Critical Precision",
+      "precisionDesc": "When mistakes cost millions, 'good enough' isn't an option. We engineer fault-tolerant workflows designed to withstand the pressure of real-world operations.",
+      "visibility": "Total Visibility",
+      "visibilityDesc": "No more black boxes or data silos. We unify your operational context into a single source of truth, giving you the clarity to act before problems escalate."
+    }
+  },
+  "CTA": {
+    "label": "Get in Touch",
+    "title": "Modernize what moves the world.",
+    "description": "Help us untangle the world’s most complex systems. If you’re driven by real problems and real impact, Enigmatic is where your work matters.",
+    "button": "Collaborate"
+  },
+  "Visualizations": {
+    "rateCalculation": "Rate Calculation",
+    "contractLogic": "Contract Logic",
+    "checkCapacity": "Check Capacity",
+    "carrierApi": "Carrier API",
+    "full": "Full",
+    "available": "Available",
+    "dispatchDriver": "Dispatch Driver",
+    "samsara": "Samsara",
+    "nextStep": "Next step",
+    "isShipmentDelayed": "Is Shipment Delayed?",
+    "isTrue": "Is true",
+    "notifyCustomer": "Notify Customer",
+    "email": "Email",
+    "isFalse": "Is false",
+    "selectBlock": "Select block",
+    "calculateEta": "Calculate ETA",
+    "consolidateLoads": "Consolidate Loads",
+    "updateTms": "Update TMS",
+    "exceptionReview": "Exception Review",
+    "humanAction": "Human Action",
+    "rateVariance": "Rate variance detected:",
+    "carrierInvoice": "Carrier Invoice #INV-2024-001",
+    "approve": "Approve",
+    "reject": "Reject"
+  },
+  "Footer": {
+      "tagline": "Digitizing complex workflows and building automated solutions that power the future of industrial operations.",
+      "copyright": "© {year} Enigmatic Technologies. All rights reserved.",
+      "legal": "Legal"
+  },
+  "UseCasesPage": {
+      "title": "Use Cases.",
+      "description": "See how Enigmatic and Nodal digitize manual workflows and orchestrate complex operations at scale.",
+      "ctaTitle": "Have a unique challenge?",
+      "ctaDescription": "Our team of engineers can build custom workflows tailored to your specific operational needs.",
+      "cards": {
+          "onboarding": "Driver Onboarding & Hiring",
+          "onboardingDesc": "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
+          "maintenance": "Asset Maintenance & Inspections",
+          "maintenanceDesc": "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically, orchestrating cross-team work beyond the TMS.",
+          "billing": "Billing & Claims Processing",
+          "billingDesc": "Accelerate cash flow by reducing leakage. Nodal provides a single workflow view for billing and claims, handling tasks, attachments, and validations before submitting clean data to your TMS or accounting system.",
+          "predictive": "Predictive Manufacturing Operations",
+          "predictiveDesc": "Connect the shop floor to top floor. Ingest live sensor data to detect anomalies, automatically trigger work orders in your CMMS, and reschedule production shifts in your ERP without manual intervention.",
+          "production": "Production Line Visibility",
+          "productionDesc": "Real-time monitoring of material inputs and outputs. When inventory drops below thresholds, Nodal's AI agents negotiate replenishment with suppliers instantly.",
+          "field": "Field Communication Integration",
+          "fieldDesc": "Bridge the gap between the job site and the back office. Site foremen can report issues via SMS or Chat, which Nodal translates into formal RFI documents and ticket requests.",
+          "construction": "Construction Material Logistics",
+          "constructionDesc": "Just-in-time delivery for complex sites. Coordinate concrete pours and material drops by syncing site requests directly with batch plants and logistics dispatchers."
+      }
+  },
+  "Sidebar": {
+    "searchPlaceholder": "Search...",
+    "docs": "Docs",
+    "nodes": "Nodes",
+    "variables": "Variables",
+    "sections": {
+      "workspace": "Workspace",
+      "development": "Development",
+      "triggers": "Triggers",
+      "humanInLoop": "Human in loop",
+      "builtInTools": "Built-in tools",
+      "connectors": "Connectors"
+    },
+    "items": {
+      "overview": "Overview",
+      "natalie": "Natalie",
+      "actionFlows": "Action Flows",
+      "organization": "Organization",
+      "flowStudio": "Flow Studio",
+      "integration": "Integration",
+      "knowledgeBase": "Knowledge Base"
+    },
+    "draggable": {
+      "triggerCreateFlow": "Trigger: Create Flow",
+      "humanTask": "Human Task",
+      "filterData": "Filter Data",
+      "setVariable": "Set Variable",
+      "mapData": "Map Data",
+      "ifElse": "If / Else",
+      "loop": "Loop",
+      "switch": "Switch",
+      "httpRequest": "HTTP Request"
+    },
+    "groups": {
+      "dataOperation": "Data Operation",
+      "logic": "Logic",
+      "network": "Network"
+    },
+    "messages": {
+      "noConnectors": "No connectors configured.",
+      "dragVariables": "Drag variables into node inputs to use data from previous steps."
+    }
+  },
+  "AboutUs": {
+    "hero": {
+      "title": "About Us.",
+      "subtitle": "Building the future of logistics with intelligence and precision."
+    },
+    "team": {
+      "title": "Our Team",
+      "samRole": "Founding Partner | Vision",
+      "samDescription": "Sam shapes the strategic vision for Enigmatic's identity, products, and services, uniting top-tier talent to fundamentally reimagine the logistics technology ecosystem.",
+      "chrisRole": "Founding Partner | Sales",
+      "chrisDescription": "Chris spearheads operations and strategic partnerships, focusing on scaling Enigmatic's market presence and delivering value to key industry stakeholders.",
+      "phiRole": "Founding Partner | Technology",
+      "phiDescription": "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech."
+    },
+    "story": {
+      "title": "Founded by Logistics Enthusiasts.",
+      "description": "We are a team of logistics industry veterans with decades of hands-on experience optimizing supply chains. We combine this operational depth with serious engineering expertise to deliver strategic consulting and Nodal, our platform for standardizing and orchestrating business processes."
+    },
+    "cta": {
+      "title": "Join our journey",
+      "description": "Interested in working with us or learning more about our platform?"
+    }
+  },
+  "Login": {
+    "title": "Sign in to Nodal",
+    "subtitle": "Enter your credentials to access the platform",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign in",
+    "resetEmailSent": "Password reset email sent! Check your inbox.",
+    "enterEmailFirst": "Please enter your email address first.",
+    "loading": "Loading..."
+  },
+  "MFA": {
+    "verify": {
+      "title": "Two-Factor Authentication",
+      "subtitle": "Enter the 6-digit code from your authenticator app",
+      "codePlaceholder": "000000",
+      "verifying": "Verifying...",
+      "verify": "Verify",
+      "backToLogin": "Back to login",
+      "sessionExpired": "Session expired. Please log in again.",
+      "noFactorFound": "No MFA factor found."
+    },
+    "setup": {
+      "title": "Secure Your Account",
+      "subtitle": "Two-factor authentication is required for all users",
+      "scanInstructions": "Scan the QR code with your authenticator app to continue",
+      "manualEntry": "Can't scan? Enter this code manually:",
+      "enterCode": "Enter 6-digit code",
+      "verifyAndContinue": "Verify and Continue",
+      "verifying": "Verifying...",
+      "settingUp": "Setting up MFA...",
+      "setupError": "Setup Error",
+      "setupErrorMessage": "There was a problem setting up MFA",
+      "tryAgain": "Try Again",
+      "success": "MFA enabled successfully!"
+    }
+  }
+}

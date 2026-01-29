@@ -3,8 +3,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Workflow, Network, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function ServicesSection() {
+  const t = useTranslations("Services");
+
   return (
     <section className="w-full min-h-dvh flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
       <div className="w-full max-w-[95%] bg-muted/25 text-foreground rounded-3xl overflow-hidden">
@@ -18,9 +21,9 @@ export function ServicesSection() {
               transition={{ duration: 0.5 }}
               className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-8"
             >
-              <span className="text-foreground">Orchestrate Your Operations. </span>
+              <span className="text-foreground">{t("title")}{" "}</span>
               <span className="text-muted-foreground">
-                Move from chaos to clarity. Enigmatic unifies your fragmented tools and workflows into a single, intelligent digital ecosystem.
+                {t("description")}
               </span>
             </motion.h2>
           </div>
@@ -32,12 +35,10 @@ export function ServicesSection() {
               {/* Left Panel */}
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
-                  Strategic Digital Transformation
+                  {t("panels.consulting")}
                 </h3>
                 <p className="text-base text-muted-foreground mb-6">
-                  We don't just patch holes. We re-engineer your core operational
-                  workflows, replacing manual bottlenecks with scalable, automated
-                  solutions tailored to your unique infrastructure.
+                  {t("panels.consultingDesc")}
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 bg-muted/30 rounded-xl border border-border/50 relative overflow-hidden flex items-center justify-center">
@@ -52,12 +53,10 @@ export function ServicesSection() {
               {/* Right Panel */}
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
-                  The Nodal Operating System
+                  {t("panels.nodal")}
                 </h3>
                 <p className="text-base text-muted-foreground mb-6">
-                  The central nervous system for your business. Nodal connects
-                  your teams, tools, and data into a single, intelligent
-                  interface—executing actions so you don't have to.
+                  {t("panels.nodalDesc")}
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 flex items-center justify-center p-4">
@@ -78,12 +77,10 @@ export function ServicesSection() {
                   <Workflow className="w-6 h-6 text-foreground" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  Intelligent Triggers
+                  {t("grid.triggers")}
                 </h3>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Automatically initiate complex workflows based on real-time
-                  signals—whether it's an incoming email, a status update, or an
-                  API event.
+                  {t("grid.triggersDesc")}
                 </p>
               </div>
 
@@ -93,12 +90,10 @@ export function ServicesSection() {
                   <Users className="w-6 h-6 text-foreground" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  Human-Centric Control
+                  {t("grid.human")}
                 </h3>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Amplify your workforce. Intelligent routing ensures only
-                  critical exceptions reach your team, while standard tasks are
-                  handled instantly.
+                  {t("grid.humanDesc")}
                 </p>
               </div>
 
@@ -108,12 +103,10 @@ export function ServicesSection() {
                   <Network className="w-6 h-6 text-foreground" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  Total Connectivity
+                  {t("grid.connectivity")}
                 </h3>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Bridge the gap between legacy systems and modern tools. Unify
-                  data from ERPs, field devices, and external partners into one
-                  source of truth.
+                  {t("grid.connectivityDesc")}
                 </p>
               </div>
             </div>

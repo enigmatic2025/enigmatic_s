@@ -12,7 +12,8 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal, Loader2, Eraser } from "lucide-react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "@/navigation";
+import { useParams } from "next/navigation";
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
 import { NodeConfigurationSheet } from "@/components/flow-studio/node-configuration-sheet";

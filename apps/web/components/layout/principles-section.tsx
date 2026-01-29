@@ -3,29 +3,29 @@
 import { motion } from "framer-motion";
 import { UserCheck, ShieldCheck, Eye } from "lucide-react";
 import Image from "next/image";
-
-const principles = [
-  {
-    icon: <UserCheck className="w-6 h-6" />,
-    title: "Intelligence, Amplified",
-    description:
-      "Automation shouldn't replace your team—it should elevate them. We handle the repetitive execution so your experts can focus on high-value decisions.",
-  },
-  {
-    icon: <ShieldCheck className="w-6 h-6" />,
-    title: "Mission-Critical Precision",
-    description:
-      "When mistakes cost millions, 'good enough' isn't an option. We engineer fault-tolerant workflows designed to withstand the pressure of real-world operations.",
-  },
-  {
-    icon: <Eye className="w-6 h-6" />,
-    title: "Total Visibility",
-    description:
-      "No more black boxes or data silos. We unify your operational context into a single source of truth, giving you the clarity to act before problems escalate.",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export function PrinciplesSection() {
+  const t = useTranslations("Principles");
+
+  const principles = [
+    {
+      icon: <UserCheck className="w-6 h-6" />,
+      titleKey: "cards.intelligence",
+      descriptionKey: "cards.intelligenceDesc",
+    },
+    {
+      icon: <ShieldCheck className="w-6 h-6" />,
+      titleKey: "cards.precision",
+      descriptionKey: "cards.precisionDesc",
+    },
+    {
+      icon: <Eye className="w-6 h-6" />,
+      titleKey: "cards.visibility",
+      descriptionKey: "cards.visibilityDesc",
+    },
+  ];
+
   return (
     <section className="w-full flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
       <div className="relative w-full max-w-7xl rounded-3xl overflow-hidden">
@@ -48,10 +48,10 @@ export function PrinciplesSection() {
                 className="text-2xl md:text-4xl font-normal tracking-tight leading-[1.15]"
               >
                 <span className="text-foreground">
-                  Generic software ignores operational reality.{" "}
+                  {t("title")}{" "}
                 </span>
                 <span className="text-muted-foreground">
-                  To build a resilient enterprise, you need more than just tools. You need a philosophy of engineering.
+                  {t("description")}
                 </span>
               </motion.h2>
             </motion.div>
@@ -125,11 +125,11 @@ export function PrinciplesSection() {
                   <div className="flex items-center gap-4 mb-3">
                     <div className="text-current shrink-0 border p-1 rounded-sm">{principle.icon}</div>
                     <h3 className="font-medium text-foreground text-lg">
-                      {principle.title}
+                      {t(principle.titleKey)}
                     </h3>
                   </div>
                   <p className="text-md text-muted-foreground leading-relaxed pl-10">
-                    {principle.description}
+                    {t(principle.descriptionKey)}
                   </p>
                 </div>
               </motion.div>

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth-provider";
 import { supabase } from "@/lib/supabase";
+import { useTranslations } from "next-intl";
 
 interface CTAButtonsProps {
   className?: string;
@@ -16,6 +17,7 @@ interface CTAButtonsProps {
 export function CTAButtons({ className, hideSignIn = false }: CTAButtonsProps) {
   const { user } = useAuth();
   const [dashboardUrl, setDashboardUrl] = useState<string | null>(null);
+  const t = useTranslations("Navigation");
 
   useEffect(() => {
     const getDashboardUrl = async () => {
@@ -49,7 +51,7 @@ export function CTAButtons({ className, hideSignIn = false }: CTAButtonsProps) {
     >
       <Button size="lg" className="text-lg px-8 h-14 w-full sm:w-auto hover:bg-black dark:hover:bg-white" asChild>
         <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
-          Collaborate
+          {t("collaborate")}
           <ArrowRight className="ml-2 w-5 h-5" />
         </Link>
       </Button>
@@ -61,9 +63,9 @@ export function CTAButtons({ className, hideSignIn = false }: CTAButtonsProps) {
           asChild
         >
           {user && dashboardUrl ? (
-            <Link href={dashboardUrl}>Dashboard</Link>
+            <Link href={dashboardUrl}>{t("dashboard")}</Link>
           ) : (
-            <Link href="/login">Sign In</Link>
+            <Link href="/login">{t("signIn")}</Link>
           )}
         </Button>
       )}

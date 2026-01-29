@@ -8,8 +8,11 @@ import {
   ExtendFunctionalityPreview,
   HumanInLoopPreview,
 } from "@/components/layout/nodal-visualizations";
+import { useTranslations } from "next-intl";
 
 export function NodalPlatformSection() {
+  const t = useTranslations("NodalPlatform");
+
   return (
     <section className="flex flex-col bg-background text-foreground px-4 md:px-6 py-16 md:py-24 min-h-dvh">
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col px-6">
@@ -31,11 +34,9 @@ export function NodalPlatformSection() {
             transition={{ duration: 0.5 }}
             className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
           >
-            <span className="text-foreground">Unify Your Systems. </span>
+            <span className="text-foreground">{t("title")}{" "}</span>
             <span className="text-muted-foreground">
-              Nodal adds a powerful orchestration layer on top of your existing
-              core systems and tools, giving you perfect consistency and
-              visibility without replacing a single tool.
+              {t("description")}
             </span>
           </motion.h2>
         </div>
@@ -44,32 +45,32 @@ export function NodalPlatformSection() {
         <BentoGrid className="max-w-7xl mx-auto md:auto-rows-[24rem]">
           {/* Card 1: Visual Canvas (Tall, Left) */}
           <BentoGridItem
-            title="Orchestrate with Action Flows."
-            description="Design pipelines that guide users through their daily tasks. Whether it's an event trigger from your TMS or a manual start, Nodal ensures everyone follows the same standardized process."
+            title={t("cards.flow")}
+            description={t("cards.flowDesc")}
             header={<VisualCanvasPreview />}
             className="md:col-span-1 md:row-span-2"
           />
 
           {/* Card 2: Powerful Blocks (Top Middle) */}
           <BentoGridItem
-            title="Connect & Automate."
-            description="Facilitate business processes by connecting disparate systems. Trigger actions automatically and monitor execution across your entire stack."
+            title={t("cards.connect")}
+            description={t("cards.connectDesc")}
             header={<PowerfulBlocksPreview />}
             className="md:col-span-1"
           />
 
           {/* Card 3: Extend Functionality (Top Right) */}
           <BentoGridItem
-            title="Extend your capabilities."
-            description="Add custom calculations and automated alerts. Get full visibility into your data without changing your existing tech stack."
+            title={t("cards.extend")}
+            description={t("cards.extendDesc")}
             header={<ExtendFunctionalityPreview />}
             className="md:col-span-1"
           />
 
           {/* Card 4: Human in Loop (Bottom Wide) */}
           <BentoGridItem
-            title="Human-in-the-loop control."
-            description="Seamlessly route exceptions to operators. Ensure critical decisions get human attention while keeping the rest of your process running on autopilot."
+            title={t("cards.human")}
+            description={t("cards.humanDesc")}
             header={<HumanInLoopPreview />}
             className="md:col-span-2"
           />

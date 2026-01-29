@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth-provider'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 
 export default function MFAEnrollmentPage() {
   const [qrCode, setQrCode] = useState('')
@@ -16,6 +17,7 @@ export default function MFAEnrollmentPage() {
   const [step, setStep] = useState<'enroll' | 'verify'>('enroll')
   const router = useRouter()
   const { user } = useAuth()
+  const t = useTranslations("MFA.setup")
 
   useEffect(() => {
     if (!user) {
@@ -102,7 +104,7 @@ export default function MFAEnrollmentPage() {
 
       if (error) throw error
 
-      toast.success('MFA enabled successfully!')
+      toast.success(t("success"))
       
       // Redirect based on user role
       const { data: { user } } = await supabase.auth.getUser()
@@ -142,7 +144,7 @@ export default function MFAEnrollmentPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <div className="text-center">
-          <p className="text-lg text-muted-foreground font-light">Setting up MFA...</p>
+          <p className="text-lg text-muted-foreground font-light">{t("settingUp")}</p>
         </div>
       </div>
     )
@@ -154,10 +156,10 @@ export default function MFAEnrollmentPage() {
         <div className="w-full max-w-md space-y-6">
           <div className="text-center">
             <h1 className="text-4xl font-light tracking-tight text-foreground">
-              Setup Error
+              {t("setupError")}
             </h1>
             <p className="mt-2 text-lg text-muted-foreground font-light">
-              There was a problem setting up MFA
+              {t("setupErrorMessage")}
             </p>
           </div>
           
@@ -173,7 +175,7 @@ export default function MFAEnrollmentPage() {
             }}
             className="w-full rounded-md border border-transparent bg-foreground text-background px-4 py-3 text-sm font-light hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-300"
           >
-            Try Again
+            {t("tryAgain")}
           </button>
         </div>
       </div>
@@ -185,13 +187,13 @@ export default function MFAEnrollmentPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-light tracking-tight text-foreground">
-            Secure Your Account
+            {t("title")}
           </h1>
           <p className="mt-2 text-lg text-muted-foreground font-light">
-            Two-factor authentication is required for all users
+            {t("subtitle")}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Scan the QR code with your authenticator app to continue
+            {t("scanInstructions")}
           </p>
         </div>
 
@@ -211,7 +213,7 @@ export default function MFAEnrollmentPage() {
               
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Can't scan? Enter this code manually:
+                  {t("manualEntry")}
                 </p>
                 <p className="text-sm font-mono bg-muted px-4 py-2 rounded-md">
                   {secret}
@@ -223,7 +225,7 @@ export default function MFAEnrollmentPage() {
             <form onSubmit={verifyMFA} className="space-y-6">
               <div>
                 <label htmlFor="code" className="block text-sm font-light text-foreground mb-2">
-                  Enter 6-digit code
+                  {t("enterCode")}
                 </label>
                 <input
                   id="code"
@@ -251,7 +253,7 @@ export default function MFAEnrollmentPage() {
                 disabled={loading || verifyCode.length !== 6}
                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-foreground text-background px-4 py-3 text-sm font-light hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
-                {loading ? 'Verifying...' : 'Verify and Continue'}
+                {loading ? t("verifying") : t("verifyAndContinue")}
               </button>
             </form>
           </div>

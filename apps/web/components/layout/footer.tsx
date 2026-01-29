@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 const footerLinks = {
   product: [
@@ -19,6 +20,24 @@ const footerLinks = {
 };
 
 export function Footer() {
+  const t = useTranslations("Footer");
+  const tNav = useTranslations("Navigation");
+
+  const footerLinks = {
+    product: [
+      { label: tNav("items.nodal"), href: "/product/login" },
+      { label: tNav("items.docs"), href: "/documentation" },
+      { label: tNav("items.useCases"), href: "/product/use-cases" },
+    ],
+    company: [
+      { label: tNav("items.about"), href: "/company/about-us" },
+    ],
+    legal: [
+      { label: tNav("items.privacy"), href: "/privacy" },
+      { label: tNav("items.terms"), href: "/terms" },
+    ],
+  };
+
   return (
     <footer className="bg-background border-t border-border/40">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16">
@@ -39,7 +58,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Digitizing complex workflows and building automated solutions that power the future of industrial operations.
+              {t("tagline")}
             </p>
           </div>
 
@@ -47,7 +66,7 @@ export function Footer() {
           <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
             {/* Product */}
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-medium text-foreground">Product</h4>
+              <h4 className="text-sm font-medium text-foreground">{tNav("product")}</h4>
               <ul className="flex flex-col gap-3">
                 {footerLinks.product.map((link) => (
                   <li key={link.href}>
@@ -64,7 +83,7 @@ export function Footer() {
 
             {/* Company */}
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-medium text-foreground">Company</h4>
+              <h4 className="text-sm font-medium text-foreground">{tNav("company")}</h4>
               <ul className="flex flex-col gap-3">
                 {footerLinks.company.map((link) => (
                   <li key={link.href}>
@@ -81,7 +100,7 @@ export function Footer() {
 
             {/* Legal */}
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-medium text-foreground">Legal</h4>
+              <h4 className="text-sm font-medium text-foreground">{t("legal")}</h4>
               <ul className="flex flex-col gap-3">
                 {footerLinks.legal.map((link) => (
                   <li key={link.href}>
@@ -101,8 +120,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Enigmatic Technologies. All rights
-            reserved.
+            {t("copyright", { year: new Date().getFullYear() })}
           </p>
           <div className="flex items-center gap-6">
             {/* Social Links could go here */}

@@ -3,36 +3,35 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { CTASection } from "@/components/layout/cta-section";
+import { useTranslations } from "next-intl";
 
 const team = [
   {
     name: "Sam Tran",
-    role: "Founding Partner | Vision",
+    roleKey: "samRole",
+    descriptionKey: "samDescription",
     image: "/images/company/team/sam.jpg",
-    description:
-      "Sam shapes the strategic vision for Enigmatic’s identity, products, and services, uniting top-tier talent to fundamentally reimagine the logistics technology ecosystem.",
     linkedin: "https://www.linkedin.com/in/htsam22/",
   },
   {
     name: "Chris Schmitt",
-    role: "Founding Partner | Sales",
+    roleKey: "chrisRole",
+    descriptionKey: "chrisDescription",
     image: "/images/company/team/chris.jpg",
-    description:
-      "Chris spearheads operations and strategic partnerships, focusing on scaling Enigmatic's market presence and delivering value to key industry stakeholders.",
     linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/",
   },
   {
     name: "Phi Tran",
-    role: "Founding Partner | Technology",
+    roleKey: "phiRole",
+    descriptionKey: "phiDescription",
     image: "/images/company/team/phi.jpg",
-    description:
-      "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech.",
     linkedin: "https://www.linkedin.com/in/phi-tran-m-s/",
   },
-
 ];
 
 export default function AboutUsPage() {
+  const t = useTranslations("AboutUs");
+
   return (
     <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
@@ -44,9 +43,9 @@ export default function AboutUsPage() {
             transition={{ duration: 0.5 }}
             className="text-2xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
           >
-            <span className="text-foreground">About Us. </span>
+            <span className="text-foreground">{t("hero.title")} </span>
             <span className="text-muted-foreground">
-              Building the future of logistics with intelligence and precision.
+              {t("hero.subtitle")}
             </span>
           </motion.h1>
         </div>
@@ -61,7 +60,7 @@ export default function AboutUsPage() {
           transition={{ duration: 0.5 }}
           className="text-2xl md:text-4xl font-normal tracking-tight mb-8 md:mb-12"
         >
-          Our Team
+          {t("team.title")}
         </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {team.map((member, index) => (
@@ -81,7 +80,7 @@ export default function AboutUsPage() {
                       {member.name}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {member.role}
+                      {t(`team.${member.roleKey}`)}
                     </p>
                   </div>
                   <a
@@ -102,7 +101,7 @@ export default function AboutUsPage() {
                   </a>
                 </div>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  {member.description}
+                  {t(`team.${member.descriptionKey}`)}
                 </p>
               </div>
             </div>
@@ -122,7 +121,7 @@ export default function AboutUsPage() {
                 transition={{ duration: 0.5 }}
                 className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-6"
               >
-                Founded by Logistics Enthusiasts.
+                {t("story.title")}
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -131,11 +130,7 @@ export default function AboutUsPage() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
               >
-                We are a team of logistics industry veterans with decades of
-                hands-on experience optimizing supply chains. We combine this
-                operational depth with serious engineering expertise to deliver
-                strategic consulting and Nodal, our platform for standardizing
-                and orchestrating business processes.
+                {t("story.description")}
               </motion.p>
             </div>
           </div>
@@ -144,8 +139,8 @@ export default function AboutUsPage() {
 
       {/* CTA Section */}
       <CTASection
-        title="Join our journey"
-        description="Interested in working with us or learning more about our platform?"
+        title={t("cta.title")}
+        description={t("cta.description")}
       />
     </main>
   );

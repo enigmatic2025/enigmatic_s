@@ -1,0 +1,273 @@
+{
+  "HomePage": {
+    "title": "Enigmatic",
+    "subtitle": "規劃. 建構. 掌握.",
+    "description": "我們設計、連結並協調您的核心系統所忽略的流程。"
+  },
+  "Navigation": {
+    "dashboard": "儀表板",
+    "collaborate": "合作",
+    "product": "產品",
+    "company": "公司",
+    "insights": "洞察",
+    "signIn": "登入",
+    "loading": "載入中...",
+    "items": {
+      "nodal": "Nodal",
+      "nodalDesc": "現代工業運營的中央操作系統",
+      "docs": "文件",
+      "docsDesc": "綜合指南和 API 參考",
+      "useCases": "應用案例",
+      "useCasesDesc": "了解 Enigmatic 如何解決現實世界的問題",
+      "about": "關於我們",
+      "aboutDesc": "了解我們的使命和團隊",
+      "privacy": "隱私政策",
+      "terms": "服務條款"
+    }
+  },
+  "Mission": {
+    "label": "使命.",
+    "description": "我們構建您的運營技術生態系統，使其更加集成、智能和直觀。",
+    "industries": {
+      "transportation": "運輸產業",
+      "transportationDesc": "將承運商網絡統一到一個單一的指揮中心，以實現無縫執行。",
+      "supplyChain": "供應鏈",
+      "supplyChainDesc": "用智能編排取代手動跟踪，以預測中斷。",
+      "manufacturing": "製造業",
+      "manufacturingDesc": "將物料流與生產計劃同步，實現零延遲運營。",
+      "construction": "營建業",
+      "constructionDesc": "簡化現場和供應商之間的協調，以實現精確交付。",
+      "storage": "倉儲",
+      "storageDesc": "通過優化庫存的智能工作流程加速履行。",
+      "energy": "能源",
+      "energyDesc": "現代化合規跟踪，以確保安全、高效的基礎設施物流。"
+    },
+    "stats": {
+      "stat1": "80%+",
+      "desc1": "的工業企業在斷開連接的舊系統中難以處理碎片化數據。",
+      "stat2": "高達 50%",
+      "desc2": "的運營帶寬消耗在現場和辦公室之間的手動協調上。",
+      "stat3": "30–40%",
+      "desc3": "的潛在利潤因被動解決問題而不是戰略規劃而被侵蝕。"
+    }
+  },
+  "Problem": {
+    "title": "運營碎片化問題.",
+    "description": "現代工業運營正因過時的工具和斷開連接的系統而不堪重負。",
+    "cards": {
+      "manual": "手動協調",
+      "manualDesc": "團隊仍然依賴電子表格、電子郵件和電話來協調複雜的運營。錯過關鍵更新，進度延誤，每個人都在使用不同的劇本工作。",
+      "disconnected": "數據斷開",
+      "disconnectedDesc": "ERP、專用軟體和現場工具之間的孤島造成了盲點。數據被重複輸入、不準確，並且被困在互不通訊的系統中。",
+      "reactive": "被動救火",
+      "reactiveDesc": "所有的這些碎片化迫使您最優秀的人員整天追逐信息和修復錯誤，而不是優化績效和推動增長。"
+    }
+  },
+  "Services": {
+    "title": "編排您的運營.",
+    "description": "從混亂走向清晰。Enigmatic 將您碎片化的工具和工作流程統一到一個單一、智能的數位生態系統中。",
+    "panels": {
+      "consulting": "戰略數位轉型",
+      "consultingDesc": "我們不只是修補漏洞。我們重新設計您的核心運營工作流程，用適合您獨特基礎設施的可擴展、自動化解決方案取代手動瓶頸。",
+      "nodal": "Nodal 操作系統",
+      "nodalDesc": "您企業的中樞神經系統。Nodal 將您的團隊、工具和數據連接到一個單一、智能的介面中——執行操作，讓您不必親自動手。"
+    },
+    "grid": {
+      "triggers": "智能觸發",
+      "triggersDesc": "基於即時信號自動啟動複雜的工作流程——無論是傳入的電子郵件、狀態更新還是 API 事件。",
+      "human": "以人為本的控制",
+      "humanDesc": "擴大您的勞動力。智能路由確保只有關鍵的異常情況才會傳達給您的團隊，而標準任務則會立即處理。",
+      "connectivity": "全面連接",
+      "connectivityDesc": "彌合舊系統與現代工具之間的差距。將來自 ERP、現場設備和外部合作夥伴的數據統一到單一的真實來源中。"
+    }
+  },
+  "NodalPlatform": {
+    "title": "統壹您的系統.",
+    "description": "Nodal 在您現有的核心系統和工具之上增加了一個強大的編排層，在不替換任何單一工具的情況下為您提供完美的一致性和可視化。",
+    "cards": {
+      "flow": "用行動流進行編排.",
+      "flowDesc": "設計引導用戶完成日常任務的管道。無論是來自 TMS 的事件觸發還是手動啟動，Nodal 都能確保每個人都遵循相同的標準化流程。",
+      "connect": "連接與自動化.",
+      "connectDesc": "通過連接不同的系統促進業務流程。自動觸發操作並監控整個堆疊的執行情況。",
+      "extend": "擴展您的能力.",
+      "extendDesc": "添加自定義計算和自動警報。在不更改現有技術堆疊的情況下獲得對數據的完全可視化。",
+      "human": "人在回路控制.",
+      "humanDesc": "將異常情況無縫路由給操作員。確保關鍵決策得到人工關注，同時保持其餘流程自動駕駛。"
+    }
+  },
+  "Principles": {
+    "title": "通用軟體忽略了運營現實.",
+    "description": "要建立一個有彈性的企業，您需要的不仅仅是工具。您需要一種工程哲學。",
+    "cards": {
+      "intelligence": "智能，被放大",
+      "intelligenceDesc": "自動化不應該取代您的團隊——它應該提升他們。我們處理重複性的執行，以便您的專家可以專注於高價值的決策。",
+      "precision": "任務關鍵精度",
+      "precisionDesc": "當錯誤造成數百萬損失時，「足夠好」不是一個選項。我們設計了容錯工作流程，旨在承受現實世界運營的壓力。",
+      "visibility": "全面可視化",
+      "visibilityDesc": "不再有黑盒子或數據孤島。我們將您的運營背景統一到單一的真實來源中，讓您在問題升級之前清楚地採取行動。"
+    }
+  },
+  "CTA": {
+    "label": "立即聯繫",
+    "title": "現代化推動世界運轉的事物.",
+    "description": "幫助我們理清世界上最複雜的系統。如果您受到實際問題和實際影響的驅動，Enigmatic 就是您工作有意義的地方。",
+    "button": "合作"
+  },
+  "Visualizations": {
+    "rateCalculation": "費率計算",
+    "contractLogic": "合約邏輯",
+    "checkCapacity": "檢查運力",
+    "carrierApi": "承運商 API",
+    "full": "滿載",
+    "available": "可用",
+    "dispatchDriver": "調度司機",
+    "samsara": "Samsara",
+    "nextStep": "下一步",
+    "isShipmentDelayed": "貨物延誤？",
+    "isTrue": "是",
+    "notifyCustomer": "通知客戶",
+    "email": "電子郵件",
+    "isFalse": "否",
+    "selectBlock": "選擇模組",
+    "calculateEta": "計算 ETA",
+    "consolidateLoads": "整合貨物",
+    "updateTms": "更新 TMS",
+    "exceptionReview": "異常審查",
+    "humanAction": "人工操作",
+    "rateVariance": "檢測到費率差異：",
+    "carrierInvoice": "承運商發票 #INV-2024-001",
+    "approve": "批准",
+    "reject": "拒絕"
+  },
+  "Footer": {
+      "tagline": "將複雜的工作流程數位化，並構建推動工業運營未來的自動化解決方案。",
+      "copyright": "© {year} Enigmatic Technologies. 版權所有。",
+      "legal": "法律聲明"
+  },
+  "UseCasesPage": {
+      "title": "應用案例。",
+      "description": "了解 Enigmatic 和 Nodal 如何將手動工作流程數位化，並大規模協調複雜的運營。",
+      "ctaTitle": "有獨特的挑戰嗎？",
+      "ctaDescription": "我們的工程師團隊可以根據您的具體運營需求構建定制的工作流程。",
+      "cards": {
+          "onboarding": "駕駛員入職與招聘",
+          "onboardingDesc": "每個運輸公司都要處理混亂的入職流程，這些流程分散在 Tenstreet、HRIS、電子郵件、電子表格和安全檢查中。Nodal 將這個混亂的流程壓縮成一個統一的視圖，自動化合規步驟和文件收集。",
+          "maintenance": "資產維護與檢查",
+          "maintenanceDesc": "維護通常是被動且分散的。使用 Nodal，技術人員提交 DVIR 會自動觸發零件訂購、工作分配和批准，協調 TMS 之外的跨團隊工作。",
+          "billing": "帳單與索賠處理",
+          "billingDesc": "通過減少流失來加速現金流。Nodal 為帳單和索賠提供單一的工作流程視圖，在將乾淨的數據提交給您的 TMS 或會計系統之前處理任務、附件和驗證。",
+          "predictive": "預測性製造運營",
+          "predictiveDesc": "連接車間與管理層。攝取即時傳感器數據以檢測異常，自動觸發 CMMS 中的工單，並在沒有人工干預的情況下重新安排 ERP 中的生產班次。",
+          "production": "生產線可視化",
+          "productionDesc": "即時監控物料輸入和輸出。當庫存低於閾值時，Nodal 的 AI 代理會立即與供應商協商補貨。",
+          "field": "現場通訊整合",
+          "fieldDesc": "縮小工地與後勤辦公室之間的差距。工地領班可以通過簡訊或聊天報告問題，Nodal 將其轉化為正式的 RFI 文件和工單請求。",
+          "construction": "建築材料物流",
+          "constructionDesc": "為複雜工地提供即時交付 (Just-in-time)。通過將現場請求直接與攪拌站和物流調度員同步，協調混凝土澆築和材料投放。"
+      }
+  },
+  "Sidebar": {
+    "searchPlaceholder": "搜尋...",
+    "docs": "文檔",
+    "nodes": "節點",
+    "variables": "變量",
+    "sections": {
+      "workspace": "工作區",
+      "development": "開發",
+      "triggers": "觸發器",
+      "humanInLoop": "人工介入",
+      "builtInTools": "內置工具",
+      "connectors": "連接器"
+    },
+    "items": {
+      "overview": "概覽",
+      "natalie": "Natalie",
+      "actionFlows": "動作流程",
+      "organization": "組織",
+      "flowStudio": "Flow Studio",
+      "integration": "集成",
+      "knowledgeBase": "知識庫"
+    },
+    "draggable": {
+      "triggerCreateFlow": "觸發：創建流程",
+      "humanTask": "人工任務",
+      "filterData": "過濾數據",
+      "setVariable": "設置變量",
+      "mapData": "映射數據",
+      "ifElse": "若 / 則",
+      "loop": "循環",
+      "switch": "切換",
+      "httpRequest": "HTTP 請求"
+    },
+    "groups": {
+      "dataOperation": "數據操作",
+      "logic": "邏輯",
+      "network": "網絡"
+    },
+    "messages": {
+      "noConnectors": "未配置連接器。",
+      "dragVariables": "將變量拖入節點輸入以使用先前步驟的數據。"
+    }
+  },
+  "AboutUs": {
+    "hero": {
+      "title": "關於我們。",
+      "subtitle": "以智慧與精準打造物流業的未來。"
+    },
+    "team": {
+      "title": "我們的團隊",
+      "samRole": "創始合夥人 | 願景",
+      "samDescription": "Sam 塑造 Enigmatic 的身份、產品和服務的策略願景，團結頂尖人才，從根本上重新構想物流技術生態系統。",
+      "chrisRole": "創始合夥人 | 銷售",
+      "chrisDescription": "Chris 領導營運和策略合作夥伴關係，專注於擴大 Enigmatic 的市場影響力，並為關鍵產業利益相關者創造價值。",
+      "phiRole": "創始合夥人 | 技術",
+      "phiDescription": "Phi 架構 Enigmatic 的技術基礎，領導研發以提供尖端、穩健的解決方案，突破物流技術的界限。"
+    },
+    "story": {
+      "title": "由物流愛好者創立。",
+      "description": "我們是一支物流業資深團隊，擁有數十年優化供應鏈的實戰經驗。我們將這種營運深度與嚴謹的工程專業相結合，提供策略諮詢和 Nodal，我們用於標準化和編排業務流程的平台。"
+    },
+    "cta": {
+      "title": "加入我們的旅程",
+      "description": "有興趣與我們合作或了解更多關於我們的平台？"
+    }
+  },
+  "Login": {
+    "title": "登入 Nodal",
+    "subtitle": "輸入您的憑證以存取平台",
+    "email": "電子郵件",
+    "emailPlaceholder": "name@example.com",
+    "password": "密碼",
+    "forgotPassword": "忘記密碼？",
+    "signIn": "登入",
+    "resetEmailSent": "密碼重設郵件已發送！請檢查您的收件匣。",
+    "enterEmailFirst": "請先輸入您的電子郵件地址。",
+    "loading": "載入中..."
+  },
+  "MFA": {
+    "verify": {
+      "title": "雙重驗證",
+      "subtitle": "輸入您驗證應用程式中的 6 位數代碼",
+      "codePlaceholder": "000000",
+      "verifying": "驗證中...",
+      "verify": "驗證",
+      "backToLogin": "返回登入",
+      "sessionExpired": "工作階段已過期。請重新登入。",
+      "noFactorFound": "找不到 MFA 因素。"
+    },
+    "setup": {
+      "title": "保護您的帳戶",
+      "subtitle": "所有使用者都必須啟用雙重驗證",
+      "scanInstructions": "使用您的驗證應用程式掃描 QR 碼以繼續",
+      "manualEntry": "無法掃描？手動輸入此代碼：",
+      "enterCode": "輸入 6 位數代碼",
+      "verifyAndContinue": "驗證並繼續",
+      "verifying": "驗證中...",
+      "settingUp": "正在設定 MFA...",
+      "setupError": "設定錯誤",
+      "setupErrorMessage": "設定 MFA 時發生問題",
+      "tryAgain": "重試",
+      "success": "MFA 已成功啟用！"
+    }
+  }
+}

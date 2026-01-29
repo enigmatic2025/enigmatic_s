@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/navigation";
 import {
   Settings,
   Menu,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 interface TopBarProps {
   mobileMenuOpen: boolean;
@@ -90,6 +91,9 @@ export function TopBar({
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Settings className="h-4 w-4" />
         </Button>
+
+        {/* Language Switcher */}
+        <LanguageSwitcher />
 
         {/* Theme Switcher */}
         <Button

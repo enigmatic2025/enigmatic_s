@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import {
   DriverOnboardingFlow,
@@ -17,57 +18,43 @@ import { CTASection } from "@/components/layout/cta-section";
 
 const useCases = [
   {
-    title: "Driver Onboarding & Hiring",
-    description:
-      "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
+    id: "onboarding",
     component: <DriverOnboardingFlow />,
     className: "md:col-span-2",
     minHeight: "min-h-[500px] md:min-h-[800px]",
   },
   {
-    title: "Asset Maintenance & Inspections",
-    description:
-      "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically, orchestrating cross-team work beyond the TMS.",
+    id: "maintenance",
     component: <AssetMaintenanceFlow />,
     className: "md:col-span-1",
     minHeight: "min-h-[500px] md:min-h-[800px]",
   },
   {
-    title: "Billing & Claims Processing",
-    description:
-      "Accelerate cash flow by reducing leakage. Nodal provides a single workflow view for billing and claims, handling tasks, attachments, and validations before submitting clean data to your TMS or accounting system.",
+    id: "billing",
     component: <BillingClaimsPreview />,
     className: "md:col-span-3",
     minHeight: "min-h-[500px] md:min-h-[600px]",
   },
   {
-    title: "Predictive Manufacturing Operations",
-    description:
-      "Connect the shop floor to top floor. Ingest live sensor data to detect anomalies, automatically trigger work orders in your CMMS, and reschedule production shifts in your ERP without manual intervention.",
+    id: "predictive",
     component: <ManufacturingFlow />,
     className: "md:col-span-2",
     minHeight: "min-h-[500px] md:min-h-[800px]",
   },
   {
-    title: "Production Line Visibility",
-    description:
-      "Real-time monitoring of material inputs and outputs. When inventory drops below thresholds, Nodal's AI agents negotiate replenishment with suppliers instantly.",
+    id: "production",
     component: <ManufacturingMaterialFlowPreview />,
     className: "md:col-span-1",
     minHeight: "min-h-[500px] md:min-h-[800px]",
   },
   {
-    title: "Field Communication Integration",
-    description:
-      "Bridge the gap between the job site and the back office. Site foremen can report issues via SMS or Chat, which Nodal translates into formal RFI documents and ticket requests.",
+    id: "field",
     component: <ConstructionSiteCoordinationPreview />,
     className: "md:col-span-1",
     minHeight: "min-h-[500px] md:min-h-[800px]",
   },
   {
-    title: "Construction Material Logistics",
-    description:
-      "Just-in-time delivery for complex sites. Coordinate concrete pours and material drops by syncing site requests directly with batch plants and logistics dispatchers.",
+    id: "construction",
     component: <ConstructionFlow />,
     className: "md:col-span-2",
     minHeight: "min-h-[500px] md:min-h-[800px]",
@@ -75,6 +62,8 @@ const useCases = [
 ];
 
 export default function UseCasesPage() {
+  const t = useTranslations("UseCasesPage");
+
   return (
     <main className="flex min-h-screen flex-col bg-background">
       {/* Hero Section */}
@@ -86,9 +75,9 @@ export default function UseCasesPage() {
             transition={{ duration: 0.5 }}
             className="text-3xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
           >
-            <span className="text-foreground">Use Cases. </span>
+            <span className="text-foreground">{t("title")} </span>
             <span className="text-muted-foreground">
-              See how Enigmatic and Nodal digitize manual workflows and orchestrate complex operations at scale.
+              {t("description")}
             </span>
           </motion.h1>
         </div>
@@ -107,10 +96,10 @@ export default function UseCasesPage() {
             >
               <div className="mb-8 max-w-2xl">
                 <h2 className="text-xl md:text-2xl font-normal tracking-tight text-foreground mb-4">
-                  {useCase.title}
+                  {t(`cards.${useCase.id}`)}
                 </h2>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  {useCase.description}
+                  {t(`cards.${useCase.id}Desc`)}
                 </p>
               </div>
 
@@ -126,8 +115,8 @@ export default function UseCasesPage() {
 
       {/* CTA Section */}
       <CTASection
-        title="Have a unique challenge?"
-        description="Our team of engineers can build custom workflows tailored to your specific operational needs."
+        title={t("ctaTitle")}
+        description={t("ctaDescription")}
       />
     </main>
   );

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const t = useTranslations("Login");
 
   // Redirect if already logged in
   useEffect(() => {
@@ -162,7 +164,7 @@ export default function LoginPage() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      toast.error("Please enter your email address first.");
+      toast.error(t("enterEmailFirst"));
       return;
     }
     setLoading(true);
@@ -172,7 +174,7 @@ export default function LoginPage() {
         redirectTo: `${window.location.origin}/auth/callback?next=/account/update-password`,
       });
       if (error) throw error;
-      toast.success("Password reset email sent! Check your inbox.");
+      toast.success(t("resetEmailSent"));
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -185,20 +187,20 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-light tracking-tight">
-            Sign in to Nodal
+            {t("title")}
           </CardTitle>
           <CardDescription>
-            Enter your credentials to access the platform
+            {t("subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAuth} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("email")}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder={t("emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -207,7 +209,7 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("password")}</Label>
                 <Button
                   variant="link"
                   className="px-0 font-normal h-auto text-xs text-muted-foreground"
@@ -215,7 +217,7 @@ export default function LoginPage() {
                   type="button"
                   disabled={loading}
                 >
-                  Forgot password?
+                  {t("forgotPassword")}
                 </Button>
               </div>
               <Input
@@ -229,7 +231,7 @@ export default function LoginPage() {
             </div>
             <Button className="w-full" type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign in
+              {t("signIn")}
             </Button>
           </form>
         </CardContent>
