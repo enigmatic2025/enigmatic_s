@@ -408,7 +408,15 @@
         "dateTime": "Ngày & Giờ",
         "fileUpload": "Tải lên tệp",
         "signature": "Chữ ký"
-      }
+      },
+      "information": "Thông tin",
+      "informationPlaceholder": "ví dụ: Tóm tắt ngữ cảnh cho người được giao...",
+      "informationHelp": "Tóm tắt ngắn gọn hiển thị trên thẻ.",
+      "description": "Mô tả nội bộ",
+      "descriptionPlaceholder": "ví dụ: Ghi chú nội bộ cho người thiết kế...",
+      "instructions": "Hướng dẫn",
+      "instructionsPlaceholder": "ví dụ: Cung cấp các bước chi tiết, danh sách kiểm tra hoặc ngữ cảnh...",
+      "instructionsHelp": "Hướng dẫn chi tiết này sẽ được hiển thị trên thẻ nhiệm vụ."
     },
     "apiTrigger": {
       "name": "Tên",

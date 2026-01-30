@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type, Clock, PenTool } from 'lucide-react';
+
 import { useTranslations } from 'next-intl';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 interface SchemaField {
   key: string;
@@ -60,18 +62,35 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
             onChange={(e) => onUpdate({ ...currentConfig, title: e.target.value })}
             placeholder={t("actionTitlePlaceholder")}
           />
-          <p className="text-[11px] text-muted-foreground">{t("actionTitleHelp")}</p>
+          <p className="text-11px text-muted-foreground">{t("actionTitleHelp")}</p>
         </div>
 
         <div className="space-y-2">
-          <Label>{t("information")}</Label>
-          <Textarea 
-            value={currentConfig.description || ''} 
-            onChange={(e) => onUpdate({ ...currentConfig, description: e.target.value })}
-            placeholder={t("informationPlaceholder")}
-            className="min-h-[80px]"
-          />
-          <p className="text-[11px] text-muted-foreground">{t("informationHelp")}</p>
+            <Label>{t("information")}</Label>
+            <Textarea
+              value={currentConfig.information || ''}
+              onChange={(e) => onUpdate({ ...currentConfig, information: e.target.value })}
+              placeholder={t("informationPlaceholder")}
+              className="resize-none h-20 text-xs"
+            />
+            <p className="text-[11px] text-muted-foreground">{t("informationHelp")}</p>
+        </div>
+
+
+
+        <div className="space-y-2">
+           <Label>{t("instructions")}</Label>
+            <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+               <RichTextEditor
+                value={currentConfig.instructions || ''}
+                onChange={(val) => {
+                  onUpdate({ ...currentConfig, instructions: val });
+                }}
+                placeholder={t("instructionsPlaceholder")}
+                className="min-h-[600px]"
+              />
+              <p className="text-[11px] text-muted-foreground mt-2">{t("instructionsHelp")}</p>
+            </div>
         </div>
 
         <div className="space-y-2">

@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { flowService } from "@/services/flow-service";
 
 import { apiClient } from "@/lib/api-client"; // Added apiClient
+import DOMPurify from "isomorphic-dompurify";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
     ArrowLeft,
@@ -361,7 +362,7 @@ export default function ActionFlowDetailPage() {
                                       className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
                                     >
                                        {/* Header Row */}
-                                       <div className="p-3 pb-2 flex items-center justify-between gap-2">
+                                       <div className="p-3 pb-2 flex flex-wrap items-center justify-between gap-2">
                                            <div className="flex items-center gap-2">
                                                {/* Status Pill (Monochrome) */}
                                                <div className={`px-2 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300`}>
@@ -376,7 +377,6 @@ export default function ActionFlowDetailPage() {
                                            </div>
                                            
                                            <div className="flex items-center gap-3">
-                                               <span className="text-[10px] text-zinc-400 font-mono">#{i+1} • 2m ago</span>
                                                 <AssigneeSelector
                                                     variant="avatar-group"
                                                     selected={(act.assignments || []).map((a: any) => ({
@@ -410,20 +410,37 @@ export default function ActionFlowDetailPage() {
                                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                                {act.name}
                                            </p>
-                                           {act.description && (
-                                               <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
-                                                   {act.description}
+                                           {act.information && (
+                                               <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 mb-2 leading-relaxed">
+                                                   {act.information}
                                                </p>
                                            )}
-                                           {!act.description && (
-                                                <p className="text-xs text-zinc-400 italic mt-1">No description provided.</p>
+                                           {(act.instructions) && (
+                                               <div className={`text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed prose prose-sm dark:prose-invert max-w-none
+                                                   ${isRunning ? '' : 'line-clamp-2'}
+                                                   prose-p:my-0.5 prose-p:text-xs 
+                                                   prose-ul:my-0.5 prose-ul:list-disc prose-ul:pl-4 
+                                                   prose-ol:my-0.5 prose-ol:list-decimal prose-ol:pl-4
+                                                   prose-li:my-0 
+                                                   prose-headings:text-xs prose-headings:font-bold prose-headings:my-1
+                                                   prose-a:text-blue-500 hover:prose-a:underline
+                                                   [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
+                                               `} 
+                                               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(act.instructions || '') }}
+                                               />
+                                           )}
+                                           {(!act.instructions && !act.information) && (
+                                                <p className="text-xs text-zinc-400 italic mt-1">No instructions provided.</p>
                                            )}
                                        </div>
 
                                        {/* Footer (Monochrome) */}
-                                       <div className={`px-3 py-1.5 flex items-center gap-2 text-[10px] font-medium ${footerClass}`}>
-                                            <div className={`w-1.5 h-1.5 rounded-full ${isRunning || isDone ? 'bg-zinc-50 dark:bg-zinc-950 animate-pulse' : 'bg-zinc-400'}`} />
-                                            {isDone ? 'Completed successfully' : isFailed ? 'Action failed' : isRunning ? 'Active execution' : 'Pending start'}
+                                       <div className={`px-3 py-1.5 flex items-center justify-between text-[10px] font-medium ${footerClass}`}>
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-1.5 h-1.5 rounded-full ${isRunning || isDone ? 'bg-zinc-50 dark:bg-zinc-950 animate-pulse' : 'bg-zinc-400'}`} />
+                                                {isDone ? 'Completed successfully' : isFailed ? 'Action failed' : isRunning ? 'Active execution' : 'Pending start'}
+                                            </div>
+                                            <span className="opacity-70 font-mono">#{i+1} • 2m ago</span>
                                        </div>
                                    </div>
                                );
