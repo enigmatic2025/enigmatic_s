@@ -440,5 +440,53 @@
       "actionFlowInfo": "ACTION FLOW INFORMATION",
       "actionFlowDescription": "Define how this trigger integrates into the Action Flow Dashboard."
     }
+  },
+  "FlowStudio": {
+    "title": "Flow Studio",
+    "newFlow": "New Flow",
+    "tabs": {
+      "active": "Active",
+      "draft": "Draft",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "name": "Name",
+      "status": "Status",
+      "lastRun": "Last Run",
+      "never": "Never",
+      "loading": "Loading flows...",
+      "empty": "No flows found. Create one to get started!",
+      "statusActive": "Active",
+      "statusDraft": "Draft",
+      "unpublishedChanges": "Unpublished Changes"
+    }
+  },
+  "ActionFlows": {
+    "title": "Action Flows",
+    "summary": {
+      "total": "total",
+      "active": "active",
+      "completed": "completed",
+      "failed": "failed"
+    },
+    "filters": {
+      "search": "Search flows...",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "assignment": "Assignment",
+      "allFlows": "All Flows",
+      "assignedToMe": "Assigned to Me",
+      "assignedToMyTeam": "Assigned to My Team",
+      "relatedToMe": "Related to Me"
+    },
+    "statuses": {
+      "inProgress": "In-Progress",
+      "completed": "Completed",
+      "failed": "Failed",
+      "terminated": "Terminated"
+    },
+    "empty": "No action flows found.",
+    "emptyHint": "Run an action flow to see it here.",
+    "deleteConfirm": "Are you sure you want to delete this action flow run?"
   }
 }

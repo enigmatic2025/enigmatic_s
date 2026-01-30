@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { flowService } from "@/services/flow-service";
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
 import { RenameFlowModal } from "@/components/flow-studio/modals/rename-flow-modal";
+import { useTranslations } from "next-intl";
 
 interface FlowTableProps {
   initialFlows: any[];
@@ -34,6 +35,7 @@ interface FlowTableProps {
 }
 
 export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
+  const t = useTranslations("FlowStudio.table");
   const router = useRouter();
   const [flows, setFlows] = useState<any[]>(initialFlows);
   const [selectedFlow, setSelectedFlow] = useState<any>(null);
@@ -48,7 +50,7 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
   }, [initialFlows]);
 
   if (isLoading) {
-    return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading flows...</div>;
+    return <div className="p-8 text-center text-muted-foreground animate-pulse">{t("loading")}</div>;
   }
 
   const handleDelete = async () => {
@@ -89,9 +91,9 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
         <Table>
           <TableHeader className="border-none">
             <TableRow className="border-none hover:bg-transparent">
-              <TableHead className="w-[300px] pl-0">Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last Run</TableHead>
+              <TableHead className="w-[300px] pl-0">{t("name")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead>{t("lastRun")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,7 +124,7 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
                           : "text-orange-600 border-orange-600/20 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-400"
                       }
                     >
-                      {flow.is_active ? "Active" : "Draft"}
+                      {flow.is_active ? t("statusActive") : t("statusDraft")}
                     </Badge>
                     
                     {(() => {
@@ -134,7 +136,7 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
                                 return (
                                     <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-yellow-500/10 text-yellow-600 border-yellow-500/20 hover:bg-yellow-500/20 gap-1 whitespace-nowrap">
                                         <div className="w-1 h-1 rounded-full bg-yellow-500" />
-                                        Unpublished Changes
+                                        {t("unpublishedChanges")}
                                     </Badge>
                                 );
                             }
@@ -144,7 +146,7 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {flow.last_run ? new Date(flow.last_run).toLocaleDateString() : "Never"}
+                    {flow.last_run ? new Date(flow.last_run).toLocaleDateString() : t("never")}
                   </TableCell>
                 </TableRow>
               ))
@@ -154,7 +156,7 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
                   colSpan={3}
                   className="text-center text-muted-foreground py-8"
                 >
-                  No flows found. Create one to get started!
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             )}

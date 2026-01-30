@@ -181,10 +181,10 @@
     },
     "items": {
       "overview": "概覽",
-      "natalie": "Natalie",
+      "natalie": "娜塔莉",
       "actionFlows": "動作流程",
       "organization": "組織",
-      "flowStudio": "Flow Studio",
+      "flowStudio": "流程工作室",
       "integration": "集成",
       "knowledgeBase": "知識庫"
     },
@@ -437,5 +437,53 @@
       "actionFlowInfo": "動作流程資訊",
       "actionFlowDescription": "定義此觸發器如何整合到動作流程儀表板中。"
     }
+  },
+  "FlowStudio": {
+    "title": "流程工作室",
+    "newFlow": "新建流程",
+    "tabs": {
+      "active": "活躍",
+      "draft": "草稿",
+      "inactive": "停用"
+    },
+    "table": {
+      "name": "名稱",
+      "status": "狀態",
+      "lastRun": "上次執行",
+      "never": "從未",
+      "loading": "正在載入流程...",
+      "empty": "未找到流程。創建一個以開始！",
+      "statusActive": "活躍",
+      "statusDraft": "草稿",
+      "unpublishedChanges": "未發布的變更"
+    }
+  },
+  "ActionFlows": {
+    "title": "動作流程",
+    "summary": {
+      "total": "總計",
+      "active": "活躍",
+      "completed": "已完成",
+      "failed": "失敗"
+    },
+    "filters": {
+      "search": "搜尋流程...",
+      "status": "狀態",
+      "allStatuses": "所有狀態",
+      "assignment": "分配",
+      "allFlows": "所有流程",
+      "assignedToMe": "分配給我",
+      "assignedToMyTeam": "分配給我的團隊",
+      "relatedToMe": "與我相關"
+    },
+    "statuses": {
+      "inProgress": "進行中",
+      "completed": "已完成",
+      "failed": "失敗",
+      "terminated": "已終止"
+    },
+    "empty": "未找到動作流程。",
+    "emptyHint": "執行動作流程以在此處查看。",
+    "deleteConfirm": "您確定要刪除此動作流程執行嗎？"
   }
 }

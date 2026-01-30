@@ -139,4 +139,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Vietnamese font override - Aspekta doesn't support Vietnamese diacritics properly */
+  :lang(vi) {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  }
 }

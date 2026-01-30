@@ -184,7 +184,7 @@
       "natalie": "Natalie",
       "actionFlows": "Luồng hành động",
       "organization": "Tổ chức",
-      "flowStudio": "Flow Studio",
+      "flowStudio": "Phòng Thiết Kế Luồng",
       "integration": "Tích hợp",
       "knowledgeBase": "Cơ sở tri thức"
     },
@@ -437,5 +437,53 @@
       "actionFlowInfo": "THÔNG TIN LUỒNG HÀNH ĐỘNG",
       "actionFlowDescription": "Xác định cách kích hoạt này tích hợp vào Bảng điều khiển Luồng Hành động."
     }
+  },
+  "FlowStudio": {
+    "title": "Phòng Thiết Kế Luồng",
+    "newFlow": "Luồng Mới",
+    "tabs": {
+      "active": "Đang hoạt động",
+      "draft": "Bản nháp",
+      "inactive": "Không hoạt động"
+    },
+    "table": {
+      "name": "Tên",
+      "status": "Trạng thái",
+      "lastRun": "Lần chạy cuối",
+      "never": "Chưa bao giờ",
+      "loading": "Đang tải luồng...",
+      "empty": "Không tìm thấy luồng nào. Tạo một luồng để bắt đầu!",
+      "statusActive": "Đang hoạt động",
+      "statusDraft": "Bản nháp",
+      "unpublishedChanges": "Thay đổi chưa xuất bản"
+    }
+  },
+  "ActionFlows": {
+    "title": "Luồng Hành Động",
+    "summary": {
+      "total": "tổng cộng",
+      "active": "đang hoạt động",
+      "completed": "đã hoàn thành",
+      "failed": "thất bại"
+    },
+    "filters": {
+      "search": "Tìm kiếm luồng...",
+      "status": "Trạng thái",
+      "allStatuses": "Tất cả trạng thái",
+      "assignment": "Phân công",
+      "allFlows": "Tất cả luồng",
+      "assignedToMe": "Được giao cho tôi",
+      "assignedToMyTeam": "Được giao cho nhóm tôi",
+      "relatedToMe": "Liên quan đến tôi"
+    },
+    "statuses": {
+      "inProgress": "Đang thực hiện",
+      "completed": "Đã hoàn thành",
+      "failed": "Thất bại",
+      "terminated": "Đã dừng"
+    },
+    "empty": "Không tìm thấy luồng hành động.",
+    "emptyHint": "Chạy một luồng hành động để xem tại đây.",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa lần chạy luồng hành động này không?"
   }
 }
