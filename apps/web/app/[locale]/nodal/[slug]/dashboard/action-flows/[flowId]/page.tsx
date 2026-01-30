@@ -176,33 +176,7 @@ export default function ActionFlowDetailPage() {
                                 </DropdownMenuContent>
                            </DropdownMenu>
 
-                           {/* Assignments */}
-                           <div className="w-[200px]">
-                                <AssigneeSelector
-                                    selected={(data.assignments || []).map((a: any) => ({
-                                        id: a.id,
-                                        type: a.type,
-                                        name: a.name || "Unknown",
-                                        avatar: a.avatar,
-                                        info: a.info
-                                    }))}
-                                    onSelect={async (newAssignees) => {
-                                        try {
-                                            // Optimistic Update
-                                            // const newData = { ...data, assignments: newAssignees };
-                                            // mutate(newData, false); 
-                                            // Note: SWR global mutate or keys might be tricky for partial updates without key function
-                                            
-                                            await apiClient.patch(`/action-flows/${data.id}`, { assignments: newAssignees });
-                                            mutate(`/action-flows/${data.id}`);
-                                            toast.success("Assignments updated");
-                                        } catch (e) {
-                                            toast.error("Failed to update assignments");
-                                        }
-                                    }}
-                                    orgSlug={slug as string}
-                                />
-                           </div>
+
 
                            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
                                <MoreHorizontal className="w-4 h-4" />
@@ -343,7 +317,7 @@ export default function ActionFlowDetailPage() {
                   {/* ACTIONS LIST (Compact) */}
                   <div className="col-span-5 space-y-3">
                        <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-2">
-                           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Actions History</h3>
+                           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Actions</h3>
                            <Button variant="outline" size="sm" className="h-6 text-[10px] px-2 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                                + Action
                            </Button>
@@ -375,6 +349,33 @@ export default function ActionFlowDetailPage() {
                                                 <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">#ACTION-{i+1}</span>
                                                 {isRunning && <span className="text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded-sm">Running</span>}
                                            </div>
+                                       </div>
+
+                                       <div className="shrink-0 w-[180px]">
+                                            <AssigneeSelector
+                                                selected={(act.assignments || []).map((a: any) => ({
+                                                    id: a.id,
+                                                    type: a.type,
+                                                    name: a.name || "Unknown",
+                                                    avatar: a.avatar,
+                                                    info: a.info
+                                                }))}
+                                                onSelect={async (newAssignees) => {
+                                                    try {
+                                                        if (act.id) {
+                                                            await apiClient.patch(`/tasks/${act.id}`, { assignments: newAssignees });
+                                                            toast.success("Task assignments updated");
+                                                            mutate(flowId ? `/action-flows/${flowId}` : null);
+                                                        } else {
+                                                            toast.error("Task ID missing");
+                                                        }
+                                                    } catch (e) {
+                                                        toast.error("Failed to update task assignments");
+                                                        console.error(e);
+                                                    }
+                                                }}
+                                                orgSlug={slug as string}
+                                            />
                                        </div>
                                    </div>
                                );

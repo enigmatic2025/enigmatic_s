@@ -118,3 +118,39 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
+
+// UpdateTaskHandler updates task details (assignments)
+// PATCH /api/tasks/{id}
+func (h *HumanTaskHandler) UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
+	taskID := r.PathValue("id")
+	if taskID == "" {
+		http.Error(w, "Task ID required", http.StatusBadRequest)
+		return
+	}
+
+	var payload struct {
+		Assignments []map[string]interface{} `json:"assignments"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, "Invalid body", http.StatusBadRequest)
+		return
+	}
+
+	client := database.GetClient()
+
+	// Update Task
+	updateData := map[string]interface{}{
+		"assignments": payload.Assignments,
+		"updated_at":  time.Now(),
+	}
+
+	var updateRes []interface{}
+	err := client.DB.From("human_tasks").Update(updateData).Eq("id", taskID).Execute(&updateRes)
+	if err != nil {
+		http.Error(w, "Failed to update task: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}

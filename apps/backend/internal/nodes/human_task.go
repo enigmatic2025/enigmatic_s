@@ -74,16 +74,45 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 	// 3. Create Task Record in DB
 	client := database.GetClient()
 
+	// Extract Assignments
+	var assignments []map[string]interface{}
+	if val, ok := input.Config["assignments"]; ok {
+		if list, ok := val.([]interface{}); ok {
+			for _, item := range list {
+				if m, ok := item.(map[string]interface{}); ok {
+					assignments = append(assignments, map[string]interface{}{
+						"id":     m["id"],
+						"type":   m["type"],
+						"name":   m["name"],
+						"avatar": m["avatar"],
+						"info":   m["info"],
+					})
+				}
+			}
+		}
+	} else if assignee != "" && assignee != "unassigned" {
+		// Backwards compatibility: Create a simple assignment from legacy assignee field
+		// We might not have ID/Avatar, but we can store the name/info
+		assignments = append(assignments, map[string]interface{}{
+			"id":     assignee, // Use value as ID for now
+			"type":   "user",   // Guessing user
+			"name":   assignee,
+			"avatar": "",
+			"info":   assignee,
+		})
+	}
+
 	taskRecord := struct {
-		FlowID      string      `json:"flow_id"`
-		RunID       string      `json:"run_id"` // Temporal RunID
-		Title       string      `json:"title"`
-		Description string      `json:"description"`
-		Assignee    string      `json:"assignee"`
-		Status      string      `json:"status"`
-		Schema      interface{} `json:"schema"`
-		CreatedAt   time.Time   `json:"created_at"`
-		UpdatedAt   time.Time   `json:"updated_at"`
+		FlowID      string                   `json:"flow_id"`
+		RunID       string                   `json:"run_id"` // Temporal RunID
+		Title       string                   `json:"title"`
+		Description string                   `json:"description"`
+		Assignee    string                   `json:"assignee"`
+		Assignments []map[string]interface{} `json:"assignments"`
+		Status      string                   `json:"status"`
+		Schema      interface{}              `json:"schema"`
+		CreatedAt   time.Time                `json:"created_at"`
+		UpdatedAt   time.Time                `json:"updated_at"`
 	}{
 		FlowID: input.FlowID,
 		RunID:  input.RunID,
@@ -91,6 +120,7 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 		Title:       title,
 		Description: description,
 		Assignee:    assignee,
+		Assignments: assignments,
 		Status:      "PENDING",
 		Schema:      schema,
 		CreatedAt:   time.Now(),

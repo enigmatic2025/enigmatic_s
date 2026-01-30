@@ -270,11 +270,6 @@ func (h *FlowHandler) ListFlows(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if err != nil {
-		http.Error(w, "Failed to fetch flows: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	// Note: Sorting is currently handled by the database query order or default insertion order.
 	// If explicit sorting by updated_at is needed, ensure the PostgREST library supports .Order() correctly.
 

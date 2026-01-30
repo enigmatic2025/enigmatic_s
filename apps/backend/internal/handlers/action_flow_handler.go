@@ -234,11 +234,12 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 
 	// Fetch Activities (Human Tasks + System Events)
 	type Activity struct {
-		Type      string `json:"type"` // "trigger", "human_action", "end"
-		Name      string `json:"name"`
-		Status    string `json:"status"`
-		StartedAt string `json:"started_at"`
-		ID        string `json:"id,omitempty"`
+		Type        string                   `json:"type"` // "trigger", "human_action", "end"
+		Name        string                   `json:"name"`
+		Status      string                   `json:"status"`
+		StartedAt   string                   `json:"started_at"`
+		ID          string                   `json:"id,omitempty"`
+		Assignments []map[string]interface{} `json:"assignments,omitempty"`
 	}
 	var activities []Activity
 
@@ -253,25 +254,27 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 	// 2. Human Tasks
 	if af.RunID != "" {
 		type HumanTask struct {
-			ID        string `json:"id"`
-			Title     string `json:"title"` // Dynamic title
-			Status    string `json:"status"`
-			CreatedAt string `json:"created_at"`
+			ID          string                   `json:"id"`
+			Title       string                   `json:"title"` // Dynamic title
+			Status      string                   `json:"status"`
+			CreatedAt   string                   `json:"created_at"`
+			Assignments []map[string]interface{} `json:"assignments"`
 		}
 		var tasks []HumanTask
 		// Query using RunID
 		client.DB.From("human_tasks").
-			Select("id, title, status, created_at").
+			Select("id, title, status, created_at, assignments").
 			Eq("run_id", af.RunID).
 			Execute(&tasks)
 
 		for _, t := range tasks {
 			activities = append(activities, Activity{
-				Type:      "human_action",
-				Name:      t.Title,
-				Status:    t.Status,
-				StartedAt: t.CreatedAt,
-				ID:        t.ID,
+				Type:        "human_action",
+				Name:        t.Title,
+				Status:      t.Status,
+				StartedAt:   t.CreatedAt,
+				ID:          t.ID,
+				Assignments: t.Assignments,
 			})
 		}
 	}

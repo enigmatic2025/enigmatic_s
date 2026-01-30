@@ -110,6 +110,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	taskHandler := handlers.NewHumanTaskHandler(s.temporalClient)
 	mux.Handle("GET /api/tasks", middleware.Auth(http.HandlerFunc(taskHandler.GetTasksHandler)))
 	mux.Handle("POST /api/tasks/{id}/complete", middleware.Auth(http.HandlerFunc(taskHandler.CompleteTaskHandler)))
+	mux.Handle("PATCH /api/tasks/{id}", middleware.Auth(http.HandlerFunc(taskHandler.UpdateTaskHandler))) // Added
 
 	// Comment Routes
 	commentHandler := handlers.NewCommentHandler()
