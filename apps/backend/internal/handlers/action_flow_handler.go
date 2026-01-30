@@ -27,14 +27,15 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 	limit := 50
 
 	type ActionFlowResult struct {
-		ID                 string         `json:"id"`
-		FlowID             string         `json:"flow_id"`
-		Status             string         `json:"status"`
-		TemporalWorkflowID string         `json:"temporal_workflow_id"`
-		InputData          map[string]any `json:"input_data"`
-		StartedAt          string         `json:"started_at"`
-		Title              string         `json:"title"`
-		Priority           string         `json:"priority"`
+		ID                 string           `json:"id"`
+		FlowID             string           `json:"flow_id"`
+		Status             string           `json:"status"`
+		TemporalWorkflowID string           `json:"temporal_workflow_id"`
+		InputData          map[string]any   `json:"input_data"`
+		StartedAt          string           `json:"started_at"`
+		Title              string           `json:"title"`
+		Priority           string           `json:"priority"`
+		Assignments        []map[string]any `json:"assignments"` // Added
 	}
 
 	var results []ActionFlowResult
@@ -91,6 +92,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		TemporalWorkflowID string `json:"temporal_workflow_id"`
 		StartedAt          string `json:"started_at"`
 		Priority           string `json:"priority"`
+		HasAssignments     bool   `json:"has_assignments"` // Optional usage
 	}
 
 	flatResults := make([]FlatResult, len(results))
@@ -181,17 +183,18 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 	client := database.GetClient()
 
 	type ActionFlowResult struct {
-		ID                 string         `json:"id"`
-		OrgID              string         `json:"org_id"` // Added OrgID
-		FlowID             string         `json:"flow_id"`
-		Status             string         `json:"status"`
-		TemporalWorkflowID string         `json:"temporal_workflow_id"`
-		RunID              string         `json:"run_id"`
-		InputData          map[string]any `json:"input_data"`
-		KeyData            map[string]any `json:"key_data"` // Added KeyData
-		Output             map[string]any `json:"output"`
-		StartedAt          string         `json:"started_at"`
-		Priority           string         `json:"priority"`
+		ID                 string           `json:"id"`
+		OrgID              string           `json:"org_id"` // Added OrgID
+		FlowID             string           `json:"flow_id"`
+		Status             string           `json:"status"`
+		TemporalWorkflowID string           `json:"temporal_workflow_id"`
+		RunID              string           `json:"run_id"`
+		InputData          map[string]any   `json:"input_data"`
+		KeyData            map[string]any   `json:"key_data"` // Added KeyData
+		Output             map[string]any   `json:"output"`
+		StartedAt          string           `json:"started_at"`
+		Priority           string           `json:"priority"`
+		Assignments        []map[string]any `json:"assignments"` // Added
 	}
 
 	var results []ActionFlowResult
@@ -299,18 +302,19 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 
 	// Flatten Result
 	type FlatResult struct {
-		ID                 string         `json:"id"`
-		OrgID              string         `json:"org_id"` // Added OrgID
-		FlowID             string         `json:"flow_id"`
-		FlowName           string         `json:"flow_name"`
-		Title              string         `json:"title"`
-		Status             string         `json:"status"`
-		TemporalWorkflowID string         `json:"temporal_workflow_id"`
-		RunID              string         `json:"run_id"`
-		StartedAt          string         `json:"started_at"`
-		Priority           string         `json:"priority"`
-		InputData          map[string]any `json:"input_data"`
-		KeyData            map[string]any `json:"key_data"`
+		ID                 string           `json:"id"`
+		OrgID              string           `json:"org_id"` // Added OrgID
+		FlowID             string           `json:"flow_id"`
+		FlowName           string           `json:"flow_name"`
+		Title              string           `json:"title"`
+		Status             string           `json:"status"`
+		TemporalWorkflowID string           `json:"temporal_workflow_id"`
+		RunID              string           `json:"run_id"`
+		StartedAt          string           `json:"started_at"`
+		Priority           string           `json:"priority"`
+		Assignments        []map[string]any `json:"assignments"` // Added
+		InputData          map[string]any   `json:"input_data"`
+		KeyData            map[string]any   `json:"key_data"`
 
 		Output     map[string]any `json:"output"`
 		Activities []Activity     `json:"activities"`
@@ -342,6 +346,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		RunID:              af.RunID,
 		StartedAt:          af.StartedAt,
 		Priority:           af.Priority,
+		Assignments:        af.Assignments,
 		InputData:          af.InputData,
 		KeyData:            af.KeyData,
 
@@ -362,7 +367,8 @@ func (h *ActionFlowHandler) UpdateActionFlow(w http.ResponseWriter, r *http.Requ
 	}
 
 	var payload struct {
-		Priority string `json:"priority"`
+		Priority    string           `json:"priority"`
+		Assignments []map[string]any `json:"assignments"` // Added
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
@@ -370,30 +376,40 @@ func (h *ActionFlowHandler) UpdateActionFlow(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if payload.Priority == "" {
+	if payload.Priority == "" && payload.Assignments == nil {
 		http.Error(w, "Nothing to update", http.StatusBadRequest)
 		return
 	}
 
-	// Validate Priority
-	valid := false
-	for _, p := range []string{"low", "medium", "high", "critical"} {
-		if p == payload.Priority {
-			valid = true
-			break
-		}
-	}
-	if !valid {
-		http.Error(w, "Invalid priority", http.StatusBadRequest)
-		return
+	client := database.GetClient()
+	updates := make(map[string]interface{})
+
+	// Validate Assign
+	if payload.Assignments != nil {
+		// Basic validation: ensure it's a list
+		updates["assignments"] = payload.Assignments
 	}
 
-	client := database.GetClient()
+	// Validate Priority
+	if payload.Priority != "" {
+		valid := false
+		for _, p := range []string{"low", "medium", "high", "critical"} {
+			if p == payload.Priority {
+				valid = true
+				break
+			}
+		}
+		if !valid {
+			http.Error(w, "Invalid priority", http.StatusBadRequest)
+			return
+		}
+		updates["priority"] = payload.Priority
+	}
 
 	// Update
 	var result []map[string]interface{}
 	err := client.DB.From("action_flows").
-		Update(map[string]interface{}{"priority": payload.Priority}).
+		Update(updates).
 		Eq("id", id).
 		Execute(&result)
 

@@ -7,6 +7,7 @@ import { useReactFlow } from 'reactflow';
 import { Copy, Check, Plus, Trash2, Info } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { AssigneeSelector } from '@/components/assignee-selector';
 
 interface ApiTriggerConfigProps {
   nodeId: string;
@@ -263,6 +264,21 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                         </select>
                         <p className="text-[10px] text-muted-foreground mt-1">
                             Priority to assign if not specified in API payload.
+                        </p>
+                    </div>
+
+                    {/* Default Assignees */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">
+                            Default Assignees
+                        </label>
+                        <AssigneeSelector
+                            selected={data.assignments || []}
+                            onSelect={(newAssignees) => onUpdate({ ...data, assignments: newAssignees })}
+                            orgSlug={params?.slug as string}
+                        />
+                         <p className="text-[10px] text-muted-foreground mt-1">
+                            Users/Teams to assign if not specified in API payload.
                         </p>
                     </div>
 

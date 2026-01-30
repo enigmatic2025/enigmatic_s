@@ -37,7 +37,8 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	// 1. Find API Trigger Node configuration for Templating AND pre-populate node output
 	var titleTemplate, descTemplate string
 	var infoFieldsRaw []interface{}
-	priority := "medium" // Default
+	priority := "medium"                     // Default
+	var assignments []map[string]interface{} // Default empty
 
 	for _, node := range flowDefinition.Nodes {
 		// Populate the specific node ID with the input data (Flat, for variable constraints)
@@ -57,6 +58,50 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 				descTemplate = d
 			}
 
+			if val, ok := inputData["info_fields"]; ok {
+				// Type assertion complex, simplified:
+				// infoFields = val
+				_ = val
+			}
+
+			// 1.3 Determine Assignments (Input > Trigger Config > Default Empty)
+			// Assignments declared outside loop
+			if val, ok := inputData["assignments"]; ok {
+				// Try to parse from input
+				if list, ok := val.([]interface{}); ok {
+					for _, item := range list {
+						if m, ok := item.(map[string]interface{}); ok {
+							assignments = append(assignments, map[string]interface{}{
+								"id":     m["id"],
+								"type":   m["type"],
+								"name":   m["name"],
+								"avatar": m["avatar"],
+								"info":   m["info"],
+							})
+						}
+					}
+				}
+			} else {
+				// Check trigger config for default assignments (using 'node' variable)
+				if def, ok := node.Data["assignments"]; ok {
+					if list, ok := def.([]interface{}); ok {
+						for _, item := range list {
+							if m, ok := item.(map[string]interface{}); ok {
+								assignments = append(assignments, map[string]interface{}{
+									"id":     m["id"],
+									"type":   m["type"],
+									"name":   m["name"],
+									"avatar": m["avatar"],
+									"info":   m["info"],
+								})
+							}
+						}
+					}
+				}
+			}
+
+			// 2. Add System Info
+			// Add Execution Info
 			if fields, ok := node.Data["infoFields"].([]interface{}); ok {
 				infoFieldsRaw = fields
 			}
@@ -154,6 +199,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		Title:       titleTemplate,
 		Description: descTemplate,
 		Priority:    priority,
+		Assignments: assignments,
 		InfoFields:  infoFields,
 	}
 

@@ -8,7 +8,18 @@ import useSWR, { useSWRConfig } from "swr"; // Added useSWRConfig
 import { useRouter } from "@/navigation";
 import { flowService } from "@/services/flow-service";
 import { apiClient } from "@/lib/api-client"; // Added apiClient
-import { ArrowLeft, MoreHorizontal, Check, Clock, MousePointer2, Plus, User, Send, Bot, Sparkles, Paperclip, Mic, ChevronDown, Hash, AtSign } from "lucide-react";
+import {
+    ArrowLeft,
+    CheckCircle2,
+    XCircle,
+    Clock,
+    MoreHorizontal,
+    Box,
+    ChevronDown,
+    Bot,
+    Send
+} from "lucide-react";
+import { AssigneeSelector, Assignee } from "@/components/assignee-selector";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -36,10 +47,11 @@ interface ActionFlowDetail {
   temporal_workflow_id: string;
   started_at: string;
   input_data: any;
-  key_data: Record<string, any>; // Added key_data
+  key_data: Record<string, any>;
+  priority?: string;
+  assignments?: Assignee[]; // Added assignments
   output: any;
   activities: any[];
-  priority?: string;
 }
 
 
@@ -153,7 +165,6 @@ export default function ActionFlowDetailPage() {
                                                      // Let's modify the hook call next.
                                                      toast.success(`Priority updated to ${p}`);
                                                      mutate(`/action-flows/${data.id}`); 
-
                                                 } catch (e) {
                                                     toast.error("Failed to update priority");
                                                 }
@@ -164,6 +175,34 @@ export default function ActionFlowDetailPage() {
                                     ))}
                                 </DropdownMenuContent>
                            </DropdownMenu>
+
+                           {/* Assignments */}
+                           <div className="w-[200px]">
+                                <AssigneeSelector
+                                    selected={(data.assignments || []).map((a: any) => ({
+                                        id: a.id,
+                                        type: a.type,
+                                        name: a.name || "Unknown",
+                                        avatar: a.avatar,
+                                        info: a.info
+                                    }))}
+                                    onSelect={async (newAssignees) => {
+                                        try {
+                                            // Optimistic Update
+                                            // const newData = { ...data, assignments: newAssignees };
+                                            // mutate(newData, false); 
+                                            // Note: SWR global mutate or keys might be tricky for partial updates without key function
+                                            
+                                            await apiClient.patch(`/action-flows/${data.id}`, { assignments: newAssignees });
+                                            mutate(`/action-flows/${data.id}`);
+                                            toast.success("Assignments updated");
+                                        } catch (e) {
+                                            toast.error("Failed to update assignments");
+                                        }
+                                    }}
+                                    orgSlug={slug as string}
+                                />
+                           </div>
 
                            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
                                <MoreHorizontal className="w-4 h-4" />

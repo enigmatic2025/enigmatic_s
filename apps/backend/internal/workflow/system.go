@@ -8,14 +8,15 @@ import (
 )
 
 type RecordActionFlowParams struct {
-	FlowID      string                 `json:"flow_id"`
-	WorkflowID  string                 `json:"workflow_id"`
-	RunID       string                 `json:"run_id"`
-	InputData   map[string]interface{} `json:"input_data"`
-	Title       string                 `json:"title"`
-	Description string                 `json:"description"`
-	Priority    string                 `json:"priority"` // Added Priority
-	InfoFields  []map[string]string    `json:"info_fields"`
+	FlowID      string                   `json:"flow_id"`
+	WorkflowID  string                   `json:"workflow_id"`
+	RunID       string                   `json:"run_id"`
+	InputData   map[string]interface{}   `json:"input_data"`
+	Title       string                   `json:"title"`
+	Description string                   `json:"description"`
+	Priority    string                   `json:"priority"`    // Added Priority
+	Assignments []map[string]interface{} `json:"assignments"` // Changed to interface{}
+	InfoFields  []map[string]string      `json:"info_fields"`
 }
 
 // RecordActionFlowActivity Inserts a record into the 'action_flows' table
@@ -60,23 +61,25 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 	}
 
 	record := struct {
-		FlowID     *string                `json:"flow_id"`
-		TemporalID string                 `json:"temporal_id"`
-		RunID      string                 `json:"run_id"`
-		Status     string                 `json:"status"`
-		InputData  map[string]interface{} `json:"input_data"`
-		KeyData    map[string]interface{} `json:"key_data"`
-		Priority   string                 `json:"priority"`
-		StartedAt  time.Time              `json:"started_at"`
+		FlowID      *string                  `json:"flow_id"`
+		TemporalID  string                   `json:"temporal_id"`
+		RunID       string                   `json:"run_id"`
+		Status      string                   `json:"status"`
+		InputData   map[string]interface{}   `json:"input_data"`
+		KeyData     map[string]interface{}   `json:"key_data"`
+		Priority    string                   `json:"priority"`
+		Assignments []map[string]interface{} `json:"assignments"` // Changed to interface{}
+		StartedAt   time.Time                `json:"started_at"`
 	}{
-		FlowID:     flowIDPtr,
-		TemporalID: params.WorkflowID,
-		RunID:      params.RunID,
-		Status:     "RUNNING",
-		InputData:  finalInputData,
-		KeyData:    keyData,
-		Priority:   params.Priority,
-		StartedAt:  time.Now(),
+		FlowID:      flowIDPtr,
+		TemporalID:  params.WorkflowID,
+		RunID:       params.RunID,
+		Status:      "RUNNING",
+		InputData:   finalInputData,
+		KeyData:     keyData,
+		Priority:    params.Priority,
+		Assignments: params.Assignments, // Initialize Assignments
+		StartedAt:   time.Now(),
 	}
 
 	// Insert into 'action_flows'
