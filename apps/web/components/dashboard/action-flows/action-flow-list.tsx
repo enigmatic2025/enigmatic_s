@@ -14,6 +14,9 @@ import { Copy, MoreHorizontal, Trash2, Workflow, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
+import { PriorityBadge } from "@/components/shared/priority-badge";
+import { StatusBadge } from "@/components/shared/status-badge";
+
 import { useRouter, usePathname } from "@/navigation";
 
 export interface ActionFlowExec {
@@ -68,68 +71,7 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
-  const getStatusBadge = (status: string) => {
-    const s = status?.toUpperCase();
-    
-    // Monochrome badge styling for all statuses
-    const monochromeClass = "text-gray-700 border-gray-300 bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600";
-    
-    switch (s) {
-      case "COMPLETED":
-        return (
-          <Badge variant="outline" className={monochromeClass}>
-            {t("statuses.completed")}
-          </Badge>
-        );
-      case "RUNNING":
-        return (
-          <Badge variant="outline" className={monochromeClass}>
-            {t("statuses.inProgress")}
-          </Badge>
-        );
-      case "FAILED":
-        return (
-          <Badge variant="outline" className={monochromeClass}>
-            {t("statuses.failed")}
-          </Badge>
-        );
-      case "TERMINATED":
-        return (
-          <Badge variant="outline" className={monochromeClass}>
-            {t("statuses.terminated")}
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline" className={monochromeClass}>{status}</Badge>;
-    }
-  };
 
-  const getPriorityBadge = (priority?: string) => {
-    if (!priority) return null;
-    const p = priority.toLowerCase();
-    switch (p) {
-      case "high":
-        return (
-          <Badge variant="outline" className="text-red-600 border-red-300 bg-red-50 dark:bg-red-900/20 dark:text-red-400 dark:border-red-700 text-xs">
-            High
-          </Badge>
-        );
-      case "medium":
-        return (
-          <Badge variant="outline" className="text-yellow-600 border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-700 text-xs">
-            Medium
-          </Badge>
-        );
-      case "low":
-        return (
-          <Badge variant="outline" className="text-blue-600 border-blue-300 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-700 text-xs">
-            Low
-          </Badge>
-        );
-      default:
-        return null;
-    }
-  };
 
   const handleDelete = async (exec: ActionFlowExec, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -168,8 +110,8 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
 
             {/* Metadata Badges */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              {getStatusBadge(exec.status)}
-              {getPriorityBadge(exec.priority)}
+              <StatusBadge status={exec.status} />
+              <PriorityBadge priority={exec.priority} />
               
               {exec.has_assignments && (
                 <Badge variant="outline" className="text-xs">

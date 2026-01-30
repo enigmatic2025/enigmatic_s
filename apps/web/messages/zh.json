@@ -482,6 +482,12 @@
       "failed": "失敗",
       "terminated": "已終止"
     },
+    "priorities": {
+      "critical": "嚴重",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
     "empty": "未找到動作流程。",
     "emptyHint": "執行動作流程以在此處查看。",
     "deleteConfirm": "您確定要刪除此動作流程執行嗎？"

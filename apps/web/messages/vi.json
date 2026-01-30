@@ -482,6 +482,12 @@
       "failed": "Thất bại",
       "terminated": "Đã dừng"
     },
+    "priorities": {
+      "critical": "Nghiêm trọng",
+      "high": "Cao",
+      "medium": "Trung bình",
+      "low": "Thấp"
+    },
     "empty": "Không tìm thấy luồng hành động.",
     "emptyHint": "Chạy một luồng hành động để xem tại đây.",
     "deleteConfirm": "Bạn có chắc chắn muốn xóa lần chạy luồng hành động này không?"

@@ -6,8 +6,11 @@ import { useParams } from "next/navigation";
 import useSWR, { useSWRConfig } from "swr"; // Added useSWRConfig
 
 import { useRouter } from "@/navigation";
+import { useTranslations } from "next-intl";
 import { flowService } from "@/services/flow-service";
+
 import { apiClient } from "@/lib/api-client"; // Added apiClient
+import { StatusBadge } from "@/components/shared/status-badge";
 import {
     ArrowLeft,
     CheckCircle2,
@@ -58,6 +61,7 @@ interface ActionFlowDetail {
 export default function ActionFlowDetailPage() {
   const { slug, flowId } = useParams();
   const router = useRouter();
+  const t = useTranslations("ActionFlows");
   /* 
    * Data Fetching with SWR 
    * Replaced useEffect/useState with stale-while-revalidate strategy
@@ -124,27 +128,23 @@ export default function ActionFlowDetailPage() {
                       </Button>
                       
                       <div className="flex items-center gap-2">
-                           <span className={`text-xs font-mono px-2 py-0.5 border rounded-full ${
-                               isSuccess ? 'border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900' : 
-                               isFailed ? 'border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900' : 
-                               'border-zinc-800 dark:border-zinc-200 text-zinc-900 dark:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 font-semibold'
-                           }`}>
-                               {data.status}
-                           </span>
+                           <StatusBadge status={data.status} />
                            
                            <DropdownMenu>
 
                                 <DropdownMenuTrigger asChild>
-                                    <button className={`text-xs font-mono px-2 py-0.5 border rounded-full uppercase transition-colors cursor-pointer hover:opacity-80 flex items-center gap-1 ${
+                                    <button className={`text-xs px-2 py-0.5 border rounded-full transition-colors cursor-pointer hover:opacity-80 flex items-center gap-1 ${
                                         (order => {
                                             const p = (data.priority || 'medium').toLowerCase();
-                                            if (p === 'critical') return 'border-red-500/50 text-red-600 bg-red-50 dark:bg-red-900/20';
-                                            if (p === 'high') return 'border-orange-500/50 text-orange-600 bg-orange-50 dark:bg-orange-900/20';
-                                            if (p === 'low') return 'border-green-500/50 text-green-600 bg-green-50 dark:bg-green-900/20';
-                                            return 'border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400';
+                                            const base = "bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 font-medium";
+                                            if (p === 'critical') return `${base} text-red-600 dark:text-red-400`;
+                                            if (p === 'high') return `${base} text-orange-600 dark:text-orange-400`;
+                                            if (p === 'medium') return `${base} text-amber-600 dark:text-amber-400`;
+                                            if (p === 'low') return `${base} text-blue-600 dark:text-blue-400`;
+                                            return `${base} text-zinc-500 dark:text-zinc-400`;
                                         })()
                                     }`}>
-                                        {data.priority || 'MEDIUM'}
+                                        {t(`priorities.${(data.priority || 'medium').toLowerCase()}`)}
                                         <ChevronDown className="w-3 h-3 opacity-50" />
                                     </button>
                                 </DropdownMenuTrigger>
@@ -152,7 +152,7 @@ export default function ActionFlowDetailPage() {
                                     {['low', 'medium', 'high', 'critical'].map(p => (
                                         <DropdownMenuItem 
                                             key={p} 
-                                            className="uppercase text-xs font-mono cursor-pointer"
+                                            className="text-xs cursor-pointer"
                                             onClick={async () => {
                                                 try {
                                                      // Optimistic Update
@@ -170,7 +170,7 @@ export default function ActionFlowDetailPage() {
                                                 }
                                             }}
                                         >
-                                            {p}
+                                            {t(`priorities.${p}`)}
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuContent>
