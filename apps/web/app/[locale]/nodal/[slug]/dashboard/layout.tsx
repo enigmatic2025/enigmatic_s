@@ -86,7 +86,7 @@ export default function DashboardLayout({
         />
 
         {/* Page Content */}
-        <main className={`flex-1 ${pathname?.includes('/natalie') ? 'h-[calc(100vh-3.5rem)]' : 'p-6'}`}>
+        <main className={`flex-1 ${pathname?.includes('/natalie') || pathname?.includes('/action-flows/') ? 'h-[calc(100vh-3.5rem)]' : 'p-6'}`}>
           {children}
         </main>
       </div>

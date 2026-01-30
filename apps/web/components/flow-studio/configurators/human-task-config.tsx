@@ -64,6 +64,17 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
         </div>
 
         <div className="space-y-2">
+          <Label>{t("information")}</Label>
+          <Textarea 
+            value={currentConfig.description || ''} 
+            onChange={(e) => onUpdate({ ...currentConfig, description: e.target.value })}
+            placeholder={t("informationPlaceholder")}
+            className="min-h-[80px]"
+          />
+          <p className="text-[11px] text-muted-foreground">{t("informationHelp")}</p>
+        </div>
+
+        <div className="space-y-2">
           <Label>{t("assignee")} <span className="text-red-500">*</span></Label>
           <Input 
             value={currentConfig.assignee || ''} 

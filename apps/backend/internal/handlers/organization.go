@@ -157,7 +157,7 @@ func (h *OrganizationHandler) GetAssignees(w http.ResponseWriter, r *http.Reques
 	// Let's do a simple search on profiles for now.
 	// Let's do a simple search on profiles for now.
 	// Let's do a simple search on profiles for now.
-	err := client.DB.From("profiles").Select("id, full_name, email").Limit(10).Ilike("full_name", query).Execute(&users)
+	err := client.DB.From("profiles").Select("id, full_name, email").Limit(50).Ilike("full_name", query).Execute(&users)
 	if err == nil {
 		for _, u := range users {
 			results = append(results, map[string]interface{}{
@@ -175,7 +175,7 @@ func (h *OrganizationHandler) GetAssignees(w http.ResponseWriter, r *http.Reques
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	}
-	err = client.DB.From("teams").Select("id, name").Limit(10).Eq("org_id", orgID).Ilike("name", query).Execute(&teams)
+	err = client.DB.From("teams").Select("id, name").Limit(50).Eq("org_id", orgID).Ilike("name", query).Execute(&teams)
 	if err == nil {
 		for _, t := range teams {
 			results = append(results, map[string]interface{}{

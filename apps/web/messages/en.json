@@ -408,7 +408,10 @@
         "dateTime": "Date & Time",
         "fileUpload": "File Upload",
         "signature": "Signature"
-      }
+      },
+      "information": "Information",
+      "informationPlaceholder": "e.g. Provide instructions or context for the assignee...",
+      "informationHelp": "This information will be displayed on the task card to guide the assignee."
     },
     "apiTrigger": {
       "name": "Name",

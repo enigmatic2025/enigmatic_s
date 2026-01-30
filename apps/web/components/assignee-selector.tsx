@@ -33,9 +33,10 @@ interface AssigneeSelectorProps {
   selected: Assignee[];
   onSelect: (assignees: Assignee[]) => void;
   orgSlug: string;
+  variant?: "default" | "avatar-group";
 }
 
-export function AssigneeSelector({ selected, onSelect, orgSlug }: AssigneeSelectorProps) {
+export function AssigneeSelector({ selected, onSelect, orgSlug, variant = "default" }: AssigneeSelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   
@@ -68,26 +69,48 @@ export function AssigneeSelector({ selected, onSelect, orgSlug }: AssigneeSelect
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between h-auto py-2 px-3 text-left font-normal"
-        >
-          {selected.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-                {selected.map((s) => (
-                    <div key={s.id} className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-xs animate-in fade-in zoom-in slide-in-from-left-2 duration-200">
-                        {s.type === 'team' ? <Users className="w-3 h-3 text-zinc-500" /> : <User className="w-3 h-3 text-zinc-500" />}
-                        <span className="truncate max-w-[100px]">{s.name}</span>
+        {variant === "avatar-group" ? (
+             <div className="flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+                {selected.length > 0 && (
+                    <div className="flex -space-x-2 mr-2">
+                        {selected.map((s, i) => (
+                             <div key={`${s.type}-${s.id}`} className="w-6 h-6 rounded-full border border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-[9px] font-bold text-zinc-600 dark:text-zinc-300 overflow-hidden relative" title={s.name}>
+                                 {s.avatar ? (
+                                    <img src={s.avatar} alt={s.name} className="w-full h-full object-cover" />
+                                 ) : (
+                                    <span>{s.name ? s.name.split(' ').map((n: string) => n[0]).join('').substring(0,2).toUpperCase() : '?'}</span>
+                                 )}
+                             </div>
+                        ))}
                     </div>
-                ))}
+                )}
+                
+                <div className="w-6 h-6 rounded-full border border-white dark:border-zinc-900 bg-white dark:bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-400 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors">
+                    <span className="mb-0.5">+</span>
+                </div>
             </div>
-          ) : (
-            <span className="text-zinc-500">Assign to...</span>
-          )}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+        ) : (
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="w-full justify-between h-auto py-2 px-3 text-left font-normal"
+            >
+              {selected.length > 0 ? (
+                <div className="flex flex-wrap gap-1">
+                    {selected.map((s) => (
+                        <div key={s.id} className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full text-xs animate-in fade-in zoom-in slide-in-from-left-2 duration-200">
+                            {s.type === 'team' ? <Users className="w-3 h-3 text-zinc-500" /> : <User className="w-3 h-3 text-zinc-500" />}
+                            <span className="truncate max-w-[100px]">{s.name}</span>
+                        </div>
+                    ))}
+                </div>
+              ) : (
+                <span className="text-zinc-500">Assign to...</span>
+              )}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command shouldFilter={false}>
