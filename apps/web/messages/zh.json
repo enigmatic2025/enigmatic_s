@@ -216,11 +216,11 @@
     },
     "team": {
       "title": "我們的團隊",
-      "samRole": "創始合夥人 | 願景",
+      "samRole": "願景",
       "samDescription": "Sam 塑造 Enigmatic 的身份、產品和服務的策略願景，團結頂尖人才，從根本上重新構想物流技術生態系統。",
-      "chrisRole": "創始合夥人 | 銷售",
+      "chrisRole": "銷售",
       "chrisDescription": "Chris 領導營運和策略合作夥伴關係，專注於擴大 Enigmatic 的市場影響力，並為關鍵產業利益相關者創造價值。",
-      "phiRole": "創始合夥人 | 技術",
+      "phiRole": "技術",
       "phiDescription": "Phi 架構 Enigmatic 的技術基礎，領導研發以提供尖端、穩健的解決方案，突破物流技術的界限。"
     },
     "story": {
