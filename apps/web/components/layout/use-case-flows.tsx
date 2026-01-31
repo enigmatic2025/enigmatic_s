@@ -26,6 +26,7 @@ import {
   ClipboardList,
   Siren,
   HardHat,
+  Sparkles,
 } from "lucide-react";
 import { FlowBlockNode, ConditionNode } from "@/components/ui/flow-nodes";
 
@@ -135,7 +136,7 @@ export const DriverOnboardingFlow = () => {
       data: {
         label: t('onboarding.bgChecks'),
         subLabel: t('onboarding.natalieAgent'),
-        icon: Bot,
+        icon: Sparkles,
         badge: t('badges.automated'),
         iconBg:
           "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
@@ -317,7 +318,7 @@ export const ManufacturingFlow = () => {
       data: {
         label: t('manufacturing.anomaly'),
         subLabel: t('manufacturing.confidence'),
-        icon: Bot,
+        icon: Sparkles,
         badge: t('badges.aiAnalysis'),
         iconBg:
           "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
