@@ -61,13 +61,7 @@ export const validateFlow = (nodes: Node[], edges: Edge[]): boolean => {
             return false;
         }
 
-        // Human Task
-        if (node.type === 'human-task') {
-            if (!node.data.assignee) {
-                toast.error(`Node "${node.data.title || node.data.label}" is missing an Assignee.`);
-                return false;
-            }
-        }
+
 
         // API Trigger
         if (node.type === 'api-trigger') {

@@ -189,18 +189,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   }, []);
 
   
-  const handlePublish = async () => {
-      if (!flowId) return;
-      try {
-          toast.info("Publishing flow...");
-          await flowService.publishFlow(flowId);
-          toast.success("Flow published successfully! It is now live.");
-          setPublishStatus('published');
-      } catch (error) {
-          console.error("Publish error:", error);
-          toast.error("Failed to publish flow");
-      }
-  };
+
 
   // Sync with global store for Sidebar
   const { syncNodes, syncEdges, setExecutionTrace, clearExecutionTrace, selectedNodeId, setSelectedNodeId } = useFlowStore();
@@ -259,6 +248,24 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       setIsDirty(false);
       if (publishStatus === 'published') {
           setPublishStatus('changed');
+      }
+  };
+
+  const handlePublish = async () => {
+      if (!flowId) return;
+      try {
+          if (isDirty) {
+             toast.info("Saving changes before publishing...");
+             await handleSave();
+          }
+          
+          toast.info("Publishing flow...");
+          await flowService.publishFlow(flowId);
+          toast.success("Flow published successfully! It is now live.");
+          setPublishStatus('published');
+      } catch (error) {
+          console.error("Publish error:", error);
+          toast.error("Failed to publish flow");
       }
   };
   
@@ -642,7 +649,6 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handlePublish}
-                    disabled={isDirty} 
                     >
                     <Rocket className="h-4 w-4" />
                     </Button>

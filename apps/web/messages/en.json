@@ -383,7 +383,7 @@
     },
     "humanTask": {
       "actionTitle": "Action Title",
-      "actionTitlePlaceholder": "e.g. Review Driver Application",
+      "actionTitlePlaceholder": "e.g. Review Request",
       "actionTitleHelp": "The name of the task shown to the assignee. Supports variables.",
       "assignee": "Assignee (Email or Role)",
       "assigneePlaceholder": "e.g. user@example.com or finance-team",

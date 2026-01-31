@@ -383,7 +383,7 @@
     },
     "humanTask": {
       "actionTitle": "Tiêu đề hành động",
-      "actionTitlePlaceholder": "ví dụ: Xem xét đơn xin việc",
+      "actionTitlePlaceholder": "ví dụ: Xem xét yêu cầu",
       "actionTitleHelp": "Tên của tác vụ hiển thị cho người được giao. Hỗ trợ biến.",
       "assignee": "Người được giao (Email hoặc Vai trò)",
       "assigneePlaceholder": "ví dụ: nguoidung@example.com hoặc nhom-tai-chinh",

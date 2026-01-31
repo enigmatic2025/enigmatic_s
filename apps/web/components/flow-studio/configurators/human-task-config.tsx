@@ -1,4 +1,6 @@
 import React from 'react';
+import { useParams } from 'next/navigation';
+import { AssigneeSelector } from '@/components/assignee-selector';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,6 +30,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
   const currentConfig = data || {};
   const schema = (currentConfig.schema || []) as SchemaField[];
   const t = useTranslations("ConfigDrawer.humanTask");
+  const params = useParams();
 
   const addField = () => {
     const newField: SchemaField = {
@@ -94,12 +97,13 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
         </div>
 
         <div className="space-y-2">
-          <Label>{t("assignee")} <span className="text-red-500">*</span></Label>
-          <Input 
-            value={currentConfig.assignee || ''} 
-            onChange={(e) => onUpdate({ ...currentConfig, assignee: e.target.value })}
-            placeholder={t("assigneePlaceholder")}
-          />
+           <Label>{t("assignee")}</Label>
+           <AssigneeSelector
+                selected={currentConfig.assignments || []}
+                onSelect={(newAssignees) => onUpdate({ ...currentConfig, assignments: newAssignees })}
+                orgSlug={params?.slug as string}
+            />
+            <p className="text-11px text-muted-foreground">Select users or teams responsible for this task.</p>
         </div>
       </div>
 

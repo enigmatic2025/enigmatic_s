@@ -383,7 +383,7 @@
     },
     "humanTask": {
       "actionTitle": "動作標題",
-      "actionTitlePlaceholder": "例如：審查駕駛申請",
+      "actionTitlePlaceholder": "例如：審查請求",
       "actionTitleHelp": "顯示給受讓人的任務名稱。支援變數。",
       "assignee": "受讓人（電子郵件或角色）",
       "assigneePlaceholder": "例如：user@example.com 或 finance-team",

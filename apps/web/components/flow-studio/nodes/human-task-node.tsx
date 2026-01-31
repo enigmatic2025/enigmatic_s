@@ -21,7 +21,7 @@ const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
   const borderClasses = "border-teal-500/20 hover:border-teal-500/50";
   const handleColor = "bg-teal-500";
   
-  const isConfigured = !!data.config?.assignee;
+  const isConfigured = !!data.title;
   const readyLabel = "Ready for Human";
 
   return (
@@ -64,7 +64,7 @@ const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
 
       <CardContent className="p-4 pt-2">
          {(() => {
-          const isConfigured = !!data.assignee && !!data.description;
+          const isConfigured = !!data.title;
           
           return (
             <NodeStatus 

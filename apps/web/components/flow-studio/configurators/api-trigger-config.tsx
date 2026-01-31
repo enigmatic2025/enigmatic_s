@@ -7,7 +7,7 @@ import { useReactFlow } from 'reactflow';
 import { Copy, Check, Plus, Trash2, Info } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { AssigneeSelector } from '@/components/assignee-selector';
+
 
 interface ApiTriggerConfigProps {
   nodeId: string;
@@ -240,7 +240,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                             nodeId={nodeId}
                             value={data.instanceNameTemplate || ''}
                             onChange={(e) => onUpdate({ ...data, instanceNameTemplate: e.target.value })}
-                            placeholder="e.g. Driver At Risk {{ steps.trigger.body.driver_code }}"
+                            placeholder="e.g. New Request {{ steps.trigger.body.request_id }}"
                         />
                         <p className="text-[10px] text-muted-foreground mt-1">
                             Name the running instance dynamically using variables.
@@ -267,20 +267,7 @@ export default function ApiTriggerConfig({ nodeId, data, onUpdate }: ApiTriggerC
                         </p>
                     </div>
 
-                    {/* Default Assignees */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">
-                            Default Assignees
-                        </label>
-                        <AssigneeSelector
-                            selected={data.assignments || []}
-                            onSelect={(newAssignees) => onUpdate({ ...data, assignments: newAssignees })}
-                            orgSlug={params?.slug as string}
-                        />
-                         <p className="text-[10px] text-muted-foreground mt-1">
-                            Users/Teams to assign if not specified in API payload.
-                        </p>
-                    </div>
+
 
                     
                     {/* Information (Description) */}
