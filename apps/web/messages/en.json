@@ -197,6 +197,7 @@
       "ifElse": "If / Else",
       "loop": "Loop",
       "switch": "Switch",
+      "goto": "Goto / Jump",
       "httpRequest": "HTTP Request"
     },
     "groups": {
@@ -324,6 +325,7 @@
       "map": "Map Data",
       "humanTask": "Human Task",
       "human-task": "Human Task",
+      "goto": "Goto / Jump",
       "action": "Action"
     },
     "descriptions": {
@@ -340,6 +342,7 @@
       "map": "Transform data structures from one format to another.",
       "humanTask": "Pause the flow and wait for human approval or input.",
       "human-task": "Pause the flow and wait for human approval or input.",
+      "goto": "Jump to another step in the flow.",
       "action": "Perform a generic action."
     },
     "labels": {

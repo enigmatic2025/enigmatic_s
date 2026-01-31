@@ -54,6 +54,7 @@ var Registry = map[string]NodeExecutor{
 	"API-TRIGGER": &TriggerNode{}, // Support for API Trigger node type
 	"ACTION":      &HttpNode{},    // Alias for generic Action nodes (defaults to HTTP)
 	"HUMAN-TASK":  &HumanTaskNode{},
+	"GOTO":        &GotoNode{},
 }
 
 // GetExecutor returns the executor for a given node type.

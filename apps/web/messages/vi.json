@@ -197,6 +197,7 @@
       "ifElse": "Nếu / Thì",
       "loop": "Vòng lặp",
       "switch": "Chuyển mạch",
+      "goto": "Đi tới / Nhảy",
       "httpRequest": "Yêu cầu HTTP"
     },
     "groups": {
@@ -324,6 +325,7 @@
       "map": "Ánh xạ dữ liệu",
       "humanTask": "Tác vụ con người",
       "human-task": "Tác vụ con người",
+      "goto": "Đi tới / Nhảy",
       "action": "Hành động"
     },
     "descriptions": {
@@ -340,6 +342,7 @@
       "map": "Chuyển đổi cấu trúc dữ liệu từ định dạng này sang định dạng khác.",
       "humanTask": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
       "human-task": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
+      "goto": "Nhảy đến một bước khác trong quy trình.",
       "action": "Thực hiện một hành động chung."
     },
     "labels": {

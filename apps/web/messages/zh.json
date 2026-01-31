@@ -197,6 +197,7 @@
       "ifElse": "若 / 則",
       "loop": "循環",
       "switch": "切換",
+      "goto": "跳轉 / 跳至",
       "httpRequest": "HTTP 請求"
     },
     "groups": {
@@ -324,6 +325,7 @@
       "map": "映射資料",
       "humanTask": "人工任務",
       "human-task": "人工任務",
+      "goto": "跳轉 / 跳至",
       "action": "動作"
     },
     "descriptions": {
@@ -340,6 +342,7 @@
       "map": "將資料結構從一種格式轉換為另一種格式。",
       "humanTask": "暫停流程並等待人工批准或輸入。",
       "human-task": "暫停流程並等待人工批准或輸入。",
+      "goto": "跳轉至流程中的另一個步驟。",
       "action": "執行通用動作。"
     },
     "labels": {

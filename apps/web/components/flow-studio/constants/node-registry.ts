@@ -17,6 +17,8 @@ import ApiTriggerNode from '../nodes/api-trigger-node';
 import ApiTriggerConfig from '../configurators/api-trigger-config';
 import { HumanTaskNode } from '../nodes/human-task-node';
 import { HumanTaskConfig } from '../configurators/human-task-config';
+import { GotoNode } from '../nodes/goto-node';
+import { GotoConfig } from '../configurators/goto-config';
 
 export const NODE_TYPES = {
     // schedule: ScheduleNode,
@@ -28,6 +30,7 @@ export const NODE_TYPES = {
     variable: VariableNode,
     switch: SwitchNode,
     'human-task': HumanTaskNode,
+    'goto': GotoNode,
 };
 
 export const CONFIG_COMPONENTS: Record<string, any> = {
@@ -42,6 +45,8 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
     'switch': SwitchConfig,
     'map': MapConfig,
     'human-task': HumanTaskConfig,
+    'goto': GotoConfig,
+
     // Fallbacks
     'action': HttpRequestConfig, // Default action to HTTP for now
 };
@@ -87,6 +92,11 @@ export const NODE_METADATA: Record<string, { title: string; description: string 
         title: "Human Task",
         description: "Pause the flow and wait for human approval or input."
     },
+    'goto': {
+        title: "Goto / Jump",
+        description: "Jump to another step in the flow."
+    },
+
     // Fallback
     'action': {
         title: "Action",

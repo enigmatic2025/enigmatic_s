@@ -15,7 +15,8 @@ import {
   Table,
   ClipboardList,
   Workflow,
-  Globe
+  Globe,
+  CornerUpLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -382,6 +383,13 @@ export function Sidebar({
                             iconColorClass="text-amber-500"
                             bgColorClass="bg-amber-500/10"
                             dataTransferType="switch"
+                          />
+                          <SidebarDraggableItem
+                            label={t("draggable.goto")}
+                            icon={CornerUpLeft} // Using Repeat or CornerUpLeft if imported
+                            iconColorClass="text-fuchsia-500"
+                            bgColorClass="bg-fuchsia-500/10"
+                            dataTransferType="goto"
                           />
                         </div>
                       </div>

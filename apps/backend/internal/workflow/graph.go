@@ -18,9 +18,11 @@ type Node struct {
 }
 
 type Edge struct {
-	ID     string `json:"id"`
-	Source string `json:"source"`
-	Target string `json:"target"`
+	ID           string  `json:"id"`
+	Source       string  `json:"source"`
+	Target       string  `json:"target"`
+	SourceHandle *string `json:"sourceHandle,omitempty"`
+	TargetHandle *string `json:"targetHandle,omitempty"`
 }
 
 // TopologicalSort sorts nodes by dependency order (Kahn's algorithm)

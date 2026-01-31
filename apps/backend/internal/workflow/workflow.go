@@ -19,11 +19,13 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	logger.Info("Nodal workflow started", "Nodes", len(flowDefinition.Nodes))
 
 	// 1. Sort the graph to determine execution order
-	sortedNodes, err := TopologicalSort(flowDefinition)
-	if err != nil {
-		logger.Error("Graph sort failed", "Error", err)
-		return nil, err
-	}
+	// REFACTORED: We now use a Graph Walker approach to support loops/jumps.
+	// The walker starts at the Trigger node and follows edges dynamically.
+	// sortedNodes, err := TopologicalSort(flowDefinition)
+	// if err != nil {
+	// 	logger.Error("Graph sort failed", "Error", err)
+	// 	return nil, err
+	// }
 
 	// 0. Initialize Execution State
 	executionState := make(map[string]map[string]interface{})
@@ -208,92 +210,206 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		return nil, err // Stop execution if we can't record the start
 	}
 
-	// 2. Iterate through sorted nodes
-	for _, node := range sortedNodes {
-		// Skip Trigger Nodes (they are the entry point, already "executed")
-		if node.Type == "api-trigger" || node.Type == "manual-trigger" || node.Type == "webhook" {
-			continue
+	// 2. Build Adjacency Map (Actually unused now, we scan edges directly)
+	// adj := make(map[string][]string)
+	// Re-map flow definition nodes to a quick lookup
+	// Re-map flow definition nodes to a quick lookup
+	nodesLookup := make(map[string]Node)
+
+	// Let's use the incoming flowDefinition direct
+	for _, n := range flowDefinition.Nodes {
+		nodesLookup[n.ID] = n
+	}
+
+	// 2. Build Adjacency Map (Actually unused now, we scan edges directly)
+	// adj := make(map[string][]string)
+	// Re-map flow definition nodes to a quick lookup
+	// Re-map flow definition nodes to a quick lookup
+
+	// 3. Find Start Nodes (Trigger)
+	var queue []string
+	for _, node := range flowDefinition.Nodes {
+		if node.Type == "api-trigger" || node.Type == "manual-trigger" || node.Type == "webhook" || node.Type == "trigger" {
+			queue = append(queue, node.ID)
+		}
+	}
+
+	if len(queue) == 0 {
+		return nil, fmt.Errorf("no trigger node found")
+	}
+
+	// We only support single-threaded execution for now (one active pointer)
+	// Start with the first trigger
+	currentNodeID := queue[0]
+
+	// Max steps safety to prevent infinite loops crashing the worker
+	maxSteps := 1000
+	stepsExecuted := 0
+
+	// Execution Loop (Graph Walker)
+	for currentNodeID != "" {
+		stepsExecuted++
+		if stepsExecuted > maxSteps {
+			return nil, fmt.Errorf("read max execution steps (%d) - potential infinite loop without exit condition", maxSteps)
 		}
 
-		// Construct Context for the Node
-		nodeCtx := nodes.NodeContext{
-			FlowID:     flowDefinition.ID,
-			WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
-			RunID:      workflow.GetInfo(ctx).WorkflowExecution.RunID,
-			StepID:     node.ID,
-			InputData: map[string]interface{}{
-				"steps":     executionState,
-				"variables": variables,
-			},
-			Config: node.Data,
+		node, exists := nodesLookup[currentNodeID]
+		if !exists {
+			logger.Error("Attempted to execute non-existent node", "ID", currentNodeID)
+			break
 		}
 
-		// TODO: Map inputs from previous steps based on Edges.
-		// For now, simplistically passing all previous state or relying on explicit 'steps.foo' references in Config.
-		// In a real engine, we'd look at incoming edges to 'node.ID' and merge their outputs into 'InputData'.
-		// Let's pass the entire executionState for now so the node can pick what it needs via expressions.
-		// (Simplified for this sprint)
+		// Skip Trigger Nodes logic here as they are entry points?
+		// Actually, we might want to "execute" them if they have logic, but usually they just pass data.
+		// If it's the very first step, we assume data is already in executionState["trigger"]
+		if stepsExecuted == 1 && (node.Type == "api-trigger" || node.Type == "manual-trigger" || node.Type == "trigger") {
+			// Already processed initialization above
+			// Just move to next
+			// We need to advance currentNodeID here because the 'else' block which usually advances it is skipped.
+			// Oh wait, advancement is at the bottom of the loop.
+			// But we need to make sure we don't run the `NodeExecutionActivity` for triggers.
+		} else {
 
-		var result nodes.NodeResult
-		logger.Info("Executing Node", "ID", node.ID, "Type", node.Type)
-
-		err := workflow.ExecuteActivity(ctx, NodeExecutionActivity, nodeCtx).Get(ctx, &result)
-		if err != nil {
-			logger.Error("Node execution failed", "ID", node.ID, "Error", err)
-			return nil, err
-		}
-
-		// 3. Handle Suspension (Human-in-the-Loop)
-		if result.Status == nodes.StatusPaused {
-			logger.Info("Node requested suspension", "ID", node.ID)
-
-			// Wait for a Signal
-			// Wait for a Signal
-			// Signal name convention: "Resume-<NodeID>" or "HumanTask-<TaskID>"
-			signalName := "Resume-" + node.ID
-
-			// If the node returned a task_id (Human Task), listen to that specific task signal
-			if tid, ok := result.Output["task_id"].(string); ok {
-				signalName = "HumanTask-" + tid
+			// Construct Context for the Node
+			nodeCtx := nodes.NodeContext{
+				FlowID:     flowDefinition.ID,
+				WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
+				RunID:      workflow.GetInfo(ctx).WorkflowExecution.RunID,
+				StepID:     node.ID,
+				InputData: map[string]interface{}{
+					"steps":     executionState,
+					"variables": variables,
+				},
+				Config: node.Data,
 			}
-			var signalData interface{}
 
-			selector := workflow.NewSelector(ctx)
-			selector.AddReceive(workflow.GetSignalChannel(ctx, signalName), func(c workflow.ReceiveChannel, more bool) {
-				c.Receive(ctx, &signalData)
-			})
+			var result nodes.NodeResult
+			logger.Info("Executing Node", "ID", node.ID, "Type", node.Type)
 
-			// Block until signal received
-			selector.Select(ctx)
+			err := workflow.ExecuteActivity(ctx, NodeExecutionActivity, nodeCtx).Get(ctx, &result)
+			if err != nil {
+				logger.Error("Node execution failed", "ID", node.ID, "Error", err)
+				return nil, err
+			}
 
-			logger.Info("Signal received, resuming", "ID", node.ID, "Data", signalData)
-
-			// Merge signal data into the result output
-			if signalMap, ok := signalData.(map[string]interface{}); ok {
-				if result.Output == nil {
-					result.Output = make(map[string]interface{})
+			// 3. Handle Suspension (Human-in-the-Loop)
+			if result.Status == nodes.StatusPaused {
+				logger.Info("Node requested suspension", "ID", node.ID)
+				signalName := "Resume-" + node.ID
+				if tid, ok := result.Output["task_id"].(string); ok {
+					signalName = "HumanTask-" + tid
 				}
-				for k, v := range signalMap {
-					result.Output[k] = v
+				var signalData interface{}
+				selector := workflow.NewSelector(ctx)
+				selector.AddReceive(workflow.GetSignalChannel(ctx, signalName), func(c workflow.ReceiveChannel, more bool) {
+					c.Receive(ctx, &signalData)
+				})
+				selector.Select(ctx)
+				logger.Info("Signal received, resuming", "ID", node.ID, "Data", signalData)
+				if signalMap, ok := signalData.(map[string]interface{}); ok {
+					if result.Output == nil {
+						result.Output = make(map[string]interface{})
+					}
+					for k, v := range signalMap {
+						result.Output[k] = v
+					}
+				}
+				result.Status = nodes.StatusSuccess
+			}
+
+			if result.Status == nodes.StatusFailed {
+				return nil, fmt.Errorf("node %s failed: %s", node.ID, result.Error)
+			}
+
+			// Store output
+			executionState[node.ID] = result.Output
+
+			// Update variables
+			if node.Type == "set" || node.Type == "variable" {
+				for k, v := range result.Output {
+					if k != "_debug_message" && k != "_received_config" {
+						variables[k] = v
+					}
 				}
 			}
-			result.Status = nodes.StatusSuccess
-		}
 
-		if result.Status == nodes.StatusFailed {
-			return nil, fmt.Errorf("node %s failed: %s", node.ID, result.Error)
-		}
+			// CHECK FOR GOTO / JUMP SIGNAL
+			if target, ok := result.Output["_goto_target"].(string); ok && target != "" {
+				logger.Info("Jumping to target node", "From", node.ID, "To", target)
+				currentNodeID = target
+				continue // Jump immediately
+			}
 
-		// Store output for future steps
-		executionState[node.ID] = result.Output
+			// Determine Next Node (BRANCHING LOGIC)
+			outgoingID := ""
 
-		// If this was a Set Variable node, update the global variables state
-		if node.Type == "set" || node.Type == "variable" {
-			for k, v := range result.Output {
-				// Avoid pollution from debug keys
-				if k != "_debug_message" && k != "_received_config" {
-					variables[k] = v
+			// Get all edges from this node
+			// Note: adj map only stores targets, we need full edge objects for handles.
+			// Loop through all edges is inefficient but fine for MVP graph sizes.
+			outgoingEdges := make([]Edge, 0)
+			for _, edge := range flowDefinition.Edges {
+				if edge.Source == currentNodeID {
+					outgoingEdges = append(outgoingEdges, edge)
 				}
+			}
+
+			if len(outgoingEdges) == 0 {
+				// Stop if no edges
+				currentNodeID = ""
+				// Loop will exit on next check or we can break here
+				// break // Don't break, let the outer loop handle "currentNodeID == empty"
+			} else {
+				// LOGIC: Branching based on Node Type
+				if node.Type == "condition" || node.Type == "if-else" {
+					// Expecting boolean result
+					resVal, _ := result.Output["result"].(bool)
+
+					// Find edge matching handle
+					// Convention: Handle for true is "true", false is "false"
+					targetHandle := "false"
+					if resVal {
+						targetHandle = "true"
+					}
+
+					for _, edge := range outgoingEdges {
+						if edge.SourceHandle != nil && *edge.SourceHandle == targetHandle {
+							outgoingID = edge.Target
+							break
+						}
+					}
+
+					if outgoingID == "" && len(outgoingEdges) > 0 {
+						logger.Warn("Condition node has no matching edge for result", "Result", targetHandle)
+					}
+
+				} else if node.Type == "switch" {
+					// Expecting "selected_case" in output
+					selectedCase, _ := result.Output["selected_case"].(string)
+
+					for _, edge := range outgoingEdges {
+						if edge.SourceHandle != nil && *edge.SourceHandle == selectedCase {
+							outgoingID = edge.Target
+							break
+						}
+					}
+					if outgoingID == "" {
+						// Try finding "default" handle
+						for _, edge := range outgoingEdges {
+							if edge.SourceHandle != nil && *edge.SourceHandle == "default" {
+								outgoingID = edge.Target
+								break
+							}
+						}
+					}
+
+				} else {
+					// Standard Node (Linear): Just take the first edge
+					if len(outgoingEdges) > 0 {
+						outgoingID = outgoingEdges[0].Target
+					}
+				}
+
+				currentNodeID = outgoingID
 			}
 		}
 	}
