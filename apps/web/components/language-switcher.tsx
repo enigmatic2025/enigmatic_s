@@ -23,7 +23,7 @@ export function LanguageSwitcher() {
   const localeLabels: Record<string, string> = {
     en: "English",
     vi: "Tiếng Việt",
-    zh: "繁體中文",
+    "zh-TW": "繁體中文",
   };
 
   return (
@@ -41,7 +41,7 @@ export function LanguageSwitcher() {
         <DropdownMenuItem onClick={() => handleLocaleChange("vi")}>
           Tiếng Việt
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLocaleChange("zh")}>
+        <DropdownMenuItem onClick={() => handleLocaleChange("zh-TW")}>
           繁體中文
         </DropdownMenuItem>
       </DropdownMenuContent>
