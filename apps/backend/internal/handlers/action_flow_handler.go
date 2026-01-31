@@ -229,14 +229,15 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 
 	// Fetch Activities (Human Tasks + System Events)
 	type Activity struct {
-		Type        string                   `json:"type"` // "trigger", "human_action", "end"
-		Name        string                   `json:"name"`
-		Description string                   `json:"description,omitempty"`
-		Information string                   `json:"information,omitempty"` // Added Information
-		Status      string                   `json:"status"`
-		StartedAt   string                   `json:"started_at"`
-		ID          string                   `json:"id,omitempty"`
-		Assignments []map[string]interface{} `json:"assignments,omitempty"`
+		Type         string                   `json:"type"` // "trigger", "human_action", "end"
+		Name         string                   `json:"name"`
+		Description  string                   `json:"description,omitempty"`
+		Information  string                   `json:"information,omitempty"`  // Added Information
+		Instructions string                   `json:"instructions,omitempty"` // Added Instructions (rich text)
+		Status       string                   `json:"status"`
+		StartedAt    string                   `json:"started_at"`
+		ID           string                   `json:"id,omitempty"`
+		Assignments  []map[string]interface{} `json:"assignments,omitempty"`
 	}
 	var activities []Activity
 
@@ -251,31 +252,33 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 	// 2. Human Tasks
 	if af.RunID != "" {
 		type HumanTask struct {
-			ID          string                   `json:"id"`
-			Title       string                   `json:"title"`
-			Description string                   `json:"description"`
-			Information string                   `json:"information"` // Added
-			Status      string                   `json:"status"`
-			CreatedAt   string                   `json:"created_at"`
-			Assignments []map[string]interface{} `json:"assignments"`
+			ID           string                   `json:"id"`
+			Title        string                   `json:"title"`
+			Description  string                   `json:"description"`
+			Information  string                   `json:"information"`  // Added
+			Instructions string                   `json:"instructions"` // Added (rich text)
+			Status       string                   `json:"status"`
+			CreatedAt    string                   `json:"created_at"`
+			Assignments  []map[string]interface{} `json:"assignments"`
 		}
 		var tasks []HumanTask
 		// Query using RunID
 		client.DB.From("human_tasks").
-			Select("id, title, description, information, status, created_at, assignments"). // Added information
+			Select("id, title, description, information, instructions, status, created_at, assignments"). // Added information and instructions
 			Eq("run_id", af.RunID).
 			Execute(&tasks)
 
 		for _, t := range tasks {
 			activities = append(activities, Activity{
-				Type:        "human_action",
-				Name:        t.Title,
-				Description: t.Description,
-				Information: t.Information, // Map information
-				Status:      t.Status,
-				StartedAt:   t.CreatedAt,
-				ID:          t.ID,
-				Assignments: t.Assignments,
+				Type:         "human_action",
+				Name:         t.Title,
+				Description:  t.Description,
+				Information:  t.Information,  // Map information
+				Instructions: t.Instructions, // Map instructions (rich text)
+				Status:       t.Status,
+				StartedAt:    t.CreatedAt,
+				ID:           t.ID,
+				Assignments:  t.Assignments,
 			})
 		}
 	}

@@ -528,6 +528,17 @@ export default function ActionFlowDetailPage() {
                                       </div>
                                   </div>
 
+                                  {/* Instructions (Rich Text) */}
+                                  {action.instructions && (
+                                      <div className="space-y-2">
+                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Instructions</label>
+                                          <div 
+                                              className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed bg-zinc-50 dark:bg-zinc-900 p-3 rounded-lg border border-zinc-100 dark:border-zinc-800 prose prose-sm dark:prose-invert max-w-none prose-headings:text-zinc-900 dark:prose-headings:text-zinc-100 prose-p:text-zinc-700 dark:prose-p:text-zinc-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-zinc-900 dark:prose-strong:text-zinc-100 prose-ul:text-zinc-700 dark:prose-ul:text-zinc-300 prose-ol:text-zinc-700 dark:prose-ol:text-zinc-300"
+                                              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(action.instructions) }}
+                                          />
+                                      </div>
+                                  )}
+
                                   {/* Assignments */}
                                   {action.assignments && action.assignments.length > 0 && (
                                      <div className="space-y-2">
