@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/nodes"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 )
 
@@ -12,6 +13,12 @@ import (
 func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputData map[string]interface{}) (interface{}, error) {
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 1 * time.Minute, // Default timeout
+		RetryPolicy: &temporal.RetryPolicy{
+			InitialInterval:    1 * time.Second,
+			BackoffCoefficient: 2.0,
+			MaximumInterval:    1 * time.Minute,
+			MaximumAttempts:    5, // Fail after 5 attempts to save resources
+		},
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
