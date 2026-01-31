@@ -483,13 +483,18 @@ export default function ActionFlowDetailPage() {
               {/* ACTION DETAILS TAB */}
               <TabsContent value="action-details" className="flex-1 overflow-y-auto mt-4 custom-scrollbar">
                   {!selectedActionId ? (
-                      <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-3">
-                          <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
+                      <div className="flex flex-col items-center justify-center h-full p-6 text-center space-y-3">
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center text-zinc-400 dark:text-zinc-500">
                               <Box className="w-6 h-6" />
                           </div>
-                          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                              Click on an action to display info
-                          </p>
+                          <div className="space-y-0.5">
+                              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                                  No Action Selected
+                              </p>
+                              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                  Click on an action to view details
+                              </p>
+                          </div>
                       </div>
                   ) : (
                       (() => {
@@ -501,29 +506,54 @@ export default function ActionFlowDetailPage() {
                           );
 
                           return (
-                              <div className="p-4 space-y-6">
+                              <div className="p-4 space-y-5">
                                   {/* Header */}
-                                  <div className="space-y-3 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+                                  <div className="space-y-3 pb-4 border-b border-zinc-200 dark:border-zinc-800">
                                       <div className="flex items-center justify-between">
-                                          <Badge variant="outline" className="text-[10px] h-5 rounded-sm px-1.5 uppercase tracking-wide">
+                                          <Badge variant="outline" className="text-[10px] h-5 rounded-md px-2 uppercase tracking-wide font-semibold border-zinc-300 dark:border-zinc-700">
                                               {action.type}
                                           </Badge>
                                           <StatusBadge status={action.status} />
                                       </div>
                                       
-                                      <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50 leading-snug">
+                                      <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 leading-tight">
                                           {action.name}
                                       </h2>
 
-                                      <div className="text-xs font-mono text-zinc-400 break-all">
-                                          {action.id}
+                                      <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 dark:text-zinc-500">
+                                          <span className="break-all">{action.id}</span>
+                                      </div>
+                                  </div>
+
+                                  {/* Timestamps - Moved to top and made compact */}
+                                  <div className="grid grid-cols-2 gap-2">
+                                      <div className="space-y-1">
+                                          <label className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
+                                              <Clock className="w-2.5 h-2.5" />
+                                              Started
+                                          </label>
+                                          <div className="text-xs text-zinc-900 dark:text-zinc-100">
+                                              {action.started_at ? new Date(action.started_at).toLocaleString() : '-'}
+                                          </div>
+                                      </div>
+                                      <div className="space-y-1">
+                                          <label className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
+                                              <CheckCircle2 className="w-2.5 h-2.5" />
+                                              Completed
+                                          </label>
+                                          <div className="text-xs text-zinc-900 dark:text-zinc-100">
+                                              {action.completed_at ? new Date(action.completed_at).toLocaleString() : '-'}
+                                          </div>
                                       </div>
                                   </div>
 
                                   {/* Info / Description */}
                                   <div className="space-y-2">
-                                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Information</label>
-                                      <div className="text-sm text-zinc-700 dark:text-zinc-100 leading-relaxed bg-zinc-50 dark:bg-zinc-900 p-3 rounded-lg border border-zinc-100 dark:border-zinc-800">
+                                      <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                                          <div className="w-1 h-3.5 bg-blue-500 rounded-full" />
+                                          Information
+                                      </label>
+                                      <div className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
                                           {action.information || <span className="italic text-zinc-400">No information provided.</span>}
                                       </div>
                                   </div>
@@ -531,9 +561,13 @@ export default function ActionFlowDetailPage() {
                                   {/* Instructions (Rich Text) */}
                                   {action.instructions && (
                                       <div className="space-y-2">
-                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Instructions</label>
+                                          <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                                              <div className="w-1 h-3.5 bg-purple-500 rounded-full" />
+                                              Instructions
+                                          </label>
                                           <div 
-                                              className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed bg-zinc-50 dark:bg-zinc-900 p-3 rounded-lg border border-zinc-100 dark:border-zinc-800 prose prose-sm dark:prose-invert max-w-none prose-headings:text-zinc-900 dark:prose-headings:text-zinc-100 prose-p:text-zinc-700 dark:prose-p:text-zinc-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-zinc-900 dark:prose-strong:text-zinc-100 prose-ul:text-zinc-700 dark:prose-ul:text-zinc-300 prose-ol:text-zinc-700 dark:prose-ol:text-zinc-300"
+                                              className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 prose prose-sm dark:prose-invert max-w-none break-words prose-headings:text-zinc-900 dark:prose-headings:text-zinc-100 prose-headings:font-bold prose-p:text-zinc-700 dark:prose-p:text-zinc-300 prose-p:break-words prose-p:leading-relaxed prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:break-all prose-a:font-medium hover:prose-a:underline prose-strong:text-zinc-900 dark:prose-strong:text-zinc-100 prose-strong:font-semibold prose-ul:text-zinc-700 dark:prose-ul:text-zinc-300 prose-ul:space-y-1 prose-ol:text-zinc-700 dark:prose-ol:text-zinc-300 prose-li:marker:text-purple-500"
+
                                               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(action.instructions) }}
                                           />
                                       </div>
@@ -542,14 +576,13 @@ export default function ActionFlowDetailPage() {
                                   {/* Assignments */}
                                   {action.assignments && action.assignments.length > 0 && (
                                      <div className="space-y-2">
-                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Assigned To</label>
-                                          <div className="flex flex-wrap gap-2">
+                                          <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                                              <div className="w-1 h-3.5 bg-green-500 rounded-full" />
+                                              Assigned To
+                                          </label>
+                                          <div className="flex flex-wrap gap-1.5">
                                               {action.assignments.map((assignee: Assignee) => (
-                                                  <div key={assignee.id} className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full">
-                                                      <Avatar className="h-5 w-5">
-                                                          <AvatarImage src={assignee.avatar} />
-                                                          <AvatarFallback className="text-[9px]">{assignee.name?.[0]}</AvatarFallback>
-                                                      </Avatar>
+                                                  <div key={assignee.id} className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all duration-200">
                                                       <span className="text-xs font-medium">{assignee.name}</span>
                                                   </div>
                                               ))}
@@ -557,38 +590,30 @@ export default function ActionFlowDetailPage() {
                                      </div>
                                   )}
 
-                                  {/* Timestamps */}
-                                  <div className="grid grid-cols-2 gap-4">
-                                      <div className="space-y-1">
-                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Started</label>
-                                          <div className="text-xs text-zinc-900 dark:text-zinc-100">
-                                              {action.started_at ? new Date(action.started_at).toLocaleString() : '-'}
-                                          </div>
-                                      </div>
-                                      <div className="space-y-1">
-                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Completed</label>
-                                          <div className="text-xs text-zinc-900 dark:text-zinc-100">
-                                              {action.completed_at ? new Date(action.completed_at).toLocaleString() : '-'}
-                                          </div>
-                                      </div>
-                                  </div>
+
 
                                   {/* Input / Output Data (JSON view for tech details) */}
                                    {(action.input || action.output) && (
-                                      <div className="space-y-2">
+                                      <div className="space-y-3">
                                           {action.input && (
-                                              <div className="space-y-1">
-                                                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Input Data</label>
-                                                  <pre className="text-[10px] bg-zinc-900 text-zinc-50 p-2 rounded-md overflow-x-auto custom-scrollbar">
+                                              <div className="space-y-1.5">
+                                                  <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                                                      <div className="w-1 h-3.5 bg-orange-500 rounded-full" />
+                                                      Input Data
+                                                  </label>
+                                                  <pre className="text-[10px] bg-zinc-900 dark:bg-black text-zinc-100 p-3 rounded-lg overflow-x-auto custom-scrollbar border border-zinc-800 font-mono leading-relaxed">
                                                       {JSON.stringify(action.input, null, 2)}
                                                   </pre>
                                               </div>
                                           )}
                                           
                                           {action.output && (
-                                              <div className="space-y-1">
-                                                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Output Data</label>
-                                                  <pre className="text-[10px] bg-zinc-900 text-zinc-50 p-2 rounded-md overflow-x-auto custom-scrollbar">
+                                              <div className="space-y-1.5">
+                                                  <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                                                      <div className="w-1 h-3.5 bg-teal-500 rounded-full" />
+                                                      Output Data
+                                                  </label>
+                                                  <pre className="text-[10px] bg-zinc-900 dark:bg-black text-zinc-100 p-3 rounded-lg overflow-x-auto custom-scrollbar border border-zinc-800 font-mono leading-relaxed">
                                                       {JSON.stringify(action.output, null, 2)}
                                                   </pre>
                                               </div>
