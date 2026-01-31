@@ -231,7 +231,8 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 	type Activity struct {
 		Type        string                   `json:"type"` // "trigger", "human_action", "end"
 		Name        string                   `json:"name"`
-		Description string                   `json:"description,omitempty"` // Added Description
+		Description string                   `json:"description,omitempty"`
+		Information string                   `json:"information,omitempty"` // Added Information
 		Status      string                   `json:"status"`
 		StartedAt   string                   `json:"started_at"`
 		ID          string                   `json:"id,omitempty"`
@@ -252,7 +253,8 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		type HumanTask struct {
 			ID          string                   `json:"id"`
 			Title       string                   `json:"title"`
-			Description string                   `json:"description"` // Added
+			Description string                   `json:"description"`
+			Information string                   `json:"information"` // Added
 			Status      string                   `json:"status"`
 			CreatedAt   string                   `json:"created_at"`
 			Assignments []map[string]interface{} `json:"assignments"`
@@ -260,7 +262,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		var tasks []HumanTask
 		// Query using RunID
 		client.DB.From("human_tasks").
-			Select("id, title, description, status, created_at, assignments"). // Added description
+			Select("id, title, description, information, status, created_at, assignments"). // Added information
 			Eq("run_id", af.RunID).
 			Execute(&tasks)
 
@@ -268,7 +270,8 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 			activities = append(activities, Activity{
 				Type:        "human_action",
 				Name:        t.Title,
-				Description: t.Description, // Map description
+				Description: t.Description,
+				Information: t.Information, // Map information
 				Status:      t.Status,
 				StartedAt:   t.CreatedAt,
 				ID:          t.ID,
