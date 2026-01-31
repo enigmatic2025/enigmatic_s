@@ -340,15 +340,16 @@ export default function ActionFlowDetailPage() {
                            </Button>
                        </div>
 
-                       <div className="space-y-3"> 
+                       <div className="space-y-3">
                            {visibleActivities.map((act, i) => {
                                const isDone = act.status === 'COMPLETED';
                                const isRunning = act.status === 'RUNNING';
                                const isFailed = act.status === 'FAILED';
-                               
+                               const isSelected = selectedActionId === act.id;
+
                                // Strictly Monochrome Logic
                                const footerClass = isDone || isRunning
-                                   ? 'bg-zinc-900 text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900' 
+                                   ? 'bg-zinc-900 text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900'
                                    : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-500 border-t border-zinc-100 dark:border-zinc-800';
 
                                const StatusIcon = isDone ? CheckCircle2 : isFailed ? XCircle : isRunning ? Clock : Box;
@@ -357,9 +358,14 @@ export default function ActionFlowDetailPage() {
                                const typeLabel = act.type === 'human_action' ? 'Human' : 'Automated';
 
                                return (
-                                   <div 
-                                      key={i} 
-                                      className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden transition-all hover:border-zinc-300 dark:hover:border-zinc-700 min-h-[160px] flex flex-col justify-between"
+                                   <div
+                                      key={i}
+                                      onClick={() => setSelectedActionId(act.id)}
+                                      className={`group bg-white dark:bg-zinc-950 border rounded-lg overflow-hidden transition-all min-h-[160px] flex flex-col justify-between cursor-pointer ${
+                                          isSelected
+                                            ? 'border-zinc-900 dark:border-zinc-100 ring-1 ring-zinc-900 dark:ring-zinc-100'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                                      }`}
                                     >
                                        {/* Header Row */}
                                        <div>
@@ -452,91 +458,224 @@ export default function ActionFlowDetailPage() {
       </div>
 
       {/* 35% RIGHT PANEL: AI CHAT - Monochrome & Clean */}
-      <div className="w-[35%] flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
-          {/* Chat Header */}
-          {/* Chat Header */}
-          <div className="h-12 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 flex items-center justify-between shrink-0">
-               <div className="flex items-center gap-3">
-                   <div className="w-6 h-6 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center">
-                       <Bot className="w-3.5 h-3.5" />
-                   </div>
-                   <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Assistant</span>
-               </div>
-               <Button variant="ghost" size="sm" className="text-[10px] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 h-7 px-2">
-                   Clear Context
-               </Button>
-          </div>
-
-          {/* Messages */}
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
-              
-              {/* Bot Msg */}
-              <div className="flex gap-4 max-w-2xl">
-                  <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
-                       <Bot className="w-3.5 h-3.5" />
+      <div className="w-[35%] flex flex-col h-full bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800">
+          <Tabs defaultValue="action-details" className="h-full flex flex-col">
+              <div className="px-6 pt-6 pb-2 bg-white dark:bg-zinc-950 flex flex-col gap-4">
+                  {/* Optional Header/Title could go here, but for now just spacing */}
+                  <div className="flex items-center justify-center">
+                    <TabsList className="bg-muted p-1 rounded-lg h-auto inline-flex">
+                        <TabsTrigger 
+                            value="action-details" 
+                            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
+                        >
+                            Action Details
+                        </TabsTrigger>
+                        <TabsTrigger 
+                            value="assistant" 
+                            className="rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground shadow-none"
+                        >
+                            Natalie
+                        </TabsTrigger>
+                    </TabsList>
                   </div>
-                  <div>
-                      <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">AI</span>
-                          <span className="text-[10px] text-zinc-400">Just now</span>
-                      </div>
-                      <div className="text-sm text-zinc-800 dark:text-zinc-300 leading-relaxed">
-                          <p className="mb-3">I'm ready to assist with the <strong>{data.title}</strong> workflow.</p>
-                          <div className="flex flex-wrap gap-2">
-                              {["Summarize Risks", "Query Data", "Draft Email"].map((label) => (
-                                  <button key={label} className="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 rounded-full hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors text-zinc-600 dark:text-zinc-400">
-                                      {label}
-                                  </button>
-                              ))}
+              </div>
+
+              {/* ACTION DETAILS TAB */}
+              <TabsContent value="action-details" className="flex-1 overflow-y-auto mt-4 custom-scrollbar">
+                  {!selectedActionId ? (
+                      <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-3">
+                          <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
+                              <Box className="w-6 h-6" />
                           </div>
+                          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                              Click on an action to display info
+                          </p>
                       </div>
-                  </div>
-              </div>
+                  ) : (
+                      (() => {
+                          const action = data.activities?.find(a => a.id === selectedActionId);
+                          if (!action) return (
+                             <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+                                 <p className="text-sm text-zinc-500">Action not found</p>
+                             </div>
+                          );
 
-               {/* User Msg */}
-               <div className="flex flex-col items-end gap-1">
-                   <div className="bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-2.5 rounded-2xl rounded-tr-sm text-sm max-w-lg">
-                       Can you summarize the driver's risk factors?
+                          return (
+                              <div className="p-4 space-y-6">
+                                  {/* Header */}
+                                  <div className="space-y-3 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+                                      <div className="flex items-center justify-between">
+                                          <Badge variant="outline" className="text-[10px] h-5 rounded-sm px-1.5 uppercase tracking-wide">
+                                              {action.type}
+                                          </Badge>
+                                          <StatusBadge status={action.status} />
+                                      </div>
+                                      
+                                      <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50 leading-snug">
+                                          {action.name}
+                                      </h2>
+
+                                      <div className="text-xs font-mono text-zinc-400 break-all">
+                                          {action.id}
+                                      </div>
+                                  </div>
+
+                                  {/* Info / Description */}
+                                  <div className="space-y-2">
+                                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Information</label>
+                                      <div className="text-sm text-zinc-700 dark:text-zinc-100 leading-relaxed bg-zinc-50 dark:bg-zinc-900 p-3 rounded-lg border border-zinc-100 dark:border-zinc-800">
+                                          {action.information || <span className="italic text-zinc-400">No information provided.</span>}
+                                      </div>
+                                  </div>
+
+                                  {/* Assignments */}
+                                  {action.assignments && action.assignments.length > 0 && (
+                                     <div className="space-y-2">
+                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Assigned To</label>
+                                          <div className="flex flex-wrap gap-2">
+                                              {action.assignments.map((assignee: Assignee) => (
+                                                  <div key={assignee.id} className="flex items-center gap-2 px-2 py-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full">
+                                                      <Avatar className="h-5 w-5">
+                                                          <AvatarImage src={assignee.avatar} />
+                                                          <AvatarFallback className="text-[9px]">{assignee.name?.[0]}</AvatarFallback>
+                                                      </Avatar>
+                                                      <span className="text-xs font-medium">{assignee.name}</span>
+                                                  </div>
+                                              ))}
+                                          </div>
+                                     </div>
+                                  )}
+
+                                  {/* Timestamps */}
+                                  <div className="grid grid-cols-2 gap-4">
+                                      <div className="space-y-1">
+                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Started</label>
+                                          <div className="text-xs text-zinc-900 dark:text-zinc-100">
+                                              {action.started_at ? new Date(action.started_at).toLocaleString() : '-'}
+                                          </div>
+                                      </div>
+                                      <div className="space-y-1">
+                                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Completed</label>
+                                          <div className="text-xs text-zinc-900 dark:text-zinc-100">
+                                              {action.completed_at ? new Date(action.completed_at).toLocaleString() : '-'}
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  {/* Input / Output Data (JSON view for tech details) */}
+                                   {(action.input || action.output) && (
+                                      <div className="space-y-2">
+                                          {action.input && (
+                                              <div className="space-y-1">
+                                                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Input Data</label>
+                                                  <pre className="text-[10px] bg-zinc-900 text-zinc-50 p-2 rounded-md overflow-x-auto custom-scrollbar">
+                                                      {JSON.stringify(action.input, null, 2)}
+                                                  </pre>
+                                              </div>
+                                          )}
+                                          
+                                          {action.output && (
+                                              <div className="space-y-1">
+                                                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Output Data</label>
+                                                  <pre className="text-[10px] bg-zinc-900 text-zinc-50 p-2 rounded-md overflow-x-auto custom-scrollbar">
+                                                      {JSON.stringify(action.output, null, 2)}
+                                                  </pre>
+                                              </div>
+                                          )}
+                                      </div>
+                                   )}
+                              </div>
+                          );
+                      })()
+                  )}
+              </TabsContent>
+
+              {/* ASSISTANT TAB */}
+              <TabsContent value="assistant" className="flex-1 flex flex-col min-h-0 mt-4 data-[state=inactive]:hidden">
+                   {/* Chat Header - Preserved but slightly compacted for tab context if needed, or kept same */}
+                   <div className="h-10 border-b border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 flex items-center justify-between shrink-0">
+                       <div className="flex items-center gap-3">
+                           <div className="w-6 h-6 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center">
+                               <Bot className="w-3 h-3 stroke-[1.5]" />
+                           </div>
+                           <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Natalie</span>
+                       </div>
+                       <Button variant="ghost" size="sm" className="text-[10px] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 h-6 px-2">
+                           Clear Context
+                       </Button>
                    </div>
-                   <span className="text-[10px] text-zinc-400 mr-1">You • 1m ago</span>
-               </div>
 
-               {/* Bot Msg */}
-               <div className="flex gap-4 max-w-2xl">
-                  <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
-                       <Bot className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                      <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">AI</span>
-                          <span className="text-[10px] text-zinc-400">Just now</span>
-                      </div>
-                      <div className="text-sm text-zinc-800 dark:text-zinc-300 leading-relaxed space-y-2">
-                          <p>Analysis for <strong>Phi Tran</strong>:</p>
-                          <ul className="list-disc pl-4 space-y-1 marker:text-zinc-400">
-                              <li><strong>Risk Score (85/100)</strong>: Exceeds safe threshold.</li>
-                              <li><strong>Tenure</strong>: 3.5 Years (High value retention target).</li>
-                          </ul>
-                          <p className="text-zinc-600 dark:text-zinc-400 italic mt-2 text-xs">Recommended: Priority outreach.</p>
-                      </div>
-                  </div>
-              </div>
+                   {/* Messages */}
+                   <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
+                       
+                       {/* Bot Msg */}
+                       <div className="flex gap-4 max-w-2xl">
+                           <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
+                                <Bot className="w-3.5 h-3.5 stroke-[1.5]" />
+                           </div>
+                           <div>
+                               <div className="flex items-center gap-2 mb-1">
+                                   <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Natalie</span>
+                                   <span className="text-[10px] text-zinc-400">Just now</span>
+                               </div>
+                               <div className="text-sm text-zinc-800 dark:text-zinc-300 leading-relaxed">
+                                   <p className="mb-3">I'm ready to assist with the <strong>{data.title}</strong> workflow.</p>
+                                   <div className="flex flex-wrap gap-2">
+                                       {["Summarize Risks", "Query Data", "Draft Email"].map((label) => (
+                                           <button key={label} className="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 rounded-full hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors text-zinc-600 dark:text-zinc-400">
+                                               {label}
+                                           </button>
+                                       ))}
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
 
-          </div>
+                        {/* User Msg */}
+                        <div className="flex flex-col items-end gap-1">
+                            <div className="bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-2.5 rounded-2xl rounded-tr-sm text-sm max-w-lg">
+                                Can you summarize the driver's risk factors?
+                            </div>
+                            <span className="text-[10px] text-zinc-400 mr-1">You • 1m ago</span>
+                        </div>
 
-          {/* Input Area - Minimal */}
-          <div className="p-4 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
-              <div className="relative">
-                  <Input 
-                      placeholder="Ask AI..." 
-                      className="bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm py-5 pl-4 pr-12 rounded-lg focus-visible:ring-1 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-600 transition-all shadow-none placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
-                  />
-                  <Button size="icon" className="absolute right-1.5 top-1.5 h-7 w-7 bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded">
-                      <Send className="w-3.5 h-3.5" />
-                  </Button>
-              </div>
-          </div>
+                        {/* Bot Msg */}
+                        <div className="flex gap-4 max-w-2xl">
+                           <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
+                                <Bot className="w-3.5 h-3.5 stroke-[1.5]" />
+                           </div>
+                           <div>
+                               <div className="flex items-center gap-2 mb-1">
+                                   <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Natalie</span>
+                                   <span className="text-[10px] text-zinc-400">Just now</span>
+                               </div>
+                               <div className="text-sm text-zinc-800 dark:text-zinc-300 leading-relaxed space-y-2">
+                                   <p>Analysis for <strong>Phi Tran</strong>:</p>
+                                   <ul className="list-disc pl-4 space-y-1 marker:text-zinc-400">
+                                       <li><strong>Risk Score (85/100)</strong>: Exceeds safe threshold.</li>
+                                       <li><strong>Tenure</strong>: 3.5 Years (High value retention target).</li>
+                                   </ul>
+                                   <p className="text-zinc-600 dark:text-zinc-400 italic mt-2 text-xs">Recommended: Priority outreach.</p>
+                               </div>
+                           </div>
+                       </div>
+
+                   </div>
+
+                   {/* Input Area - Minimal */}
+                   <div className="p-4 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
+                       <div className="relative">
+                           <Input 
+                               placeholder="Ask AI..." 
+                               className="bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm py-5 pl-4 pr-12 rounded-lg focus-visible:ring-1 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-600 transition-all shadow-none placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
+                           />
+                           <Button size="icon" className="absolute right-1.5 top-1.5 h-7 w-7 bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded">
+                               <Send className="w-3.5 h-3.5" />
+                           </Button>
+                       </div>
+                   </div>
+              </TabsContent>
+          </Tabs>
       </div>
 
     </div>
