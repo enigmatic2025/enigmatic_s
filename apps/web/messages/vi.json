@@ -502,5 +502,128 @@
     "empty": "Không tìm thấy luồng hành động.",
     "emptyHint": "Chạy một luồng hành động để xem tại đây.",
     "deleteConfirm": "Bạn có chắc chắn muốn xóa lần chạy luồng hành động này không?"
+  },
+  "UseCaseVisualizations": {
+    "driverOnboarding": {
+      "tenstreet": "Tenstreet",
+      "emails": "Email",
+      "hris": "HRIS",
+      "safety": "An toàn",
+      "title": "Tuyển dụng tài xế",
+      "candidate": "Ứng viên",
+      "inProgress": "Đang xử lý",
+      "appReview": "Đánh giá hồ sơ",
+      "mvrCheck": "Kiểm tra bằng lái",
+      "drugScreen": "Kết quả xét nghiệm",
+      "orientation": "Lên lịch định hướng"
+    },
+    "billing": {
+      "natalie": "Natalie",
+      "today": "Hôm nay",
+      "claimDiscrepancy": "Sai lệch Yêu cầu #CLM-892",
+      "driverOnboarding": "Tuyển dụng tài xế - John Doe",
+      "maintenanceRequest": "Yêu cầu bảo trì #442",
+      "claimHeader": "Yêu cầu #CLM-892",
+      "aiMsg1": "Tôi đã phân tích tài liệu cho <span>Hóa đơn #4021</span>. Giá cước khớp với hợp đồng, nhưng tôi phát hiện sai lệch về thời gian lưu xe.",
+      "userMsg": "Được rồi, tôi có biên bản giao nhận đã ký hiển thị thời gian đến và đi. Đang tải lên ngay.",
+      "aiMsg2": "Đã nhận. Tôi đã xác minh dấu thời gian. Phí lưu xe là hợp lệ.",
+      "aiMsg3": "Tôi đã cập nhật trạng thái yêu cầu thành <span>Sẵn sàng thanh toán</span>.",
+      "inputPlaceholder": "Nhắn tin cho Natalie...",
+      "footer": "Natalie có thể mắc lỗi. Vui lòng xác minh thông tin quan trọng."
+    },
+    "manufacturing": {
+      "status": "Trạng thái Dây chuyền SX A4",
+      "outputRate": "Tỷ lệ đầu ra",
+      "activeShift": "Ca làm việc",
+      "morning": "Sáng",
+      "lowInventory": "Phát hiện tồn kho thấp",
+      "lowInventoryDesc": "Dự trữ thép cuộn thô đã giảm xuống dưới ngưỡng 15%.",
+      "automatedResolution": "Giải quyết tự động",
+      "erpSignal": "Tín hiệu ERP",
+      "reorderTriggered": "Đã kích hoạt đặt hàng lại",
+      "supplierConfirmed": "Nhà cung cấp đã xác nhận",
+      "deliveryTime": "Giao hàng: 2:00 Chiều nay"
+    },
+    "construction": {
+      "siteReport": "Báo cáo công trường",
+      "online": "Trực tuyến",
+      "timestamp": "Hôm nay, 09:14 Sáng",
+      "userMsg": "Hỏng thủy lực máy xúc chính. Chúng tôi đã dừng tại Khu B.",
+      "foreman": "Đốc công Mike",
+      "aiMsg": "Đã nhận. Đánh dấu là <span>Ưu tiên nghiêm trọng</span>.",
+      "ticketCreated": "Đã tạo phiếu #8821",
+      "maintenanceNotify": "Thông báo đội bảo trì",
+      "estimate": "Ước tính: Kỹ thuật viên đến sau 45p.",
+      "pmMsg": "Chuyển Đội B sang làm móng Khu C cho đến khi giải quyết xong.",
+      "typeMessage": "Nhập tin nhắn..."
+    }
+  },
+  "UseCaseFlows": {
+    "onboarding": {
+      "appReceived": "Đã nhận đơn",
+      "tenstreetWebhook": "Webhook Tenstreet",
+      "docsReview": "Đánh giá tài liệu",
+      "recruiting": "Stacy (Tuyển dụng)",
+      "bgChecks": "Kiểm tra lý lịch",
+      "natalieAgent": "Đại lý AI Natalie",
+      "orientation": "Lịch định hướng",
+      "ops": "John (Vận hành)",
+      "provisioning": "Cấp phép hệ thống",
+      "systems": "TMS, HR, Lương",
+      "ready": "Sẵn sàng điều phối",
+      "active": "Trạng thái: Hoạt động"
+    },
+    "maintenance": {
+      "dvir": "Đã gửi DVIR",
+      "techApp": "Ứng dụng Kỹ thuật viên",
+      "defect": "Phát hiện lỗi: Phanh",
+      "trigger": "Kích hoạt tự động",
+      "orchestration": "Điều phối công việc",
+      "assigned": "Phụ tùng & Nhân công",
+      "update": "Cập nhật trạng thái",
+      "erpTms": "ERP & TMS"
+    },
+    "manufacturing": {
+      "iot": "Luồng cảm biến IoT",
+      "vibration": "Rung động > Ngưỡng",
+      "anomaly": "Phát hiện bất thường",
+      "confidence": "Độ tin cậy: 98%",
+      "workOrder": "Tạo lệnh làm việc",
+      "shiftLead": "Giao cho: Trưởng ca",
+      "adjust": "Điều chỉnh lịch trình",
+      "reroute": "Định tuyến lại Dây chuyền 4"
+    },
+    "construction": {
+      "request": "Yêu cầu vật liệu",
+      "concrete": "Bê tông - Khu B",
+      "inventory": "Kiểm tra tồn kho",
+      "plant": "Trạm trộn #4",
+      "dispatch": "Điều phối tài xế",
+      "eta": "ETA: 45 phút",
+      "gate": "Mã cổng",
+      "access": "Đã cấp quyền truy cập",
+      "pour": "Hoàn thành đổ",
+      "quality": "Đã ghi nhật ký CL"
+    },
+    "badges": {
+      "api": "API",
+      "human": "Con người",
+      "automated": "Tự động",
+      "hero": "Hero",
+      "complete": "Hoàn tất",
+      "mobile": "Di động",
+      "alert": "Cảnh báo",
+      "auto": "Tự động",
+      "sync": "Đồng bộ",
+      "mqtt": "MQTT",
+      "aiAnalysis": "Phân tích AI",
+      "cmms": "CMMS",
+      "erpSync": "Đồng bộ ERP",
+      "fieldApp": "App hiện trường",
+      "erp": "ERP",
+      "logistics": "Hậu cần",
+      "security": "An ninh",
+      "record": "Ghi nhận"
+    }
   }
 }

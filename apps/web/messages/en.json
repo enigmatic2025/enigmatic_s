@@ -502,5 +502,128 @@
     "empty": "No action flows found.",
     "emptyHint": "Run an action flow to see it here.",
     "deleteConfirm": "Are you sure you want to delete this action flow run?"
+  },
+  "UseCaseVisualizations": {
+    "driverOnboarding": {
+      "tenstreet": "Tenstreet",
+      "emails": "Emails",
+      "hris": "HRIS",
+      "safety": "Safety",
+      "title": "Driver Onboarding",
+      "candidate": "Candidate",
+      "inProgress": "In Progress",
+      "appReview": "Application Review",
+      "mvrCheck": "MVR Check",
+      "drugScreen": "Drug Screen Results",
+      "orientation": "Orientation Scheduling"
+    },
+    "billing": {
+      "natalie": "Natalie",
+      "today": "Today",
+      "claimDiscrepancy": "Claim #CLM-892 Discrepancy",
+      "driverOnboarding": "Driver Onboarding - John Doe",
+      "maintenanceRequest": "Maintenance Request #442",
+      "claimHeader": "Claim #CLM-892",
+      "aiMsg1": "I've analyzed the documents for <span>Invoice #4021</span>. The rate matches the contract, but I detected a discrepancy in the detention time claimed.",
+      "userMsg": "Okay, I have the signed POD showing the arrival and departure times. Uploading it now.",
+      "aiMsg2": "Received. I've verified the timestamps. The detention charge is valid.",
+      "aiMsg3": "I've updated the claim status to <span>Ready for Payment</span>.",
+      "inputPlaceholder": "Message Natalie...",
+      "footer": "Natalie can make mistakes. Please verify important information."
+    },
+    "manufacturing": {
+      "status": "Production Line A4 Status",
+      "outputRate": "Output Rate",
+      "activeShift": "Active Shift",
+      "morning": "Morning",
+      "lowInventory": "Low Material Inventory Detected",
+      "lowInventoryDesc": "Raw Steel Coil reserves have dropped below 15% threshold.",
+      "automatedResolution": "Automated Resolution",
+      "erpSignal": "ERP Signal",
+      "reorderTriggered": "Reorder Triggered",
+      "supplierConfirmed": "Supplier Confirmed",
+      "deliveryTime": "Delivery: 2:00 PM Today"
+    },
+    "construction": {
+      "siteReport": "Site Report",
+      "online": "Online",
+      "timestamp": "Today, 09:14 AM",
+      "userMsg": "Main excavator hydraulic failure. We're halted on Zone B.",
+      "foreman": "Foreman Mike",
+      "aiMsg": "Acknowledged. This is marked as <span>Critical Priority</span>.",
+      "ticketCreated": "Ticket #8821 Created",
+      "maintenanceNotify": "Maintenance Team Notify",
+      "estimate": "Estimate: Tech arriving in 45m.",
+      "pmMsg": "Moving Crew B to Zone C foundation work until resolved.",
+      "typeMessage": "Type a message..."
+    }
+  },
+  "UseCaseFlows": {
+    "onboarding": {
+      "appReceived": "Application Received",
+      "tenstreetWebhook": "Tenstreet Webhook",
+      "docsReview": "Documents Review",
+      "recruiting": "Stacy (Recruiting)",
+      "bgChecks": "Background Checks",
+      "natalieAgent": "Natalie AI Agent",
+      "orientation": "Orientation Scheduled",
+      "ops": "John (Ops)",
+      "provisioning": "Systems Provisioning",
+      "systems": "TMS, HR, Payroll",
+      "ready": "Ready for Dispatch",
+      "active": "Status: Active"
+    },
+    "maintenance": {
+      "dvir": "DVIR Submitted",
+      "techApp": "Technician App",
+      "defect": "Defect Detected: Brakes",
+      "trigger": "Automated Trigger",
+      "orchestration": "Work Orchestration",
+      "assigned": "Parts & Labor Assigned",
+      "update": "Update Fleet Status",
+      "erpTms": "ERP & TMS"
+    },
+    "manufacturing": {
+      "iot": "IoT Sensor Stream",
+      "vibration": "Vibration > Threshold",
+      "anomaly": "Anomaly Detection",
+      "confidence": "Model Confidence: 98%",
+      "workOrder": "Create Work Order",
+      "shiftLead": "Assign to: Shift Lead",
+      "adjust": "Adjust Schedule",
+      "reroute": "Reroute Line 4"
+    },
+    "construction": {
+      "request": "Material Request",
+      "concrete": "Concrete - Zone B",
+      "inventory": "Inventory Check",
+      "plant": "Batch Plant #4",
+      "dispatch": "Dispatch Driver",
+      "eta": "ETA: 45 min",
+      "gate": "Gate Code",
+      "access": "Access Granted",
+      "pour": "Pour Complete",
+      "quality": "Quality Logged"
+    },
+    "badges": {
+      "api": "API",
+      "human": "Human",
+      "automated": "Automated",
+      "hero": "Hero",
+      "complete": "Complete",
+      "mobile": "Mobile",
+      "alert": "Alert",
+      "auto": "Auto",
+      "sync": "Sync",
+      "mqtt": "MQTT",
+      "aiAnalysis": "AI Analysis",
+      "cmms": "CMMS",
+      "erpSync": "ERP Sync",
+      "fieldApp": "Field App",
+      "erp": "ERP",
+      "logistics": "Logistics",
+      "security": "Security",
+      "record": "Record"
+    }
   }
 }
