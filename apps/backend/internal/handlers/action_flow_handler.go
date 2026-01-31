@@ -151,12 +151,7 @@ func (h *ActionFlowHandler) DeleteActionFlow(w http.ResponseWriter, r *http.Requ
 		}
 
 		// 3. Delete associated Human Tasks
-		// While we could rely on run_id, let's be safe and check if RunID is present
-		if af.RunID != "" {
-			var deletedTasks []map[string]interface{}
-			// Ignore error here as it's cleanup
-			_ = dbClient.DB.From("human_tasks").Delete().Eq("run_id", af.RunID).Execute(&deletedTasks)
-		}
+		// Logic removed: handled by database trigger/cascade
 	}
 
 	// 3. Delete from DB
