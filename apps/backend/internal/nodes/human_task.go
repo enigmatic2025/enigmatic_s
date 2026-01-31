@@ -34,16 +34,29 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 	}
 	title := rawTitle // Final evaluated title
 
-	// 'description' parsing...
-	description, _ := input.Config["instructions"].(string)
-	if description == "" {
-		description, _ = input.Config["description"].(string)
+	// 'instructions' parsing (Rich Text)
+	instructions, _ := input.Config["instructions"].(string)
+	// Evaluate Instructions
+	instrVal, err := expressionEngine.Evaluate(instructions, input)
+	if err == nil {
+		instructions = fmt.Sprintf("%v", instrVal)
 	}
 
+	// 'description' parsing (Designer Description)
+	description, _ := input.Config["description"].(string)
 	// Evaluate Description
 	descVal, err := expressionEngine.Evaluate(description, input)
 	if err == nil {
 		description = fmt.Sprintf("%v", descVal)
+	}
+
+	// 'information' parsing...
+	information, _ := input.Config["information"].(string)
+
+	// Evaluate Information
+	infoVal, err := expressionEngine.Evaluate(information, input)
+	if err == nil {
+		information = fmt.Sprintf("%v", infoVal)
 	}
 
 	assignee, _ := input.Config["assignee"].(string)
@@ -103,28 +116,32 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 	}
 
 	taskRecord := struct {
-		FlowID      string                   `json:"flow_id"`
-		RunID       string                   `json:"run_id"` // Temporal RunID
-		Title       string                   `json:"title"`
-		Description string                   `json:"description"`
-		Assignee    string                   `json:"assignee"`
-		Assignments []map[string]interface{} `json:"assignments"`
-		Status      string                   `json:"status"`
-		Schema      interface{}              `json:"schema"`
-		CreatedAt   time.Time                `json:"created_at"`
-		UpdatedAt   time.Time                `json:"updated_at"`
+		FlowID       string                   `json:"flow_id"`
+		RunID        string                   `json:"run_id"` // Temporal RunID
+		Title        string                   `json:"title"`
+		Description  string                   `json:"description"`
+		Instructions string                   `json:"instructions"`
+		Information  string                   `json:"information"`
+		Assignee     string                   `json:"assignee"`
+		Assignments  []map[string]interface{} `json:"assignments"`
+		Status       string                   `json:"status"`
+		Schema       interface{}              `json:"schema"`
+		CreatedAt    time.Time                `json:"created_at"`
+		UpdatedAt    time.Time                `json:"updated_at"`
 	}{
 		FlowID: input.FlowID,
 		RunID:  input.RunID,
 
-		Title:       title,
-		Description: description,
-		Assignee:    assignee,
-		Assignments: assignments,
-		Status:      "PENDING",
-		Schema:      schema,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		Title:        title,
+		Description:  description,
+		Instructions: instructions,
+		Information:  information,
+		Assignee:     assignee,
+		Assignments:  assignments,
+		Status:       "PENDING",
+		Schema:       schema,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 
 	// Ensure FlowID is present to avoid Foreign Key violations

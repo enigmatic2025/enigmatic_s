@@ -359,79 +359,66 @@ export default function ActionFlowDetailPage() {
                                return (
                                    <div 
                                       key={i} 
-                                      className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
+                                      className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden transition-all hover:border-zinc-300 dark:hover:border-zinc-700 min-h-[160px] flex flex-col justify-between"
                                     >
                                        {/* Header Row */}
-                                       <div className="p-3 pb-2 flex flex-wrap items-center justify-between gap-2">
-                                           <div className="flex items-center gap-2">
-                                               {/* Status Pill (Monochrome) */}
-                                               <div className={`px-2 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300`}>
-                                                   <StatusIcon className="w-3 h-3" />
-                                                   {act.status}
+                                       <div>
+                                           <div className="p-3 pb-2 flex flex-wrap items-center justify-between gap-2">
+                                               <div className="flex items-center gap-2">
+                                                   {/* Status Pill (Monochrome) */}
+                                                   <div className={`px-2 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300`}>
+                                                       <StatusIcon className="w-3 h-3" />
+                                                       {act.status}
+                                                   </div>
+    
+                                                   {/* Type Pill (Monochrome - Replaces ID) - Squared corners */}
+                                                   <div className="px-2 py-0.5 rounded-sm bg-zinc-100 dark:bg-zinc-800 text-[10px] font-medium text-zinc-600 dark:text-zinc-400 border border-transparent">
+                                                       {typeLabel}
+                                                   </div>
                                                </div>
-
-                                               {/* Type Pill (Monochrome - Replaces ID) - Squared corners */}
-                                               <div className="px-2 py-0.5 rounded-sm bg-zinc-100 dark:bg-zinc-800 text-[10px] font-medium text-zinc-600 dark:text-zinc-400 border border-transparent">
-                                                   {typeLabel}
-                                               </div>
-                                           </div>
-                                           
-                                           <div className="flex items-center gap-3">
-                                                <AssigneeSelector
-                                                    variant="avatar-group"
-                                                    selected={(act.assignments || []).map((a: any) => ({
-                                                        id: a.id,
-                                                        type: a.type,
-                                                        name: a.name || "Unknown",
-                                                        avatar: a.avatar,
-                                                        info: a.info
-                                                    }))}
-                                                    onSelect={async (newAssignees) => {
-                                                        try {
-                                                            if (act.id) {
-                                                                await apiClient.patch(`/tasks/${act.id}`, { assignments: newAssignees });
-                                                                toast.success("Task assignments updated");
-                                                                mutate(flowId ? `/action-flows/${flowId}` : null);
-                                                            } else {
-                                                                toast.error("Task ID missing");
+                                               
+                                               <div className="flex items-center gap-3">
+                                                    <AssigneeSelector
+                                                        variant="avatar-group"
+                                                        selected={(act.assignments || []).map((a: any) => ({
+                                                            id: a.id,
+                                                            type: a.type,
+                                                            name: a.name || "Unknown",
+                                                            avatar: a.avatar,
+                                                            info: a.info
+                                                        }))}
+                                                        onSelect={async (newAssignees) => {
+                                                            try {
+                                                                if (act.id) {
+                                                                    await apiClient.patch(`/tasks/${act.id}`, { assignments: newAssignees });
+                                                                    toast.success("Task assignments updated");
+                                                                    mutate(flowId ? `/action-flows/${flowId}` : null);
+                                                                } else {
+                                                                    toast.error("Task ID missing");
+                                                                }
+                                                            } catch (e) {
+                                                                toast.error("Failed to update task assignments");
+                                                                console.error(e);
                                                             }
-                                                        } catch (e) {
-                                                            toast.error("Failed to update task assignments");
-                                                            console.error(e);
-                                                        }
-                                                    }}
-                                                    orgSlug={slug as string}
-                                                />
+                                                        }}
+                                                        orgSlug={slug as string}
+                                                    />
+                                               </div>
                                            </div>
-                                       </div>
-
-                                       {/* Description Body */}
-                                       <div className="px-3 pb-3 pt-0 text-left">
-                                           <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                                               {act.name}
-                                           </p>
-                                           {act.information && (
-                                               <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 mb-2 leading-relaxed">
-                                                   {act.information}
+    
+                                           {/* Description Body */}
+                                           <div className="px-3 pb-3 pt-0 text-left">
+                                               <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                                   {act.name}
                                                </p>
-                                           )}
-                                           {(act.instructions) && (
-                                               <div className={`text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed prose prose-sm dark:prose-invert max-w-none
-                                                   ${isRunning ? '' : 'line-clamp-2'}
-                                                   prose-p:my-0.5 prose-p:text-xs 
-                                                   prose-ul:my-0.5 prose-ul:list-disc prose-ul:pl-4 
-                                                   prose-ol:my-0.5 prose-ol:list-decimal prose-ol:pl-4
-                                                   prose-li:my-0 
-                                                   prose-headings:text-xs prose-headings:font-bold prose-headings:my-1
-                                                   prose-a:text-blue-500 hover:prose-a:underline
-                                                   [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
-                                               `} 
-                                               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(act.instructions || '') }}
-                                               />
-                                           )}
-                                           {(!act.instructions && !act.information) && (
-                                                <p className="text-xs text-zinc-400 italic mt-1">No instructions provided.</p>
-                                           )}
+                                               {act.information ? (
+                                                   <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 mb-2 leading-relaxed line-clamp-3">
+                                                       {act.information}
+                                                   </p>
+                                               ) : (
+                                                    <p className="text-xs text-zinc-400 italic mt-1">No information provided.</p>
+                                               )}
+                                           </div>
                                        </div>
 
                                        {/* Footer (Monochrome) */}

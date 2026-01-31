@@ -69,6 +69,21 @@ export const validateFlow = (nodes: Node[], edges: Edge[]): boolean => {
                 toast.error(`Trigger "${node.data.label}" is missing an Action Flow Title Template.`);
                 return false;
             }
+
+            // Validate Additional Fields (Key Data)
+            if (node.data.infoFields && Array.isArray(node.data.infoFields)) {
+                for (let i = 0; i < node.data.infoFields.length; i++) {
+                    const field = node.data.infoFields[i];
+                    if (!field.label || !field.label.trim()) {
+                        toast.error(`Trigger "${node.data.label}" has an Additional Field (Row ${i + 1}) missing a Label/Key.`);
+                        return false;
+                    }
+                    if (!field.value || !field.value.trim()) {
+                        toast.error(`Trigger "${node.data.label}" has an Additional Field "${field.label || 'Unknown'}" missing a Value.`);
+                        return false;
+                    }
+                }
+            }
         }
 
         // Action Nodes
