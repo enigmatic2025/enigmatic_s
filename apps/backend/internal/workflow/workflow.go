@@ -170,8 +170,8 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	// Helper: Try to execute a node
 	// This function is RECURSIVE (via workflow.Go)
-	var tryExecuteNode func(nodeID string)
-	tryExecuteNode = func(nodeID string) {
+	var tryExecuteNode func(ctx workflow.Context, nodeID string)
+	tryExecuteNode = func(ctx workflow.Context, nodeID string) {
 		defer wg.Done()
 
 		// Safety check
@@ -322,7 +322,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 				wg.Add(1)
 				// Launch child in new routine
 				workflow.Go(ctx, func(ctx workflow.Context) {
-					tryExecuteNode(edge.Target)
+					tryExecuteNode(ctx, edge.Target)
 				})
 			}
 		}
@@ -335,7 +335,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	// Start from trigger
 	workflow.Go(ctx, func(ctx workflow.Context) {
-		tryExecuteNode(triggerNodeID)
+		tryExecuteNode(ctx, triggerNodeID)
 	})
 
 	// Wait for all to finish
