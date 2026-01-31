@@ -217,11 +217,11 @@
     },
     "team": {
       "title": "Our Team",
-      "samRole": "Founding Partner | Vision",
+      "samRole": "Vision",
       "samDescription": "Sam shapes the strategic vision for Enigmatic's identity, products, and services, uniting top-tier talent to fundamentally reimagine the logistics technology ecosystem.",
-      "chrisRole": "Founding Partner | Sales",
+      "chrisRole": "Sales",
       "chrisDescription": "Chris spearheads operations and strategic partnerships, focusing on scaling Enigmatic's market presence and delivering value to key industry stakeholders.",
-      "phiRole": "Founding Partner | Technology",
+      "phiRole": "Technology",
       "phiDescription": "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech."
     },
     "story": {
