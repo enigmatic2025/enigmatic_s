@@ -238,6 +238,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		StartedAt    string                   `json:"started_at"`
 		ID           string                   `json:"id,omitempty"`
 		Assignments  []map[string]interface{} `json:"assignments,omitempty"`
+		Schema       []map[string]interface{} `json:"schema,omitempty"` // Added Schema
 	}
 	var activities []Activity
 
@@ -255,16 +256,17 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 			ID           string                   `json:"id"`
 			Title        string                   `json:"title"`
 			Description  string                   `json:"description"`
-			Information  string                   `json:"information"`  // Added
-			Instructions string                   `json:"instructions"` // Added (rich text)
+			Information  string                   `json:"information"`
+			Instructions string                   `json:"instructions"`
 			Status       string                   `json:"status"`
 			CreatedAt    string                   `json:"created_at"`
 			Assignments  []map[string]interface{} `json:"assignments"`
+			Schema       []map[string]interface{} `json:"schema"` // Added Schema
 		}
 		var tasks []HumanTask
 		// Query using RunID
 		client.DB.From("human_tasks").
-			Select("id, title, description, information, instructions, status, created_at, assignments"). // Added information and instructions
+			Select("id, title, description, information, instructions, status, created_at, assignments, schema"). // Added schema
 			Eq("run_id", af.RunID).
 			Execute(&tasks)
 
@@ -273,12 +275,13 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 				Type:         "human_action",
 				Name:         t.Title,
 				Description:  t.Description,
-				Information:  t.Information,  // Map information
-				Instructions: t.Instructions, // Map instructions (rich text)
+				Information:  t.Information,
+				Instructions: t.Instructions,
 				Status:       t.Status,
 				StartedAt:    t.CreatedAt,
 				ID:           t.ID,
 				Assignments:  t.Assignments,
+				Schema:       t.Schema, // Map schema
 			})
 		}
 	}

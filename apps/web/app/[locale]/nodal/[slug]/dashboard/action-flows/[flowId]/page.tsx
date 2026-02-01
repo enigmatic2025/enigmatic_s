@@ -40,6 +40,7 @@ import {
 import { toast } from "sonner";
 import DashboardLoading from "../../loading"; 
 import { ActionFlowComments } from "@/components/flow-studio/action-flow-comments";
+import { HumanTaskForm } from "@/components/flow-studio/human-task-form";
 
 interface ActionFlowDetail {
   id: string;
@@ -573,6 +574,7 @@ export default function ActionFlowDetailPage() {
                                       </div>
                                   )}
 
+
                                   {/* Assignments */}
                                   {action.assignments && action.assignments.length > 0 && (
                                      <div className="space-y-2">
@@ -590,7 +592,24 @@ export default function ActionFlowDetailPage() {
                                      </div>
                                   )}
 
+                                  {/* Human Task Form - New Render Logic */}
+                                  {(action.type === 'human_action' || action.type === 'human_task') && (
+                                      <div className="mt-8">
+                                          {/* Debugging Helper */}
+                                          {process.env.NODE_ENV === 'development' && console.log("Rendering Human Task:", action)}
 
+                                          <HumanTaskForm 
+                                              actionId={action.id}
+                                              schema={action.schema || action.input?.schema || action.config?.schema || action.data?.schema || []}
+                                              status={action.status}
+                                              initialData={action.output || {}}
+                                              onComplete={() => {
+                                                  // Refresh data
+                                                  mutate(flowId ? `/action-flows/${flowId}` : null);
+                                              }}
+                                          />
+                                      </div>
+                                  )}
 
                                   {/* Input / Output Data (JSON view for tech details) */}
                                    {(action.input || action.output) && (
