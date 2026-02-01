@@ -6,9 +6,13 @@
 echo "Starting Temporal Dev Server..."
 temporal server start-dev --ip 0.0.0.0 &
 
-# Wait for Temporal to be ready (Simple sleep for MVP)
+# Wait for Temporal to be ready by checking port 7233
 echo "Waiting for Temporal to start..."
-sleep 10
+until nc -z localhost 7233; do
+  echo "Waiting for Temporal..."
+  sleep 1
+done
+echo "Temporal started!"
 
 # Start the Backend Application
 # use 'exec' so the Go process replaces the shell and receives signals (SIGTERM)

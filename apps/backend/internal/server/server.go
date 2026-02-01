@@ -21,7 +21,7 @@ type Server struct {
 func NewServer() *http.Server {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8000"
 	}
 
 	// Initialize Database
