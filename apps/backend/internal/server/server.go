@@ -59,6 +59,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Health Check
 	mux.HandleFunc("/", s.HelloWorldHandler)
+	mux.HandleFunc("/health", s.HelloWorldHandler)
 
 	// Initialize Handlers
 	adminHandler := handlers.NewAdminHandler()
@@ -140,5 +141,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello from Nodal Backend! Supabase is connected."))
+	log.Printf("Health check received from %s", r.RemoteAddr)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Hello from Nodal Backend! App is healthy."))
 }
