@@ -595,9 +595,6 @@ export default function ActionFlowDetailPage() {
                                   {/* Human Task Form - New Render Logic */}
                                   {(action.type === 'human_action' || action.type === 'human_task') && (
                                       <div className="mt-8">
-                                          {/* Debugging Helper */}
-                                          {process.env.NODE_ENV === 'development' && console.log("Rendering Human Task:", action)}
-
                                           <HumanTaskForm 
                                               actionId={action.id}
                                               schema={action.schema || action.input?.schema || action.config?.schema || action.data?.schema || []}
