@@ -2,7 +2,8 @@
   "HomePage": {
     "title": "Enigmatic",
     "subtitle": "Map. Build. Own.",
-    "description": "We design, connect, and orchestrate the processes your core systems ignore."
+    "description": "We design, connect, and orchestrate the processes your core systems ignore.",
+    "poweredBy": "Powered by modern technologies."
   },
   "Navigation": {
     "dashboard": "Dashboard",

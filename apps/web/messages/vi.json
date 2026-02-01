@@ -2,7 +2,8 @@
   "HomePage": {
     "title": "Enigmatic",
     "subtitle": "Hoạch định. Xây dựng. Làm chủ.",
-    "description": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua."
+    "description": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua.",
+    "poweredBy": "Được vận hành bởi các công nghệ hiện đại."
   },
   "Navigation": {
     "dashboard": "Bảng điều khiển",

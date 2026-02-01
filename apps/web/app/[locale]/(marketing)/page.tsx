@@ -5,11 +5,13 @@ import { ServicesSection } from "@/components/layout/services-section";
 import { NodalPlatformSection } from "@/components/layout/nodal-platform-section";
 import { PrinciplesSection } from "@/components/layout/principles-section";
 import { CTASection } from "@/components/layout/cta-section";
+import { TechStack } from "@/components/company/tech-stack";
 
 export default function Home() {
   return (
     <div className="bg-background min-h-screen">
       <Hero />
+      <TechStack />
       <MissionQuote />
       <ProblemSection />
       <ServicesSection />
