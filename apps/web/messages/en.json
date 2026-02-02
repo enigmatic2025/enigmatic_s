@@ -2,7 +2,8 @@
   "HomePage": {
     "title": "Enigmatic",
     "subtitle": "Map. Build. Own.",
-    "description": "We design, connect, and orchestrate the processes your core systems ignore."
+    "description": "We design, connect, and orchestrate the processes your core systems ignore.",
+    "poweredBy": "Powered by modern technologies."
   },
   "Navigation": {
     "dashboard": "Dashboard",
@@ -213,20 +214,20 @@
   "AboutUs": {
     "hero": {
       "title": "About Us.",
-      "subtitle": "Building the future of logistics with intelligence and precision."
+      "subtitle": "Building the future of industrials with intelligence and precision."
     },
     "team": {
       "title": "Our Team",
       "samRole": "Vision",
-      "samDescription": "Sam shapes the strategic vision for Enigmatic's identity, products, and services, uniting top-tier talent to fundamentally reimagine the logistics technology ecosystem.",
+      "samDescription": "Sam shapes the strategic vision for Enigmatic's identity, products, and services, uniting top-tier talent to fundamentally reimagine industrial software systems.",
       "chrisRole": "Sales",
       "chrisDescription": "Chris spearheads operations and strategic partnerships, focusing on scaling Enigmatic's market presence and delivering value to key industry stakeholders.",
       "phiRole": "Technology",
-      "phiDescription": "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of logistics tech."
+      "phiDescription": "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of industrial technology."
     },
     "story": {
-      "title": "Founded by Logistics Enthusiasts.",
-      "description": "We are a team of logistics industry veterans with decades of hands-on experience optimizing supply chains. We combine this operational depth with serious engineering expertise to deliver strategic consulting and Nodal, our platform for standardizing and orchestrating business processes."
+      "title": "Founded by Industrial Enthusiasts.",
+      "description": "We are a team of industrial operation professionals with decades of hands-on experience optimizing workflows. We combine this operational depth with serious engineering expertise to deliver strategic consulting and Nodal, our platform for standardizing and orchestrating business processes."
     },
     "cta": {
       "title": "Join our journey",
