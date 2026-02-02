@@ -406,8 +406,7 @@
         "checkboxes": "Checkboxes",
         "rating": "Rating (1-5)",
         "yesNo": "Yes/No",
-        "dateOnly": "Date only",
-        "timeOnly": "Time only",
+        "date": "Date",
         "dateTime": "Date & Time",
         "fileUpload": "File Upload",
         "signature": "Signature"

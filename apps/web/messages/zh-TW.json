@@ -406,8 +406,7 @@
         "checkboxes": "核取方塊",
         "rating": "評分（1-5）",
         "yesNo": "是/否",
-        "dateOnly": "僅日期",
-        "timeOnly": "僅時間",
+        "date": "日期",
         "dateTime": "日期與時間",
         "fileUpload": "檔案上傳",
         "signature": "簽名"

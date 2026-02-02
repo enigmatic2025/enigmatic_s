@@ -406,8 +406,7 @@
         "checkboxes": "Hộp kiểm",
         "rating": "Đánh giá (1-5)",
         "yesNo": "Có/Không",
-        "dateOnly": "Chỉ ngày",
-        "timeOnly": "Chỉ giờ",
+        "date": "Ngày",
         "dateTime": "Ngày & Giờ",
         "fileUpload": "Tải lên tệp",
         "signature": "Chữ ký"

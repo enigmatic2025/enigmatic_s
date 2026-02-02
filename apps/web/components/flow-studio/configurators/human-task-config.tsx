@@ -139,27 +139,14 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                       <Input 
                         value={field.label} 
                         onChange={(e) => {
-                          const newLabel = e.target.value;
-                          const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
-                          
-                          // Auto-generate key if it matches the previous slug or is default/empty
-                          const currentSlug = slugify(field.label);
-                          const isAutoKey = field.key === currentSlug || field.key.startsWith('field_') || field.key === '';
-                          
-                          const updates: Partial<SchemaField> = { label: newLabel };
-                          
-                          // Only auto-update key if it's not a section header (headers don't use keys heavily)
-                          if (isAutoKey) {
-                             updates.key = slugify(newLabel);
-                          }
-                          updateField(index, updates);
+                          updateField(index, { label: e.target.value });
                         }}
                         placeholder={t("fieldLabelPlaceholder")}
                         className="h-8 text-sm font-medium border-transparent bg-transparent hover:bg-background hover:border-input focus:bg-background focus:border-input px-2 -ml-2 transition-all" 
                       />
                     </div>
                     <Select 
-                      value={field.type} 
+                      value={field.type === 'datetime' ? 'date' : field.type} 
                       onValueChange={(val: any) => updateField(index, { type: val })}
                     >
                       <SelectTrigger className="w-[140px] h-8 text-xs">
@@ -176,9 +163,8 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                         <SelectItem value="rating"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">★</span> {t("fieldTypes.rating")}</div></SelectItem>
                         <SelectItem value="boolean"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> {t("fieldTypes.yesNo")}</div></SelectItem>
                         
-                        <SelectItem value="date"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> {t("fieldTypes.dateOnly")}</div></SelectItem>
-                        <SelectItem value="time"><div className="flex items-center gap-2"><Clock className="w-3 h-3"/> {t("fieldTypes.timeOnly")}</div></SelectItem>
-                        <SelectItem value="datetime"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> {t("fieldTypes.dateTime")}</div></SelectItem>
+                        <SelectItem value="date"><div className="flex items-center gap-2"><Calendar className="w-3 h-3"/> {t("fieldTypes.date")}</div></SelectItem>
+
 
                         <SelectItem value="file"><div className="flex items-center gap-2"><FileText className="w-3 h-3"/> {t("fieldTypes.fileUpload")}</div></SelectItem>
                         <SelectItem value="signature"><div className="flex items-center gap-2"><PenTool className="w-3 h-3"/> {t("fieldTypes.signature")}</div></SelectItem>

@@ -49,11 +49,13 @@ export function NodeConfigurationSheet({
   const tNodes = useTranslations("FlowNodes");
 
   const executionTrace = useFlowStore((state) => state.executionTrace);
+  const setEditingNode = useFlowStore((state) => state.setEditingNode);
 
   // Reset form when node changes
   useEffect(() => {
     if (selectedNode) {
       setFormData(selectedNode.data || {});
+      setEditingNode(selectedNode.id, selectedNode.data || {});
       
       // Only reset UI state if we switched to a different node
       if (selectedNode.id !== prevNodeId) {
@@ -184,8 +186,13 @@ export function NodeConfigurationSheet({
   const isTrigger = selectedNode.type === 'schedule';
   const isRunnable = selectedNode.data?.subtype === 'http';
 
+  const handleClose = () => {
+    setEditingNode(null, null);
+    onClose();
+  };
+
   return (
-    <Sheet open={isOpen} onOpenChange={onClose} modal={false}>
+    <Sheet open={isOpen} onOpenChange={handleClose} modal={false}>
       <SheetContent 
         side="right"
         overlay={false}
@@ -274,6 +281,10 @@ export function NodeConfigurationSheet({
                                             setFormData(updated);
                                             
                                             // Live-update the store for schema changes (so Sidebar updates immediately)
+                                            // ALWAYS update for live preview logic now
+                                            setEditingNode(selectedNode.id, updated);
+                                            
+                                            // Keep original onUpdate behavior for specific cases if needed, but primarily relying on draft state now
                                             if (
                                               newData.lastRunResult || 
                                               (selectedNode.type === 'api-trigger' && newData.schema !== undefined)
@@ -306,7 +317,7 @@ export function NodeConfigurationSheet({
         {/* Footer Actions */}
         <SheetFooter className="p-4 border-t bg-background flex-none flex flex-row items-center justify-between sm:justify-between gap-2">
            {/* Left: Close without saving */}
-           <Button variant="ghost" onClick={onClose} className="text-muted-foreground hover:text-foreground">
+           <Button variant="ghost" onClick={handleClose} className="text-muted-foreground hover:text-foreground">
              {t("buttons.cancel")}
            </Button>
            

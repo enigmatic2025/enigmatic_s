@@ -219,7 +219,7 @@ const DEFAULT_SCHEMAS: Record<string, any> = {
 };
 
 export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
-  const { nodes, variables, setVariable, deleteVariable, setSelectedNodeId, selectedNodeId } = useFlowStore();
+  const { nodes, variables, setVariable, deleteVariable, setSelectedNodeId, selectedNodeId, editingNodeId, editingNodeData } = useFlowStore();
   const [newVarName, setNewVarName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   
@@ -369,17 +369,30 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
             )}
             
             {filteredNodes.map((node) => {
-                const runResult = node.data?.lastRunResult;
+                // LIVE PREVIEW LOGIC:
+                // If this node is currently being edited, use the draft data from the store
+                const isEditing = node.id === editingNodeId;
+                const activeData = isEditing && editingNodeData ? editingNodeData : node.data;
+
+                const runResult = activeData?.lastRunResult;
                 let schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[node.type || ""];
                 
-                // Special handling for API Trigger / Incoming Webhook Schema
-                if (schema === undefined && node.type === 'api-trigger' && node.data?.schema && Array.isArray(node.data.schema)) {
+                // Special handling for API Trigger and Human Task Schema
+                const isSchemaNode = 
+                    node.type === 'api-trigger' || 
+                    node.type === 'human-task' || 
+                    node.type === 'human_task' || 
+                    node.type === 'human_action';
+
+                if (schema === undefined && isSchemaNode && activeData?.schema && Array.isArray(activeData.schema)) {
                     const parsedSchema: Record<string, any> = {};
-                    node.data.schema.forEach((field: any) => {
+                    activeData.schema.forEach((field: any) => {
                         if (field.key) {
-                            parsedSchema[field.key] = field.type === 'string' ? "example_string" : 
+                            parsedSchema[field.key] = field.type === 'string' || field.type === 'text' || field.type === 'shortText' || field.type === 'longText' ? "example_string" : 
                                                         field.type === 'number' ? 123 : 
-                                                        field.type === 'boolean' ? true :
+                                                        field.type === 'boolean' || field.type === 'yesNo' ? true :
+                                                        field.type === 'date' ? "2024-01-01" :
+                                                        field.type === 'datetime' ? "2024-01-01T12:00:00Z" :
                                                         field.type === 'object' ? {} : 
                                                         field.type === 'array' ? [] : "value";
                         }
@@ -393,9 +406,9 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
 
                 // Special handling for Set Variable nodes
                 // We want to allow copying {{ variables.varName }} directly
-                if (node.type === 'variable' && node.data?.variableName) {
+                if (node.type === 'variable' && activeData?.variableName) {
                     schema = {
-                        [node.data.variableName]: node.data.value || "current_value"
+                        [activeData.variableName]: activeData.value || "current_value"
                     };
                 }
 
@@ -404,8 +417,8 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                 return (
                     <div key={node.id} className="border rounded-md bg-card overflow-hidden">
                     <div className="flex items-center gap-2 p-2 bg-muted/30 border-b">
-                        <div className="font-medium text-sm truncate flex-1" title={node.data.label}>
-                        {node.data.label || node.id}
+                        <div className="font-medium text-sm truncate flex-1" title={activeData?.label || node.data.label}>
+                        {activeData?.label || node.data.label || node.id}
                         </div>
                         <span className="text-[10px] uppercase text-muted-foreground bg-background border px-1.5 py-0.5 rounded shadow-sm">
                         {node.type}
