@@ -235,6 +235,20 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                           </div>
                       </div>
                   )}
+                  
+                  {/* Date Options (Include Time Toggle) */}
+                  {(field.type === 'date' || field.type === 'datetime') && (
+                      <div className="pl-4 border-l-2 border-muted-foreground/20 space-y-2">
+                          <div className="flex items-center gap-2">
+                              <Switch 
+                                  checked={field.type === 'datetime'} 
+                                  onCheckedChange={(checked) => updateField(index, { type: checked ? 'datetime' : 'date' })}
+                                  className="scale-75 origin-left"
+                              />
+                              <Label className="text-xs text-muted-foreground font-normal">Date Time</Label>
+                          </div>
+                      </div>
+                  )}
 
                   {/* Row 2: Key & Required */}
                   <div className="flex items-center gap-3 text-xs">
