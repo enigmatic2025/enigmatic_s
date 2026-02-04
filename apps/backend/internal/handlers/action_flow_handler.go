@@ -95,15 +95,17 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 
 	// 2.5 Fetch Action Stats (Human Tasks)
 	type TaskStat struct {
-		RunID     string `json:"run_id"`
-		Title     string `json:"title"`
-		Status    string `json:"status"`
-		CreatedAt string `json:"created_at"`
+		RunID       string                   `json:"run_id"`
+		Title       string                   `json:"title"`
+		Status      string                   `json:"status"`
+		CreatedAt   string                   `json:"created_at"`
+		Assignments []map[string]interface{} `json:"assignments"`
 	}
 	taskStatsMap := make(map[string]struct {
 		Count          int
 		CurrentAction  string
 		LatestActivity string
+		Assignments    []map[string]interface{}
 	})
 
 	if len(results) > 0 {
@@ -117,15 +119,8 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		if len(runIDs) > 0 {
 			var tasks []TaskStat
 			// Fetch all tasks for these flows.
-			// Note: PostgREST In filter slightly tedious in this client wrapper if not supported directly.
-			// Assuming we can fetch all or loop. For 50 items, fetching all human_tasks might be too big.
-			// Let's rely on a rough loop or if the client supports In.
-			// The current client wrapper seems simple. Let's try to just fetch all human_tasks for now if expected volume is low,
-			// OR optimally, we skip this optimization if strict "IN" query isn't easy,
-			// BUT for a dashboard, we need it.
-			// Let's assume we can fetch recent human tasks.
 			client.DB.From("human_tasks").
-				Select("run_id, title, status, created_at").
+				Select("run_id, title, status, created_at, assignments").
 				Limit(500). // Cap at 500 tasks to avoid massive payload
 				Execute(&tasks)
 
@@ -143,15 +138,47 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 					stat.LatestActivity = t.CreatedAt
 				}
 
-				// Current Action: First PENDING/IN_PROGRESS found (since we ordered by desc, correct logic is complex)
-				// Actually, we want the *active* one.
+				// Current Action: First PENDING/IN_PROGRESS found
 				if t.Status == "PENDING" || t.Status == "IN_PROGRESS" {
-					// Overwrite nicely or pick the latest? define "Current" as most recently created pending task.
-					// Given sorting by desc, the first one we hit is likely the newest.
 					if stat.CurrentAction == "" {
 						stat.CurrentAction = t.Title
 					}
 				}
+
+				// Aggregate Assignments
+				if len(t.Assignments) > 0 {
+					if stat.Assignments == nil {
+						stat.Assignments = make([]map[string]interface{}, 0)
+					}
+
+					// Simple deduplication
+					existingIDs := make(map[string]bool)
+					for _, a := range stat.Assignments {
+						if id, ok := a["id"].(string); ok {
+							existingIDs[id] = true
+						} else if name, ok := a["name"].(string); ok {
+							existingIDs[name] = true
+						}
+					}
+
+					for _, newAssign := range t.Assignments {
+						id, hasID := newAssign["id"].(string)
+						name, hasName := newAssign["name"].(string)
+
+						key := ""
+						if hasID {
+							key = id
+						} else if hasName {
+							key = name
+						}
+
+						if key != "" && !existingIDs[key] {
+							stat.Assignments = append(stat.Assignments, newAssign)
+							existingIDs[key] = true
+						}
+					}
+				}
+
 				taskStatsMap[t.RunID] = stat
 			}
 		}
@@ -197,6 +224,12 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 			finalTitle = t
 		}
 
+		// Use aggregated assignments from tasks if main flow assignments are empty
+		finalAssignments := r.Assignments
+		if len(finalAssignments) == 0 && len(stats.Assignments) > 0 {
+			finalAssignments = stats.Assignments
+		}
+
 		flatResults[i] = FlatResult{
 			ID:                 r.ID,
 			FlowID:             r.FlowID,
@@ -207,7 +240,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,
 			Priority:           r.Priority,
-			Assignments:        r.Assignments,
+			Assignments:        finalAssignments,
 			ActionCount:        stats.Count,
 			CurrentAction:      stats.CurrentAction,
 			LatestActivityAt:   latest,
