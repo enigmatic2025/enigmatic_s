@@ -53,15 +53,8 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 w-full bg-muted/20 animate-pulse rounded-md border" />
-        ))}
-      </div>
-    );
-  }
+  // Loading state handled by parent via LoadingPage
+  // if (isLoading) { ... }
 
   if (data.length === 0) {
     return (

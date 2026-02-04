@@ -17,6 +17,7 @@ import {
   Settings,
   Loader2
 } from "lucide-react";
+import LoadingPage from "@/components/loading-page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -104,7 +105,7 @@ export default function OrganizationPage() {
       }
   };
 
-  if(loading) return <div className="h-full w-full flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
+  if(loading) return <LoadingPage />;
 
   return (
     <div className="h-full w-full space-y-6">

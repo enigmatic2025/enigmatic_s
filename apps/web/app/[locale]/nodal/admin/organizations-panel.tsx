@@ -7,6 +7,7 @@ import { apiClient } from "@/lib/api-client"
 import { toast } from 'sonner'
 import { Organization } from '@/types/admin'
 import { Spinner } from "@/components/ui/spinner"
+import LoadingPage from "@/components/loading-page"
 import { Badge } from "@/components/ui/badge"
 import {
   Table,
@@ -98,9 +99,7 @@ export function OrganizationsPanel() {
 
   if (loading) {
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <Spinner />
-      </div>
+      <LoadingPage />
     )
   }
 

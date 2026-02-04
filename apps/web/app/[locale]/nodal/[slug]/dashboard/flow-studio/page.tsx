@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
+import LoadingPage from "@/components/loading-page";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,6 +29,10 @@ export default function FlowStudioPage() {
         onError: () => toast.error("Failed to load flows")
     }
   );
+
+  if (loading && flows.length === 0) {
+      return <LoadingPage />;
+  }
 
 
   return (

@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
 import { User, Organization } from '@/types/admin'
 import { Spinner } from "@/components/ui/spinner"
+import LoadingPage from "@/components/loading-page"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -168,9 +169,7 @@ export function UsersPanel() {
 
   if (loading) {
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <Spinner />
-      </div>
+      <LoadingPage />
     )
   }
 

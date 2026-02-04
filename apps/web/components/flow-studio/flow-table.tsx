@@ -49,9 +49,8 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
     setFlows(initialFlows);
   }, [initialFlows]);
 
-  if (isLoading) {
-    return <div className="p-8 text-center text-muted-foreground animate-pulse">{t("loading")}</div>;
-  }
+  // Loading state handled by parent via LoadingPage
+  // if (isLoading) { ... }
 
   const handleDelete = async () => {
     if (!selectedFlow || isDeleting) return;

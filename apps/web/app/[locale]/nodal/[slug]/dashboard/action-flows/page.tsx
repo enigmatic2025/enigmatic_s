@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
+import LoadingPage from "@/components/loading-page";
 import { useTranslations } from "next-intl";
 
 import { apiClient } from "@/lib/api-client";
@@ -33,6 +34,11 @@ export default function ActionFlowPlyPage() {
         fallbackData: []
     }
   );
+
+  // Show global loading page only on initial load
+  if (isLoading && executions.length === 0) {
+     return <LoadingPage />;
+  }
 
   // Calculate stats
 
