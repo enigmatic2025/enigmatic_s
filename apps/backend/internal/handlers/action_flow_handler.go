@@ -24,26 +24,31 @@ func NewActionFlowHandler(c client.Client) *ActionFlowHandler {
 // ListActionFlows handles GET /api/action-flows
 func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Request) {
 	client := database.GetClient()
+	limit := 100 // Increased limit to ensure we get latest even without DB sort
 
-	limit := 50
-
-	type ActionFlowResult struct {
+	type DashboardFlow struct {
 		ID                 string           `json:"id"`
 		FlowID             string           `json:"flow_id"`
 		Status             string           `json:"status"`
 		TemporalWorkflowID string           `json:"temporal_workflow_id"`
-		RunID              string           `json:"run_id"` // Added RunID
-		InputData          map[string]any   `json:"input_data"`
+		RunID              string           `json:"run_id"`
 		StartedAt          string           `json:"started_at"`
-		Title              string           `json:"title"`
 		Priority           string           `json:"priority"`
-		Assignments        []map[string]any `json:"assignments"`
+		InputData          map[string]any   `json:"input_data"`
+		FlowName           string           `json:"flow_name"`
+		FlowDescription    string           `json:"flow_description"`
+		FlowAssignments    []map[string]any `json:"flow_assignments"`
+		ActionCount        int              `json:"action_count"`
+		TaskAssignments    []map[string]any `json:"task_assignments"`
+		LatestActivityAt   string           `json:"latest_activity_at"`
+		CurrentAction      *string          `json:"current_action"`
 	}
 
-	var results []ActionFlowResult
+	var results []DashboardFlow
 
-	// 1. Fetch Action Flows (Raw)
-	err := client.DB.From("action_flows").
+	// Query the optimized SQL view
+	// Note: We sort in Go because the PostgREST client wrapper .Order() syntax varies.
+	err := client.DB.From("dashboard_action_flows").
 		Select("*").
 		Limit(limit).
 		Execute(&results)
@@ -53,144 +58,18 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	// Sort explicitly in Go since .Order() might be missing in this client version
+	// Sort results by LatestActivityAt desc
 	sort.Slice(results, func(i, j int) bool {
-		return results[i].StartedAt > results[j].StartedAt
+		return results[i].LatestActivityAt > results[j].LatestActivityAt
 	})
 
-	// 2. Hydrate Flow Names manually
-	type FlowInfo struct {
-		Name        string
-		Description string
-	}
-	flowMap := make(map[string]FlowInfo)
-
-	if len(results) > 0 {
-		flowIDs := make([]string, 0)
-		seen := make(map[string]bool)
-
-		for _, af := range results {
-			if af.FlowID != "" && !seen[af.FlowID] {
-				flowIDs = append(flowIDs, af.FlowID)
-				seen[af.FlowID] = true
-			}
-		}
-
-		if len(flowIDs) > 0 {
-			var flows []struct {
-				ID          string `json:"id"`
-				Name        string `json:"name"`
-				Description string `json:"description"`
-			}
-			// Fetch flows with description
-			client.DB.From("flows").Select("id, name, description").Execute(&flows)
-			for _, f := range flows {
-				flowMap[f.ID] = FlowInfo{
-					Name:        f.Name,
-					Description: f.Description,
-				}
-			}
-		}
-	}
-
-	// 2.5 Fetch Action Stats (Human Tasks)
-	type TaskStat struct {
-		RunID       string                   `json:"run_id"`
-		Title       string                   `json:"title"`
-		Status      string                   `json:"status"`
-		CreatedAt   string                   `json:"created_at"`
-		Assignments []map[string]interface{} `json:"assignments"`
-	}
-	taskStatsMap := make(map[string]struct {
-		Count          int
-		CurrentAction  string
-		LatestActivity string
-		Assignments    []map[string]interface{}
-	})
-
-	if len(results) > 0 {
-		runIDs := make([]string, 0)
-		for _, r := range results {
-			if r.RunID != "" {
-				runIDs = append(runIDs, r.RunID)
-			}
-		}
-
-		if len(runIDs) > 0 {
-			var tasks []TaskStat
-			// Fetch all tasks for these flows.
-			client.DB.From("human_tasks").
-				Select("run_id, title, status, created_at, assignments").
-				Limit(500). // Cap at 500 tasks to avoid massive payload
-				Execute(&tasks)
-
-			// Sort tasks by created_at desc
-			sort.Slice(tasks, func(i, j int) bool {
-				return tasks[i].CreatedAt > tasks[j].CreatedAt
-			})
-
-			for _, t := range tasks {
-				stat := taskStatsMap[t.RunID]
-				stat.Count++
-
-				// Latest Activity: Max(created_at)
-				if stat.LatestActivity == "" || t.CreatedAt > stat.LatestActivity {
-					stat.LatestActivity = t.CreatedAt
-				}
-
-				// Current Action: First PENDING/IN_PROGRESS found
-				if t.Status == "PENDING" || t.Status == "IN_PROGRESS" {
-					if stat.CurrentAction == "" {
-						stat.CurrentAction = t.Title
-					}
-				}
-
-				// Aggregate Assignments
-				if len(t.Assignments) > 0 {
-					if stat.Assignments == nil {
-						stat.Assignments = make([]map[string]interface{}, 0)
-					}
-
-					// Simple deduplication
-					existingIDs := make(map[string]bool)
-					for _, a := range stat.Assignments {
-						if id, ok := a["id"].(string); ok {
-							existingIDs[id] = true
-						} else if name, ok := a["name"].(string); ok {
-							existingIDs[name] = true
-						}
-					}
-
-					for _, newAssign := range t.Assignments {
-						id, hasID := newAssign["id"].(string)
-						name, hasName := newAssign["name"].(string)
-
-						key := ""
-						if hasID {
-							key = id
-						} else if hasName {
-							key = name
-						}
-
-						if key != "" && !existingIDs[key] {
-							stat.Assignments = append(stat.Assignments, newAssign)
-							existingIDs[key] = true
-						}
-					}
-				}
-
-				taskStatsMap[t.RunID] = stat
-			}
-		}
-	}
-
-	// 3. Flatten Result
+	// Flatten Result
 	type FlatResult struct {
 		ID                 string           `json:"id"`
 		FlowID             string           `json:"flow_id"`
 		FlowName           string           `json:"flow_name"`
-		FlowDescription    string           `json:"flow_description"` // Added
-		Title              string           `json:"title"`            // Dynamic Instance Title
+		FlowDescription    string           `json:"flow_description"`
+		Title              string           `json:"title"`
 		Status             string           `json:"status"`
 		TemporalWorkflowID string           `json:"temporal_workflow_id"`
 		StartedAt          string           `json:"started_at"`
@@ -204,45 +83,47 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 
 	flatResults := make([]FlatResult, len(results))
 	for i, r := range results {
-		info := flowMap[r.FlowID]
-		flowName := info.Name
-		if flowName == "" {
-			flowName = "Unknown Flow"
+		// Title Logic: InputData > FlowName
+		displayTitle := r.FlowName
+		if t, ok := r.InputData["title"].(string); ok && t != "" {
+			displayTitle = t
+		} else {
+			displayTitle = "Untitled Instance"
+			if t, ok := r.InputData["title"].(string); ok && t != "" {
+				displayTitle = t
+			}
 		}
 
-		stats := taskStatsMap[r.RunID]
+		// Assignments Logic: Prefer Flow (manual) > Task (aggregated)
+		finalAssignments := r.FlowAssignments
+		if len(finalAssignments) == 0 && len(r.TaskAssignments) > 0 {
+			finalAssignments = r.TaskAssignments
+		}
 
-		// Fallback for LatestActivityAt
-		latest := stats.LatestActivity
+		currentAction := "System processing"
+		if r.CurrentAction != nil {
+			currentAction = *r.CurrentAction
+		}
+
+		latest := r.LatestActivityAt
 		if latest == "" {
 			latest = r.StartedAt
-		}
-
-		// Determine Title from InputData if available (matching GetActionFlow logic)
-		finalTitle := r.Title
-		if t, ok := r.InputData["title"].(string); ok && t != "" {
-			finalTitle = t
-		}
-
-		// Use aggregated assignments from tasks if main flow assignments are empty
-		finalAssignments := r.Assignments
-		if len(finalAssignments) == 0 && len(stats.Assignments) > 0 {
-			finalAssignments = stats.Assignments
 		}
 
 		flatResults[i] = FlatResult{
 			ID:                 r.ID,
 			FlowID:             r.FlowID,
-			FlowName:           flowName,
-			FlowDescription:    info.Description,
-			Title:              finalTitle,
+			FlowName:           r.FlowName,
+			FlowDescription:    r.FlowDescription,
+			Title:              displayTitle,
 			Status:             r.Status,
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,
 			Priority:           r.Priority,
 			Assignments:        finalAssignments,
-			ActionCount:        stats.Count,
-			CurrentAction:      stats.CurrentAction,
+			HasAssignments:     len(finalAssignments) > 0,
+			ActionCount:        r.ActionCount,
+			CurrentAction:      currentAction,
 			LatestActivityAt:   latest,
 		}
 	}
