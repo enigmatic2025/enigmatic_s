@@ -18,7 +18,8 @@ interface SchemaField {
   label: string;
   description?: string;
   required: boolean;
-  options?: string[]; // For multi-choice and checkboxes
+  options?: string[]; // For multi-choice
+  allowMultiple?: boolean; // For multi-choice (checkboxes mode)
 }
 
 interface HumanTaskConfigProps {
@@ -113,9 +114,6 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t("requiredInfo")}</h3>
-          <Button variant="outline" size="sm" onClick={addField} className="h-7 text-xs">
-            <Plus className="w-3.5 h-3.5 mr-1" /> {t("addField")}
-          </Button>
         </div>
 
         <div className="space-y-3">
@@ -158,7 +156,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                         <SelectItem value="number"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">123</span> {t("fieldTypes.number")}</div></SelectItem>
                         
                         <SelectItem value="multi-choice"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> {t("fieldTypes.multiChoice")}</div></SelectItem>
-                        <SelectItem value="checkboxes"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> {t("fieldTypes.checkboxes")}</div></SelectItem>
+
                         
                         <SelectItem value="rating"><div className="flex items-center gap-2"><span className="font-mono text-[10px]">★</span> {t("fieldTypes.rating")}</div></SelectItem>
                         <SelectItem value="boolean"><div className="flex items-center gap-2"><CheckSquare className="w-3 h-3"/> {t("fieldTypes.yesNo")}</div></SelectItem>
@@ -182,19 +180,33 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                     </Button>
                   </div>
 
-                  {/* Options Editor for Multi-Choice / Checkboxes */}
-                  {(field.type === 'multi-choice' || field.type === 'checkboxes') && (
+                  {/* Multi-Choice Options (Allow Multiple Toggle) */}
+                  {field.type === 'multi-choice' && (
+                      <div className="pl-4 border-l-2 border-muted-foreground/20 space-y-2">
+                          <div className="flex items-center gap-2">
+                              <Switch 
+                                  checked={field.allowMultiple || false} 
+                                  onCheckedChange={(checked) => updateField(index, { allowMultiple: checked })}
+                                  className="scale-75 origin-left"
+                              />
+                              <Label className="text-xs text-muted-foreground font-normal">{t("fieldTypes.allowMultiple")}</Label>
+                          </div>
+                      </div>
+                  )}
+
+                  {/* Options Editor for Multi-Choice */}
+                  {field.type === 'multi-choice' && (
                       <div className="pl-4 border-l-2 border-muted-foreground/20 space-y-2">
                           <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">
-                            {field.type === 'multi-choice' ? t("optionsSelectOne") : t("optionsSelectMany")}
+                            {field.allowMultiple ? t("optionsSelectMany") : t("optionsSelectOne")}
                           </Label>
                           <div className="grid grid-cols-1 gap-2">
                               {(field.options || []).map((option, optIndex) => (
                                   <div key={optIndex} className="flex gap-2 items-center">
-                                      {field.type === 'multi-choice' ? (
-                                        <div className="w-3 h-3 mt-0.5 rounded-full border border-muted-foreground/30 shrink-0" />
-                                      ) : (
+                                      {field.allowMultiple ? (
                                         <div className="w-3 h-3 mt-0.5 rounded border border-muted-foreground/30 shrink-0" />
+                                      ) : (
+                                        <div className="w-3 h-3 mt-0.5 rounded-full border border-muted-foreground/30 shrink-0" />
                                       )}
                                       <Input 
                                           value={option}
@@ -281,6 +293,14 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
             </div>
           ))}
         </div>
+        
+        <Button 
+          variant="outline" 
+          onClick={addField} 
+          className="w-full border-dashed text-muted-foreground hover:text-primary hover:border-primary/50"
+        >
+          <Plus className="w-4 h-4 mr-2" /> {t("addField")}
+        </Button>
       </div>
     </div>
   );

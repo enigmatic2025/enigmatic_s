@@ -13,7 +13,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
-import { Loader2, CheckCircle2, Star, Upload, X, FileText, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Loader2, CheckCircle2, Star, Upload, X, FileText, Calendar as CalendarIcon, Clock, PenTool } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -22,6 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { SignaturePad } from "@/components/ui/signature-pad";
 
 interface SchemaField {
   key: string;
@@ -30,7 +31,9 @@ interface SchemaField {
   description?: string;
   required: boolean;
   options?: string[];
+  allowMultiple?: boolean;
 }
+
 
 interface HumanTaskFormProps {
   actionId: string;
@@ -281,13 +284,13 @@ export function HumanTaskForm({
   }
 
   return (
-    <div className="space-y-6 max-w-2xl bg-white dark:bg-zinc-950 p-6 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-sm">
-      <div className="space-y-1 pb-4 border-b border-zinc-100 dark:border-zinc-800 mb-4">
+    <div className="space-y-4 w-full bg-white dark:bg-zinc-950">
+      <div className="space-y-1 pb-2 mb-4">
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Task Submission</h3>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">Please provide the required information to complete this task.</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 pb-24">
         {schema.map((field) => (
           <div key={field.key} className="space-y-3">
             <Label className="text-sm font-medium flex items-center gap-1">
@@ -310,6 +313,7 @@ export function HumanTaskForm({
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         placeholder="Enter text..."
                         disabled={isCompleted}
+                        className="shadow-none"
                       />
                     );
                   case 'long-text':
@@ -318,7 +322,7 @@ export function HumanTaskForm({
                         value={formData[field.key] || ''}
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         placeholder="Enter detailed text..."
-                        className="min-h-[100px]"
+                        className="min-h-[100px] shadow-none"
                         disabled={isCompleted}
                       />
                     );
@@ -330,6 +334,7 @@ export function HumanTaskForm({
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         placeholder="0"
                         disabled={isCompleted}
+                        className="shadow-none"
                       />
                     );
                   case 'date':
@@ -357,6 +362,7 @@ export function HumanTaskForm({
                         value={formData[field.key] || ''}
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         disabled={isCompleted}
+                        className="shadow-none"
                       />
                     );
                   case 'boolean':
@@ -371,14 +377,45 @@ export function HumanTaskForm({
                           <Label htmlFor={`check-${field.key}`} className="font-normal cursor-pointer text-sm">Yes, confirm</Label>
                        </div>
                     );
-                  case 'multi-choice': // Select One
+                  case 'multi-choice':
+                    const isMulti = field.allowMultiple;
+                    
+                    if (isMulti) {
+                      // Checkboxes rendering
+                      return (
+                       <div className="space-y-2 p-3 border rounded-md">
+                         {field.options?.map((opt, i) => {
+                            const currentVals = (formData[field.key] as string[]) || [];
+                            const isChecked = currentVals.includes(opt);
+                            return (
+                              <div key={i} className="flex items-center space-x-2">
+                                 <Checkbox 
+                                   id={`c-${field.key}-${i}`}
+                                   checked={isChecked}
+                                   onCheckedChange={(checked) => {
+                                       let newVals = [...currentVals];
+                                       if (checked) newVals.push(opt);
+                                       else newVals = newVals.filter(v => v !== opt);
+                                       handleChange(field.key, newVals);
+                                   }}
+                                   disabled={isCompleted}
+                                 />
+                                 <Label htmlFor={`c-${field.key}-${i}`} className="font-normal cursor-pointer">{opt}</Label>
+                              </div>
+                            )
+                         })}
+                       </div>
+                      );
+                    }
+
+                    // Standard Select rendering
                     return (
                        <Select 
                           value={formData[field.key] || ''} 
                           onValueChange={(val: string) => handleChange(field.key, val)}
                           disabled={isCompleted}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="shadow-none">
                             <SelectValue placeholder="Select an option" />
                           </SelectTrigger>
                           <SelectContent>
@@ -388,30 +425,14 @@ export function HumanTaskForm({
                           </SelectContent>
                         </Select>
                     );
-                   case 'checkboxes': // Select Many
+                  
+                  case 'signature':
                     return (
-                      <div className="space-y-2 p-3 border rounded-md">
-                        {field.options?.map((opt, i) => {
-                           const currentVals = (formData[field.key] as string[]) || [];
-                           const isChecked = currentVals.includes(opt);
-                           return (
-                             <div key={i} className="flex items-center space-x-2">
-                                <Checkbox 
-                                  id={`c-${field.key}-${i}`}
-                                  checked={isChecked}
-                                  onCheckedChange={(checked) => {
-                                      let newVals = [...currentVals];
-                                      if (checked) newVals.push(opt);
-                                      else newVals = newVals.filter(v => v !== opt);
-                                      handleChange(field.key, newVals);
-                                  }}
-                                  disabled={isCompleted}
-                                />
-                                <Label htmlFor={`c-${field.key}-${i}`} className="font-normal cursor-pointer">{opt}</Label>
-                             </div>
-                           )
-                        })}
-                      </div>
+                        <SignaturePad
+                          onChange={(val) => handleChange(field.key, val)}
+                          disabled={isCompleted}
+                          className="w-full"
+                        />
                     );
                   case 'rating':
                      return (
@@ -436,6 +457,7 @@ export function HumanTaskForm({
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         placeholder="Enter value..."
                         disabled={isCompleted}
+                        className="shadow-none"
                       />
                     );
                 }
@@ -447,12 +469,12 @@ export function HumanTaskForm({
 
       <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
         {isCompleted ? (
-          <Button variant="outline" className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200 hover:border-green-300 dark:bg-green-900/10 dark:text-green-400 dark:border-green-900" disabled>
+          <Button variant="outline" className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200 hover:border-green-300 dark:bg-green-900/10 dark:text-green-400 dark:border-green-900 shadow-none" disabled>
              <CheckCircle2 className="w-4 h-4" />
              Task Completed
           </Button>
         ) : (
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="min-w-[140px]">
+          <Button onClick={handleSubmit} disabled={isSubmitting} className="min-w-[140px] shadow-none">
             {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Complete Task
           </Button>
