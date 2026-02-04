@@ -135,13 +135,13 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
         return (
             <Card 
                 key={exec.id} 
-                className="group border border-border/60 shadow-none hover:border-border/80 transition-all cursor-pointer overflow-hidden bg-card"
+                className="group border border-border/60 shadow-none hover:border-border/80 transition-all cursor-pointer overflow-hidden bg-card/50 hover:bg-card"
                 onClick={() => router.push(`${pathname}/${exec.id}`)}
             >
             {/* Top Row: Main Info */}
-            <div className="flex flex-col md:flex-row md:items-start justify-between p-5 gap-4">
+            <div className="flex flex-col md:flex-row md:items-start justify-between p-4 gap-4">
                 {/* Left: Identity & Description */}
-                <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                <div className="flex items-start gap-4 min-w-0 flex-1">
                     {/* Flow Type Icon (Colored) */}
                     <div 
                         className="flex items-center justify-center w-9 h-9 rounded-lg border border-transparent shrink-0 mt-0.5"
@@ -154,54 +154,23 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                         {/* Header: Flow Name + Instance Title */}
                         <div className="flex flex-wrap items-center gap-2">
                              <span className="font-semibold text-base text-foreground leading-none">
-                                {exec.flow_name}
-                             </span>
-                             
-                             {displayTitle && (
-                                <>
-                                    <span className="text-muted-foreground/30 text-sm">/</span>
-                                    <span className="text-sm font-medium text-foreground/80 truncate">
+                                {exec.flow_name} {displayTitle && displayTitle !== exec.flow_name && (
+                                    <span className="font-medium text-foreground/80">
                                         {displayTitle}
                                     </span>
-                                </>
-                             )}
+                                )}
+                             </span>
                         </div>
 
-                        {/* Description (Information) */}
-                        {displayDesc ? (
-                            <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                                {displayDesc}
-                            </p>
-                        ) : (
-                             // Fallback if no description and untitled: show ID
-                             isUntitled && (
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground/50 font-mono mt-1">
-                                    ID: {exec.id.substring(0, 8)} 
-                                </div>
-                             )
-                        )}
-                        
-                        {/* Copy ID Button (subtle) */}
-                        <div className="mt-1">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-5 px-0 text-xs text-muted-foreground/40 hover:text-foreground/60 font-mono"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigator.clipboard.writeText(exec.id);
-                                    toast.success("ID Copied");
-                                }}
-                            >
-                                <Copy className="w-3 h-3 mr-1.5" />
-                                {exec.id}
-                            </Button>
+                        {/* ID Display */}
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono mt-1">
+                            ID: {exec.id}
                         </div>
                     </div>
                 </div>
                 
                 {/* Right: Metadata (Priority, Specs, Avatar) */}
-                <div className="flex items-start gap-6 text-xs text-muted-foreground shrink-0 pt-1">
+                <div className="flex items-center gap-5 text-xs text-muted-foreground shrink-0 mt-1 md:mt-0">
                     {/* Priority */}
                     {exec.priority && (
                         <div className="flex items-center gap-1.5 px-2 py-1 bg-muted/40 rounded-md border border-border/40">
@@ -213,25 +182,31 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                         </div>
                     )}
 
-                    {/* Action Count */}
-                    <div className="flex items-center gap-1.5 px-2 py-1 bg-muted/40 rounded-md border border-border/40">
-                        <Circle className="w-3 h-3 fill-muted-foreground/20" />
-                        <span className="font-medium">{exec.action_count} actions</span>
-                    </div>
-
-                    {/* Avatars */}
-                    {exec.assignments && exec.assignments.length > 0 && (
-                        <div className="flex -space-x-2">
-                             {exec.assignments.slice(0, 3).map((assign, i) => (
-                                <Avatar key={i} className="w-7 h-7 border-2 border-background ring-1 ring-border/10">
-                                    <AvatarImage src={assign.user?.image || assign.image} />
-                                    <AvatarFallback className="text-[9px] bg-muted font-medium text-muted-foreground">
-                                        {(assign.user?.name?.[0] || assign.name?.[0] || "?").toUpperCase()}
-                                    </AvatarFallback>
-                                </Avatar>
-                            ))}
+                    {/* Stats Group */}
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5">
+                            <Circle className="w-3.5 h-3.5 fill-muted-foreground/20 text-muted-foreground/60" />
+                            <span>{exec.action_count} actions</span>
                         </div>
-                    )}
+
+                        {/* Avatars - Involved */}
+                        {exec.assignments && exec.assignments.length > 0 && (
+                            <div className="flex -space-x-2 pl-2 border-l border-border/40">
+                                 {exec.assignments.slice(0, 3).map((assign, i) => (
+                                    <Avatar key={i} className="w-7 h-7 border-2 border-background ring-1 ring-border/5">
+                                        <AvatarImage src={assign.user?.image || assign.image} />
+                                        <AvatarFallback className="text-[9px] bg-muted/80 font-medium text-muted-foreground">
+                                            {(assign.user?.name?.[0] || assign.name?.[0] || "?").toUpperCase()}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                ))}
+                            </div>
+                        )}
+                        
+                        <div className="text-xs text-muted-foreground pl-3 border-l border-border/40">
+                             {new Date(exec.started_at).toLocaleDateString()}
+                        </div>
+                    </div>
                     
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -240,6 +215,16 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigator.clipboard.writeText(exec.id);
+                                    toast.success("ID Copied");
+                                }}
+                            >
+                                <Copy className="w-4 h-4 mr-2" />
+                                Copy ID
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                             className="text-destructive focus:text-destructive"
                             onClick={(e) => handleDelete(exec, e as any)}
@@ -253,23 +238,23 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
             </div>
 
             {/* Bottom Row: Status & Activity */}
-            <div className="flex items-center justify-between px-5 py-3 bg-muted/20 border-t border-border/40 text-sm">
-                <div className="flex items-center gap-4 min-w-0">
+            <div className="flex items-center justify-between px-4 py-3 bg-muted/10 border-t border-border/40 text-xs">
+                <div className="flex items-center gap-3 min-w-0">
                     <div className="flex items-center gap-2 text-muted-foreground shrink-0">
                         {/* Status Icon in Footer */}
                         {isRunning ? <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> :
                          isCompleted ? <div className="w-2 h-2 rounded-full bg-green-500" /> :
                          <div className="w-2 h-2 rounded-full bg-zinc-300" />}
                         
-                        <span className="text-xs font-medium uppercase tracking-wider opacity-70">
+                        <span className="font-medium uppercase tracking-wider opacity-70 text-[11px]">
                             {isRunning ? "Running" : isCompleted ? "Completed" : exec.status}
                         </span>
                     </div>
 
-                    <span className="text-muted-foreground/20">|</span>
+                    <span className="text-muted-foreground/15">|</span>
 
-                    <div className="flex items-center gap-2 min-w-0 text-xs text-foreground/80 truncate">
-                         <span className="font-medium text-muted-foreground">Current Step:</span>
+                    <div className="flex items-center gap-2 min-w-0 text-foreground/80 truncate">
+                         <span className="text-muted-foreground opacity-70">Current Step:</span>
                          <span className="truncate font-medium">{exec.current_action || "System processing"}</span>
                     </div>
                 </div>

@@ -159,19 +159,20 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 
 	// 3. Flatten Result
 	type FlatResult struct {
-		ID                 string `json:"id"`
-		FlowID             string `json:"flow_id"`
-		FlowName           string `json:"flow_name"`
-		FlowDescription    string `json:"flow_description"` // Added
-		Title              string `json:"title"`            // Dynamic Instance Title
-		Status             string `json:"status"`
-		TemporalWorkflowID string `json:"temporal_workflow_id"`
-		StartedAt          string `json:"started_at"`
-		Priority           string `json:"priority"`
-		HasAssignments     bool   `json:"has_assignments"`
-		ActionCount        int    `json:"action_count"`
-		CurrentAction      string `json:"current_action"`
-		LatestActivityAt   string `json:"latest_activity_at"`
+		ID                 string           `json:"id"`
+		FlowID             string           `json:"flow_id"`
+		FlowName           string           `json:"flow_name"`
+		FlowDescription    string           `json:"flow_description"` // Added
+		Title              string           `json:"title"`            // Dynamic Instance Title
+		Status             string           `json:"status"`
+		TemporalWorkflowID string           `json:"temporal_workflow_id"`
+		StartedAt          string           `json:"started_at"`
+		Priority           string           `json:"priority"`
+		Assignments        []map[string]any `json:"assignments"`
+		HasAssignments     bool             `json:"has_assignments"`
+		ActionCount        int              `json:"action_count"`
+		CurrentAction      string           `json:"current_action"`
+		LatestActivityAt   string           `json:"latest_activity_at"`
 	}
 
 	flatResults := make([]FlatResult, len(results))
@@ -200,6 +201,7 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,
 			Priority:           r.Priority,
+			Assignments:        r.Assignments,
 			ActionCount:        stats.Count,
 			CurrentAction:      stats.CurrentAction,
 			LatestActivityAt:   latest,

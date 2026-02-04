@@ -35,10 +35,7 @@ export default function ActionFlowPlyPage() {
   );
 
   // Calculate stats
-  const totalCount = executions.length;
-  const activeCount = executions.filter(e => e.status === "RUNNING").length;
-  const completedCount = executions.filter(e => e.status === "COMPLETED").length;
-  const failedCount = executions.filter(e => e.status === "FAILED").length;
+
 
   // Filter by search, status, and assignment
   const filtered = executions.filter(e => {
@@ -84,9 +81,6 @@ export default function ActionFlowPlyPage() {
           <h1 className="text-xl font-medium tracking-tight text-foreground">
             {t("title")}
           </h1>
-          <span className="text-muted-foreground text-sm">
-            {totalCount} {t("summary.total")}, {activeCount} {t("summary.active")}, {completedCount} {t("summary.completed")}, {failedCount} {t("summary.failed")}
-          </span>
        </div>
 
        {/* Toolbar */}
