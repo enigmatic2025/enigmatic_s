@@ -46,24 +46,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Helper to generate a consistent pastel color from string
-const stringToColor = (str: string) => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const h = Math.abs(hash) % 360;
-  // Use a slightly more vibrant but still soft palette
-  return `hsl(${h}, 85%, 96%)`; 
-};
 
-const stringToTextColor = (str: string) => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const h = Math.abs(hash) % 360;
-  return `hsl(${h}, 70%, 45%)`; 
-};
 
 export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
   const t = useTranslations("ActionFlows");
@@ -120,10 +103,6 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
         const isRunning = exec.status === "RUNNING";
         const isCompleted = exec.status === "COMPLETED";
         const isFailed = exec.status === "FAILED";
-        
-        // Colors for the Flow Icon
-        const flowBg = stringToColor(exec.flow_name);
-        const flowText = stringToTextColor(exec.flow_name);
 
         // Logic to determine main description text
         // If Title is present and NOT "Untitled Instance", it's the specific instance name.
@@ -135,19 +114,16 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
         return (
             <Card 
                 key={exec.id} 
-                className="group border border-border/60 shadow-none hover:border-border/80 transition-all cursor-pointer overflow-hidden bg-card/50 hover:bg-card"
+                className="group border border-border/60 shadow-none hover:border-foreground/20 hover:shadow-sm transition-all cursor-pointer overflow-hidden bg-background"
                 onClick={() => router.push(`${pathname}/${exec.id}`)}
             >
             {/* Top Row: Main Info */}
             <div className="flex flex-col md:flex-row md:items-start justify-between p-4 gap-4">
                 {/* Left: Identity & Description */}
                 <div className="flex items-start gap-4 min-w-0 flex-1">
-                    {/* Flow Type Icon (Colored) */}
-                    <div 
-                        className="flex items-center justify-center w-9 h-9 rounded-lg border border-transparent shrink-0 mt-0.5"
-                        style={{ backgroundColor: flowBg, color: flowText }}
-                    >
-                         <Workflow className="w-5 h-5" />
+                    {/* Flow Type Icon (Monochrome) */}
+                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/5 text-primary border border-border/40 shrink-0 mt-0.5">
+                         <Workflow className="w-5 h-5 opacity-80" />
                     </div>
                     
                     <div className="flex flex-col min-w-0 gap-1">
@@ -155,8 +131,8 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                         <div className="flex flex-wrap items-center gap-2">
                              <span className="font-semibold text-base text-foreground leading-none">
                                 {exec.flow_name} {displayTitle && displayTitle !== exec.flow_name && (
-                                    <span className="font-medium text-foreground/80">
-                                        {displayTitle}
+                                    <span className="text-muted-foreground font-normal">
+                                        / {displayTitle}
                                     </span>
                                 )}
                              </span>
@@ -173,12 +149,12 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                 <div className="flex items-center gap-5 text-xs text-muted-foreground shrink-0 mt-1 md:mt-0">
                     {/* Priority */}
                     {exec.priority && (
-                        <div className="flex items-center gap-1.5 px-2 py-1 bg-muted/40 rounded-md border border-border/40">
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border/40">
                             <div className={cn("w-1.5 h-1.5 rounded-full", 
                                 exec.priority === 'high' ? "bg-orange-500" : 
                                 exec.priority === 'critical' ? "bg-red-500" : "bg-blue-500"
                             )} />
-                            <span className="capitalize font-medium">{exec.priority}</span>
+                            <span className="capitalize font-medium text-foreground/80">{exec.priority}</span>
                         </div>
                     )}
 
@@ -238,15 +214,15 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
             </div>
 
             {/* Bottom Row: Status & Activity */}
-            <div className="flex items-center justify-between px-4 py-3 bg-muted/10 border-t border-border/40 text-xs">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border/40 text-xs text-muted-foreground bg-secondary/20">
                 <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex items-center gap-2 text-muted-foreground shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                         {/* Status Icon in Footer */}
-                        {isRunning ? <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> :
-                         isCompleted ? <div className="w-2 h-2 rounded-full bg-green-500" /> :
-                         <div className="w-2 h-2 rounded-full bg-zinc-300" />}
+                        {isRunning ? <div className="w-2 h-2 rounded-full bg-zinc-900 dark:bg-zinc-100 animate-pulse" /> :
+                         isCompleted ? <div className="w-2 h-2 rounded-full bg-zinc-400" /> :
+                         <div className="w-2 h-2 rounded-full bg-zinc-200" />}
                         
-                        <span className="font-medium uppercase tracking-wider opacity-70 text-[11px]">
+                        <span className="font-medium uppercase tracking-wider opacity-90 text-[11px] text-foreground">
                             {isRunning ? "Running" : isCompleted ? "Completed" : exec.status}
                         </span>
                     </div>

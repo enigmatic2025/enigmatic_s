@@ -191,12 +191,18 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 			latest = r.StartedAt
 		}
 
+		// Determine Title from InputData if available (matching GetActionFlow logic)
+		finalTitle := r.Title
+		if t, ok := r.InputData["title"].(string); ok && t != "" {
+			finalTitle = t
+		}
+
 		flatResults[i] = FlatResult{
 			ID:                 r.ID,
 			FlowID:             r.FlowID,
 			FlowName:           flowName,
 			FlowDescription:    info.Description,
-			Title:              r.Title,
+			Title:              finalTitle,
 			Status:             r.Status,
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,
