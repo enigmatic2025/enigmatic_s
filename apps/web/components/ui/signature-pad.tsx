@@ -90,7 +90,7 @@ export function SignaturePad({ value, onChange, disabled, className }: Signature
         ref={containerRef}
         style={{ height: 160 }}
         className={cn(
-        "border border-input rounded-md overflow-hidden relative bg-muted/5 h-40 min-h-[160px] w-full block", 
+        "border border-input rounded-md overflow-hidden relative bg-white h-40 min-h-[160px] w-full block", 
         disabled ? "opacity-50 pointer-events-none" : "hover:border-primary/50 transition-colors"
       )}>
         <SignatureCanvas
