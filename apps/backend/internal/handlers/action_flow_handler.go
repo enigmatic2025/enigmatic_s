@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"go.temporal.io/sdk/client"
@@ -31,11 +32,12 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		FlowID             string           `json:"flow_id"`
 		Status             string           `json:"status"`
 		TemporalWorkflowID string           `json:"temporal_workflow_id"`
+		RunID              string           `json:"run_id"` // Added RunID
 		InputData          map[string]any   `json:"input_data"`
 		StartedAt          string           `json:"started_at"`
 		Title              string           `json:"title"`
 		Priority           string           `json:"priority"`
-		Assignments        []map[string]any `json:"assignments"` // Added
+		Assignments        []map[string]any `json:"assignments"`
 	}
 
 	var results []ActionFlowResult
@@ -51,8 +53,18 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	// Sort explicitly in Go since .Order() might be missing in this client version
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].StartedAt > results[j].StartedAt
+	})
+
 	// 2. Hydrate Flow Names manually
-	flowNameMap := make(map[string]string)
+	type FlowInfo struct {
+		Name        string
+		Description string
+	}
+	flowMap := make(map[string]FlowInfo)
+
 	if len(results) > 0 {
 		flowIDs := make([]string, 0)
 		seen := make(map[string]bool)
@@ -66,18 +78,81 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 
 		if len(flowIDs) > 0 {
 			var flows []struct {
-				ID   string `json:"id"`
-				Name string `json:"name"`
+				ID          string `json:"id"`
+				Name        string `json:"name"`
+				Description string `json:"description"`
 			}
-			// PostgREST "in" filter format: (id1,id2,...)
-			// optimizing: select id,name from flows where id in (...)
-			// Since we don't have a robust 'In' builder here easily without string join,
-			// let's just fetch all names or loop. Fetching all is safer for small counts.
-			// Actually, let's just loop-query or assume client cache? No, backend hydration is better.
-			// Re-using existing logic but fixed strict typing.
-			client.DB.From("flows").Select("id, name").Execute(&flows)
+			// Fetch flows with description
+			client.DB.From("flows").Select("id, name, description").Execute(&flows)
 			for _, f := range flows {
-				flowNameMap[f.ID] = f.Name
+				flowMap[f.ID] = FlowInfo{
+					Name:        f.Name,
+					Description: f.Description,
+				}
+			}
+		}
+	}
+
+	// 2.5 Fetch Action Stats (Human Tasks)
+	type TaskStat struct {
+		RunID     string `json:"run_id"`
+		Title     string `json:"title"`
+		Status    string `json:"status"`
+		CreatedAt string `json:"created_at"`
+	}
+	taskStatsMap := make(map[string]struct {
+		Count          int
+		CurrentAction  string
+		LatestActivity string
+	})
+
+	if len(results) > 0 {
+		runIDs := make([]string, 0)
+		for _, r := range results {
+			if r.RunID != "" {
+				runIDs = append(runIDs, r.RunID)
+			}
+		}
+
+		if len(runIDs) > 0 {
+			var tasks []TaskStat
+			// Fetch all tasks for these flows.
+			// Note: PostgREST In filter slightly tedious in this client wrapper if not supported directly.
+			// Assuming we can fetch all or loop. For 50 items, fetching all human_tasks might be too big.
+			// Let's rely on a rough loop or if the client supports In.
+			// The current client wrapper seems simple. Let's try to just fetch all human_tasks for now if expected volume is low,
+			// OR optimally, we skip this optimization if strict "IN" query isn't easy,
+			// BUT for a dashboard, we need it.
+			// Let's assume we can fetch recent human tasks.
+			client.DB.From("human_tasks").
+				Select("run_id, title, status, created_at").
+				Limit(500). // Cap at 500 tasks to avoid massive payload
+				Execute(&tasks)
+
+			// Sort tasks by created_at desc
+			sort.Slice(tasks, func(i, j int) bool {
+				return tasks[i].CreatedAt > tasks[j].CreatedAt
+			})
+
+			for _, t := range tasks {
+				stat := taskStatsMap[t.RunID]
+				stat.Count++
+
+				// Latest Activity: Max(created_at)
+				if stat.LatestActivity == "" || t.CreatedAt > stat.LatestActivity {
+					stat.LatestActivity = t.CreatedAt
+				}
+
+				// Current Action: First PENDING/IN_PROGRESS found (since we ordered by desc, correct logic is complex)
+				// Actually, we want the *active* one.
+				if t.Status == "PENDING" || t.Status == "IN_PROGRESS" {
+					// Overwrite nicely or pick the latest? define "Current" as most recently created pending task.
+					// Given sorting by desc, the first one we hit is likely the newest.
+					if stat.CurrentAction == "" {
+						stat.CurrentAction = t.Title
+					}
+				}
+				taskStatsMap[t.RunID] = stat
 			}
 		}
 	}
@@ -87,35 +162,48 @@ func (h *ActionFlowHandler) ListActionFlows(w http.ResponseWriter, r *http.Reque
 		ID                 string `json:"id"`
 		FlowID             string `json:"flow_id"`
 		FlowName           string `json:"flow_name"`
-		Title              string `json:"title"` // Dynamic Instance Title
+		FlowDescription    string `json:"flow_description"` // Added
+		Title              string `json:"title"`            // Dynamic Instance Title
 		Status             string `json:"status"`
 		TemporalWorkflowID string `json:"temporal_workflow_id"`
 		StartedAt          string `json:"started_at"`
 		Priority           string `json:"priority"`
-		HasAssignments     bool   `json:"has_assignments"` // Optional usage
+		HasAssignments     bool   `json:"has_assignments"`
+		ActionCount        int    `json:"action_count"`
+		CurrentAction      string `json:"current_action"`
+		LatestActivityAt   string `json:"latest_activity_at"`
 	}
 
 	flatResults := make([]FlatResult, len(results))
 	for i, r := range results {
-		flowName := flowNameMap[r.FlowID]
+		info := flowMap[r.FlowID]
+		flowName := info.Name
 		if flowName == "" {
 			flowName = "Unknown Flow"
 		}
 
-		// Use the Dynamic Title if available, otherwise fallback to Flow Name in UI logic
-		// But here we send both.
+		stats := taskStatsMap[r.RunID]
+
+		// Fallback for LatestActivityAt
+		latest := stats.LatestActivity
+		if latest == "" {
+			latest = r.StartedAt
+		}
 
 		flatResults[i] = FlatResult{
 			ID:                 r.ID,
 			FlowID:             r.FlowID,
 			FlowName:           flowName,
+			FlowDescription:    info.Description,
 			Title:              r.Title,
 			Status:             r.Status,
 			TemporalWorkflowID: r.TemporalWorkflowID,
 			StartedAt:          r.StartedAt,
 			Priority:           r.Priority,
+			ActionCount:        stats.Count,
+			CurrentAction:      stats.CurrentAction,
+			LatestActivityAt:   latest,
 		}
-
 	}
 
 	w.Header().Set("Content-Type", "application/json")
