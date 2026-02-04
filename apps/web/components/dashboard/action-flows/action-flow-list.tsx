@@ -114,7 +114,7 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
         return (
             <Card 
                 key={exec.id} 
-                className="group border border-border/60 shadow-none hover:border-foreground/20 hover:shadow-sm transition-all cursor-pointer overflow-hidden bg-background"
+                className="group border border-border/60 shadow-none hover:border-foreground/20 transition-all cursor-pointer overflow-hidden bg-background"
                 onClick={() => router.push(`${pathname}/${exec.id}`)}
             >
             {/* Top Row: Main Info */}
@@ -168,14 +168,24 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                         {/* Avatars - Involved */}
                         {exec.assignments && exec.assignments.length > 0 && (
                             <div className="flex -space-x-2 pl-2 border-l border-border/40">
-                                 {exec.assignments.slice(0, 3).map((assign, i) => (
-                                    <Avatar key={i} className="w-7 h-7 border-2 border-background ring-1 ring-border/5">
-                                        <AvatarImage src={assign.user?.image || assign.image} />
-                                        <AvatarFallback className="text-[9px] bg-muted/80 font-medium text-muted-foreground">
-                                            {(assign.user?.name?.[0] || assign.name?.[0] || "?").toUpperCase()}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                ))}
+                                 {exec.assignments.slice(0, 3).map((assign, i) => {
+                                    const name = assign.user?.name || assign.name || "?";
+                                    const initials = name
+                                        .split(' ')
+                                        .map((n: string) => n[0])
+                                        .slice(0, 2)
+                                        .join('')
+                                        .toUpperCase();
+
+                                    return (
+                                        <Avatar key={i} className="w-7 h-7 border-2 border-background shrink-0">
+                                            <AvatarImage src={assign.user?.image || assign.image} />
+                                            <AvatarFallback className="text-[9px] bg-muted font-medium text-muted-foreground">
+                                                {initials}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    );
+                                })}
                             </div>
                         )}
                         
