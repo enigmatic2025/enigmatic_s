@@ -23,6 +23,17 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { SignaturePad } from "@/components/ui/signature-pad";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { supabase } from "@/lib/supabase";
 
 interface SchemaField {
   key: string;
@@ -80,24 +91,52 @@ function StarRating({ value, onChange, disabled }: { value: number; onChange: (v
   );
 }
 
-function FileUpload({ value, onChange, disabled }: { value: any; onChange: (val: any) => void; disabled?: boolean }) {
+function FileUpload({ value, onChange, disabled, actionId }: { value: any; onChange: (val: any) => void; disabled?: boolean; actionId: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<string>(value?.name || (typeof value === 'string' ? value : ''));
+  const [isUploading, setIsUploading] = useState(false);
+  // Store the name for display if value is object with name, or just string if legacy
+  const fileName = value?.name || (typeof value === 'string' ? value : '');
 
-  // Logic to handle file selection
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-      onChange(file); 
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const filePath = `${actionId}/${Date.now()}_${file.name}`;
+      
+      const { data, error } = await supabase.storage
+        .from('task-uploads')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('task-uploads')
+        .getPublicUrl(filePath);
+
+      // Save structured data: Name + URL
+      onChange({
+        name: file.name,
+        url: publicUrl,
+        type: file.type,
+        size: file.size
+      });
+      
+      toast.success("File uploaded");
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Upload failed: " + error.message);
+    } finally {
+      setIsUploading(false);
+      // Reset input
+      if (inputRef.current) inputRef.current.value = '';
     }
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setFileName('');
     onChange(null);
-    if (inputRef.current) inputRef.current.value = '';
   };
 
   if (fileName) {
@@ -107,7 +146,14 @@ function FileUpload({ value, onChange, disabled }: { value: any; onChange: (val:
           <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary shrink-0">
             <FileText className="w-4 h-4" />
           </div>
-          <span className="text-sm font-medium truncate">{fileName}</span>
+          <div className="flex flex-col min-w-0">
+             <span className="text-sm font-medium truncate">{fileName}</span>
+             {value?.url && (
+                <a href={value.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline truncate">
+                  View File
+                </a>
+             )}
+          </div>
         </div>
         {!disabled && (
           <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={handleClear}>
@@ -121,23 +167,25 @@ function FileUpload({ value, onChange, disabled }: { value: any; onChange: (val:
   return (
     <div 
       className={cn(
-        "border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center gap-2 transition-all hover:bg-muted/10 cursor-pointer hover:border-primary/50",
-        disabled && "opacity-50 cursor-default hover:bg-transparent hover:border-dashed"
+        "border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center gap-2 transition-all hover:bg-muted/10 cursor-pointer hover:border-primary/50 relative",
+        (disabled || isUploading) && "opacity-50 cursor-default hover:bg-transparent hover:border-dashed"
       )}
-      onClick={() => !disabled && inputRef.current?.click()}
+      onClick={() => !disabled && !isUploading && inputRef.current?.click()}
     >
       <input 
         ref={inputRef}
         type="file" 
         className="hidden" 
         onChange={handleFileChange}
-        disabled={disabled}
+        disabled={disabled || isUploading}
       />
-      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-1">
-        <Upload className="w-5 h-5 text-muted-foreground" />
-      </div>
+      {isUploading ? (
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      ) : (
+          <Upload className="w-5 h-5 text-muted-foreground" />
+      )}
       <div className="space-y-1">
-        <p className="text-sm font-medium">Click to upload or drag and drop</p>
+        <p className="text-sm font-medium">{isUploading ? "Uploading..." : "Click to upload or drag and drop"}</p>
         <p className="text-xs text-muted-foreground">PDF, PNG, JPG up to 10MB</p>
       </div>
     </div>
@@ -246,30 +294,57 @@ export function HumanTaskForm({
   const isCompleted = status === 'COMPLETED';
   const [formData, setFormData] = useState<Record<string, any>>(initialData || {});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = (key: string, value: any) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async () => {
-    // Basic Validation
-    const missingFields = schema.filter(field => field.required && (formData[field.key] === undefined || formData[field.key] === ''));
-    if (missingFields.length > 0) {
-      toast.error(`Please fill in required fields: ${missingFields.map(f => f.label).join(', ')}`);
-      return;
-    }
+  const handleSaveDraft = async () => {
+      try {
+          setIsSaving(true);
+          // PATCH /tasks/{id} sends partial updates (draft)
+          await apiClient.patch(`/tasks/${actionId}`, {
+             output: formData
+          });
+          toast.success("Progress saved");
+      } catch (error) {
+          console.error(error);
+          toast.error("Failed to save progress");
+      } finally {
+          setIsSaving(false);
+      }
+  };
 
+  const handleCompleteClick = () => {
+      // Basic Validation
+      const missingFields = schema.filter(field => field.required && (formData[field.key] === undefined || formData[field.key] === '' || formData[field.key] === null));
+      if (missingFields.length > 0) {
+        toast.error(`Please fill in required fields: ${missingFields.map(f => f.label).join(', ')}`);
+        return;
+      }
+      setShowConfirm(true);
+  };
+
+  const confirmComplete = async () => {
     try {
       setIsSubmitting(true);
-      await apiClient.patch(`/tasks/${actionId}`, {
-        status: 'COMPLETED',
+      setShowConfirm(false); // Close dialog immediately or wait? Better UX to close and show spinner on button?
+                             // Since we disable buttons, keeping dialog open with spinner is also fine.
+                             // Let's close and rely on page state update or parent callback.
+                             
+      // POST /tasks/{id}/complete trigger workflow
+      await apiClient.post(`/tasks/${actionId}/complete`, {
         output: formData
       });
+      
       toast.success("Task completed successfully");
       if (onComplete) onComplete();
     } catch (error) {
       console.error(error);
       toast.error("Failed to complete task");
+      setShowConfirm(false); // Re-enable if failed
     } finally {
       setIsSubmitting(false);
     }
@@ -448,6 +523,7 @@ export function HumanTaskForm({
                         value={formData[field.key]}
                         onChange={(val) => handleChange(field.key, val)}
                         disabled={isCompleted}
+                        actionId={actionId}
                       />
                     );
                   default:
@@ -474,12 +550,41 @@ export function HumanTaskForm({
              Task Completed
           </Button>
         ) : (
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="min-w-[140px] shadow-none">
-            {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Complete Task
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+                variant="outline" 
+                onClick={handleSaveDraft} 
+                disabled={isSaving || isSubmitting}
+                className="shadow-none border-dashed hover:border-solid"
+            >
+                {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Loader2 className="w-4 h-4 mr-2 opacity-50" />}
+                Save Draft
+            </Button>
+            <Button onClick={handleCompleteClick} disabled={isSubmitting || isSaving} className="min-w-[140px] shadow-none">
+                {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                Complete Task
+            </Button>
+          </div>
         )}
       </div>
-    </div>
+
+      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Complete this task?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will submit your answers and resume the workflow. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmComplete} className="bg-primary hover:bg-primary/90">
+              Confirm Completion
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      </div>
+
   );
 }

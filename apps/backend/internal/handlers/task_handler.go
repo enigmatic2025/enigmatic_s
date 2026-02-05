@@ -130,6 +130,7 @@ func (h *HumanTaskHandler) UpdateTaskHandler(w http.ResponseWriter, r *http.Requ
 
 	var payload struct {
 		Assignments []map[string]interface{} `json:"assignments"`
+		Output      map[string]interface{}   `json:"output"` // Added output for drafts
 	}
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "Invalid body", http.StatusBadRequest)
@@ -140,8 +141,13 @@ func (h *HumanTaskHandler) UpdateTaskHandler(w http.ResponseWriter, r *http.Requ
 
 	// Update Task
 	updateData := map[string]interface{}{
-		"assignments": payload.Assignments,
-		"updated_at":  time.Now(),
+		"updated_at": time.Now(),
+	}
+	if payload.Assignments != nil {
+		updateData["assignments"] = payload.Assignments
+	}
+	if payload.Output != nil {
+		updateData["output"] = payload.Output
 	}
 
 	var updateRes []interface{}
