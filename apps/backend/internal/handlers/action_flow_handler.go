@@ -310,6 +310,8 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 			}
 			client.DB.From("flows").Select("definition").Eq("id", af.FlowID).Execute(&flowDefs)
 
+			processedNodeIDs := make(map[string]bool)
+
 			if len(flowDefs) > 0 && flowDefs[0].Definition != nil {
 				// Walk through nodes in definition
 				if nodesList, ok := flowDefs[0].Definition["nodes"].([]interface{}); ok {
@@ -336,10 +338,9 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										Assignments:  task.Assignments,
 										Schema:       task.Schema,
 									})
+									processedNodeIDs[nodeID] = true
 								} else {
 									// Create a "Future" stub
-									// We need to resolve title/desc from Data if possible, but static only
-									// For now, use Label or Title from data
 									label, _ := data["label"].(string)
 									title, _ := data["title"].(string)
 									if title == "" {
@@ -354,7 +355,6 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										Name:      title,
 										Status:    "PENDING_START", // Custom status for UI
 										StartedAt: "",              // Not started
-										// ID is skipped or we can send a fake one if needed, but UI handles check
 									})
 								}
 							}
@@ -362,11 +362,27 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 					}
 				}
 			}
+
+			// Add Orphaned Tasks (Tasks in DB but not in Definition or failed to match)
+			for nodeID, task := range taskMap {
+				if !processedNodeIDs[nodeID] {
+					activities = append(activities, Activity{
+						Type:         "human_action",
+						Name:         task.Title,
+						Description:  task.Description,
+						Information:  task.Information,
+						Instructions: task.Instructions,
+						Status:       task.Status,
+						StartedAt:    task.CreatedAt,
+						ID:           task.ID,
+						Assignments:  task.Assignments,
+						Schema:       task.Schema,
+					})
+				}
+			}
 		} else {
 			// Fallback if no FlowID (Orphaned run?), just dump tasks
 			for _, t := range tasks {
-				// Check if already added via map (unlikely if no flowid logic ran)
-				// But simpler: just add all tasks if we didn't run the merge logic
 				activities = append(activities, Activity{
 					Type:         "human_action",
 					Name:         t.Title,
