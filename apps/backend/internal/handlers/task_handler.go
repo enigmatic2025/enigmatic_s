@@ -72,11 +72,11 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	client := database.GetClient()
 
 	var task []struct {
-		ID     string                 `json:"id"`
-		RunID  string                 `json:"run_id"`
-		FlowID string                 `json:"flow_id"` // Added FlowID
-		Status string                 `json:"status"`
-		Schema map[string]interface{} `json:"schema"`
+		ID     string                   `json:"id"`
+		RunID  string                   `json:"run_id"`
+		FlowID string                   `json:"flow_id"` // Added FlowID
+		Status string                   `json:"status"`
+		Schema []map[string]interface{} `json:"schema"`
 	}
 
 	err := client.DB.From("human_tasks").Select("*").Eq("id", taskID).Execute(&task)
