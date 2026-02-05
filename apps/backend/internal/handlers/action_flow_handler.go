@@ -250,6 +250,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		ID           string                   `json:"id,omitempty"`
 		Assignments  []map[string]interface{} `json:"assignments,omitempty"`
 		Schema       []map[string]interface{} `json:"schema,omitempty"` // Added Schema
+		StepNumber   int                      `json:"step_number"`      // Added StepNumber
 	}
 	var activities []Activity
 
@@ -311,6 +312,57 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 			}
 			client.DB.From("flows").Select("definition").Eq("id", af.FlowID).Execute(&flowDefs)
 
+			// Calculate Node Depths (Step Numbers)
+			nodeDepths := make(map[string]int)
+			if edgesList, ok := flowDefs[0].Definition["edges"].([]interface{}); ok {
+				adj := make(map[string][]string)
+				inDegree := make(map[string]int)
+
+				// Build Adjacency List & In-Degree
+				for _, e := range edgesList {
+					if eMap, ok := e.(map[string]interface{}); ok {
+						src, _ := eMap["source"].(string)
+						tgt, _ := eMap["target"].(string)
+						if src != "" && tgt != "" {
+							adj[src] = append(adj[src], tgt)
+							inDegree[tgt]++
+						}
+					}
+				}
+
+				// Find Start Nodes (Any node with In-Degree 0)
+				var queue []string
+				visited := make(map[string]bool)
+
+				if nodesList, ok := flowDefs[0].Definition["nodes"].([]interface{}); ok {
+					for _, n := range nodesList {
+						if nMap, ok := n.(map[string]interface{}); ok {
+							nID, _ := nMap["id"].(string)
+							if inDegree[nID] == 0 {
+								queue = append(queue, nID)
+								visited[nID] = true
+								nodeDepths[nID] = 1
+							}
+						}
+					}
+				}
+
+				// BFS
+				for len(queue) > 0 {
+					curr := queue[0]
+					queue = queue[1:]
+					currDepth := nodeDepths[curr]
+
+					for _, neighbor := range adj[curr] {
+						if !visited[neighbor] {
+							visited[neighbor] = true
+							nodeDepths[neighbor] = currDepth + 1
+							queue = append(queue, neighbor)
+						}
+					}
+				}
+			}
+
 			processedNodeIDs := make(map[string]bool)
 
 			if len(flowDefs) > 0 && flowDefs[0].Definition != nil {
@@ -321,6 +373,12 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 							nodeType, _ := nodeMap["type"].(string)
 							nodeID, _ := nodeMap["id"].(string)
 							data, _ := nodeMap["data"].(map[string]interface{})
+
+							// Get calculated Step Number
+							stepNum := nodeDepths[nodeID]
+							if stepNum == 0 {
+								stepNum = 99 // Fallback for disconnected nodes
+							}
 
 							// Only care about Human Tasks
 							if nodeType == "human_task" || nodeType == "human_action" || nodeType == "human-task" || nodeType == "human-action" {
@@ -338,6 +396,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										ID:           task.ID,
 										Assignments:  task.Assignments,
 										Schema:       task.Schema,
+										StepNumber:   stepNum,
 									})
 									processedNodeIDs[nodeID] = true
 								} else {
@@ -373,12 +432,13 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 									}
 
 									activities = append(activities, Activity{
-										Type:      "human_action",
-										Name:      title,
-										Status:    "PENDING_START", // Custom status for UI
-										StartedAt: "",              // Not started
-										ID:        "future-" + nodeID,
-										Schema:    schema,
+										Type:       "human_action",
+										Name:       title,
+										Status:     "PENDING_START", // Custom status for UI
+										StartedAt:  "",              // Not started
+										ID:         "future-" + nodeID,
+										Schema:     schema,
+										StepNumber: stepNum,
 									})
 								}
 							}
@@ -427,13 +487,13 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 	// Simple bubble sort or slice sort since list is small
 	// Adding dependency on "sort" package might be annoying if not imported.
 	// Let's use simple bubble sort for <10 items usually.
-	for i := 0; i < len(activities); i++ {
-		for j := 0; j < len(activities)-i-1; j++ {
-			if activities[j].StartedAt > activities[j+1].StartedAt {
-				activities[j], activities[j+1] = activities[j+1], activities[j]
-			}
+	// Sort Activities: Primary = StepNumber ASC, Secondary = StartedAt ASC
+	sort.Slice(activities, func(i, j int) bool {
+		if activities[i].StepNumber != activities[j].StepNumber {
+			return activities[i].StepNumber < activities[j].StepNumber
 		}
-	}
+		return activities[i].StartedAt < activities[j].StartedAt
+	})
 
 	// 3. End Event (if finished)
 	if af.Status == "COMPLETED" || af.Status == "FAILED" || af.Status == "TERMINATED" {
