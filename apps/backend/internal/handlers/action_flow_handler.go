@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
+	"strings"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"go.temporal.io/sdk/client"
@@ -350,12 +351,34 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										title = "Future Task"
 									}
 
+									// Basic variable substitution for title/description
+									// This is a lightweight substitute for full Liquid rendering
+									if af.InputData != nil {
+										for k, v := range af.InputData {
+											placeholder := fmt.Sprintf("{{ steps.trigger.body.%s }}", k)
+											if strVal, ok := v.(string); ok {
+												title = strings.ReplaceAll(title, placeholder, strVal)
+											}
+										}
+									}
+
+									// Extract Schema
+									var schema []map[string]interface{}
+									if schemaRaw, ok := data["schema"].([]interface{}); ok {
+										for _, s := range schemaRaw {
+											if sMap, ok := s.(map[string]interface{}); ok {
+												schema = append(schema, sMap)
+											}
+										}
+									}
+
 									activities = append(activities, Activity{
 										Type:      "human_action",
 										Name:      title,
 										Status:    "PENDING_START", // Custom status for UI
 										StartedAt: "",              // Not started
 										ID:        "future-" + nodeID,
+										Schema:    schema,
 									})
 								}
 							}

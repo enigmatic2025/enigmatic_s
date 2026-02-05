@@ -376,7 +376,7 @@ export default function ActionFlowDetailPage() {
                                                    {/* Status Pill (Monochrome) */}
                                                    <div className={`px-2 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300`}>
                                                        <StatusIcon className="w-3 h-3" />
-                                                       {act.status}
+                                                       {act.status === 'PENDING_START' ? 'Pending Start' : act.status}
                                                    </div>
     
                                                    {/* Type Pill (Monochrome - Replaces ID) - Squared corners */}
