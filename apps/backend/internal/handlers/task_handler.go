@@ -92,6 +92,7 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	}
 	err = client.DB.From("action_flows").Select("temporal_workflow_id").Eq("id", task[0].FlowID).Execute(&actionFlow)
 	if err != nil || len(actionFlow) == 0 {
+		fmt.Printf("DEBUG: Action Flow Lookup Failed. ID=%s, Err=%v\n", task[0].FlowID, err)
 		http.Error(w, "Action flow not found", http.StatusInternalServerError)
 		return
 	}
@@ -112,6 +113,7 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	var updateRes []interface{}
 	err = client.DB.From("human_tasks").Update(updateData).Eq("id", taskID).Execute(&updateRes)
 	if err != nil {
+		fmt.Printf("DEBUG: Task Update Failed. ID=%s, Err=%v\n", taskID, err)
 		http.Error(w, "Failed to update task", http.StatusInternalServerError)
 		return
 	}
