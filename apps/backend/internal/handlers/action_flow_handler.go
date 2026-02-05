@@ -272,27 +272,114 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 			CreatedAt    string                   `json:"created_at"`
 			Assignments  []map[string]interface{} `json:"assignments"`
 			Schema       []map[string]interface{} `json:"schema"` // Added Schema
+			NodeID       *string                  `json:"node_id"`
 		}
 		var tasks []HumanTask
 		// Query using RunID
 		client.DB.From("human_tasks").
-			Select("id, title, description, information, instructions, status, created_at, assignments, schema"). // Added schema
+			Select("id, title, description, information, instructions, status, created_at, assignments, schema, node_id"). // Added schema and node_id
 			Eq("run_id", af.RunID).
 			Execute(&tasks)
 
+		// Create a Map of NodeID -> Task for merging
+		taskMap := make(map[string]HumanTask)
 		for _, t := range tasks {
-			activities = append(activities, Activity{
-				Type:         "human_action",
-				Name:         t.Title,
-				Description:  t.Description,
-				Information:  t.Information,
-				Instructions: t.Instructions,
-				Status:       t.Status,
-				StartedAt:    t.CreatedAt,
-				ID:           t.ID,
-				Assignments:  t.Assignments,
-				Schema:       t.Schema, // Map schema
-			})
+			if t.NodeID != nil && *t.NodeID != "" {
+				taskMap[*t.NodeID] = t
+			} else {
+				// Legacy tasks without NodeID
+				activities = append(activities, Activity{
+					Type:         "human_action",
+					Name:         t.Title,
+					Description:  t.Description,
+					Information:  t.Information,
+					Instructions: t.Instructions,
+					Status:       t.Status,
+					StartedAt:    t.CreatedAt,
+					ID:           t.ID,
+					Assignments:  t.Assignments,
+					Schema:       t.Schema,
+				})
+			}
+		}
+
+		// fetch flow definition
+		if af.FlowID != "" {
+			var flowDefs []struct {
+				Definition map[string]interface{} `json:"definition"`
+			}
+			client.DB.From("flows").Select("definition").Eq("id", af.FlowID).Execute(&flowDefs)
+
+			if len(flowDefs) > 0 && flowDefs[0].Definition != nil {
+				// Walk through nodes in definition
+				if nodesList, ok := flowDefs[0].Definition["nodes"].([]interface{}); ok {
+					for _, n := range nodesList {
+						if nodeMap, ok := n.(map[string]interface{}); ok {
+							nodeType, _ := nodeMap["type"].(string)
+							nodeID, _ := nodeMap["id"].(string)
+							data, _ := nodeMap["data"].(map[string]interface{})
+
+							// Only care about Human Tasks
+							if nodeType == "human_task" || nodeType == "human_action" {
+								// Check if we have a runtime task for this node
+								if task, exists := taskMap[nodeID]; exists {
+									// Add the *real* task
+									activities = append(activities, Activity{
+										Type:         "human_action",
+										Name:         task.Title,
+										Description:  task.Description,
+										Information:  task.Information,
+										Instructions: task.Instructions,
+										Status:       task.Status,
+										StartedAt:    task.CreatedAt,
+										ID:           task.ID,
+										Assignments:  task.Assignments,
+										Schema:       task.Schema,
+									})
+								} else {
+									// Create a "Future" stub
+									// We need to resolve title/desc from Data if possible, but static only
+									// For now, use Label or Title from data
+									label, _ := data["label"].(string)
+									title, _ := data["title"].(string)
+									if title == "" {
+										title = label
+									}
+									if title == "" {
+										title = "Future Task"
+									}
+
+									activities = append(activities, Activity{
+										Type:      "human_action",
+										Name:      title,
+										Status:    "PENDING_START", // Custom status for UI
+										StartedAt: "",              // Not started
+										// ID is skipped or we can send a fake one if needed, but UI handles check
+									})
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			// Fallback if no FlowID (Orphaned run?), just dump tasks
+			for _, t := range tasks {
+				// Check if already added via map (unlikely if no flowid logic ran)
+				// But simpler: just add all tasks if we didn't run the merge logic
+				activities = append(activities, Activity{
+					Type:         "human_action",
+					Name:         t.Title,
+					Description:  t.Description,
+					Information:  t.Information,
+					Instructions: t.Instructions,
+					Status:       t.Status,
+					StartedAt:    t.CreatedAt,
+					ID:           t.ID,
+					Assignments:  t.Assignments,
+					Schema:       t.Schema,
+				})
+			}
 		}
 	}
 

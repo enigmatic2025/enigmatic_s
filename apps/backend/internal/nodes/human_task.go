@@ -126,6 +126,7 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 		Assignments  []map[string]interface{} `json:"assignments"`
 		Status       string                   `json:"status"`
 		Schema       interface{}              `json:"schema"`
+		NodeID       string                   `json:"node_id"` // Add NodeID
 		CreatedAt    time.Time                `json:"created_at"`
 		UpdatedAt    time.Time                `json:"updated_at"`
 	}{
@@ -140,6 +141,7 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 		Assignments:  assignments,
 		Status:       "PENDING",
 		Schema:       schema,
+		NodeID:       input.StepID, // Save NodeID
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}

@@ -292,6 +292,7 @@ export function HumanTaskForm({
   onComplete 
 }: HumanTaskFormProps) {
   const isCompleted = status === 'COMPLETED';
+  const isPendingStart = status === 'PENDING_START';
   const [formData, setFormData] = useState<Record<string, any>>(initialData || {});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -378,7 +379,7 @@ export function HumanTaskForm({
             )}
 
             {/* Field Rendering Logic */}
-            <div className={isCompleted ? "opacity-70 pointer-events-none" : ""}>
+            <div className={isCompleted || isPendingStart ? "opacity-60 pointer-events-none" : ""}>
               {(() => {
                 switch (field.type) {
                   case 'text':
@@ -548,6 +549,11 @@ export function HumanTaskForm({
           <Button variant="outline" className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200 hover:border-green-300 dark:bg-green-900/10 dark:text-green-400 dark:border-green-900 shadow-none" disabled>
              <CheckCircle2 className="w-4 h-4" />
              Task Completed
+          </Button>
+        ) : isPendingStart ? (
+          <Button variant="ghost" disabled className="w-full border border-dashed text-muted-foreground cursor-not-allowed">
+            <Clock className="w-4 h-4 mr-2" />
+            Pending Start
           </Button>
         ) : (
           <div className="flex items-center gap-2">

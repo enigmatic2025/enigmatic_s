@@ -344,8 +344,9 @@ export default function ActionFlowDetailPage() {
                        <div className="space-y-3">
                            {visibleActivities.map((act, i) => {
                                const isDone = act.status === 'COMPLETED';
-                               const isRunning = act.status === 'RUNNING';
+                               const isRunning = act.status === 'RUNNING' || act.status === 'PENDING'; // Human Tasks use PENDING
                                const isFailed = act.status === 'FAILED';
+                               const isPendingStart = act.status === 'PENDING_START';
                                const isSelected = selectedActionId === act.id;
 
                                // Strictly Monochrome Logic
