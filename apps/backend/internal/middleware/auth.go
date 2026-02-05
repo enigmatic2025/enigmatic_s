@@ -29,7 +29,7 @@ func init() {
 	}
 
 	jwksURL := fmt.Sprintf("%s/auth/v1/.well-known/jwks.json", supabaseURL)
-	
+
 	// Create the JWKS from the resource at the given URL.
 	var err error
 	options := keyfunc.Options{
@@ -65,10 +65,15 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 
-
 		// 1. Try to parse with JWKS (for new ECC/RSA keys)
-		token, err := jwt.Parse(tokenString, jwks.Keyfunc)
-		
+		var token *jwt.Token
+		var err error
+		if jwks != nil {
+			token, err = jwt.Parse(tokenString, jwks.Keyfunc)
+		} else {
+			err = fmt.Errorf("JWKS not initialized")
+		}
+
 		// 2. If JWKS fails, try fallback to HMAC Secret (for legacy/local keys)
 		if err != nil {
 			jwtSecret := os.Getenv("SUPABASE_JWT_SECRET")
