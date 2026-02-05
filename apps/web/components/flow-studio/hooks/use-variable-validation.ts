@@ -55,10 +55,20 @@ export function validateVariableReferences(
     // Strict pattern for the usage inside: steps.NODE.body.FIELD
     // No spaces allowed inside the variable name itself, and it must match exactly.
     // We allow surrounding whitespace INSIDE the brackets, e.g. {{ steps.foo.body.bar }} is valid.
-    const strictVarRegex = /^\s*steps\.([a-zA-Z0-9_-]+)(?:\.body\.([a-zA-Z0-9_-]+))?\s*$/;
+    // Strict pattern for the usage inside: steps.NODE.body.FIELD
+    // No spaces allowed inside the variable name itself, and it must match exactly.
+    // We allow surrounding whitespace INSIDE the brackets, e.g. {{ steps.foo.body.bar }} is valid.
+
+    // OLD STRICT: /^\s*steps\.([a-zA-Z0-9_-]+)(?:\.body\.([a-zA-Z0-9_-]+))?\s*$/
+    // NEW RELAXED (Previous): /^\s*steps\.([a-zA-Z0-9_-]+)(?:\.([a-zA-Z0-9_.-]+))?\s*$/
+
+    // ROBUST: Allows dot or bracket notation for the path suffix.
+    // Capture Group 1: Node ID
+    // Capture Group 2: The path suffix (starting with . or [)
+    const strictVarRegex = /^\s*steps\.([a-zA-Z0-9_-]+)((?:[\.\[].+)?)?\s*$/;
 
     for (const match of matches) {
-        const rawContent = match[1]; // " steps.trigger.body.driver 2 "
+        const rawContent = match[1]; // " steps.trigger.body.driver "
 
         // Check if it fits the strict variable pattern
         const varMatch = rawContent.match(strictVarRegex);
@@ -74,7 +84,7 @@ export function validateVariableReferences(
         }
 
         const nodeRef = varMatch[1];
-        const fieldRef = varMatch[2];
+        const pathSuffix = varMatch[2] || ""; // e.g. ".body.driver", "['key']", ".yesno"
 
         let effectiveNodeId = nodeRef;
         if (nodeRef === 'trigger' && triggerNode) {
@@ -107,9 +117,25 @@ export function validateVariableReferences(
         }
 
         // B. Schema Validation (Specific to Trigger Body for now)
-        if (isReachable && nodeRef === 'trigger' && fieldRef && triggerSchemaKeys) {
-            if (!triggerSchemaKeys.has(fieldRef)) {
-                invalidFields.push(fieldRef);
+        // Only validate against schema if we are accessing the "body" of the trigger
+        if (isReachable && nodeRef === 'trigger' && pathSuffix && triggerSchemaKeys) {
+            // We only validate if the path strictly starts with ".body." to avoid false positives on brackets or other fields
+            if (pathSuffix.startsWith('.body.')) {
+                // Extract the first property after body.
+                // e.g. .body.address.city -> address
+                // e.g. .body.id -> id
+                const pathAfterBody = pathSuffix.substring(6); // remove ".body."
+
+                // Get the first segment (stop at dot or bracket)
+                const firstSegmentMatch = pathAfterBody.match(/^([a-zA-Z0-9_-]+)/);
+
+                if (firstSegmentMatch) {
+                    const rootField = firstSegmentMatch[1];
+                    if (!triggerSchemaKeys.has(rootField)) {
+                        // We only invalid if it's explicitly missing from the body schema
+                        invalidFields.push(rootField);
+                    }
+                }
             }
         }
     }
