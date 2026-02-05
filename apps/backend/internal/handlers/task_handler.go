@@ -90,9 +90,10 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	var actionFlow []struct {
 		TemporalWorkflowID string `json:"temporal_workflow_id"`
 	}
-	err = client.DB.From("action_flows").Select("temporal_workflow_id").Eq("id", task[0].FlowID).Execute(&actionFlow)
+	// Use RunID to link Task to Execution, as FlowID points to Definition
+	err = client.DB.From("action_flows").Select("temporal_workflow_id").Eq("run_id", task[0].RunID).Execute(&actionFlow)
 	if err != nil || len(actionFlow) == 0 {
-		fmt.Printf("DEBUG: Action Flow Lookup Failed. ID=%s, Err=%v\n", task[0].FlowID, err)
+		fmt.Printf("DEBUG: Action Flow Lookup Failed. RunID=%s, Err=%v\n", task[0].RunID, err)
 		http.Error(w, "Action flow not found", http.StatusInternalServerError)
 		return
 	}

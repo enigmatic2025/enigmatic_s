@@ -52,8 +52,10 @@ func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request)
 	dbClient := database.GetClient()
 
 	// We use a temporary struct to capture the DB result
+	// We use a temporary struct to capture the DB result
 	var dbResult []struct {
 		ID                  string          `json:"id"`
+		OrgID               string          `json:"org_id"` // Added OrgID
 		Name                string          `json:"name"`
 		PublishedDefinition json.RawMessage `json:"published_definition"`
 		Definition          json.RawMessage `json:"definition"`
@@ -61,7 +63,7 @@ func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request)
 		IsActive            bool            `json:"is_active"`
 	}
 
-	err := dbClient.DB.From("flows").Select("id, name, published_definition, definition, variables_schema, is_active").Eq("id", flowID).Execute(&dbResult)
+	err := dbClient.DB.From("flows").Select("id, org_id, name, published_definition, definition, variables_schema, is_active").Eq("id", flowID).Execute(&dbResult)
 	if err != nil || len(dbResult) == 0 {
 		http.Error(w, "Flow not found", http.StatusNotFound)
 		return
@@ -84,8 +86,9 @@ func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Inject Flow ID
+	// Inject Flow ID and Org ID
 	flowDef.ID = flowID
+	flowDef.OrgID = dbResult[0].OrgID
 
 	// 3.5 Validate Trigger Schema
 	// Check if the input body matches the required fields defined in the API Trigger

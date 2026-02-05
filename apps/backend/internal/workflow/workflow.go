@@ -152,6 +152,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	// Record Execution in DB
 	recordParams := RecordActionFlowParams{
 		FlowID:      flowDefinition.ID,
+		OrgID:       flowDefinition.OrgID, // Added OrgID
 		WorkflowID:  info.WorkflowExecution.ID,
 		RunID:       info.WorkflowExecution.RunID,
 		InputData:   inputData,

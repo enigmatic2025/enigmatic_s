@@ -7,6 +7,7 @@ import (
 // FlowDefinition maps the React Flow JSON structure
 type FlowDefinition struct {
 	ID    string `json:"id"`
+	OrgID string `json:"org_id"` // Added OrgID
 	Nodes []Node `json:"nodes"`
 	Edges []Edge `json:"edges"`
 }

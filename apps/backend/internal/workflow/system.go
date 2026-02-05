@@ -9,6 +9,7 @@ import (
 
 type RecordActionFlowParams struct {
 	FlowID      string                   `json:"flow_id"`
+	OrgID       string                   `json:"org_id"` // Added OrgID
 	WorkflowID  string                   `json:"workflow_id"`
 	RunID       string                   `json:"run_id"`
 	InputData   map[string]interface{}   `json:"input_data"`
@@ -62,7 +63,8 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 
 	record := struct {
 		FlowID      *string                  `json:"flow_id"`
-		TemporalID  string                   `json:"temporal_id"`
+		OrgID       string                   `json:"org_id"`               // Added OrgID
+		TemporalID  string                   `json:"temporal_workflow_id"` // Fixed JSON tag to match DB
 		RunID       string                   `json:"run_id"`
 		Status      string                   `json:"status"`
 		InputData   map[string]interface{}   `json:"input_data"`
@@ -72,6 +74,7 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 		StartedAt   time.Time                `json:"started_at"`
 	}{
 		FlowID:      flowIDPtr,
+		OrgID:       params.OrgID,
 		TemporalID:  params.WorkflowID,
 		RunID:       params.RunID,
 		Status:      "RUNNING",
