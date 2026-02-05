@@ -343,9 +343,13 @@ export function HumanTaskForm({
                              // Let's close and rely on page state update or parent callback.
                              
       // POST /tasks/{id}/complete trigger workflow
-      await apiClient.post(`/tasks/${actionId}/complete`, {
+      const res = await apiClient.post(`/tasks/${actionId}/complete`, {
         output: formData
       });
+
+      if (!res.ok) {
+        throw new Error(`Failed to complete task: ${res.status} ${res.statusText}`);
+      }
       
       toast.success("Task completed successfully");
       if (onComplete) onComplete();
