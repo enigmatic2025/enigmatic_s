@@ -341,7 +341,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 							if inDegree[nID] == 0 {
 								queue = append(queue, nID)
 								visited[nID] = true
-								nodeDepths[nID] = 1
+								nodeDepths[nID] = 0 // Start Triggers at 0 so first Action is 1
 							}
 						}
 					}
@@ -410,9 +410,22 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										title = "Future Task"
 									}
 
-									// Extract other fields (Info, Instructions)
+									// Extract other fields (Info, Instructions, Description)
+									// Check both lowercase and TitleCase keys to be safe
 									info, _ := data["information"].(string)
+									if info == "" {
+										info, _ = data["Information"].(string)
+									}
+
 									instr, _ := data["instructions"].(string)
+									if instr == "" {
+										instr, _ = data["Instructions"].(string)
+									}
+
+									desc, _ := data["description"].(string)
+									if desc == "" {
+										desc, _ = data["Description"].(string)
+									}
 
 									// Basic variable substitution for title/description/info/instructions
 									// This is a lightweight substitute for full Liquid rendering
@@ -423,6 +436,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 												title = strings.ReplaceAll(title, placeholder, strVal)
 												info = strings.ReplaceAll(info, placeholder, strVal)
 												instr = strings.ReplaceAll(instr, placeholder, strVal)
+												desc = strings.ReplaceAll(desc, placeholder, strVal)
 											}
 										}
 									}
@@ -440,8 +454,9 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 									activities = append(activities, Activity{
 										Type:         "human_action",
 										Name:         title,
-										Information:  info,  // Added
-										Instructions: instr, // Added
+										Description:  desc, // Added
+										Information:  info,
+										Instructions: instr,
 										Status:       "PENDING_START",
 										StartedAt:    "",
 										ID:           "future-" + nodeID,
