@@ -73,6 +73,7 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	var task []struct {
 		ID     string                 `json:"id"`
 		RunID  string                 `json:"run_id"`
+		FlowID string                 `json:"flow_id"` // Added FlowID
 		Status string                 `json:"status"`
 		Schema map[string]interface{} `json:"schema"`
 	}
@@ -82,6 +83,17 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Task not found", http.StatusNotFound)
 		return
 	}
+
+	// 1.5 Fetch Workflow ID from Action Flow
+	var actionFlow []struct {
+		TemporalWorkflowID string `json:"temporal_workflow_id"`
+	}
+	err = client.DB.From("action_flows").Select("temporal_workflow_id").Eq("id", task[0].FlowID).Execute(&actionFlow)
+	if err != nil || len(actionFlow) == 0 {
+		http.Error(w, "Action flow not found", http.StatusInternalServerError)
+		return
+	}
+	workflowID := actionFlow[0].TemporalWorkflowID
 
 	if task[0].Status != "PENDING" {
 		http.Error(w, "Task already completed", http.StatusConflict)
@@ -109,7 +121,8 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 		"output":  payload.Output,
 	}
 
-	err = h.TemporalClient.SignalWorkflow(r.Context(), task[0].RunID, "", signalName, signalArg)
+	// Correctly pass WorkflowID and RunID
+	err = h.TemporalClient.SignalWorkflow(r.Context(), workflowID, task[0].RunID, signalName, signalArg)
 	if err != nil {
 		http.Error(w, "Task completed but workflow signal failed: "+err.Error(), http.StatusInternalServerError)
 		return

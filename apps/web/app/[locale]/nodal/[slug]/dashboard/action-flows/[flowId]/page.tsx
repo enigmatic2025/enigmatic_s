@@ -642,18 +642,6 @@ export default function ActionFlowDetailPage() {
                                                   </pre>
                                               </div>
                                           )}
-                                          
-                                          {action.output && (
-                                              <div className="space-y-1.5">
-                                                  <label className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                                                      <div className="w-1 h-3.5 bg-teal-500 rounded-full" />
-                                                      Output Data
-                                                  </label>
-                                                  <pre className="text-[10px] bg-zinc-900 dark:bg-black text-zinc-100 p-3 rounded-lg overflow-x-auto custom-scrollbar border border-zinc-800 font-mono leading-relaxed">
-                                                      {JSON.stringify(action.output, null, 2)}
-                                                  </pre>
-                                              </div>
-                                          )}
                                       </div>
                                    )}
                               </div>
