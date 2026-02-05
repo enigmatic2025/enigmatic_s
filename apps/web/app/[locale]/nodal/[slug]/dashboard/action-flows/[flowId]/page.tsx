@@ -3,13 +3,12 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
-import useSWR, { useSWRConfig } from "swr"; // Added useSWRConfig
-
+import useSWR, { useSWRConfig } from "swr";
+import { apiClient } from "@/lib/api-client";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "@/navigation";
 import { useTranslations } from "next-intl";
 import { flowService } from "@/services/flow-service";
-
-import { apiClient } from "@/lib/api-client"; // Added apiClient
 import DOMPurify from "isomorphic-dompurify";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
@@ -68,18 +67,41 @@ export default function ActionFlowDetailPage() {
    * Data Fetching with SWR 
    * Replaced useEffect/useState with stale-while-revalidate strategy
    */
+  /* 
+   * Data Fetching with SWR & Realtime
+   */
   const { data, error, isLoading } = useSWR<ActionFlowDetail>(
     flowId ? `/action-flows/${flowId}` : null,
     (url) => apiClient.get(url).then(async (res) => {
         if (!res.ok) throw new Error("Failed to load details");
         return res.json();
     }),
-    {
-        refreshInterval: 10000, // Poll every 10s for status updates
-    }
+    { revalidateOnFocus: true }
   );
 
-  const { mutate } = useSWRConfig(); // Need to import useSWRConfig or just destructure from return
+  const { mutate } = useSWRConfig();
+
+  // Supabase Realtime Subscription
+  useEffect(() => {
+    if (!flowId) return;
+
+    // Listen for any changes to human_tasks linked to this flow
+    const channel = supabase.channel(`flow-${flowId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'human_tasks', filter: `flow_id=eq.${flowId}` },
+        () => {
+          console.log("Realtime update received! Revalidating...");
+          mutate(`/action-flows/${flowId}`); 
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [flowId, mutate]);
+
 
 
   const loading = isLoading; // Alias for existing logic compatibility
@@ -616,13 +638,14 @@ export default function ActionFlowDetailPage() {
                                   {(action.type === 'human_action' || action.type === 'human_task') && (
                                       <div className="mt-8">
                                           <HumanTaskForm 
+                                              key={action.id} // Force remount on action switch
                                               actionId={action.id}
                                               schema={action.schema || action.input?.schema || action.config?.schema || action.data?.schema || []}
                                               status={action.status}
                                               initialData={action.output || {}}
                                               onComplete={() => {
-                                                  // Refresh data
-                                                  mutate(flowId ? `/action-flows/${flowId}` : null);
+                                                  // Refresh data using key string
+                                                  mutate(`/action-flows/${flowId}`); 
                                               }}
                                           />
                                       </div>

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -124,9 +125,11 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	// Correctly pass WorkflowID and RunID
 	err = h.TemporalClient.SignalWorkflow(r.Context(), workflowID, task[0].RunID, signalName, signalArg)
 	if err != nil {
+		fmt.Printf("DEBUG: SignalWorkflow FAILED: %v\n", err)
 		http.Error(w, "Task completed but workflow signal failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	fmt.Printf("DEBUG: SignalWorkflow SUCCESS for WorkflowID=%s RunID=%s Signal=%s\n", workflowID, task[0].RunID, signalName)
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
