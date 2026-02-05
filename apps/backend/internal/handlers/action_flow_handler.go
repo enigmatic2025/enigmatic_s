@@ -251,15 +251,17 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		Assignments  []map[string]interface{} `json:"assignments,omitempty"`
 		Schema       []map[string]interface{} `json:"schema,omitempty"` // Added Schema
 		StepNumber   int                      `json:"step_number"`      // Added StepNumber
+		Output       map[string]interface{}   `json:"output,omitempty"` // Added Output map (persisted draft)
 	}
 	var activities []Activity
 
 	// 1. Start Event
 	activities = append(activities, Activity{
-		Type:      "trigger",
-		Name:      "Workflow Started",
-		Status:    "COMPLETED",
-		StartedAt: af.StartedAt,
+		Type:       "trigger",
+		Name:       "Workflow Started",
+		Status:     "COMPLETED",
+		StartedAt:  af.StartedAt,
+		StepNumber: 0,
 	})
 
 	// 2. Human Tasks
@@ -275,11 +277,12 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 			Assignments  []map[string]interface{} `json:"assignments"`
 			Schema       []map[string]interface{} `json:"schema"` // Added Schema
 			NodeID       *string                  `json:"node_id"`
+			Output       map[string]interface{}   `json:"output"` // Added Output
 		}
 		var tasks []HumanTask
 		// Query using RunID
 		client.DB.From("human_tasks").
-			Select("id, title, description, information, instructions, status, created_at, assignments, schema, node_id"). // Added schema and node_id
+			Select("id, title, description, information, instructions, status, created_at, assignments, schema, node_id, output"). // Added output
 			Eq("run_id", af.RunID).
 			Execute(&tasks)
 
@@ -301,6 +304,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 					ID:           t.ID,
 					Assignments:  t.Assignments,
 					Schema:       t.Schema,
+					Output:       t.Output,
 				})
 			}
 		}
@@ -397,6 +401,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										Assignments:  task.Assignments,
 										Schema:       task.Schema,
 										StepNumber:   stepNum,
+										Output:       task.Output, // Added Output map (persisted draft)
 									})
 									processedNodeIDs[nodeID] = true
 								} else {
