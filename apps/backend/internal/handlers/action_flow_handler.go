@@ -410,13 +410,19 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										title = "Future Task"
 									}
 
-									// Basic variable substitution for title/description
+									// Extract other fields (Info, Instructions)
+									info, _ := data["information"].(string)
+									instr, _ := data["instructions"].(string)
+
+									// Basic variable substitution for title/description/info/instructions
 									// This is a lightweight substitute for full Liquid rendering
 									if af.InputData != nil {
 										for k, v := range af.InputData {
 											placeholder := fmt.Sprintf("{{ steps.trigger.body.%s }}", k)
 											if strVal, ok := v.(string); ok {
 												title = strings.ReplaceAll(title, placeholder, strVal)
+												info = strings.ReplaceAll(info, placeholder, strVal)
+												instr = strings.ReplaceAll(instr, placeholder, strVal)
 											}
 										}
 									}
@@ -432,13 +438,15 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 									}
 
 									activities = append(activities, Activity{
-										Type:       "human_action",
-										Name:       title,
-										Status:     "PENDING_START", // Custom status for UI
-										StartedAt:  "",              // Not started
-										ID:         "future-" + nodeID,
-										Schema:     schema,
-										StepNumber: stepNum,
+										Type:         "human_action",
+										Name:         title,
+										Information:  info,  // Added
+										Instructions: instr, // Added
+										Status:       "PENDING_START",
+										StartedAt:    "",
+										ID:           "future-" + nodeID,
+										Schema:       schema,
+										StepNumber:   stepNum,
 									})
 								}
 							}
