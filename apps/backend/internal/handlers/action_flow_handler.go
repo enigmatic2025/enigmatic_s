@@ -322,7 +322,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 							data, _ := nodeMap["data"].(map[string]interface{})
 
 							// Only care about Human Tasks
-							if nodeType == "human_task" || nodeType == "human_action" {
+							if nodeType == "human_task" || nodeType == "human_action" || nodeType == "human-task" || nodeType == "human-action" {
 								// Check if we have a runtime task for this node
 								if task, exists := taskMap[nodeID]; exists {
 									// Add the *real* task
