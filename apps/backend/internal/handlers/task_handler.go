@@ -81,6 +81,7 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 
 	err := client.DB.From("human_tasks").Select("*").Eq("id", taskID).Execute(&task)
 	if err != nil || len(task) == 0 {
+		fmt.Printf("DEBUG: Task Lookup Failed. ID=%s, Err=%v, Count=%d\n", taskID, err, len(task))
 		http.Error(w, "Task not found", http.StatusNotFound)
 		return
 	}
