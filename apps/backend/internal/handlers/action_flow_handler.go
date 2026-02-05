@@ -355,6 +355,7 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 										Name:      title,
 										Status:    "PENDING_START", // Custom status for UI
 										StartedAt: "",              // Not started
+										ID:        "future-" + nodeID,
 									})
 								}
 							}
