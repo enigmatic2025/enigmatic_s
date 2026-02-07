@@ -95,3 +95,26 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 
 	return nil
 }
+
+type UpdateActionFlowStatusParams struct {
+	RunID  string `json:"run_id"`
+	Status string `json:"status"`
+}
+
+// UpdateActionFlowStatusActivity Updates the status of an action flow
+func UpdateActionFlowStatusActivity(ctx context.Context, params UpdateActionFlowStatusParams) error {
+	client := database.GetClient()
+
+	updateData := map[string]interface{}{
+		"status":       params.Status,
+		"completed_at": time.Now(),
+	}
+
+	var results []map[string]interface{}
+	err := client.DB.From("action_flows").Update(updateData).Eq("run_id", params.RunID).Execute(&results)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

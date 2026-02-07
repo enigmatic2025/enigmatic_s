@@ -6,13 +6,13 @@ import { CTASection } from "@/components/layout/cta-section";
 import { useTranslations } from "next-intl";
 
 const team = [
-  {
-    name: "Sam Tran",
-    roleKey: "samRole",
-    descriptionKey: "samDescription",
-    image: "/images/company/team/sam.jpg",
-    linkedin: "https://www.linkedin.com/in/htsam22/",
-  },
+  // {
+  //   name: "Sam Tran",
+  //   roleKey: "samRole",
+  //   descriptionKey: "samDescription",
+  //   image: "/images/company/team/sam.jpg",
+  //   linkedin: "https://www.linkedin.com/in/htsam22/",
+  // },
   {
     name: "Chris Schmitt",
     roleKey: "chrisRole",

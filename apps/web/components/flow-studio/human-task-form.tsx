@@ -453,15 +453,38 @@ export function HumanTaskForm({
                       />
                     );
                   case 'boolean':
+                    const boolVal = formData[field.key];
                     return (
-                       <div className="flex items-center gap-2 p-3 border rounded-md bg-muted/10">
-                          <Checkbox 
-                            id={`check-${field.key}`}
-                            checked={!!formData[field.key]}
-                            onCheckedChange={(checked) => handleChange(field.key, checked)}
+                       <div className="flex gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleChange(field.key, true)}
+                            className={cn(
+                              "flex-1 py-3 px-4 rounded-md border text-sm font-medium transition-all flex items-center justify-center gap-2 shadow-sm",
+                              boolVal === true 
+                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-500" 
+                                : "border-input bg-background hover:bg-muted/50 text-muted-foreground"
+                            )}
                             disabled={isCompleted}
-                          />
-                          <Label htmlFor={`check-${field.key}`} className="font-normal cursor-pointer text-sm">Yes, confirm</Label>
+                          >
+                            <CheckCircle2 className={cn("w-4 h-4", boolVal === true ? "opacity-100" : "opacity-50")} />
+                            Yes
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleChange(field.key, false)}
+                            className={cn(
+                              "flex-1 py-3 px-4 rounded-md border text-sm font-medium transition-all flex items-center justify-center gap-2 shadow-sm",
+                              boolVal === false
+                                ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 ring-1 ring-red-500" 
+                                : "border-input bg-background hover:bg-muted/50 text-muted-foreground"
+                            )}
+                            disabled={isCompleted}
+                          >
+                            <X className={cn("w-4 h-4", boolVal === false ? "opacity-100" : "opacity-50")} />
+                            No
+                          </button>
                        </div>
                     );
                   case 'multi-choice':

@@ -176,6 +176,28 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	// executionError handles failing the whole workflow if one node fails
 	var executionError error
 
+	// Helper: Reset Downstream Nodes (Recursive)
+	// Used for Loop/Goto to signal that nodes can run again
+	var resetDownstreamNodes func(nodeID string)
+	visitedReset := make(map[string]bool)
+
+	resetDownstreamNodes = func(nodeID string) {
+		if visitedReset[nodeID] {
+			return
+		}
+		visitedReset[nodeID] = true
+		nodeStatus[nodeID] = "PENDING"
+		// We do NOT clear executionState, to preserve history?
+		// Actually, for a clean rerun, we might want to?
+		// But in a parallel graph, maybe not.
+		// For now, let's just reset status.
+
+		// Follow all outgoing edges
+		for _, edge := range outgoingEdges[nodeID] {
+			resetDownstreamNodes(edge.Target)
+		}
+	}
+
 	// Helper: Try to execute a node
 	// This function is RECURSIVE (via workflow.Go)
 	var tryExecuteNode func(ctx workflow.Context, nodeID string)
@@ -291,6 +313,23 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			}
 		}
 
+		// Handle GOTO / LOOP
+		if gotoTarget, ok := result.Output["_goto_target"].(string); ok && gotoTarget != "" {
+			logger.Info("GOTO signal received", "From", nodeID, "To", gotoTarget)
+			// 1. Reset status of target and its children so they can run again
+			visitedReset = make(map[string]bool) // Clear visited map for this run
+			resetDownstreamNodes(gotoTarget)
+
+			// 2. Trigger the target immediately
+			wg.Add(1)
+			workflow.Go(ctx, func(ctx workflow.Context) {
+				tryExecuteNode(ctx, gotoTarget)
+			})
+
+			// 3. Stop normal propagation (Do not trigger children of this node)
+			return
+		}
+
 		// E. Trigger Children (Parallel Split)
 		childrenEdges := outgoingEdges[nodeID]
 		for _, edge := range childrenEdges {
@@ -351,6 +390,17 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	if executionError != nil {
 		return nil, executionError
+	}
+
+	// 5. Mark Flow as COMPLETED
+	completeParams := UpdateActionFlowStatusParams{
+		RunID:  info.WorkflowExecution.RunID,
+		Status: "COMPLETED",
+	}
+	// We execute this synchronously to ensure DB is updated before Workflow closes
+	if err := workflow.ExecuteActivity(ctx, UpdateActionFlowStatusActivity, completeParams).Get(ctx, nil); err != nil {
+		logger.Error("Failed to mark action flow as COMPLETED", "Error", err)
+		// We log but don't fail the workflow result, as the work was technically done.
 	}
 
 	logger.Info("Nodal workflow completed successfully")
