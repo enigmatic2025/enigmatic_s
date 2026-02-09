@@ -246,6 +246,22 @@
     "enterEmailFirst": "請先輸入您的電子郵件地址。",
     "loading": "載入中..."
   },
+  "Security": {
+    "title": "帳戶安全",
+    "subtitle": "管理您的安全設置和雙重驗證",
+    "mfaTitle": "雙重驗證",
+    "mfaEnabled": "您的帳戶已受 2FA 保護",
+    "mfaDisabled": "所有用戶都必須啟用 - 請啟用以繼續使用平台",
+    "enabledBadge": "✓ 已啟用",
+    "disabledBadge": "已禁用",
+    "requiredWarning": "⚠️ 所有帳戶都必須進行雙重驗證。請啟用它以繼續。",
+    "enableButton": "啟用雙重驗證",
+    "appBased": "您的帳戶目前受基於驗證器應用程序的 2FA 保護。",
+    "disableButton": "禁用雙重驗證",
+    "disableConfirm": "您確定要禁用雙重驗證嗎？",
+    "disableSuccess": "雙重驗證已禁用。",
+    "disableError": "禁用 MFA 時出錯："
+  },
   "MFA": {
     "verify": {
       "title": "雙重驗證",

@@ -246,6 +246,22 @@
     "enterEmailFirst": "Vui lòng nhập địa chỉ email của bạn trước.",
     "loading": "Đang tải..."
   },
+  "Security": {
+    "title": "Bảo Mật Tài Khoản",
+    "subtitle": "Quản lý cài đặt bảo mật và xác thực hai yếu tố",
+    "mfaTitle": "Xác Thực Hai Yếu Tố",
+    "mfaEnabled": "Tài khoản của bạn đã được bảo vệ với 2FA",
+    "mfaDisabled": "Yêu cầu cho tất cả người dùng - vui lòng kích hoạt để tiếp tục sử dụng nền tảng",
+    "enabledBadge": "✓ Đã kích hoạt",
+    "disabledBadge": "Vô hiệu hóa",
+    "requiredWarning": "⚠️ Xác thực hai yếu tố là bắt buộc cho tất cả tài khoản. Vui lòng kích hoạt nó để tiếp tục.",
+    "enableButton": "Kích hoạt Xác thực Hai yếu tố",
+    "appBased": "Tài khoản của bạn hiện đang được bảo vệ bằng 2FA dựa trên ứng dụng xác thực.",
+    "disableButton": "Vô hiệu hóa Xác thực Hai yếu tố",
+    "disableConfirm": "Bạn có chắc chắn muốn vô hiệu hóa xác thực hai yếu tố?",
+    "disableSuccess": "Xác thực hai yếu tố đã bị vô hiệu hóa.",
+    "disableError": "Lỗi vô hiệu hóa MFA: "
+  },
   "MFA": {
     "verify": {
       "title": "Xác Thực Hai Yếu Tố",

@@ -8,10 +8,12 @@ import { useAuth } from '@/components/auth-provider'
 import { Link } from '@/navigation'
 import { toast } from 'sonner'
 import useSWR, { mutate } from 'swr'
+import { useTranslations } from 'next-intl'
 
 export default function SecurityPage() {
   const router = useRouter()
   const { user } = useAuth()
+  const t = useTranslations("Security")
 
   // Redirect if not logged in
   if (!user) {
@@ -35,7 +37,7 @@ export default function SecurityPage() {
   const [isDisabling, setIsDisabling] = useState(false)
 
   const handleDisableMFA = async () => {
-    if (!confirm('Are you sure you want to disable two-factor authentication?')) return
+    if (!confirm(t('disableConfirm'))) return
 
     setIsDisabling(true)
     try {
@@ -44,12 +46,12 @@ export default function SecurityPage() {
         const { error } = await supabase.auth.mfa.unenroll({ factorId })
         if (error) throw error
         
-        toast.success('Two-factor authentication has been disabled.')
+        toast.success(t('disableSuccess'))
         // Revalidate SWR
         mutate('mfa-factors') 
       }
     } catch (err: any) {
-      toast.error('Error disabling MFA: ' + err.message)
+      toast.error(t('disableError') + err.message)
     } finally {
       setIsDisabling(false)
     }
@@ -69,10 +71,10 @@ export default function SecurityPage() {
         {/* Header */}
         <div>
           <h1 className="text-4xl font-light tracking-tight text-foreground">
-            Account Security
+            {t('title')}
           </h1>
           <p className="mt-2 text-lg text-muted-foreground font-light">
-            Manage your security settings and two-factor authentication
+            {t('subtitle')}
           </p>
         </div>
 
@@ -81,23 +83,23 @@ export default function SecurityPage() {
           <div className="flex items-start justify-between">
             <div className="space-y-2">
               <h2 className="text-2xl font-light text-foreground">
-                Two-Factor Authentication
+                {t('mfaTitle')}
               </h2>
               <p className="text-base text-muted-foreground">
                 {mfaEnabled 
-                  ? 'Your account is secured with 2FA' 
-                  : 'Required for all users - please enable to continue using the platform'}
+                  ? t('mfaEnabled') 
+                  : t('mfaDisabled')}
               </p>
             </div>
             
             <div className="flex items-center gap-2">
               {mfaEnabled ? (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-light bg-green-500/10 text-green-500 border border-green-500/20">
-                  ✓ Enabled
+                  {t('enabledBadge')}
                 </span>
               ) : (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-light bg-muted text-muted-foreground border border-border">
-                  Disabled
+                  {t('disabledBadge')}
                 </span>
               )}
             </div>
@@ -108,26 +110,26 @@ export default function SecurityPage() {
               <div className="space-y-4">
                 <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
                   <p className="text-sm text-yellow-600 dark:text-yellow-400 font-light">
-                    ⚠️ Two-factor authentication is required for all accounts. Please enable it to continue.
+                    {t('requiredWarning')}
                   </p>
                 </div>
                 <Link href="/account/security/mfa-setup">
                   <button className="rounded-md border border-transparent bg-foreground text-background px-4 py-2 text-sm font-light hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-300">
-                    Enable Two-Factor Authentication
+                    {t('enableButton')}
                   </button>
                 </Link>
               </div>
             ) : (
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Your account is currently protected with authenticator app-based 2FA.
+                  {t('appBased')}
                 </p>
                 <button
                   onClick={handleDisableMFA}
                   disabled={isDisabling}
                   className="rounded-md border border-red-500/20 bg-red-500/10 text-red-500 px-4 py-2 text-sm font-light hover:bg-red-500/20 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
-                  Disable Two-Factor Authentication
+                  {t('disableButton')}
                 </button>
               </div>
             )}

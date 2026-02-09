@@ -246,6 +246,22 @@
     "enterEmailFirst": "Please enter your email address first.",
     "loading": "Loading..."
   },
+  "Security": {
+    "title": "Account Security",
+    "subtitle": "Manage your security settings and two-factor authentication",
+    "mfaTitle": "Two-Factor Authentication",
+    "mfaEnabled": "Your account is secured with 2FA",
+    "mfaDisabled": "Required for all users - please enable to continue using the platform",
+    "enabledBadge": "✓ Enabled",
+    "disabledBadge": "Disabled",
+    "requiredWarning": "⚠️ Two-factor authentication is required for all accounts. Please enable it to continue.",
+    "enableButton": "Enable Two-Factor Authentication",
+    "appBased": "Your account is currently protected with authenticator app-based 2FA.",
+    "disableButton": "Disable Two-Factor Authentication",
+    "disableConfirm": "Are you sure you want to disable two-factor authentication?",
+    "disableSuccess": "Two-factor authentication has been disabled.",
+    "disableError": "Error disabling MFA: "
+  },
   "MFA": {
     "verify": {
       "title": "Two-Factor Authentication",
