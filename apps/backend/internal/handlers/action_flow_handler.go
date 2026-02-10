@@ -264,60 +264,22 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 		StepNumber: 0,
 	})
 
-	// 2. Human Tasks
-	if af.RunID != "" {
-		type HumanTask struct {
-			ID           string                   `json:"id"`
-			Title        string                   `json:"title"`
-			Description  string                   `json:"description"`
-			Information  string                   `json:"information"`
-			Instructions string                   `json:"instructions"`
-			Status       string                   `json:"status"`
-			CreatedAt    string                   `json:"created_at"`
-			Assignments  []map[string]interface{} `json:"assignments"`
-			Schema       []map[string]interface{} `json:"schema"` // Added Schema
-			NodeID       *string                  `json:"node_id"`
-			Output       map[string]interface{}   `json:"output"` // Added Output
-		}
-		var tasks []HumanTask
-		// Query using RunID
-		client.DB.From("human_tasks").
-			Select("id, title, description, information, instructions, status, created_at, assignments, schema, node_id, output"). // Added output
-			Eq("run_id", af.RunID).
-			Execute(&tasks)
+	// 2. Human Tasks & Flow Definition
+	// We need both to build a complete picture (History + Current + Future)
 
-		// Create a Map of NodeID -> Task for merging
-		taskMap := make(map[string]HumanTask)
-		for _, t := range tasks {
-			if t.NodeID != nil && *t.NodeID != "" {
-				taskMap[*t.NodeID] = t
-			} else {
-				// Legacy tasks without NodeID
-				activities = append(activities, Activity{
-					Type:         "human_action",
-					Name:         t.Title,
-					Description:  t.Description,
-					Information:  t.Information,
-					Instructions: t.Instructions,
-					Status:       t.Status,
-					StartedAt:    t.CreatedAt,
-					ID:           t.ID,
-					Assignments:  t.Assignments,
-					Schema:       t.Schema,
-					Output:       t.Output,
-				})
-			}
-		}
+	// A. Fetch Flow Definition first (to compute Step Numbers)
+	var flowDefs []struct {
+		Definition map[string]interface{} `json:"definition"`
+	}
+	nodeDepths := make(map[string]int)
+	nodeDataMap := make(map[string]map[string]interface{}) // Store node data for future stubs
+	nodeTypeMap := make(map[string]string)                 // Store node type
 
-		// fetch flow definition
-		if af.FlowID != "" {
-			var flowDefs []struct {
-				Definition map[string]interface{} `json:"definition"`
-			}
-			client.DB.From("flows").Select("definition").Eq("id", af.FlowID).Execute(&flowDefs)
+	if af.FlowID != "" {
+		client.DB.From("flows").Select("definition").Eq("id", af.FlowID).Execute(&flowDefs)
 
+		if len(flowDefs) > 0 && flowDefs[0].Definition != nil {
 			// Calculate Node Depths (Step Numbers)
-			nodeDepths := make(map[string]int)
 			if edgesList, ok := flowDefs[0].Definition["edges"].([]interface{}); ok {
 				adj := make(map[string][]string)
 				inDegree := make(map[string]int)
@@ -342,16 +304,23 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 					for _, n := range nodesList {
 						if nMap, ok := n.(map[string]interface{}); ok {
 							nID, _ := nMap["id"].(string)
+							nType, _ := nMap["type"].(string)
+							nData, _ := nMap["data"].(map[string]interface{})
+
+							// Store for later lookups
+							nodeDataMap[nID] = nData
+							nodeTypeMap[nID] = nType
+
 							if inDegree[nID] == 0 {
 								queue = append(queue, nID)
 								visited[nID] = true
-								nodeDepths[nID] = 0 // Start Triggers at 0 so first Action is 1
+								nodeDepths[nID] = 0
 							}
 						}
 					}
 				}
 
-				// BFS
+				// BFS for Depths
 				for len(queue) > 0 {
 					curr := queue[0]
 					queue = queue[1:]
@@ -366,159 +335,161 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 					}
 				}
 			}
+		}
+	}
 
-			processedNodeIDs := make(map[string]bool)
+	// B. Fetch Tasks
+	processedNodeIDs := make(map[string]bool)
+	if af.RunID != "" {
+		type HumanTask struct {
+			ID           string                   `json:"id"`
+			Title        string                   `json:"title"`
+			Description  string                   `json:"description"`
+			Information  string                   `json:"information"`
+			Instructions string                   `json:"instructions"`
+			Status       string                   `json:"status"`
+			CreatedAt    string                   `json:"created_at"`
+			Assignments  []map[string]interface{} `json:"assignments"`
+			Schema       []map[string]interface{} `json:"schema"`
+			NodeID       *string                  `json:"node_id"`
+			Output       map[string]interface{}   `json:"output"`
+		}
+		var tasks []HumanTask
+		client.DB.From("human_tasks").
+			Select("id, title, description, information, instructions, status, created_at, assignments, schema, node_id, output").
+			Eq("run_id", af.RunID).
+			Execute(&tasks)
 
-			if len(flowDefs) > 0 && flowDefs[0].Definition != nil {
-				// Walk through nodes in definition
-				if nodesList, ok := flowDefs[0].Definition["nodes"].([]interface{}); ok {
-					for _, n := range nodesList {
-						if nodeMap, ok := n.(map[string]interface{}); ok {
-							nodeType, _ := nodeMap["type"].(string)
-							nodeID, _ := nodeMap["id"].(string)
-							data, _ := nodeMap["data"].(map[string]interface{})
+		// C. Process Tasks (Add ALL of them to Activities)
+		for _, t := range tasks {
+			stepNum := 99 // Default if not found
+			if t.NodeID != nil && *t.NodeID != "" {
+				processedNodeIDs[*t.NodeID] = true
+				if d, ok := nodeDepths[*t.NodeID]; ok {
+					stepNum = d
+				}
+			}
 
-							// Get calculated Step Number
+			activities = append(activities, Activity{
+				Type:         "human_action",
+				Name:         t.Title,
+				Description:  t.Description,
+				Information:  t.Information,
+				Instructions: t.Instructions,
+				Status:       t.Status,
+				StartedAt:    t.CreatedAt,
+				ID:           t.ID,
+				Assignments:  t.Assignments,
+				Schema:       t.Schema,
+				StepNumber:   stepNum,
+				Output:       t.Output,
+			})
+		}
+	}
+
+	// D. Add Future Stubs (from Definition, for nodes NOT yet processed)
+	// We iterate the definition nodes again to ensure order/completeness
+	if len(flowDefs) > 0 && flowDefs[0].Definition != nil {
+		if nodesList, ok := flowDefs[0].Definition["nodes"].([]interface{}); ok {
+			for _, n := range nodesList {
+				if nMap, ok := n.(map[string]interface{}); ok {
+					nodeType, _ := nMap["type"].(string)
+					nodeID, _ := nMap["id"].(string)
+
+					// Only care about Human Tasks
+					if nodeType == "human_task" || nodeType == "human_action" || nodeType == "human-task" || nodeType == "human-action" {
+						// If we haven't seen this node yet, add a Future Stub
+						if !processedNodeIDs[nodeID] {
+							data := nodeDataMap[nodeID]
 							stepNum := nodeDepths[nodeID]
-							if stepNum == 0 {
-								stepNum = 99 // Fallback for disconnected nodes
+							if stepNum == 0 && nodeID != "" {
+								// Edge case: if depth 0 but not visited in BFS?
+								// Keep 0 or 99? 0 implies start.
 							}
 
-							// Only care about Human Tasks
-							if nodeType == "human_task" || nodeType == "human_action" || nodeType == "human-task" || nodeType == "human-action" {
-								// Check if we have a runtime task for this node
-								if task, exists := taskMap[nodeID]; exists {
-									// Add the *real* task
-									activities = append(activities, Activity{
-										Type:         "human_action",
-										Name:         task.Title,
-										Description:  task.Description,
-										Information:  task.Information,
-										Instructions: task.Instructions,
-										Status:       task.Status,
-										StartedAt:    task.CreatedAt,
-										ID:           task.ID,
-										Assignments:  task.Assignments,
-										Schema:       task.Schema,
-										StepNumber:   stepNum,
-										Output:       task.Output, // Added Output map (persisted draft)
-									})
-									processedNodeIDs[nodeID] = true
-								} else {
-									// Create a "Future" stub
-									label, _ := data["label"].(string)
-									title, _ := data["title"].(string)
-									if title == "" {
-										title = label
-									}
-									if title == "" {
-										title = "Future Task"
-									}
+							label, _ := data["label"].(string)
+							title, _ := data["title"].(string)
+							if title == "" {
+								title = label
+							}
+							if title == "" {
+								title = "Future Task"
+							}
 
-									// Extract other fields (Info, Instructions, Description)
-									// Check both lowercase and TitleCase keys to be safe
-									info, _ := data["information"].(string)
-									if info == "" {
-										info, _ = data["Information"].(string)
-									}
+							info, _ := data["information"].(string)
+							if info == "" {
+								info, _ = data["Information"].(string)
+							}
 
-									instr, _ := data["instructions"].(string)
-									if instr == "" {
-										instr, _ = data["Instructions"].(string)
-									}
+							instr, _ := data["instructions"].(string)
+							if instr == "" {
+								instr, _ = data["Instructions"].(string)
+							}
 
-									desc, _ := data["description"].(string)
-									if desc == "" {
-										desc, _ = data["Description"].(string)
-									}
+							desc, _ := data["description"].(string)
+							if desc == "" {
+								desc, _ = data["Description"].(string)
+							}
 
-									// Basic variable substitution for title/description/info/instructions
-									// This is a lightweight substitute for full Liquid rendering
-									if af.InputData != nil {
-										for k, v := range af.InputData {
-											placeholder := fmt.Sprintf("{{ steps.trigger.body.%s }}", k)
-											if strVal, ok := v.(string); ok {
-												title = strings.ReplaceAll(title, placeholder, strVal)
-												info = strings.ReplaceAll(info, placeholder, strVal)
-												instr = strings.ReplaceAll(instr, placeholder, strVal)
-												desc = strings.ReplaceAll(desc, placeholder, strVal)
-											}
-										}
+							// Variable substitution
+							if af.InputData != nil {
+								for k, v := range af.InputData {
+									placeholder := fmt.Sprintf("{{ steps.trigger.body.%s }}", k)
+									if strVal, ok := v.(string); ok {
+										title = strings.ReplaceAll(title, placeholder, strVal)
+										info = strings.ReplaceAll(info, placeholder, strVal)
+										instr = strings.ReplaceAll(instr, placeholder, strVal)
+										desc = strings.ReplaceAll(desc, placeholder, strVal)
 									}
-
-									// Extract Schema
-									var schema []map[string]interface{}
-									if schemaRaw, ok := data["schema"].([]interface{}); ok {
-										for _, s := range schemaRaw {
-											if sMap, ok := s.(map[string]interface{}); ok {
-												schema = append(schema, sMap)
-											}
-										}
-									}
-
-									activities = append(activities, Activity{
-										Type:         "human_action",
-										Name:         title,
-										Description:  desc, // Added
-										Information:  info,
-										Instructions: instr,
-										Status:       "PENDING_START",
-										StartedAt:    "",
-										ID:           "future-" + nodeID,
-										Schema:       schema,
-										StepNumber:   stepNum,
-									})
 								}
 							}
+
+							var schema []map[string]interface{}
+							if schemaRaw, ok := data["schema"].([]interface{}); ok {
+								for _, s := range schemaRaw {
+									if sMap, ok := s.(map[string]interface{}); ok {
+										schema = append(schema, sMap)
+									}
+								}
+							}
+
+							activities = append(activities, Activity{
+								Type:         "human_action",
+								Name:         title,
+								Description:  desc,
+								Information:  info,
+								Instructions: instr,
+								Status:       "PENDING_START",
+								StartedAt:    "", // Future
+								ID:           "future-" + nodeID,
+								Schema:       schema,
+								StepNumber:   stepNum,
+							})
 						}
 					}
 				}
 			}
-
-			// Add Orphaned Tasks (Tasks in DB but not in Definition or failed to match)
-			for nodeID, task := range taskMap {
-				if !processedNodeIDs[nodeID] {
-					activities = append(activities, Activity{
-						Type:         "human_action",
-						Name:         task.Title,
-						Description:  task.Description,
-						Information:  task.Information,
-						Instructions: task.Instructions,
-						Status:       task.Status,
-						StartedAt:    task.CreatedAt,
-						ID:           task.ID,
-						Assignments:  task.Assignments,
-						Schema:       task.Schema,
-					})
-				}
-			}
-		} else {
-			// Fallback if no FlowID (Orphaned run?), just dump tasks
-			for _, t := range tasks {
-				activities = append(activities, Activity{
-					Type:         "human_action",
-					Name:         t.Title,
-					Description:  t.Description,
-					Information:  t.Information,
-					Instructions: t.Instructions,
-					Status:       t.Status,
-					StartedAt:    t.CreatedAt,
-					ID:           t.ID,
-					Assignments:  t.Assignments,
-					Schema:       t.Schema,
-				})
-			}
 		}
 	}
 
-	// Sort Activities by StartedAt
-	// Simple bubble sort or slice sort since list is small
-	// Adding dependency on "sort" package might be annoying if not imported.
-	// Let's use simple bubble sort for <10 items usually.
 	// Sort Activities: Primary = StepNumber ASC, Secondary = StartedAt ASC
 	sort.Slice(activities, func(i, j int) bool {
+		// If StartAt is empty (Future), put it last among same steps?
+		// Actually, sorting by CreatedAt ASC puts "" (empty) at start or end?
+		// Empty string is "smaller" than "2024...", so it goes first.
+		// That's WRONG. Future tasks should be AFTER completed tasks of same step (if that happens? logic prevents it though, as we only add future if !seen).
+		// Wait, if !seen, then we ONLY have future. So sorting doesnt matter.
+		// But if we have mixed steps...
 		if activities[i].StepNumber != activities[j].StepNumber {
 			return activities[i].StepNumber < activities[j].StepNumber
+		}
+		// Same Step Number (e.g. Iterations).
+		// Empty StartedAt (Future) should be last?
+		if activities[i].StartedAt == "" {
+			return false // "i" is future, so "i > j", so return false (i not less than j)
+		}
+		if activities[j].StartedAt == "" {
+			return true // "j" is future, so "i < j", return true
 		}
 		return activities[i].StartedAt < activities[j].StartedAt
 	})
