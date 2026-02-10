@@ -1,7 +1,9 @@
 import { ActivityFeed } from "@/components/dashboard/activity-feed"
 import { MyActions } from "@/components/dashboard/my-actions"
 
-export default function DashboardPage({ params }: { params: { slug: string } }) {
+export default async function DashboardPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  
   return (
     <div className="h-full w-full p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Left Column (Main Content) */}
@@ -13,13 +15,13 @@ export default function DashboardPage({ params }: { params: { slug: string } }) 
         
         {/* Activity Feed (Stacked below stats) */}
         <div className="flex-1 min-h-[400px]">
-           <ActivityFeed slug={params.slug} scope="org" />
+           <ActivityFeed slug={slug} scope="org" />
         </div>
       </div>
 
       {/* Right Column (My Actions) */}
       <div className="lg:col-span-1 h-full min-h-[500px]">
-        <MyActions slug={params.slug} />
+        <MyActions slug={slug} />
       </div>
     </div>
   );
