@@ -32,18 +32,26 @@ func (h *HumanTaskHandler) GetTasksHandler(w http.ResponseWriter, r *http.Reques
 	status := r.URL.Query().Get("status")
 	userID := r.URL.Query().Get("user_id")
 
-	// Start query
-	query := db.From("human_tasks").Select("*").Eq("1", "1")
-
-	if email != "" {
-		query = query.Eq("assignee", email)
-	}
-	if status != "" {
-		query = query.Eq("status", status)
-	}
-
 	var tasks []map[string]interface{}
-	err := query.Execute(&tasks)
+	var err error
+
+	// Build query with real filters only (no dummy column hacks)
+	selectQuery := db.From("human_tasks").Select("*")
+
+	// Determine which filters to apply
+	hasEmail := email != ""
+	hasStatus := status != ""
+
+	if hasEmail && hasStatus {
+		err = selectQuery.Eq("assignee", email).Eq("status", status).Execute(&tasks)
+	} else if hasEmail {
+		err = selectQuery.Eq("assignee", email).Execute(&tasks)
+	} else if hasStatus {
+		err = selectQuery.Eq("status", status).Execute(&tasks)
+	} else {
+		err = selectQuery.Execute(&tasks)
+	}
+
 	if err != nil {
 		http.Error(w, "Failed to fetch tasks: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -57,7 +65,6 @@ func (h *HumanTaskHandler) GetTasksHandler(w http.ResponseWriter, r *http.Reques
 			if !ok || assignments == nil {
 				continue
 			}
-			// assignments is a JSON array like [{"id": "...", "name": "..."}]
 			assignmentList, ok := assignments.([]interface{})
 			if !ok {
 				continue
@@ -74,6 +81,11 @@ func (h *HumanTaskHandler) GetTasksHandler(w http.ResponseWriter, r *http.Reques
 			}
 		}
 		tasks = filtered
+	}
+
+	// Ensure we return [] not null
+	if tasks == nil {
+		tasks = []map[string]interface{}{}
 	}
 
 	// Sort by created_at DESC in Go
