@@ -474,23 +474,21 @@ func (h *ActionFlowHandler) GetActionFlow(w http.ResponseWriter, r *http.Request
 
 	// Sort Activities: Primary = StepNumber ASC, Secondary = StartedAt ASC
 	sort.Slice(activities, func(i, j int) bool {
-		// If StartAt is empty (Future), put it last among same steps?
-		// Actually, sorting by CreatedAt ASC puts "" (empty) at start or end?
-		// Empty string is "smaller" than "2024...", so it goes first.
-		// That's WRONG. Future tasks should be AFTER completed tasks of same step (if that happens? logic prevents it though, as we only add future if !seen).
-		// Wait, if !seen, then we ONLY have future. So sorting doesnt matter.
-		// But if we have mixed steps...
-		if activities[i].StepNumber != activities[j].StepNumber {
+		// If one has StartedAt and other doesn't (Future), StartedAt comes first
+		if activities[i].StartedAt != "" && activities[j].StartedAt == "" {
+			return true
+		}
+		if activities[i].StartedAt == "" && activities[j].StartedAt != "" {
+			return false
+		}
+
+		// Both Future: Sort by Static Step Number
+		if activities[i].StartedAt == "" && activities[j].StartedAt == "" {
 			return activities[i].StepNumber < activities[j].StepNumber
 		}
-		// Same Step Number (e.g. Iterations).
-		// Empty StartedAt (Future) should be last?
-		if activities[i].StartedAt == "" {
-			return false // "i" is future, so "i > j", so return false (i not less than j)
-		}
-		if activities[j].StartedAt == "" {
-			return true // "j" is future, so "i < j", return true
-		}
+
+		// Both Started: Sort by Time
+		// Note: String comparison of ISO8601 works for sort
 		return activities[i].StartedAt < activities[j].StartedAt
 	})
 
