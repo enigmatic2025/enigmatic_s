@@ -32,32 +32,51 @@ func (h *HumanTaskHandler) GetTasksHandler(w http.ResponseWriter, r *http.Reques
 	status := r.URL.Query().Get("status")
 	userID := r.URL.Query().Get("user_id")
 
-	// Start query and promote to FilterRequestBuilder immediately
+	// Start query
 	query := db.From("human_tasks").Select("*").Eq("1", "1")
 
 	if email != "" {
-		// Legacy support or if email is strictly used in assignee column (which seems to be 'unassigned' mostly)
 		query = query.Eq("assignee", email)
 	}
 	if status != "" {
 		query = query.Eq("status", status)
 	}
-	if userID != "" {
-		// Filter by assignments JSONB array containing the user ID
-		// assignments @> '[{"id": "USER_ID"}]'
-		filterJSON := fmt.Sprintf(`[{ "id": "%s" }]`, userID)
-		query = query.Filter("assignments", "cs", filterJSON)
-	}
 
 	var tasks []map[string]interface{}
-	// Execute query
 	err := query.Execute(&tasks)
 	if err != nil {
 		http.Error(w, "Failed to fetch tasks: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Sort by CreatedAt DESC locally (since Order is not available on FilterRequestBuilder in this client version)
+	// Post-query filter: if user_id is specified, filter by assignments JSONB in Go
+	if userID != "" {
+		var filtered []map[string]interface{}
+		for _, task := range tasks {
+			assignments, ok := task["assignments"]
+			if !ok || assignments == nil {
+				continue
+			}
+			// assignments is a JSON array like [{"id": "...", "name": "..."}]
+			assignmentList, ok := assignments.([]interface{})
+			if !ok {
+				continue
+			}
+			for _, a := range assignmentList {
+				aMap, ok := a.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				if aMap["id"] == userID {
+					filtered = append(filtered, task)
+					break
+				}
+			}
+		}
+		tasks = filtered
+	}
+
+	// Sort by created_at DESC in Go
 	sort.Slice(tasks, func(i, j int) bool {
 		t1Str, _ := tasks[i]["created_at"].(string)
 		t2Str, _ := tasks[j]["created_at"].(string)

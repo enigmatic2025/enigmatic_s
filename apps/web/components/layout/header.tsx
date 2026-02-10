@@ -89,26 +89,33 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
         return;
       }
 
-      // Check for org membership
-      const { data: memberships } = await supabase
-        .from("memberships")
-        .select("organizations(slug)")
-        .limit(1);
+      try {
+        // Use backend API instead of direct Supabase DB access
+        const res = await fetch("/api/user/memberships", {
+          headers: {
+            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          },
+        });
 
-      if (
-        memberships &&
-        memberships.length > 0 &&
-        memberships[0].organizations
-      ) {
-        const org = Array.isArray(memberships[0].organizations)
-          ? memberships[0].organizations[0]
-          : memberships[0].organizations;
-
-        if (org && org.slug) {
-          setDashboardUrl(`/nodal/${org.slug}/dashboard`);
+        if (!res.ok) {
+          setDashboardUrl("/nodal/admin");
+          return;
         }
-      } else {
-        // Fallback to admin
+
+        const memberships = await res.json();
+
+        if (memberships && memberships.length > 0 && memberships[0].organizations) {
+          const org = Array.isArray(memberships[0].organizations)
+            ? memberships[0].organizations[0]
+            : memberships[0].organizations;
+
+          if (org && org.slug) {
+            setDashboardUrl(`/nodal/${org.slug}/dashboard`);
+          }
+        } else {
+          setDashboardUrl("/nodal/admin");
+        }
+      } catch {
         setDashboardUrl("/nodal/admin");
       }
     };

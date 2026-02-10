@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
 )
 
 type OrganizationHandler struct{}
@@ -131,6 +132,33 @@ func (h *OrganizationHandler) GetOrgBySlug(w http.ResponseWriter, r *http.Reques
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(org[0])
+}
+
+// GetUserMemberships returns the current user's org memberships
+// GET /api/user/memberships
+// Replaces direct supabase.from("memberships") calls from frontend
+func (h *OrganizationHandler) GetUserMemberships(w http.ResponseWriter, r *http.Request) {
+	userID, _ := r.Context().Value(middleware.UserIDKey).(string)
+	if userID == "" {
+		http.Error(w, "User not authenticated", http.StatusUnauthorized)
+		return
+	}
+
+	client := database.GetClient()
+	var memberships []map[string]interface{}
+
+	err := client.DB.From("memberships").
+		Select("org_id, role, organizations(id, name, slug)").
+		Eq("user_id", userID).
+		Execute(&memberships)
+
+	if err != nil {
+		http.Error(w, "Failed to fetch memberships: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(memberships)
 }
 
 // GetAssignees searches for users and teams to assign

@@ -30,16 +30,6 @@ export default function DashboardLayout({
       }
       setUser(user);
 
-      // Fetch user's organizations
-      const { data: memberships, error: memError } = await supabase
-        .from("memberships")
-        .select("org_id, role, organizations(id, name, slug)");
-
-      if (memError) {
-        console.error("Error fetching orgs:", memError);
-        return;
-      }
-
       // Check for MFA factors
       // @ts-ignore - Supabase type definitions might be slightly outdated on listFactors directly on auth
       const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
@@ -49,10 +39,29 @@ export default function DashboardLayout({
          return;
       }
 
-      if (memberships && memberships.length > 0) {
-        const organizations = memberships.map((m: any) => m.organizations);
-        setCurrentOrg(organizations[0]); // Default to first org
-      } else {
+      // Fetch user's organizations via backend API (decoupled from direct Supabase DB access)
+      try {
+        const session = (await supabase.auth.getSession()).data.session;
+        const res = await fetch("/api/user/memberships", {
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : {},
+        });
+
+        if (res.ok) {
+          const memberships = await res.json();
+          if (memberships && memberships.length > 0) {
+            const organizations = memberships.map((m: any) => m.organizations);
+            setCurrentOrg(organizations[0]);
+          } else {
+            router.push("/onboarding");
+          }
+        } else {
+          console.error("Failed to fetch memberships:", res.status);
+          router.push("/onboarding");
+        }
+      } catch (err) {
+        console.error("Error fetching memberships:", err);
         router.push("/onboarding");
       }
     };

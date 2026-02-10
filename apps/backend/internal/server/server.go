@@ -141,6 +141,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	activityHandler := handlers.NewActivityHandler()
 	mux.Handle("GET /api/activity-feed", middleware.Auth(http.HandlerFunc(activityHandler.GetActivityFeed)))
 
+	// User Routes (decoupled from direct Supabase frontend access)
+	mux.Handle("GET /api/user/memberships", middleware.Auth(http.HandlerFunc(orgHandler.GetUserMemberships)))
+
 	return mux
 }
 

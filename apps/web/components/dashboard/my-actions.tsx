@@ -10,6 +10,10 @@ import { useAuth } from "@/components/auth-provider"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 
+import { supabase } from "@/lib/supabase"
+
+// ... (previous imports)
+
 interface Task {
   id: string
   title: string
@@ -22,7 +26,21 @@ interface MyActionsProps {
   slug: string
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const fetcher = async (url: string) => {
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+
+  const res = await fetch(url, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  })
+  
+  if (!res.ok) {
+     const error = await res.text()
+     throw new Error(error || "Failed to fetch")
+  }
+
+  return res.json()
+}
 
 export function MyActions({ slug }: MyActionsProps) {
   const { user } = useAuth()

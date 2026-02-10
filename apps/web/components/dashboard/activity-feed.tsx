@@ -8,6 +8,7 @@ import { formatDistanceToNow } from "date-fns"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { supabase } from "@/lib/supabase"
 
 interface ActivityLog {
   id: string
@@ -27,7 +28,21 @@ interface ActivityFeedProps {
   limit?: number
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const fetcher = async (url: string) => {
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+
+  const res = await fetch(url, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  })
+  
+  if (!res.ok) {
+     const error = await res.text()
+     throw new Error(error || "Failed to fetch")
+  }
+
+  return res.json()
+}
 
 export function ActivityFeed({ orgId, slug, scope = "org", limit = 10 }: ActivityFeedProps) {
   const queryParams = new URLSearchParams({
