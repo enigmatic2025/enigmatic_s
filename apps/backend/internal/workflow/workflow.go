@@ -289,8 +289,21 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 				if result.Output == nil {
 					result.Output = make(map[string]interface{})
 				}
+
+				// Flatten "output" key if present
+				// The signal sends { "task_id": "...", "output": { "key": "val" } }
+				// We want result.Output["key"] = "val"
+				if outputMap, ok := signalMap["output"].(map[string]interface{}); ok {
+					for k, v := range outputMap {
+						result.Output[k] = v
+					}
+				}
+
+				// Also allow top-level keys if needed (like task_id)
 				for k, v := range signalMap {
-					result.Output[k] = v
+					if k != "output" {
+						result.Output[k] = v
+					}
 				}
 			}
 			result.Status = nodes.StatusSuccess
