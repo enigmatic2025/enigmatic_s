@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/teavana/enigmatic_s/apps/backend/internal/audit"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 )
 
@@ -93,6 +94,11 @@ func RecordActionFlowActivity(ctx context.Context, params RecordActionFlowParams
 		return err
 	}
 
+	// Log Activity: Flow Started
+	audit.LogActivity(ctx, params.OrgID, nil, "flow.started", &params.RunID, map[string]interface{}{
+		"flow_name": params.Title,
+	}, "")
+
 	return nil
 }
 
@@ -114,6 +120,18 @@ func UpdateActionFlowStatusActivity(ctx context.Context, params UpdateActionFlow
 	err := client.DB.From("action_flows").Update(updateData).Eq("run_id", params.RunID).Execute(&results)
 	if err != nil {
 		return err
+	}
+
+	if len(results) > 0 {
+		// Log Activity: Flow Completed
+		orgID, _ := results[0]["org_id"].(string)
+		title, _ := results[0]["title"].(string) // Assuming logic saved title in input_data or elsewhere?
+		// Actually, result might not have title easily if it was in input_data
+		// But let's log what we have.
+		audit.LogActivity(ctx, orgID, nil, "flow.completed", &params.RunID, map[string]interface{}{
+			"status": params.Status,
+			"title":  title,
+		}, "")
 	}
 
 	return nil

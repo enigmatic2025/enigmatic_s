@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/teavana/enigmatic_s/apps/backend/internal/audit"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 )
 
@@ -162,6 +163,15 @@ func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 			Error:  fmt.Sprintf("failed to create human task: %v", err),
 		}, nil
 	}
+
+	// Log Activity: Task Created
+	// The worker doesn't have the user ID of who triggered the flow execution in NodeContext.
+	// But "System" created the task on behalf of the workflow.
+	taskID, _ := results[0]["id"].(string)
+	audit.LogActivity(ctx, input.OrgID, nil, "task.created", &taskID, map[string]interface{}{
+		"task_title": title,
+		"assignee":   assignee,
+	}, "")
 
 	// 4. Suspend Workflow
 	return &NodeResult{

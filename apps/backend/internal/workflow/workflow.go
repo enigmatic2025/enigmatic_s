@@ -250,6 +250,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			// Prepare Context
 			nodeCtx := nodes.NodeContext{
 				FlowID:     flowDefinition.ID,
+				OrgID:      flowDefinition.OrgID, // Populate OrgID
 				WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 				RunID:      workflow.GetInfo(ctx).WorkflowExecution.RunID,
 				StepID:     node.ID,

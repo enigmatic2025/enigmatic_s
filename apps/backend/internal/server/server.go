@@ -137,6 +137,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("POST /api/orgs/{orgId}/teams", middleware.Auth(http.HandlerFunc(orgHandler.CreateTeam)))
 	mux.Handle("GET /api/orgs/{orgId}/assignees", middleware.Auth(http.HandlerFunc(orgHandler.GetAssignees)))
 
+	// Activity Feed Routes
+	activityHandler := handlers.NewActivityHandler()
+	mux.Handle("GET /api/activity-feed", middleware.Auth(http.HandlerFunc(activityHandler.GetActivityFeed)))
+
 	return mux
 }
 

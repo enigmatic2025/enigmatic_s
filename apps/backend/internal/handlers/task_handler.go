@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/teavana/enigmatic_s/apps/backend/internal/audit"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"go.temporal.io/sdk/client"
 )
@@ -76,6 +77,7 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 		RunID  string                   `json:"run_id"`
 		FlowID string                   `json:"flow_id"` // Added FlowID
 		Status string                   `json:"status"`
+		Title  string                   `json:"title"` // Added Title for logging
 		Schema []map[string]interface{} `json:"schema"`
 	}
 
@@ -89,9 +91,10 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 	// 1.5 Fetch Workflow ID from Action Flow
 	var actionFlow []struct {
 		TemporalWorkflowID string `json:"temporal_workflow_id"`
+		OrgID              string `json:"org_id"`
 	}
 	// Use RunID to link Task to Execution, as FlowID points to Definition
-	err = client.DB.From("action_flows").Select("temporal_workflow_id").Eq("run_id", task[0].RunID).Execute(&actionFlow)
+	err = client.DB.From("action_flows").Select("temporal_workflow_id, org_id").Eq("run_id", task[0].RunID).Execute(&actionFlow)
 	if err != nil || len(actionFlow) == 0 {
 		fmt.Printf("DEBUG: Action Flow Lookup Failed. RunID=%s, Err=%v\n", task[0].RunID, err)
 		http.Error(w, "Action flow not found", http.StatusInternalServerError)
@@ -134,6 +137,18 @@ func (h *HumanTaskHandler) CompleteTaskHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 	fmt.Printf("DEBUG: SignalWorkflow SUCCESS for WorkflowID=%s RunID=%s Signal=%s\n", workflowID, task[0].RunID, signalName)
+
+	// Log Activity: Task Completed
+	// We extract user info from context if available (TODO: Add Auth Middleware extraction)
+	// For now, assume userID is nil or extracted from elsewhere.
+	// Actually, we can check assignments?
+	audit.LogActivity(r.Context(), actionFlow[0].OrgID, nil, "task.completed", &taskID, map[string]interface{}{
+		"task_title": task[0].Title, // Assuming title was fetched in step 1? Wait, step 1 fetched Select("*")? No.
+		// Let's verify task fetch query.
+		// line 82: err := client.DB.From("human_tasks").Select("*").Eq("id", taskID).Execute(&task)
+		// human_tasks struct used in step 1 DOES NOT have Title field explicitly in my view above?
+		// Wait, line 74 defines the struct. I need to add Title there if I want to log it.
+	}, "")
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})

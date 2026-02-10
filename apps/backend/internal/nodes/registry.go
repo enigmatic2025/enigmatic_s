@@ -9,6 +9,7 @@ import (
 // NodeContext contains all the data available to the node during execution.
 type NodeContext struct {
 	FlowID     string
+	OrgID      string // Added OrgID
 	WorkflowID string
 	RunID      string
 	StepID     string
