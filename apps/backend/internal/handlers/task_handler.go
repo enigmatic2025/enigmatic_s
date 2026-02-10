@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/audit"
@@ -23,22 +24,29 @@ func NewHumanTaskHandler(temporalClient client.Client) *HumanTaskHandler {
 }
 
 // GetTasksHandler lists tasks for a user (or all if admin)
-// GET /api/tasks?email=...&status=PENDING
+// GET /api/tasks?email=...&status=PENDING&user_id=...
 func (h *HumanTaskHandler) GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 	db := database.GetClient().DB
 
 	email := r.URL.Query().Get("email")
 	status := r.URL.Query().Get("status")
+	userID := r.URL.Query().Get("user_id")
 
-	// Start query and normalize to FilterRequestBuilder using a dummy condition
-	// This helps avoid type mismatch between SelectRequestBuilder and FilterRequestBuilder
+	// Start query and promote to FilterRequestBuilder immediately
 	query := db.From("human_tasks").Select("*").Eq("1", "1")
 
 	if email != "" {
+		// Legacy support or if email is strictly used in assignee column (which seems to be 'unassigned' mostly)
 		query = query.Eq("assignee", email)
 	}
 	if status != "" {
 		query = query.Eq("status", status)
+	}
+	if userID != "" {
+		// Filter by assignments JSONB array containing the user ID
+		// assignments @> '[{"id": "USER_ID"}]'
+		filterJSON := fmt.Sprintf(`[{ "id": "%s" }]`, userID)
+		query = query.Filter("assignments", "cs", filterJSON)
 	}
 
 	var tasks []map[string]interface{}
@@ -48,6 +56,13 @@ func (h *HumanTaskHandler) GetTasksHandler(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "Failed to fetch tasks: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// Sort by CreatedAt DESC locally (since Order is not available on FilterRequestBuilder in this client version)
+	sort.Slice(tasks, func(i, j int) bool {
+		t1Str, _ := tasks[i]["created_at"].(string)
+		t2Str, _ := tasks[j]["created_at"].(string)
+		return t1Str > t2Str
+	})
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tasks)

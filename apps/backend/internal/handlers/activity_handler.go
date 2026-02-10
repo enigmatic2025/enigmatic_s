@@ -41,7 +41,7 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 	}
 
 	query := client.DB.From("audit_logs").
-		Select("*, profiles!user_id(full_name, avatar_url)").
+		Select("*").
 		Eq("org_id", orgID)
 
 	// Scope Filtering
