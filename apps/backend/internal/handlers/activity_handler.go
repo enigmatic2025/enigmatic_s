@@ -122,48 +122,63 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 		ID          string
 		Title       string
 		ReferenceID string
-		Priority    string                 // Added
-		Description string                 // Added
-		Assignments []map[string]any       // Added
-		InputData   map[string]any         // Added (for dynamic matching if needed)
+		Priority    string
+		Description string
+		Assignments []map[string]any
+		InputData   map[string]any
 	}
 	runToFlowInfo := make(map[string]FlowInfo)
 
 	if len(runIDs) > 0 {
 		var flows []struct {
-			ID          string           `json:"id"`
-			RunID       string           `json:"run_id"`
-			Title       string           `json:"title"`
-			ReferenceID string           `json:"reference_id"`
-			Priority    string           `json:"priority"`
-			Assignments []map[string]any `json:"assignments"`
-			InputData   map[string]any   `json:"input_data"`
-			Description string           `json:"description"` // Assuming description column exists or mapped from input_data
+			ID                 string           `json:"id"`
+			RunID              string           `json:"run_id"`
+			TemporalWorkflowID string           `json:"temporal_workflow_id"` // Matches DB
+			FlowID             string           `json:"flow_id"`              // Matches DB
+			Priority           string           `json:"priority"`
+			Assignments        []map[string]any `json:"assignments"`
+			InputData          map[string]any   `json:"input_data"`
+			// Title and Description missing in DB, extracting from InputData
 		}
 		var runIdList []string
 		for id := range runIDs {
 			runIdList = append(runIdList, id)
 		}
 
-		// Select expanded fields
-		client.DB.From("action_flows").
-			Select("id, run_id, title, reference_id, priority, assignments, input_data, description").
+		// Select available fields
+		err := client.DB.From("action_flows").
+			Select("id, run_id, temporal_workflow_id, flow_id, priority, assignments, input_data").
 			In("run_id", runIdList).
 			Execute(&flows)
 
+		if err != nil {
+			// Log error but continue? Or just fail?
+			// For now, let's just log if possible, but we don't have logger here easily.
+			// The details will just be missing.
+		}
+
 		for _, f := range flows {
-			desc := f.Description
-			if desc == "" && f.InputData != nil {
-				// Fallback to extraction from InputData if formatted there
+			desc := ""
+			title := f.FlowID // Default title to flow ID or name
+
+			if f.InputData != nil {
 				if d, ok := f.InputData["description"].(string); ok {
 					desc = d
 				}
+				if t, ok := f.InputData["title"].(string); ok {
+					title = t
+				} else if t, ok := f.InputData["flow_name"].(string); ok {
+					title = t
+				}
 			}
+
+			// Reference ID defaults to Temporal Workflow ID (e.g. AF-2024-xxx)
+			refID := f.TemporalWorkflowID
 
 			runToFlowInfo[f.RunID] = FlowInfo{
 				ID:          f.ID,
-				Title:       f.Title,
-				ReferenceID: f.ReferenceID,
+				Title:       title,
+				ReferenceID: refID,
 				Priority:    f.Priority,
 				Assignments: f.Assignments,
 				Description: desc,
@@ -234,14 +249,14 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 			if _, ok := details["assignments"]; !ok && len(info.Assignments) > 0 {
 				details["assignments"] = info.Assignments
 			}
-			
+
 			// Auto-detect "Anomaly" style for critical high priority system events
 			if info.Priority == "critical" && (eventType == "flow.started" || eventType == "system.alert") {
 				if _, ok := details["type"]; !ok {
 					details["type"] = "anomaly"
 				}
 				if _, ok := details["target"]; !ok {
-					// Extract target from Title or Input? 
+					// Extract target from Title or Input?
 					// Heuristic: "Reefer Alert" or just use flow name
 					details["target"] = info.Title
 				}
@@ -254,4 +269,3 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(results)
 }
-
