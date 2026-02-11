@@ -17,6 +17,7 @@ import {
   Workflow,
   Globe,
   CornerUpLeft,
+  RadioTower,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +54,7 @@ export function Sidebar({
   const [builtInToolsOpen, setBuiltInToolsOpen] = useState(true);
   const [connectorsOpen, setConnectorsOpen] = useState(false);
   const [humanInLoopOpen, setHumanInLoopOpen] = useState(true);
+  const [automationOpen, setAutomationOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const t = useTranslations("Sidebar");
   
@@ -313,6 +315,25 @@ export function Sidebar({
                           iconColorClass="text-teal-500"
                           bgColorClass="bg-teal-500/10"
                           dataTransferType="human-task"
+                        />
+                      </div>
+                    )}
+                  </SidebarSection>
+
+                  {/* Automation */}
+                  <SidebarSection
+                    title={t("sections.automation")}
+                    isOpen={automationOpen}
+                    onToggle={() => setAutomationOpen(!automationOpen)}
+                  >
+                    {(!searchQuery || "wait for event automation".includes(searchQuery.toLowerCase())) && (
+                      <div className="grid grid-cols-1 gap-2">
+                        <SidebarDraggableItem
+                          label={t("draggable.automation")}
+                          icon={RadioTower}
+                          iconColorClass="text-pink-500"
+                          bgColorClass="bg-pink-500/10"
+                          dataTransferType="automation"
                         />
                       </div>
                     )}

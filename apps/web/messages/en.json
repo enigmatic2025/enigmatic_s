@@ -177,6 +177,7 @@
       "development": "Development",
       "triggers": "Triggers",
       "humanInLoop": "Human in loop",
+      "automation": "Automation",
       "builtInTools": "Built-in tools",
       "connectors": "Connectors"
     },
@@ -192,6 +193,7 @@
     "draggable": {
       "triggerCreateFlow": "Trigger: Create Flow",
       "humanTask": "Human Task",
+      "automation": "Wait for Event",
       "filterData": "Filter Data",
       "setVariable": "Set Variable",
       "mapData": "Map Data",
@@ -342,6 +344,7 @@
       "map": "Map Data",
       "humanTask": "Human Task",
       "human-task": "Human Task",
+      "automation": "Wait for Event",
       "goto": "Goto / Jump",
       "action": "Action"
     },
@@ -359,6 +362,7 @@
       "map": "Transform data structures from one format to another.",
       "humanTask": "Pause the flow and wait for human approval or input.",
       "human-task": "Pause the flow and wait for human approval or input.",
+      "automation": "Pause the flow and wait for an external event.",
       "goto": "Jump to another step in the flow.",
       "action": "Perform a generic action."
     },
@@ -464,6 +468,22 @@
       "optional": "Opt",
       "actionFlowInfo": "ACTION FLOW INFORMATION",
       "actionFlowDescription": "Define how this trigger integrates into the Action Flow Dashboard."
+    },
+    "automation": {
+      "stepNamePlaceholder": "Step Name (e.g. Wait for Payment)",
+      "descriptionPlaceholder": "Describe what event this step is waiting for...",
+      "expectedPayload": "Expected Payload (Schema)",
+      "addField": "Add Field",
+      "fieldNamePlaceholder": "field_name",
+      "noSchemaTitle": "No output schema defined",
+      "noSchemaDescription": "Variables will need to be manually referenced.",
+      "typeString": "String",
+      "typeNumber": "Number",
+      "typeBoolean": "Boolean",
+      "typeObject": "Object",
+      "typeArray": "Array",
+      "required": "Req",
+      "optional": "Opt"
     }
   },
   "FlowStudio": {

@@ -110,6 +110,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Public routes (no auth)
 	mux.Handle("GET /api/health", http.HandlerFunc(s.HelloWorldHandler))
 
+	// Automation Routes
+	if s.temporalClient != nil {
+		automationHandler := handlers.NewAutomationHandler(s.temporalClient)
+		mux.Handle("POST /api/automation/resume", http.HandlerFunc(automationHandler.ResumeAutomationHandler))
+	}
+
 	// Task Routes
 	taskHandler := handlers.NewHumanTaskHandler(s.temporalClient)
 	mux.Handle("GET /api/tasks", middleware.Auth(http.HandlerFunc(taskHandler.GetTasksHandler)))

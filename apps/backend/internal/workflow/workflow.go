@@ -278,6 +278,9 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			if tid, ok := result.Output["task_id"].(string); ok {
 				signalName = "HumanTask-" + tid
 			}
+			if actionID, ok := result.Output["action_id"].(string); ok {
+				signalName = "AutomationSignal-" + actionID
+			}
 			var signalData interface{}
 			selector := workflow.NewSelector(ctx)
 			selector.AddReceive(workflow.GetSignalChannel(ctx, signalName), func(c workflow.ReceiveChannel, more bool) {

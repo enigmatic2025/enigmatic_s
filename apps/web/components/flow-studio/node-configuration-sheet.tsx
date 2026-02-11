@@ -235,7 +235,7 @@ export function NodeConfigurationSheet({
                     <div className="flex-1 overflow-y-auto min-h-0">
                         <div className="p-6 space-y-8">
                             {/* 1. General Settings (Hidden for API Trigger as it handles its own) */}
-                            {selectedNode.type !== 'api-trigger' && (
+                            {selectedNode.type !== 'api-trigger' && selectedNode.type !== 'automation' && (
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 gap-4">
                                         <div className="space-y-2">
@@ -262,7 +262,7 @@ export function NodeConfigurationSheet({
 
                     {/* 2. Component Configuration */}
                     <div className="space-y-4">
-                        {selectedNode.type !== 'api-trigger' && (
+                        {selectedNode.type !== 'api-trigger' && selectedNode.type !== 'automation' && (
                             <h4 className="text-sm font-medium border-b pb-2 flex items-center justify-between">
                                 <span>{t("general.configuration")}</span>
                             </h4>

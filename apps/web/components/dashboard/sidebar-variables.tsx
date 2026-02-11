@@ -270,7 +270,7 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
        let schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[n.type || ""];
        
        // Re-resolve schema logic same as render (simplified for search)
-       if (schema === undefined && n.type === 'api-trigger' && n.data?.schema) {
+       if (schema === undefined && (n.type === 'api-trigger' || n.type === 'automation') && n.data?.schema) {
            schema = {};
            n.data.schema.forEach((f: any) => schema[f.key] = "value");
        }
@@ -382,7 +382,8 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                     node.type === 'api-trigger' || 
                     node.type === 'human-task' || 
                     node.type === 'human_task' || 
-                    node.type === 'human_action';
+                    node.type === 'human_action' ||
+                    node.type === 'automation';
 
                 if (schema === undefined && isSchemaNode && activeData?.schema && Array.isArray(activeData.schema)) {
                     const parsedSchema: Record<string, any> = {};
@@ -432,6 +433,7 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                                 path={
                                     node.type === 'variable' ? 'variables' : 
                                     node.type === 'api-trigger' ? 'steps.trigger.body' :
+                                    node.type === 'automation' ? `steps.${node.id}.output` :
                                     `steps.${node.id}`
                                 } 
                                 contextLoopSource={contextLoopSource}

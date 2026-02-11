@@ -56,6 +56,7 @@ var Registry = map[string]NodeExecutor{
 	"ACTION":      &HttpNode{},    // Alias for generic Action nodes (defaults to HTTP)
 	"HUMAN-TASK":  &HumanTaskNode{},
 	"GOTO":        &GotoNode{},
+	"AUTOMATION":  &AutomationNodeExecutor{},
 }
 
 // GetExecutor returns the executor for a given node type.

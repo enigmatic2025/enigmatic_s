@@ -19,6 +19,8 @@ import { HumanTaskNode } from '../nodes/human-task-node';
 import { HumanTaskConfig } from '../configurators/human-task-config';
 import { GotoNode } from '../nodes/goto-node';
 import { GotoConfig } from '../configurators/goto-config';
+import { AutomationNode } from '../nodes/automation-node';
+import { AutomationConfig } from '../configurators/automation-config';
 
 export const NODE_TYPES = {
     // schedule: ScheduleNode,
@@ -31,6 +33,7 @@ export const NODE_TYPES = {
     switch: SwitchNode,
     'human-task': HumanTaskNode,
     'goto': GotoNode,
+    'automation': AutomationNode,
 };
 
 export const CONFIG_COMPONENTS: Record<string, any> = {
@@ -46,6 +49,7 @@ export const CONFIG_COMPONENTS: Record<string, any> = {
     'map': MapConfig,
     'human-task': HumanTaskConfig,
     'goto': GotoConfig,
+    'automation': AutomationConfig,
 
     // Fallbacks
     'action': HttpRequestConfig, // Default action to HTTP for now
@@ -96,6 +100,10 @@ export const NODE_METADATA: Record<string, { title: string; description: string 
         title: "Goto / Jump",
         description: "Jump to another step in the flow."
     },
+    'automation': {
+        title: "Wait for Event",
+        description: "Pause flow and wait for external API call."
+    },
 
     // Fallback
     'action': {
@@ -116,7 +124,8 @@ export const ACTION_NAMES: Record<string, string> = {
     default: "Action",
     'manual-trigger': "Manual Trigger",
     'api-trigger': "Incoming Webhook",
-    'human-task': "Human Task"
+    'human-task': "Human Task",
+    'automation': "Wait for Event"
 };
 
 export const INITIAL_NODES = [];
