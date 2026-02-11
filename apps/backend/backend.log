@@ -1,0 +1,66 @@
+2026/02/11 18:39:05 JWKS initialized successfully
+2026/02/11 18:39:05 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:05 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:05 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:05 Failed to create Temporal client: failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused"
+2026/02/11 18:39:05 Registering routes...
+Starting Nodal Backend on :8080
+2026/02/11 18:39:07 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:07 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:09 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:09 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:11 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:11 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:13 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:13 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:15 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:15 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:17 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:17 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:19 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:19 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:21 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:21 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:23 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:23 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:25 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:25 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:27 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:27 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:29 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:29 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:31 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:31 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:33 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:33 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:35 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:35 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:37 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:37 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:39 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:39 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:41 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:41 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:43 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:43 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:45 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:45 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:47 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:47 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:49 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:49 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:51 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:51 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:53 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:53 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:55 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:55 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:57 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:57 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:39:59 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:39:59 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:40:01 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:40:01 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:40:03 INFO  No logger configured for temporal client. Created default one.
+2026/02/11 18:40:03 Waiting for Temporal server... (failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused")
+2026/02/11 18:40:05 Failed to connect to Temporal after retries. Worker cannot start: failed reaching server: last connection error: connection error: desc = "transport: Error while dialing: dial tcp [::1]:7233: connect: connection refused"

@@ -107,6 +107,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 		mux.Handle("POST /api/flows/{id}/execute", http.HandlerFunc(executeHandler.ExecuteFlow))
 	}
 
+	// Public routes (no auth)
+	mux.Handle("GET /api/health", http.HandlerFunc(s.HelloWorldHandler))
+
 	// Task Routes
 	taskHandler := handlers.NewHumanTaskHandler(s.temporalClient)
 	mux.Handle("GET /api/tasks", middleware.Auth(http.HandlerFunc(taskHandler.GetTasksHandler)))

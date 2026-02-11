@@ -163,6 +163,31 @@ func (h *ActionFlowHandler) DeleteActionFlow(w http.ResponseWriter, r *http.Requ
 
 		// 3. Delete associated Human Tasks
 		// Logic removed: handled by database trigger/cascade
+
+		// 4. Delete associated Audit Logs (Activity Feed)
+		// We need to clean up the activity feed so deleted flows don't show up.
+		// Matching strictly on details->>flow_id or details->>action_flow_id
+		var deletedLogs []map[string]interface{}
+
+		// Delete system events (flow.started, flow.completed, system.alert)
+		// linked via details->flow_id
+		// PostgREST Execute requires a target interface{}
+		appErr := dbClient.DB.From("audit_logs").
+			Delete().
+			Eq("details->>flow_id", id).
+			Execute(&deletedLogs)
+		if appErr != nil {
+			fmt.Println("Warning: Failed to delete audit_logs by flow_id:", appErr)
+		}
+
+		// Delete flow-level events linked via details->action_flow_id (some legacy or tasks)
+		appErr = dbClient.DB.From("audit_logs").
+			Delete().
+			Eq("details->>action_flow_id", id).
+			Execute(&deletedLogs)
+		if appErr != nil {
+			fmt.Println("Warning: Failed to delete audit_logs by action_flow_id:", appErr)
+		}
 	}
 
 	// 3. Delete from DB
