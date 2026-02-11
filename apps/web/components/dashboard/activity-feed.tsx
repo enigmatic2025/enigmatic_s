@@ -5,6 +5,7 @@ import useSWR from "swr"
 import { formatDistanceToNow } from "date-fns"
 import { ArrowRight, MoreHorizontal, Workflow } from "lucide-react"
 import { PriorityBadge } from "@/components/shared/priority-badge";
+import { FeedEmptyState } from "@/components/dashboard/feed-empty-state"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "@/navigation"
 
@@ -82,9 +83,7 @@ export function ActivityFeed({ orgId, slug, scope = "org", limit = 20 }: Activit
             Unable to load activity
           </div>
         ) : data?.length === 0 ? (
-          <div className="text-center text-muted-foreground py-12 text-sm">
-            No recent activity
-          </div>
+          <FeedEmptyState />
         ) : (
           data?.map((activity) => (
             <ActivityItem

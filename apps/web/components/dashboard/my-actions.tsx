@@ -7,6 +7,7 @@ import { Clock } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { useRouter } from "@/navigation"
 import { supabase } from "@/lib/supabase"
+import { FeedEmptyState } from "@/components/dashboard/feed-empty-state"
 
 interface Task {
   id: string
@@ -68,9 +69,10 @@ export function MyActions({ slug }: MyActionsProps) {
             Unable to load actions
           </div>
         ) : !tasks || tasks.length === 0 ? (
-          <div className="text-center py-12 px-4">
-            <p className="text-sm text-muted-foreground">No pending actions</p>
-          </div>
+          <FeedEmptyState 
+            title="No actions" 
+            description="You have no pending tasks."
+          />
         ) : (
           tasks.map((task) => (
             <button
