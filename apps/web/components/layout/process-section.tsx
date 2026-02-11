@@ -55,8 +55,8 @@ export function ProcessSection() {
               transition={{ duration: 0.5, delay: 0.2 + i * 0.2 }}
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-24 h-24 mb-8 rounded-full flex items-center justify-center bg-black border border-border">
-                <step.icon className="w-10 h-10 text-white" strokeWidth={1.5} />
+              <div className="w-24 h-24 mb-8 rounded-full flex items-center justify-center bg-foreground border border-border">
+                <step.icon className="w-10 h-10 text-background" strokeWidth={1.5} />
               </div>
               <h3 className="text-xl font-medium mb-4">{t(`steps.${step.id}`)}</h3>
               <p className="text-muted-foreground leading-relaxed max-w-xs">
