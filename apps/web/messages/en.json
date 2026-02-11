@@ -75,11 +75,11 @@
     },
     "grid": {
       "triggers": "Intelligent Triggers",
-      "triggersDesc": "Automatically initiate complex workflows based on real-time signals—whether it's an incoming email, a status update, or an API event.",
+      "triggersDesc": "Automatically initiate complex workflows based on e-mails, status updates, or API events.",
       "human": "Human Control",
-      "humanDesc": "Amplify your workforce. Intelligent routing ensures only critical exceptions reach your team, while standard tasks are handled instantly.",
+      "humanDesc": "Route critical exceptions to experts; automate the rest.",
       "connectivity": "Total Connectivity",
-      "connectivityDesc": "Bridge the gap between legacy systems and modern tools. Unify data from ERPs, field devices, and external partners into one source of truth."
+      "connectivityDesc": "Unify data from ERPs, devices, and partners into one source."
     }
   },
   "Process": {

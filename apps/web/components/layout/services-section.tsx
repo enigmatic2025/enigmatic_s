@@ -2,7 +2,6 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Workflow, Network, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export function ServicesSection() {
@@ -74,7 +73,7 @@ export function ServicesSection() {
               {/* Item 1 */}
               <div className="p-6 md:p-8">
                 <div className="mb-4">
-                  <Workflow className="w-6 h-6 text-foreground" />
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
                   {t("grid.triggers")}
@@ -87,7 +86,7 @@ export function ServicesSection() {
               {/* Item 2 */}
               <div className="p-6 md:p-8">
                 <div className="mb-4">
-                  <Users className="w-6 h-6 text-foreground" />
+                  <div className="w-2 h-2 rounded-full bg-violet-500" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
                   {t("grid.human")}
@@ -100,7 +99,7 @@ export function ServicesSection() {
               {/* Item 3 */}
               <div className="p-6 md:p-8">
                 <div className="mb-4">
-                  <Network className="w-6 h-6 text-foreground" />
+                  <div className="w-2 h-2 rounded-full bg-pink-500" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-normal mb-3">
                   {t("grid.connectivity")}

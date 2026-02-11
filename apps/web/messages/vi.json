@@ -75,11 +75,11 @@
     },
     "grid": {
       "triggers": "Kích hoạt Thông minh",
-      "triggersDesc": "Tự động khởi xướng các quy trình phức tạp dựa trên tín hiệu thời gian thực—cho dù đó là email đến, cập nhật trạng thái hay sự kiện API.",
-      "human": "Kiểm soát Lấy Con người làm Trung tâm",
-      "humanDesc": "Khuếch đại lực lượng lao động của bạn. Định tuyến thông minh đảm bảo chỉ những ngoại lệ quan trọng mới đến được đội ngũ của bạn, trong khi các nhiệm vụ tiêu chuẩn được xử lý ngay lập tức.",
+      "triggersDesc": "Tự động kích hoạt quy trình từ email, trạng thái hoặc API.",
+      "human": "Kiểm soát Con người",
+      "humanDesc": "Chuyển ngoại lệ cho chuyên gia; tự động hóa phần còn lại.",
       "connectivity": "Kết nối Toàn diện",
-      "connectivityDesc": "Thu hẹp khoảng cách giữa các hệ thống cũ và công cụ hiện đại. Hợp nhất dữ liệu từ ERP, thiết bị hiện trường và đối tác bên ngoài vào một nguồn sự thật duy nhất."
+      "connectivityDesc": "Hợp nhất dữ liệu ERP, thiết bị và đối tác về một nguồn."
     }
   },
   "Process": {
