@@ -95,6 +95,42 @@ func (h *HumanTaskHandler) GetTasksHandler(w http.ResponseWriter, r *http.Reques
 		return t1Str > t2Str
 	})
 
+	// Enrich with action_flow_id
+	runIDs := make(map[string]bool)
+	for _, t := range tasks {
+		if runID, ok := t["run_id"].(string); ok && runID != "" {
+			runIDs[runID] = true
+		}
+	}
+
+	if len(runIDs) > 0 {
+		var flows []struct {
+			ID    string `json:"id"`
+			RunID string `json:"run_id"`
+		}
+		var runIdList []string
+		for id := range runIDs {
+			runIdList = append(runIdList, id)
+		}
+
+		// Fetch action_flow IDs
+		db.From("action_flows").Select("id, run_id").In("run_id", runIdList).Execute(&flows)
+
+		runToFlowID := make(map[string]string)
+		for _, f := range flows {
+			runToFlowID[f.RunID] = f.ID
+		}
+
+		// Inject into tasks
+		for i, t := range tasks {
+			if runID, ok := t["run_id"].(string); ok && runID != "" {
+				if flowID, exists := runToFlowID[runID]; exists {
+					tasks[i]["action_flow_id"] = flowID
+				}
+			}
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tasks)
 }
