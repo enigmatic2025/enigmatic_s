@@ -82,6 +82,18 @@
       "connectivityDesc": "Thu hẹp khoảng cách giữa các hệ thống cũ và công cụ hiện đại. Hợp nhất dữ liệu từ ERP, thiết bị hiện trường và đối tác bên ngoài vào một nguồn sự thật duy nhất."
     }
   },
+  "Process": {
+    "title": "Từ Hỗn loạn đến Rõ ràng.",
+    "description": "Tiếp cận ba bước để hiện đại hóa hoạt động của bạn.",
+    "steps": {
+      "step1": "Lập bản đồ Hiện trạng",
+      "step1Desc": "Chúng tôi làm việc cùng đội ngũ của bạn để hình dung các hoạt động hiện tại, xác định các nút thắt, sự kém hiệu quả và các cơ hội cải tiến tiềm ẩn.",
+      "step2": "Thiết kế Tương lai",
+      "step2Desc": "Chúng tôi phác thảo một quy trình làm việc tối ưu được thiết kế để tối đa hóa giá trị tài chính và sự trôi chảy trong vận hành.",
+      "step3": "Xây dựng & Triển khai",
+      "step3Desc": "Chúng tôi xây dựng giải pháp sử dụng công nghệ hiện đại, với Nodal là hệ điều hành trung tâm để điều phối hệ sinh thái mới của bạn."
+    }
+  },
   "NodalPlatform": {
     "title": "Hợp nhất Hệ thống của Bạn.",
     "description": "Nodal thêm một lớp điều phối mạnh mẽ lên trên các hệ thống cốt lõi và công cụ hiện có của bạn, mang lại sự nhất quán và khả năng hiển thị hoàn hảo mà không cần thay thế bất kỳ công cụ nào.",
