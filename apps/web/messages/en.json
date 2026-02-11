@@ -28,7 +28,7 @@
   },
   "Mission": {
     "label": "The Mission.",
-    "description": "We architect your operational technology ecosystem to be more integrated, intelligent, and intuitive.",
+    "description": "As your process improvement partner, we use technology to help your operations be more integrated, intelligent, and intuitive.",
     "industries": {
       "transportation": "Transportations",
       "transportationDesc": "Unify carrier networks into a single command center for seamless execution.",
@@ -76,7 +76,7 @@
     "grid": {
       "triggers": "Intelligent Triggers",
       "triggersDesc": "Automatically initiate complex workflows based on real-time signals—whether it's an incoming email, a status update, or an API event.",
-      "human": "Human-Centric Control",
+      "human": "Human Control",
       "humanDesc": "Amplify your workforce. Intelligent routing ensures only critical exceptions reach your team, while standard tasks are handled instantly.",
       "connectivity": "Total Connectivity",
       "connectivityDesc": "Bridge the gap between legacy systems and modern tools. Unify data from ERPs, field devices, and external partners into one source of truth."
