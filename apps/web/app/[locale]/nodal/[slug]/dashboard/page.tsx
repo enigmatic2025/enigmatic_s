@@ -1,4 +1,4 @@
-import { ActivityFeed } from "@/components/dashboard/activity-feed"
+import { WorkplaceFeed } from "@/components/dashboard/workplace-feed"
 import { MyActions } from "@/components/dashboard/my-actions"
 import { DashboardSearch } from "@/components/dashboard/dashboard-search"
 import { QuickLinks } from "@/components/dashboard/quick-links"
@@ -12,7 +12,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ slug
       <div style={{ width: "70%", minWidth: 0 }}>
         <DashboardSearch slug={slug} />
         <QuickLinks slug={slug} />
-        <ActivityFeed slug={slug} scope="org" />
+        <WorkplaceFeed slug={slug} scope="org" />
       </div>
 
       {/* Right: 30% — My Actions, full height */}

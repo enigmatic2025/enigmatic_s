@@ -122,28 +122,52 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 		ID          string
 		Title       string
 		ReferenceID string
+		Priority    string                 // Added
+		Description string                 // Added
+		Assignments []map[string]any       // Added
+		InputData   map[string]any         // Added (for dynamic matching if needed)
 	}
 	runToFlowInfo := make(map[string]FlowInfo)
 
 	if len(runIDs) > 0 {
 		var flows []struct {
-			ID          string `json:"id"`
-			RunID       string `json:"run_id"`
-			Title       string `json:"title"`
-			ReferenceID string `json:"reference_id"`
+			ID          string           `json:"id"`
+			RunID       string           `json:"run_id"`
+			Title       string           `json:"title"`
+			ReferenceID string           `json:"reference_id"`
+			Priority    string           `json:"priority"`
+			Assignments []map[string]any `json:"assignments"`
+			InputData   map[string]any   `json:"input_data"`
+			Description string           `json:"description"` // Assuming description column exists or mapped from input_data
 		}
 		var runIdList []string
 		for id := range runIDs {
 			runIdList = append(runIdList, id)
 		}
 
-		client.DB.From("action_flows").Select("id, run_id, title, reference_id").In("run_id", runIdList).Execute(&flows)
+		// Select expanded fields
+		client.DB.From("action_flows").
+			Select("id, run_id, title, reference_id, priority, assignments, input_data, description").
+			In("run_id", runIdList).
+			Execute(&flows)
 
 		for _, f := range flows {
+			desc := f.Description
+			if desc == "" && f.InputData != nil {
+				// Fallback to extraction from InputData if formatted there
+				if d, ok := f.InputData["description"].(string); ok {
+					desc = d
+				}
+			}
+
 			runToFlowInfo[f.RunID] = FlowInfo{
 				ID:          f.ID,
 				Title:       f.Title,
 				ReferenceID: f.ReferenceID,
+				Priority:    f.Priority,
+				Assignments: f.Assignments,
+				Description: desc,
+				InputData:   f.InputData,
 			}
 		}
 	}
@@ -177,7 +201,9 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 		var info FlowInfo
 		found := false
 
-		if eventType == "flow.started" || eventType == "flow.completed" || eventType == "flow.failed" {
+		// Logic to associate Activity with Flow Info
+		if eventType == "flow.started" || eventType == "flow.completed" || eventType == "flow.failed" || eventType == "system.alert" {
+			// system.alert might link to run_id via resource_id if we standardize it
 			info, found = runToFlowInfo[resourceID]
 		} else if eventType == "task.created" || eventType == "task.completed" {
 			runID := taskToRunID[resourceID]
@@ -196,6 +222,30 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 			if _, ok := details["reference_id"]; !ok && info.ReferenceID != "" {
 				details["reference_id"] = info.ReferenceID
 			}
+			// Inject Priority
+			if _, ok := details["priority"]; !ok && info.Priority != "" {
+				details["priority"] = info.Priority
+			}
+			// Inject Description
+			if _, ok := details["description"]; !ok && info.Description != "" {
+				details["description"] = info.Description
+			}
+			// Inject Assignments (optional, if UI wants to show avatars)
+			if _, ok := details["assignments"]; !ok && len(info.Assignments) > 0 {
+				details["assignments"] = info.Assignments
+			}
+			
+			// Auto-detect "Anomaly" style for critical high priority system events
+			if info.Priority == "critical" && (eventType == "flow.started" || eventType == "system.alert") {
+				if _, ok := details["type"]; !ok {
+					details["type"] = "anomaly"
+				}
+				if _, ok := details["target"]; !ok {
+					// Extract target from Title or Input? 
+					// Heuristic: "Reefer Alert" or just use flow name
+					details["target"] = info.Title
+				}
+			}
 		}
 
 		results[i]["details"] = details
@@ -204,3 +254,4 @@ func (h *ActivityHandler) GetActivityFeed(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(results)
 }
+
