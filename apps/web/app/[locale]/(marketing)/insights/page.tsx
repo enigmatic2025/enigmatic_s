@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import Image from "next/image";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { CTASection } from "@/components/layout/cta-section";
