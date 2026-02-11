@@ -15,9 +15,12 @@ export default async function DashboardPage({ params }: { params: Promise<{ slug
         <WorkplaceFeed slug={slug} scope="org" />
       </div>
 
+      {/* Vertical Divider */}
+      <div className="w-px bg-border h-full mx-2" />
+
       {/* Right: 30% — My Actions, full height */}
       <div style={{ width: "30%" }}>
-        <div className="rounded-xl border border-border bg-card p-5" style={{ minHeight: "calc(100vh - 6rem)" }}>
+        <div className="p-5" style={{ minHeight: "calc(100vh - 6rem)" }}>
           <MyActions slug={slug} />
         </div>
       </div>

@@ -1,5 +1,4 @@
-import { Badge } from "@/components/ui/badge";
-import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 interface PriorityBadgeProps {
   priority?: string;
@@ -7,34 +6,19 @@ interface PriorityBadgeProps {
 }
 
 export function PriorityBadge({ priority, className }: PriorityBadgeProps) {
-  const t = useTranslations("ActionFlows");
-  
   if (!priority) return null;
   
   const p = priority.toLowerCase();
-  // Standardized font-medium weight for elegant, readable text
-  const baseClass = "bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-xs font-medium";
   
-  let colorClass = "text-zinc-600 dark:text-zinc-400";
-  
-  switch (p) {
-    case "critical":
-        colorClass = "text-red-600 dark:text-red-400";
-        break;
-    case "high":
-        colorClass = "text-orange-600 dark:text-orange-400";
-        break;
-    case "medium":
-        colorClass = "text-amber-600 dark:text-amber-400";
-        break;
-    case "low":
-        colorClass = "text-blue-600 dark:text-blue-400";
-        break;
-  }
+  let colorClass = "bg-blue-500";
+  if (p === 'high') colorClass = "bg-orange-500";
+  else if (p === 'critical') colorClass = "bg-red-500";
+  else if (p === 'medium') colorClass = "bg-amber-500";
 
   return (
-    <Badge variant="outline" className={`${baseClass} ${colorClass} ${className || ''}`}>
-      {t(`priorities.${p}`)}
-    </Badge>
+    <div className={cn("flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-border/40 text-xs font-medium bg-background", className)}>
+        <div className={cn("w-1.5 h-1.5 rounded-full", colorClass)} />
+        <span className="capitalize text-foreground/80">{priority}</span>
+    </div>
   );
 }

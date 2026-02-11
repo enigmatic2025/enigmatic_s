@@ -142,13 +142,7 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
                 <div className="flex items-center gap-5 text-xs text-muted-foreground shrink-0 mt-1 md:mt-0">
                     {/* Priority */}
                     {exec.priority && (
-                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border/40">
-                            <div className={cn("w-1.5 h-1.5 rounded-full", 
-                                exec.priority === 'high' ? "bg-orange-500" : 
-                                exec.priority === 'critical' ? "bg-red-500" : "bg-blue-500"
-                            )} />
-                            <span className="capitalize font-medium text-foreground/80">{exec.priority}</span>
-                        </div>
+                        <PriorityBadge priority={exec.priority} />
                     )}
 
                     {/* Stats Group */}

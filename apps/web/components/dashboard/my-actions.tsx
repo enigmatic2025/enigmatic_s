@@ -76,7 +76,7 @@ export function MyActions({ slug }: MyActionsProps) {
             <button
               key={task.id}
               onClick={() => handleTaskClick(task)}
-              className="w-full text-left rounded-lg bg-muted/30 hover:bg-muted/60 transition-all p-4 group"
+              className="w-full text-left rounded-lg bg-card border border-border hover:border-primary/50 transition-all p-4 group"
             >
               <h4 className="text-sm font-semibold text-foreground leading-tight truncate">
                 {task.title}

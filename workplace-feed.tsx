@@ -4,7 +4,6 @@ import * as React from "react"
 import useSWR from "swr"
 import { formatDistanceToNow } from "date-fns"
 import { ArrowRight, MoreHorizontal, Workflow, TriangleAlert } from "lucide-react"
-import { PriorityBadge } from "@/components/shared/priority-badge";
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "@/navigation"
 
@@ -152,7 +151,7 @@ function WorkplaceItem({
         {(details.reference_id || flowId) && (
           <div 
              onClick={() => flowId && onFlowClick(flowId)}
-             className="flex items-center justify-between rounded-lg border border-border bg-gray-50 dark:bg-accent/10 p-3 hover:bg-gray-100 dark:hover:bg-accent/20 transition-colors cursor-pointer"
+             className="flex items-center justify-between rounded-lg border border-border bg-gray-50/50 dark:bg-accent/10 p-3 hover:bg-gray-100/50 dark:hover:bg-accent/20 transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg border border-border flex items-center justify-center bg-card">
@@ -163,8 +162,15 @@ function WorkplaceItem({
                    <span className="text-sm font-semibold text-foreground">
                      {details.flow_name || details.title || details.reference_id || formatFlowID(flowId) || "Action Flow"}
                    </span>
-                   {details.priority && (
-                     <PriorityBadge priority={details.priority} className="text-[10px] px-1.5 py-0 h-5" />
+                   {details.priority && details.priority.toLowerCase() === 'critical' ? (
+                     <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400 text-[10px] font-medium flex items-center gap-1">
+                       <TriangleAlert className="h-3 w-3" />
+                       Critical
+                     </span>
+                   ) : (
+                     <span className="text-xs text-muted-foreground px-2 py-0.5 bg-muted rounded-full">
+                       {details.priority || "Normal"}
+                     </span>
                    )}
                 </div>
                 <div className="text-xs text-muted-foreground">

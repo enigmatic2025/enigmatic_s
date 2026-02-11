@@ -4,6 +4,7 @@ import * as React from "react"
 import useSWR from "swr"
 import { formatDistanceToNow } from "date-fns"
 import { ArrowRight, MoreHorizontal, Workflow } from "lucide-react"
+import { PriorityBadge } from "@/components/shared/priority-badge";
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "@/navigation"
 
@@ -163,10 +164,7 @@ function ActivityItem({
                       {details.reference_id || details.flow_name || "Action Flow"}
                     </span>
                     {details.priority && (
-                      <>
-                        <span className="text-muted-foreground">·</span>
-                        <span className="text-xs text-muted-foreground">{details.priority}</span>
-                      </>
+                       <PriorityBadge priority={details.priority} className="text-[10px] px-1.5 py-0 h-5 border-none bg-transparent pl-0" />
                     )}
                   </div>
                   <span className="text-[11px] text-muted-foreground">View full flow details</span>
