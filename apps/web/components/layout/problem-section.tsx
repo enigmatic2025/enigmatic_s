@@ -14,16 +14,19 @@ export function ProblemSection() {
       titleKey: "cards.manual",
       descriptionKey: "cards.manualDesc",
       pattern: manualWorkflowsPattern,
+      bgClass: "bg-blue-500",
     },
     {
       titleKey: "cards.disconnected",
       descriptionKey: "cards.disconnectedDesc",
       pattern: disconnectedPattern,
+      bgClass: "bg-violet-500",
     },
     {
       titleKey: "cards.reactive",
       descriptionKey: "cards.reactiveDesc",
       pattern: hiddenCostsPattern,
+      bgClass: "bg-pink-500",
     },
   ];
 
@@ -58,11 +61,11 @@ export function ProblemSection() {
                 transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
                 className="flex flex-col h-full"
               >
-                <div className="relative w-full aspect-square mb-10 rounded-xl overflow-hidden flex items-center justify-center p-8 border hover:bg-muted/5 transition-colors">
+                <div className={`relative w-full max-w-[320px] aspect-square mb-8 rounded-xl overflow-hidden flex items-center justify-center p-8 border-none shadow-none ${item.bgClass}`}>
                   <DottedIcon 
                     pattern={item.pattern} 
                     className="w-full h-full max-w-[180px] max-h-[180px]"
-                    dotColor="bg-foreground"
+                    dotColor="bg-white"
                   />
                 </div>
 

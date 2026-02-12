@@ -28,7 +28,7 @@
   },
   "Mission": {
     "label": "Sứ mệnh.",
-    "description": "Chúng tôi kiến trúc lại hệ sinh thái công nghệ vận hành của bạn để trở nên tích hợp, thông minh và trực quan hơn.",
+    "description": "Là đối tác cải tiến quy trình của bạn, chúng tôi sử dụng công nghệ để giúp hoạt động của bạn trở nên tích hợp, thông minh và trực quan hơn.",
     "industries": {
       "transportation": "Vận tải",
       "transportationDesc": "Hợp nhất mạng lưới nhà vận chuyển thành một trung tâm điều khiển duy nhất để vận hành liền mạch.",
@@ -75,11 +75,23 @@
     },
     "grid": {
       "triggers": "Kích hoạt Thông minh",
-      "triggersDesc": "Tự động khởi xướng các quy trình phức tạp dựa trên tín hiệu thời gian thực—cho dù đó là email đến, cập nhật trạng thái hay sự kiện API.",
-      "human": "Kiểm soát Lấy Con người làm Trung tâm",
-      "humanDesc": "Khuếch đại lực lượng lao động của bạn. Định tuyến thông minh đảm bảo chỉ những ngoại lệ quan trọng mới đến được đội ngũ của bạn, trong khi các nhiệm vụ tiêu chuẩn được xử lý ngay lập tức.",
+      "triggersDesc": "Tự động kích hoạt quy trình từ email, trạng thái hoặc API.",
+      "human": "Kiểm soát Con người",
+      "humanDesc": "Chuyển ngoại lệ cho chuyên gia; tự động hóa phần còn lại.",
       "connectivity": "Kết nối Toàn diện",
-      "connectivityDesc": "Thu hẹp khoảng cách giữa các hệ thống cũ và công cụ hiện đại. Hợp nhất dữ liệu từ ERP, thiết bị hiện trường và đối tác bên ngoài vào một nguồn sự thật duy nhất."
+      "connectivityDesc": "Hợp nhất dữ liệu ERP, thiết bị và đối tác về một nguồn."
+    }
+  },
+  "Process": {
+    "title": "Từ Hỗn loạn đến Rõ ràng.",
+    "description": "Tiếp cận ba bước để hiện đại hóa hoạt động của bạn.",
+    "steps": {
+      "step1": "Lập bản đồ Hiện trạng",
+      "step1Desc": "Chúng tôi làm việc cùng đội ngũ của bạn để hình dung các hoạt động hiện tại, xác định các nút thắt, sự kém hiệu quả và các cơ hội cải tiến tiềm ẩn.",
+      "step2": "Thiết kế Tương lai",
+      "step2Desc": "Chúng tôi phác thảo một quy trình làm việc tối ưu được thiết kế để tối đa hóa giá trị tài chính và sự trôi chảy trong vận hành.",
+      "step3": "Xây dựng & Triển khai",
+      "step3Desc": "Chúng tôi xây dựng giải pháp sử dụng công nghệ hiện đại, với Nodal là hệ điều hành trung tâm để điều phối hệ sinh thái mới của bạn."
     }
   },
   "NodalPlatform": {

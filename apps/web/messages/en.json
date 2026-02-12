@@ -28,7 +28,7 @@
   },
   "Mission": {
     "label": "The Mission.",
-    "description": "We architect your operational technology ecosystem to be more integrated, intelligent, and intuitive.",
+    "description": "As your process improvement partner, we use technology to help your operations be more integrated, intelligent, and intuitive.",
     "industries": {
       "transportation": "Transportations",
       "transportationDesc": "Unify carrier networks into a single command center for seamless execution.",
@@ -75,11 +75,23 @@
     },
     "grid": {
       "triggers": "Intelligent Triggers",
-      "triggersDesc": "Automatically initiate complex workflows based on real-time signals—whether it's an incoming email, a status update, or an API event.",
-      "human": "Human-Centric Control",
-      "humanDesc": "Amplify your workforce. Intelligent routing ensures only critical exceptions reach your team, while standard tasks are handled instantly.",
+      "triggersDesc": "Automatically initiate complex workflows based on e-mails, status updates, or API events.",
+      "human": "Human Control",
+      "humanDesc": "Route critical exceptions to experts; automate the rest.",
       "connectivity": "Total Connectivity",
-      "connectivityDesc": "Bridge the gap between legacy systems and modern tools. Unify data from ERPs, field devices, and external partners into one source of truth."
+      "connectivityDesc": "Unify data from ERPs, devices, and partners into one source."
+    }
+  },
+  "Process": {
+    "title": "From Chaos to Clarity.",
+    "description": "Our three-step approach to modernizing your operations.",
+    "steps": {
+      "step1": "Map Current State",
+      "step1Desc": "We partner with your team to visualize your current operations, identifying bottlenecks, inefficiencies, and hidden opportunities for improvement.",
+      "step2": "Design Future State",
+      "step2Desc": "We blueprint an optimized workflow designed to maximize financial value and operational fluidity.",
+      "step3": "Build & Implement",
+      "step3Desc": "We build the solution using modern technologies, with Nodal as the central operating system to orchestrate your new ecosystem."
     }
   },
   "NodalPlatform": {

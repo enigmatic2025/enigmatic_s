@@ -19,7 +19,7 @@ export function Hero() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="inline-block text-4xl font-light tracking-tight sm:text-6xl md:text-7xl lg:text-8xl bg-linear-to-r from-slate-400 via-purple-400 to-blue-400 bg-clip-text text-transparent px-1 pb-4 -mb-4">
+          <div className="inline-block text-4xl font-light tracking-tight sm:text-6xl md:text-7xl lg:text-8xl bg-linear-to-r from-blue-500 via-violet-500 to-pink-500 bg-clip-text text-transparent px-1 pb-4 -mb-4">
             {t("title")}
           </div>
         </motion.div>

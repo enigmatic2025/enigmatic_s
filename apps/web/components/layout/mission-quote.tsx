@@ -54,7 +54,7 @@ export function MissionQuote() {
 
   return (
     <section className="w-full flex flex-col items-center justify-center pt-16 md:pt-24 bg-background overflow-hidden space-y-24">
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col gap-12 md:gap-24">
+      <div className="w-full max-w-7xl mx-auto px-6 flex flex-col gap-12 md:gap-24">
 
         {/* Mission Statement */}
         <div className="w-full">

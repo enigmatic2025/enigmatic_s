@@ -31,7 +31,6 @@ export function DottedIcon({
             animate={{ 
               opacity: dot ? 1 : 0.1, 
               scale: dot ? 1 : 0.5,
-              backgroundColor: dot ? "var(--foreground)" : "transparent"
             }}
             transition={{ 
               duration: 0.5,
