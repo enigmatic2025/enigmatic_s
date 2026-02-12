@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Trash2, Info, Copy, Check } from 'lucide-react';
+import { Plus, Trash2, Info, Copy, Check, Braces } from 'lucide-react';
 
 interface AutomationConfigProps {
   nodeId: string;
+  flowId?: string;
   data: any;
   onUpdate: (data: any) => void;
 }
@@ -14,7 +15,7 @@ interface SchemaField {
   required: boolean;
 }
 
-export function AutomationConfig({ nodeId, data, onUpdate }: AutomationConfigProps) {
+export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationConfigProps) {
   const t = useTranslations("ConfigDrawer.automation");
   const [copied, setCopied] = useState(false);
   
@@ -26,9 +27,10 @@ export function AutomationConfig({ nodeId, data, onUpdate }: AutomationConfigPro
     ? process.env.NEXT_PUBLIC_APP_URL 
     : (typeof window !== 'undefined' ? window.location.origin : '');
   const endpointUrl = `${baseUrl}/api/automation/resume`;
+  const signalUrl = `${baseUrl}/api/automation/signal`;
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(endpointUrl);
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -95,7 +97,7 @@ export function AutomationConfig({ nodeId, data, onUpdate }: AutomationConfigPro
                   POST {endpointUrl}
               </code>
               <button
-                  onClick={copyToClipboard}
+                  onClick={() => copyToClipboard(endpointUrl)}
                   className="p-2 bg-background border border-border hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground active:scale-95"
                   title="Copy URL"
               >
@@ -106,6 +108,86 @@ export function AutomationConfig({ nodeId, data, onUpdate }: AutomationConfigPro
           <p className="text-xs text-muted-foreground leading-relaxed">
               Send a POST request with the <code className="text-[10px] bg-muted px-1 py-0.5 rounded">action_id</code> and <code className="text-[10px] bg-muted px-1 py-0.5 rounded">output</code> payload to resume the flow.
           </p>
+      </div>
+
+      <div className="h-px bg-border/60 w-full" />
+
+      {/* Correlation Configuration */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Correlation (Optional)</span>
+            <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">Advanced</span>
+        </div>
+        
+        <p className="text-xs text-muted-foreground">
+            Allow external systems to resume this flow using business keys instead of the Action ID.
+        </p>
+
+        <div className="grid grid-cols-2 gap-3">
+            <div>
+                <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                    Event Name
+                </label>
+                <input
+                    type="text"
+                    value={data.eventName || 'default'}
+                    onChange={(e) => onUpdate({ ...data, eventName: e.target.value })}
+                    placeholder="e.g. TruckArrival"
+                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none"
+                />
+            </div>
+            <div>
+                <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                    Key Name
+                </label>
+                <input
+                    type="text"
+                    value={data.correlationKey || ''}
+                    onChange={(e) => onUpdate({ ...data, correlationKey: e.target.value })}
+                    placeholder="e.g. equipment_id"
+                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none"
+                />
+            </div>
+        </div>
+
+        <div>
+            <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                Correlation Value
+            </label>
+            <div className="relative">
+                <input
+                    type="text"
+                    value={data.correlationValue || ''}
+                    onChange={(e) => onUpdate({ ...data, correlationValue: e.target.value })}
+                    placeholder="e.g. {{ steps.trigger.body.id }}"
+                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs font-mono focus:ring-1 focus:ring-primary outline-none pr-8"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground" title="Insert Variable">
+                    <Braces className="w-3.5 h-3.5" />
+                </div>
+            </div>
+        </div>
+
+        {data.correlationKey && (
+            <div className="p-3 bg-muted/20 rounded-md border border-border space-y-2">
+                 <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">Signal Endpoint</span>
+                     <button
+                        onClick={() => copyToClipboard(signalUrl)}
+                        className="text-[10px] flex items-center gap-1 text-primary hover:underline"
+                    >
+                        {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                        Copy URL
+                    </button>
+                 </div>
+                 <code className="block text-[10px] font-mono bg-background border border-border rounded px-2 py-1.5 text-muted-foreground truncate">
+                    POST {signalUrl}
+                 </code>
+                 <div className="text-[10px] font-mono text-muted-foreground/80 mt-1">
+                    {`{ "event": "${data.eventName || 'default'}", "key": "${data.correlationKey}", "value": "...", "flow_id": "${flowId || 'FLOW_UUID'}" }`}
+                 </div>
+            </div>
+        )}
       </div>
 
       <div className="h-px bg-border/60 w-full" />

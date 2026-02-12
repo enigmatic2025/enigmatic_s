@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/config"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/server"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
 )
@@ -15,10 +16,13 @@ func main() {
 		log.Println("No .env file found")
 	}
 
+	// Load Config
+	cfg := config.Load()
+
 	// Start Temporal Worker
 	go workflow.StartWorker()
 
-	server := server.NewServer()
+	server := server.NewServer(cfg)
 
 	fmt.Printf("Starting Nodal Backend on %s\n", server.Addr)
 	if err := server.ListenAndServe(); err != nil {

@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/config"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 )
 
@@ -13,7 +14,8 @@ func main() {
 		log.Println("Warning: .env not found")
 	}
 
-	database.Init()
+	cfg := config.Load()
+	database.Init(cfg.Auth.SupabaseURL, cfg.Auth.SupabaseKey)
 	client := database.GetClient()
 
 	// Delete all audit logs

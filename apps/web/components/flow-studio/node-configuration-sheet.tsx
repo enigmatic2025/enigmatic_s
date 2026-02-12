@@ -50,6 +50,7 @@ export function NodeConfigurationSheet({
 
   const executionTrace = useFlowStore((state) => state.executionTrace);
   const setEditingNode = useFlowStore((state) => state.setEditingNode);
+  const flowId = useFlowStore((state) => state.flowId);
 
   // Reset form when node changes
   useEffect(() => {
@@ -275,6 +276,7 @@ export function NodeConfigurationSheet({
                                 return (
                                     <ConfigComponent 
                                         key={selectedNode.id}
+                                        flowId={flowId || undefined}
                                         data={formData} 
                                         onUpdate={(newData: any) => {
                                             const updated = { ...formData, ...newData };

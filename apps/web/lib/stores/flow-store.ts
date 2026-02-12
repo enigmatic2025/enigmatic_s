@@ -39,6 +39,8 @@ interface FlowStore {
     editingNodeId: string | null;
     editingNodeData: any | null;
     setEditingNode: (id: string | null, data: any | null) => void;
+    flowId: string | null;
+    setFlowId: (id: string | null) => void;
 }
 
 export const useFlowStore = create<FlowStore>((set) => ({
@@ -69,4 +71,7 @@ export const useFlowStore = create<FlowStore>((set) => ({
     editingNodeId: null,
     editingNodeData: null,
     setEditingNode: (id, data) => set({ editingNodeId: id, editingNodeData: data }),
+    flowId: null,
+    setFlowId: (id) => set({ flowId: id }),
 }));
+

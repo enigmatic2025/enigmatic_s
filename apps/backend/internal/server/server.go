@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
+	"github.com/teavana/enigmatic_s/apps/backend/internal/config"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/handlers"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
@@ -14,35 +14,33 @@ import (
 )
 
 type Server struct {
-	port           string
+	config         *config.Config
 	temporalClient client.Client
 }
 
-func NewServer() *http.Server {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8000"
-	}
-
+func NewServer(cfg *config.Config) *http.Server {
 	// Initialize Database
-	database.Init()
+	database.Init(cfg.Auth.SupabaseURL, cfg.Auth.SupabaseKey)
 
 	// Initialize Temporal Client
 	// Note: In production we might want this to be lazy or retry, but for now we fail fast if Temporal isn't ready
 	// The start.sh script ensures Temporal starts before this if running locally.
-	c, err := client.Dial(client.Options{})
+	// We might want to use cfg.Temporal.HostPort here in options if we were customizing it.
+	c, err := client.Dial(client.Options{
+		HostPort: cfg.Temporal.HostPort,
+	})
 	if err != nil {
 		log.Printf("Failed to create Temporal client: %v", err)
 	}
 
 	s := &Server{
-		port:           port,
+		config:         cfg,
 		temporalClient: c,
 	}
 
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%s", s.port),
+		Addr:         fmt.Sprintf(":%s", cfg.Server.Port),
 		Handler:      middleware.CORS(s.RegisterRoutes()),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
@@ -114,6 +112,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	if s.temporalClient != nil {
 		automationHandler := handlers.NewAutomationHandler(s.temporalClient)
 		mux.Handle("POST /api/automation/resume", http.HandlerFunc(automationHandler.ResumeAutomationHandler))
+		mux.Handle("POST /api/automation/signal", http.HandlerFunc(automationHandler.SignalAutomationHandler))
 	}
 
 	// Task Routes

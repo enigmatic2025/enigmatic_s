@@ -2,7 +2,6 @@ package database
 
 import (
 	"log"
-	"os"
 	"sync"
 
 	"github.com/nedpals/supabase-go"
@@ -14,23 +13,20 @@ var (
 )
 
 // Init initializes the Supabase client
-func Init() {
+// Init initializes the Supabase client
+func Init(url, key string) {
 	once.Do(func() {
-		supabaseUrl := os.Getenv("SUPABASE_URL")
-		supabaseKey := os.Getenv("SUPABASE_KEY")
-
-		if supabaseUrl == "" || supabaseKey == "" {
-			log.Fatal("SUPABASE_URL and SUPABASE_KEY must be set")
+		if url == "" || key == "" {
+			log.Fatal("Supabase URL and Key must be set")
 		}
-
-		client = supabase.CreateClient(supabaseUrl, supabaseKey)
+		client = supabase.CreateClient(url, key)
 	})
 }
 
 // GetClient returns the initialized Supabase client
 func GetClient() *supabase.Client {
 	if client == nil {
-		Init()
+		log.Fatal("Database client not initialized. Call Init() first.")
 	}
 	return client
 }
