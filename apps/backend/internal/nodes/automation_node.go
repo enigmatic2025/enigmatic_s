@@ -27,19 +27,58 @@ func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext)
 	actionID := fmt.Sprintf("%s:%s", input.RunID, input.StepID)
 
 	// 2. Check for Correlation Configuration
-	eventName, _ := input.Config["eventName"].(string)
-	correlationKey, _ := input.Config["correlationKey"].(string)
-	correlationValue, _ := input.Config["correlationValue"].(string)
-
 	description := "Waiting for external event..."
 
-	// 3. Register Subscription if configured
-	if correlationKey != "" && correlationValue != "" {
+	// 3. Register Subscriptions
+	var correlations []map[string]string
+
+	// Check for new list format
+	if list, ok := input.Config["correlations"].([]interface{}); ok {
+		for _, item := range list {
+			if m, ok := item.(map[string]interface{}); ok {
+				c := map[string]string{}
+				if v, ok := m["eventName"].(string); ok {
+					c["eventName"] = v
+				}
+				if v, ok := m["key"].(string); ok {
+					c["key"] = v
+				}
+				if v, ok := m["value"].(string); ok {
+					c["value"] = v
+				}
+				correlations = append(correlations, c)
+			}
+		}
+	} else {
+		// Fallback to legacy single fields
+		eventName, _ := input.Config["eventName"].(string)
+		correlationKey, _ := input.Config["correlationKey"].(string)
+		correlationValue, _ := input.Config["correlationValue"].(string)
+
+		if correlationKey != "" && correlationValue != "" {
+			correlations = append(correlations, map[string]string{
+				"eventName": eventName,
+				"key":       correlationKey,
+				"value":     correlationValue,
+			})
+		}
+	}
+
+	client := database.GetClient()
+	registered := 0
+
+	for _, c := range correlations {
+		eventName := c["eventName"]
+		key := c["key"]
+		value := c["value"]
+
+		if key == "" || value == "" {
+			continue
+		}
 		if eventName == "" {
 			eventName = "default"
 		}
 
-		client := database.GetClient()
 		sub := Subscription{
 			OrgID:            input.OrgID,
 			FlowID:           input.FlowID,
@@ -47,8 +86,8 @@ func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext)
 			RunID:            input.RunID,
 			StepID:           input.StepID,
 			EventName:        eventName,
-			CorrelationKey:   correlationKey,
-			CorrelationValue: correlationValue,
+			CorrelationKey:   key,
+			CorrelationValue: value,
 			Status:           "active",
 		}
 
@@ -56,11 +95,9 @@ func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext)
 		err := client.DB.From("automation_subscriptions").Insert(sub).Execute(&results)
 		if err != nil {
 			log.Printf("Failed to create automation subscription: %v", err)
-			// Non-fatal? Or should we fail the step? failing is safer.
-			return nil, fmt.Errorf("failed to register subscription: %w", err)
+			continue
 		}
-
-		description = fmt.Sprintf("Waiting for event '%s' where %s = %s", eventName, correlationKey, correlationValue)
+		registered++
 	}
 
 	// 4. Prepare Metadata for UI
@@ -68,7 +105,7 @@ func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext)
 		"action_id":   actionID,
 		"status":      "waiting",
 		"message":     description,
-		"correlation": correlationKey != "",
+		"correlation": registered > 0,
 	}
 
 	return &NodeResult{

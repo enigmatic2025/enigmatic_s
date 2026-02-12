@@ -91,82 +91,143 @@ export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationC
 
       {/* Correlation Configuration (Primary) */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Correlation Configuration</span>
-            <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">Recommended</span>
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">Correlation Rules</span>
+                <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">Recommended</span>
+            </div>
+            <button
+                onClick={() => {
+                    const currentList = data.correlations || [];
+                    onUpdate({ 
+                        ...data, 
+                        correlations: [...currentList, { eventName: '', key: '', value: '' }] 
+                    });
+                }}
+                className="text-xs flex items-center gap-1 text-primary hover:underline"
+            >
+                <Plus className="w-3 h-3" />
+                Add Condition
+            </button>
         </div>
         
         <p className="text-xs text-muted-foreground">
-            Configure how external systems can resume this flow using business events.
-            The external system does not need to know the specific Run ID.
+            Configure how external systems can resume this flow. If <strong>any</strong> of these conditions match an incoming signal, the flow will resume.
         </p>
 
-        <div className="space-y-4">
-            <div>
-                <label className="text-xs font-medium text-muted-foreground block mb-1.5 flex items-center gap-1">
-                    Event Name
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground/50" /></TooltipTrigger>
-                            <TooltipContent>The type of business event you are waiting for (e.g., 'PaymentReceived', 'OrderShipped').</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </label>
-                <input
-                    type="text"
-                    value={data.eventName || 'default'}
-                    onChange={(e) => onUpdate({ ...data, eventName: e.target.value })}
-                    placeholder="e.g. TruckArrival"
-                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none"
-                />
-                <p className="text-[10px] text-muted-foreground mt-1">
-                    Wait for this specific type of event.
-                </p>
-            </div>
-            
-            <div>
-                <label className="text-xs font-medium text-muted-foreground block mb-1.5 flex items-center gap-1">
-                    Key Name
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground/50" /></TooltipTrigger>
-                            <TooltipContent>The property name used to match this specific instance (e.g., 'invoice_id', 'truck_plate').</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </label>
-                <input
-                    type="text"
-                    value={data.correlationKey || ''}
-                    onChange={(e) => onUpdate({ ...data, correlationKey: e.target.value })}
-                    placeholder="e.g. equipment_id"
-                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none"
-                />
-                <p className="text-[10px] text-muted-foreground mt-1">
-                    The identifier field in the incoming payload.
-                </p>
-            </div>
+        <div className="space-y-3">
+             {(!data.correlations || data.correlations.length === 0) && (
+                 <div className="text-center py-6 border border-dashed border-border rounded-lg bg-muted/10">
+                     <p className="text-xs text-muted-foreground mb-2">No correlation rules configured.</p>
+                     <button
+                        onClick={() => onUpdate({ ...data, correlations: [{ eventName: '', key: '', value: '' }] })}
+                        className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded hover:bg-primary/90 transition-colors"
+                     >
+                         Add First Rule
+                     </button>
+                 </div>
+             )}
+
+             {(data.correlations || []).map((rule: any, index: number) => (
+                 <div key={index} className="p-3 bg-muted/20 border border-border rounded-md space-y-3 relative group">
+                     {/* Remove Button */}
+                     <button
+                        onClick={() => {
+                            const newList = [...(data.correlations || [])];
+                            newList.splice(index, 1);
+                            onUpdate({ ...data, correlations: newList });
+                        }}
+                        className="absolute top-2 right-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                        title="Remove Rule"
+                     >
+                         <Trash2 className="w-3.5 h-3.5" />
+                     </button>
+
+                     {/* Event Name */}
+                     <div>
+                        <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block flex items-center gap-1">
+                            Event Name
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground/50" /></TooltipTrigger>
+                                    <TooltipContent>The type of business event (e.g. 'TruckArrival'). Leave blank for 'default'.</TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </label>
+                        <input
+                            type="text"
+                            value={rule.eventName || ''}
+                            onChange={(e) => {
+                                const newList = [...(data.correlations || [])];
+                                newList[index] = { ...newList[index], eventName: e.target.value };
+                                onUpdate({ ...data, correlations: newList });
+                            }}
+                            placeholder="default"
+                            className="w-full bg-background border border-input rounded px-2 py-1.5 text-xs outline-none focus:border-primary"
+                        />
+                     </div>
+
+                     <div className="grid grid-cols-2 gap-2">
+                        {/* Key */}
+                        <div>
+                            <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block flex items-center gap-1">
+                                Key
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground/50" /></TooltipTrigger>
+                                        <TooltipContent>Property name to identify the instance (e.g. 'order_id').</TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </label>
+                            <input
+                                type="text"
+                                value={rule.key || ''}
+                                onChange={(e) => {
+                                    const newList = [...(data.correlations || [])];
+                                    newList[index] = { ...newList[index], key: e.target.value };
+                                    onUpdate({ ...data, correlations: newList });
+                                }}
+                                placeholder="e.g. order_id"
+                                className="w-full bg-background border border-input rounded px-2 py-1.5 text-xs outline-none focus:border-primary"
+                            />
+                        </div>
+
+                        {/* Value */}
+                        <div>
+                            <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block flex items-center gap-1">
+                                Value
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground/50" /></TooltipTrigger>
+                                        <TooltipContent>Expected value for this run (e.g. variable ref).</TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={rule.value || ''}
+                                    onChange={(e) => {
+                                        const newList = [...(data.correlations || [])];
+                                        newList[index] = { ...newList[index], value: e.target.value };
+                                        onUpdate({ ...data, correlations: newList });
+                                    }}
+                                    placeholder="{{ ... }}"
+                                    className="w-full bg-background border border-input rounded px-2 py-1.5 text-xs font-mono outline-none focus:border-primary pr-6"
+                                />
+                                <div className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                    <Braces className="w-3 h-3" />
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+             ))}
         </div>
 
-        <div>
-            <label className="text-xs font-medium text-muted-foreground block mb-1.5">
-                Correlation Value
-            </label>
-            <div className="relative">
-                <input
-                    type="text"
-                    value={data.correlationValue || ''}
-                    onChange={(e) => onUpdate({ ...data, correlationValue: e.target.value })}
-                    placeholder="e.g. {{ steps.trigger.body.id }}"
-                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs font-mono focus:ring-1 focus:ring-primary outline-none pr-8"
-                />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground" title="Insert Variable">
-                    <Braces className="w-3.5 h-3.5" />
-                </div>
-            </div>
-        </div>
-
-        {data.correlationKey && (
-            <div className="p-3 bg-muted/20 rounded-md border border-border space-y-2">
+        {/* Signal Endpoint (Helper for the first rule or generic) */}
+        {(data.correlations?.length > 0) && (
+            <div className="p-3 bg-muted/20 rounded-md border border-border space-y-2 mt-4">
                  <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-muted-foreground">Signal Endpoint</span>
                      <button
@@ -180,41 +241,14 @@ export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationC
                  <code className="block text-[10px] font-mono bg-background border border-border rounded px-2 py-1.5 text-muted-foreground truncate">
                     POST {signalUrl}
                  </code>
-                 <div className="text-[10px] font-mono text-muted-foreground/80 mt-1">
-                    {`{ "event": "${data.eventName || 'default'}", "key": "${data.correlationKey}", "value": "...", "flow_id": "${flowId || 'FLOW_UUID'}" }`}
+                 <div className="text-[10px] font-mono text-muted-foreground/80 mt-1 break-all">
+                    {`{ "event": "${data.correlations[0].eventName || 'default'}", "key": "${data.correlations[0].key}", "value": "...", "flow_id": "${flowId || 'FLOW_UUID'}" }`}
                  </div>
             </div>
         )}
       </div>
 
       <div className="h-px bg-border/60 w-full" />
-
-      {/* Resume Endpoint URL (Legacy/Direct) */}
-      <div className="p-4 bg-muted/20 rounded-lg border border-border space-y-3 opacity-80 hover:opacity-100 transition-opacity">
-          <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">Direct Resume (Action ID)</span>
-              </div>
-          </div>
-          
-          <p className="text-xs text-muted-foreground leading-relaxed">
-              For manual testing or specific callbacks, you can use the Action ID.
-          </p>
-          
-          <div className="flex items-center gap-2">
-              <code className="flex-1 text-xs font-mono bg-background border border-border rounded-md px-3 py-2.5 truncate select-all text-muted-foreground">
-                  POST {endpointUrl}
-              </code>
-              <button
-                  onClick={() => copyToClipboard(endpointUrl)}
-                  className="p-2 bg-background border border-border hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground active:scale-95"
-                  title="Copy URL"
-              >
-                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-              </button>
-          </div>
-      </div>
 
       <div className="h-px bg-border/60 w-full" />
 

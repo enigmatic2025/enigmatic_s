@@ -127,13 +127,12 @@ func (h *AutomationHandler) SignalAutomationHandler(w http.ResponseWriter, r *ht
 			continue
 		}
 
-		// Mark subscription as completed
-		// We do this asynchronously or simply here. Ideally in a transaction but Supabase REST doesn't support easy tx across calls.
-		// "At least once" delivery is better than "At most once", so maybe mark complete AFTER signal.
-		// If signal fails, we retry later? For now, just log error.
+		// Mark ALL subscriptions for this step as completed to avoid zombies
+		// Since one signal resumes the step, the others are no longer needed.
 		client.DB.From("automation_subscriptions").
 			Update(map[string]any{"status": "completed"}).
-			Eq("id", sub.ID).
+			Eq("run_id", sub.RunID).
+			Eq("step_id", sub.StepID).
 			Execute(nil)
 
 		resumedCount++
