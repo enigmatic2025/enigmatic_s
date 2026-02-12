@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Trash2, Info, Copy, Check, Braces } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AutomationConfigProps {
   nodeId: string;
@@ -83,50 +89,28 @@ export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationC
 
       <div className="h-px bg-border/60 w-full" />
 
-      {/* Resume Endpoint URL */}
-      <div className="p-4 bg-muted/20 rounded-lg border border-border space-y-3">
-          <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-pink-500" />
-                  <span className="text-sm font-medium">Resume Endpoint</span>
-              </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-              <code className="flex-1 text-xs font-mono bg-background border border-border rounded-md px-3 py-2.5 truncate select-all text-muted-foreground">
-                  POST {endpointUrl}
-              </code>
-              <button
-                  onClick={() => copyToClipboard(endpointUrl)}
-                  className="p-2 bg-background border border-border hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground active:scale-95"
-                  title="Copy URL"
-              >
-                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-              </button>
-          </div>
-          
-          <p className="text-xs text-muted-foreground leading-relaxed">
-              Send a POST request with the <code className="text-[10px] bg-muted px-1 py-0.5 rounded">action_id</code> and <code className="text-[10px] bg-muted px-1 py-0.5 rounded">output</code> payload to resume the flow.
-          </p>
-      </div>
-
-      <div className="h-px bg-border/60 w-full" />
-
-      {/* Correlation Configuration */}
+      {/* Correlation Configuration (Primary) */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Correlation (Optional)</span>
-            <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">Advanced</span>
+            <span className="text-sm font-medium">Correlation Configuration</span>
+            <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">Recommended</span>
         </div>
         
         <p className="text-xs text-muted-foreground">
-            Allow external systems to resume this flow using business keys instead of the Action ID.
+            Configure how external systems can resume this flow using business events.
+            The external system does not need to know the specific Run ID.
         </p>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-4">
             <div>
-                <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                <label className="text-xs font-medium text-muted-foreground block mb-1.5 flex items-center gap-1">
                     Event Name
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground/50" /></TooltipTrigger>
+                            <TooltipContent>The type of business event you are waiting for (e.g., 'PaymentReceived', 'OrderShipped').</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </label>
                 <input
                     type="text"
@@ -135,10 +119,20 @@ export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationC
                     placeholder="e.g. TruckArrival"
                     className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none"
                 />
+                <p className="text-[10px] text-muted-foreground mt-1">
+                    Wait for this specific type of event.
+                </p>
             </div>
+            
             <div>
-                <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                <label className="text-xs font-medium text-muted-foreground block mb-1.5 flex items-center gap-1">
                     Key Name
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground/50" /></TooltipTrigger>
+                            <TooltipContent>The property name used to match this specific instance (e.g., 'invoice_id', 'truck_plate').</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </label>
                 <input
                     type="text"
@@ -147,6 +141,9 @@ export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationC
                     placeholder="e.g. equipment_id"
                     className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none"
                 />
+                <p className="text-[10px] text-muted-foreground mt-1">
+                    The identifier field in the incoming payload.
+                </p>
             </div>
         </div>
 
@@ -188,6 +185,35 @@ export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationC
                  </div>
             </div>
         )}
+      </div>
+
+      <div className="h-px bg-border/60 w-full" />
+
+      {/* Resume Endpoint URL (Legacy/Direct) */}
+      <div className="p-4 bg-muted/20 rounded-lg border border-border space-y-3 opacity-80 hover:opacity-100 transition-opacity">
+          <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-muted-foreground">Direct Resume (Action ID)</span>
+              </div>
+          </div>
+          
+          <p className="text-xs text-muted-foreground leading-relaxed">
+              For manual testing or specific callbacks, you can use the Action ID.
+          </p>
+          
+          <div className="flex items-center gap-2">
+              <code className="flex-1 text-xs font-mono bg-background border border-border rounded-md px-3 py-2.5 truncate select-all text-muted-foreground">
+                  POST {endpointUrl}
+              </code>
+              <button
+                  onClick={() => copyToClipboard(endpointUrl)}
+                  className="p-2 bg-background border border-border hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground active:scale-95"
+                  title="Copy URL"
+              >
+                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+              </button>
+          </div>
       </div>
 
       <div className="h-px bg-border/60 w-full" />
