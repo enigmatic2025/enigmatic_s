@@ -11,15 +11,16 @@ import (
 type AutomationNodeExecutor struct{}
 
 type Subscription struct {
-	OrgID            string `json:"org_id"`
-	FlowID           string `json:"flow_id"`
-	WorkflowID       string `json:"workflow_id"`
-	RunID            string `json:"run_id"`
-	StepID           string `json:"step_id"`
-	EventName        string `json:"event_name"`
-	CorrelationKey   string `json:"correlation_key"`
-	CorrelationValue string `json:"correlation_value"`
-	Status           string `json:"status"`
+	OrgID            string                 `json:"org_id"`
+	FlowID           string                 `json:"flow_id"`
+	WorkflowID       string                 `json:"workflow_id"`
+	RunID            string                 `json:"run_id"`
+	StepID           string                 `json:"step_id"`
+	EventName        string                 `json:"event_name"`
+	CorrelationKey   string                 `json:"correlation_key"`   // Legacy/Partial (first key)
+	CorrelationValue string                 `json:"correlation_value"` // Legacy/Partial (first value)
+	Criteria         map[string]interface{} `json:"criteria"`
+	Status           string                 `json:"status"`
 }
 
 func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
@@ -29,75 +30,63 @@ func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext)
 	// 2. Check for Correlation Configuration
 	description := "Waiting for external event..."
 
-	// 3. Register Subscriptions
-	var correlations []map[string]string
+	// 3. Register Subscription (Single Row for AND logic)
+	var criteria = make(map[string]interface{})
+	eventName := "default"
 
-	// Check for new list format
+	// Check for list format
 	if list, ok := input.Config["correlations"].([]interface{}); ok {
-		for _, item := range list {
+		for i, item := range list {
 			if m, ok := item.(map[string]interface{}); ok {
-				c := map[string]string{}
-				if v, ok := m["eventName"].(string); ok {
-					c["eventName"] = v
+				// Use the event name from the first rule as the primary event
+				if i == 0 {
+					if v, ok := m["eventName"].(string); ok && v != "" {
+						eventName = v
+					}
 				}
-				if v, ok := m["key"].(string); ok {
-					c["key"] = v
+
+				key, _ := m["key"].(string)
+				val, _ := m["value"].(string)
+
+				if key != "" && val != "" {
+					criteria[key] = val
 				}
-				if v, ok := m["value"].(string); ok {
-					c["value"] = v
-				}
-				correlations = append(correlations, c)
 			}
 		}
 	} else {
-		// Fallback to legacy single fields
-		eventName, _ := input.Config["eventName"].(string)
-		correlationKey, _ := input.Config["correlationKey"].(string)
-		correlationValue, _ := input.Config["correlationValue"].(string)
-
-		if correlationKey != "" && correlationValue != "" {
-			correlations = append(correlations, map[string]string{
-				"eventName": eventName,
-				"key":       correlationKey,
-				"value":     correlationValue,
-			})
+		// Fallback
+		if v, ok := input.Config["eventName"].(string); ok && v != "" {
+			eventName = v
+		}
+		k, _ := input.Config["correlationKey"].(string)
+		v, _ := input.Config["correlationValue"].(string)
+		if k != "" && v != "" {
+			criteria[k] = v
 		}
 	}
 
-	client := database.GetClient()
-	registered := 0
-
-	for _, c := range correlations {
-		eventName := c["eventName"]
-		key := c["key"]
-		value := c["value"]
-
-		if key == "" || value == "" {
-			continue
-		}
-		if eventName == "" {
-			eventName = "default"
-		}
-
+	registered := false
+	if len(criteria) > 0 {
+		client := database.GetClient()
 		sub := Subscription{
-			OrgID:            input.OrgID,
-			FlowID:           input.FlowID,
-			WorkflowID:       input.WorkflowID,
-			RunID:            input.RunID,
-			StepID:           input.StepID,
-			EventName:        eventName,
-			CorrelationKey:   key,
-			CorrelationValue: value,
-			Status:           "active",
+			OrgID:      input.OrgID,
+			FlowID:     input.FlowID,
+			WorkflowID: input.WorkflowID,
+			RunID:      input.RunID,
+			StepID:     input.StepID,
+			EventName:  eventName,
+			Criteria:   criteria,
+			Status:     "active",
 		}
 
 		var results []Subscription
 		err := client.DB.From("automation_subscriptions").Insert(sub).Execute(&results)
 		if err != nil {
 			log.Printf("Failed to create automation subscription: %v", err)
-			continue
+			return nil, fmt.Errorf("failed to register subscription: %w", err)
 		}
-		registered++
+		registered = true
+		description = fmt.Sprintf("Waiting for event '%s' with %d criteria...", eventName, len(criteria))
 	}
 
 	// 4. Prepare Metadata for UI
@@ -105,7 +94,7 @@ func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext)
 		"action_id":   actionID,
 		"status":      "waiting",
 		"message":     description,
-		"correlation": registered > 0,
+		"correlation": registered,
 	}
 
 	return &NodeResult{

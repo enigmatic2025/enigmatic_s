@@ -45,14 +45,16 @@ func (h *AutomationHandler) ResumeAutomationHandler(w http.ResponseWriter, r *ht
 // POST /api/automation/signal
 func (h *AutomationHandler) SignalAutomationHandler(w http.ResponseWriter, r *http.Request) {
 	var payload struct {
-		Event  string                 `json:"event"`
-		Key    string                 `json:"key"`
-		Value  string                 `json:"value"`
-		Output map[string]interface{} `json:"output"`
-		// Legacy support in same endpoint? Optional.
-		// Legacy support in same endpoint? Optional.
-		ActionID string `json:"action_id"`
-		FlowID   string `json:"flow_id"`
+		Event string `json:"event"`
+		// Legacy: Key/Value
+		Key   string `json:"key"`
+		Value string `json:"value"`
+		// Modern: Data map
+		Data map[string]interface{} `json:"data"`
+
+		Output   map[string]interface{} `json:"output"`
+		ActionID string                 `json:"action_id"`
+		FlowID   string                 `json:"flow_id"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
@@ -67,30 +69,41 @@ func (h *AutomationHandler) SignalAutomationHandler(w http.ResponseWriter, r *ht
 	}
 
 	// 2. Correlation
-	if payload.Key == "" || payload.Value == "" {
-		http.Error(w, "key and value are required for correlation signal", http.StatusBadRequest)
-		return
-	}
 	if payload.Event == "" {
 		payload.Event = "default"
 	}
 
-	client := database.GetClient()
-	var subscriptions []struct {
-		ID         string `json:"id"`
-		WorkflowID string `json:"workflow_id"`
-		RunID      string `json:"run_id"`
-		StepID     string `json:"step_id"`
+	// Normalize Payload Data
+	if payload.Data == nil {
+		payload.Data = make(map[string]interface{})
+	}
+	// Merge legacy Key/Value into Data if present
+	if payload.Key != "" && payload.Value != "" {
+		payload.Data[payload.Key] = payload.Value
 	}
 
-	// Find active subscriptions
+	if len(payload.Data) == 0 {
+		http.Error(w, "data or key/value required", http.StatusBadRequest)
+		return
+	}
+
+	client := database.GetClient()
+	type DBSubscription struct {
+		ID         string                 `json:"id"`
+		WorkflowID string                 `json:"workflow_id"`
+		RunID      string                 `json:"run_id"`
+		StepID     string                 `json:"step_id"`
+		Criteria   map[string]interface{} `json:"criteria"`
+	}
+	var subscriptions []DBSubscription
+
+	// Find active subscriptions by Event Name
 	query := client.DB.From("automation_subscriptions").
-		Select("id, workflow_id, run_id, step_id").
+		Select("id, workflow_id, run_id, step_id, criteria").
 		Eq("event_name", payload.Event).
-		Eq("correlation_key", payload.Key).
-		Eq("correlation_value", payload.Value).
 		Eq("status", "active")
 
+	// Optional Flow Scope
 	if payload.FlowID != "" {
 		query = query.Eq("flow_id", payload.FlowID)
 	}
@@ -103,14 +116,31 @@ func (h *AutomationHandler) SignalAutomationHandler(w http.ResponseWriter, r *ht
 		return
 	}
 
-	if len(subscriptions) == 0 {
-		// 200 OK but 0 resumed
-		json.NewEncoder(w).Encode(map[string]any{"status": "ok", "resumed": 0, "message": "No active subscriptions found"})
-		return
-	}
-
 	resumedCount := 0
 	for _, sub := range subscriptions {
+		// IN-MEMORY MATCHING: Check if Subscription Criteria is a SUBSET of Payload Data
+		// All keys in Criteria must exist in Payload Data and have matching values
+		match := true
+		for k, v := range sub.Criteria {
+			payloadVal, exists := payload.Data[k]
+			if !exists {
+				match = false
+				break
+			}
+			// Simple string comparison for now.
+			// In production, might want deeper equality checks for numbers/bools.
+			if fmt.Sprintf("%v", payloadVal) != fmt.Sprintf("%v", v) {
+				match = false
+				break
+			}
+		}
+
+		if !match {
+			continue
+		}
+
+		// MATCH FOUND!
+
 		// Construct ActionID
 		actionID := fmt.Sprintf("%s:%s", sub.RunID, sub.StepID)
 		signalName := "AutomationSignal-" + actionID
@@ -118,6 +148,7 @@ func (h *AutomationHandler) SignalAutomationHandler(w http.ResponseWriter, r *ht
 		signalArg := map[string]interface{}{
 			"action_id": actionID,
 			"output":    payload.Output,
+			"data":      payload.Data, // Pass full data to flow context
 		}
 
 		// Signal Workflow
@@ -127,12 +158,10 @@ func (h *AutomationHandler) SignalAutomationHandler(w http.ResponseWriter, r *ht
 			continue
 		}
 
-		// Mark ALL subscriptions for this step as completed to avoid zombies
-		// Since one signal resumes the step, the others are no longer needed.
+		// Mark subscription as completed
 		client.DB.From("automation_subscriptions").
 			Update(map[string]any{"status": "completed"}).
-			Eq("run_id", sub.RunID).
-			Eq("step_id", sub.StepID).
+			Eq("id", sub.ID).
 			Execute(nil)
 
 		resumedCount++
