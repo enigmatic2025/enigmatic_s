@@ -19,26 +19,27 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 
 interface AIConfig {
-    Provider: string
-    BaseURL:  string
-    Model:    string
-    APIKey:   string
-    GuardrailEnabled: boolean
-    GuardrailProvider: string
-    GuardrailModel: string
+    provider: string
+    base_url: string
+    model: string
+    api_key: string
+    guardrail_enabled: boolean
+    guardrail_provider: string
+    guardrail_model: string
+    guardrail_base_url?: string
 }
 
 export function AIConfigPanel() {
     const { data: config, mutate, isLoading } = useSWR<AIConfig>('/api/admin/ai-config', (url: string) => apiClient.get(url).then(res => res.json()))
     
     const [formData, setFormData] = useState<AIConfig>({
-        Provider: 'openrouter',
-        BaseURL: '',
-        Model: '',
-        APIKey: '',
-        GuardrailEnabled: false,
-        GuardrailProvider: 'openrouter',
-        GuardrailModel: 'google/gemini-2.0-flash-001'
+        provider: 'openrouter',
+        base_url: '',
+        model: '',
+        api_key: '',
+        guardrail_enabled: false,
+        guardrail_provider: 'openrouter',
+        guardrail_model: 'google/gemini-2.0-flash-001'
     })
     const [isSaving, setIsSaving] = useState(false)
 
@@ -47,15 +48,15 @@ export function AIConfigPanel() {
             setFormData(prev => ({
                 ...prev,
                 ...config,
-                GuardrailProvider: config.GuardrailProvider || 'openrouter',
-                GuardrailModel: config.GuardrailModel || 'google/gemini-2.0-flash-001'
+                guardrail_provider: config.guardrail_provider || 'openrouter',
+                guardrail_model: config.guardrail_model || 'google/gemini-2.0-flash-001'
             }))
         }
     }, [config])
 
     const handleProviderChange = (value: string) => {
-        let baseUrl = formData.BaseURL
-        let model = formData.Model
+        let baseUrl = formData.base_url
+        let model = formData.model
 
         if (value === 'openrouter') {
             baseUrl = 'https://openrouter.ai/api/v1'
@@ -68,7 +69,7 @@ export function AIConfigPanel() {
             model = 'gpt-4o'
         }
 
-        setFormData(prev => ({ ...prev, Provider: value, BaseURL: baseUrl, Model: model }))
+        setFormData(prev => ({ ...prev, provider: value, base_url: baseUrl, model: model }))
     }
 
     const saveField = async (key: string, value: string) => {
@@ -80,17 +81,17 @@ export function AIConfigPanel() {
         setIsSaving(true)
         try {
             const promises = [
-                saveField('ai_provider', formData.Provider),
-                saveField('ai_base_url', formData.BaseURL),
-                saveField('ai_model', formData.Model),
-                saveField('ai_guardrail_enabled', String(formData.GuardrailEnabled)),
-                saveField('ai_guardrail_provider', formData.GuardrailProvider),
-                saveField('ai_guardrail_model', formData.GuardrailModel),
+                saveField('ai_provider', formData.provider),
+                saveField('ai_base_url', formData.base_url),
+                saveField('ai_model', formData.model),
+                saveField('ai_guardrail_enabled', String(formData.guardrail_enabled)),
+                saveField('ai_guardrail_provider', formData.guardrail_provider),
+                saveField('ai_guardrail_model', formData.guardrail_model),
             ]
 
             // Only save API Key if it has changed from the obfuscated original
-            if (formData.APIKey !== config?.APIKey) {
-                promises.push(saveField('ai_api_key', formData.APIKey))
+            if (formData.api_key !== config?.api_key) {
+                promises.push(saveField('ai_api_key', formData.api_key))
             }
 
             await Promise.all(promises)
@@ -132,7 +133,7 @@ export function AIConfigPanel() {
                 </div>
                 <div className="p-5 grid gap-4 sm:grid-cols-2">
                     <Field label="Provider">
-                        <Select value={formData.Provider} onValueChange={handleProviderChange}>
+                        <Select value={formData.provider} onValueChange={handleProviderChange}>
                             <SelectTrigger className="h-9 text-sm">
                                 <SelectValue placeholder="Select" />
                             </SelectTrigger>
@@ -149,8 +150,8 @@ export function AIConfigPanel() {
                             <Server className="absolute left-2.5 top-2 h-3.5 w-3.5 text-zinc-400" />
                             <Input
                                 className="h-9 pl-8 text-sm font-mono"
-                                value={formData.BaseURL}
-                                onChange={(e) => setFormData(prev => ({ ...prev, BaseURL: e.target.value }))}
+                                value={formData.base_url}
+                                onChange={(e) => setFormData(prev => ({ ...prev, base_url: e.target.value }))}
                             />
                         </div>
                     </Field>
@@ -159,8 +160,8 @@ export function AIConfigPanel() {
                             <Cpu className="absolute left-2.5 top-2 h-3.5 w-3.5 text-zinc-400" />
                             <Input
                                 className="h-9 pl-8 text-sm font-mono"
-                                value={formData.Model}
-                                onChange={(e) => setFormData(prev => ({ ...prev, Model: e.target.value }))}
+                                value={formData.model}
+                                onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
                                 placeholder="e.g. gpt-4o"
                             />
                         </div>
@@ -172,8 +173,8 @@ export function AIConfigPanel() {
                                 type="password"
                                 autoComplete="new-password"
                                 className="h-9 pl-8 text-sm font-mono"
-                                value={formData.APIKey}
-                                onChange={(e) => setFormData(prev => ({ ...prev, APIKey: e.target.value }))}
+                                value={formData.api_key}
+                                onChange={(e) => setFormData(prev => ({ ...prev, api_key: e.target.value }))}
                                 placeholder="sk-..."
                             />
                         </div>
@@ -188,12 +189,12 @@ export function AIConfigPanel() {
                     <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Guardrails</h2>
                     <span className="text-xs text-zinc-400 ml-auto">Filter non-work requests</span>
                     <Switch
-                        checked={formData.GuardrailEnabled}
-                        onCheckedChange={(c) => setFormData(prev => ({ ...prev, GuardrailEnabled: c }))}
+                        checked={formData.guardrail_enabled}
+                        onCheckedChange={(c) => setFormData(prev => ({ ...prev, guardrail_enabled: c }))}
                     />
                 </div>
                 <div className="p-5">
-                    {!formData.GuardrailEnabled && (
+                    {!formData.guardrail_enabled && (
                         <div className="flex items-start gap-2 p-3 rounded-md bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-xs mb-4">
                             <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                             <span>Disabled — all requests go directly to the core model without filtering.</span>
@@ -202,9 +203,9 @@ export function AIConfigPanel() {
                     <div className="grid gap-4 sm:grid-cols-2">
                         <Field label="Router Model">
                             <Select
-                                value={formData.GuardrailModel}
-                                onValueChange={(v) => setFormData(prev => ({ ...prev, GuardrailModel: v }))}
-                                disabled={!formData.GuardrailEnabled}
+                                value={formData.guardrail_model}
+                                onValueChange={(v) => setFormData(prev => ({ ...prev, guardrail_model: v }))}
+                                disabled={!formData.guardrail_enabled}
                             >
                                 <SelectTrigger className="h-9 text-sm">
                                     <SelectValue placeholder="Select" />
@@ -219,9 +220,9 @@ export function AIConfigPanel() {
                         </Field>
                         <Field label="Router Provider">
                             <Select
-                                value={formData.GuardrailProvider}
-                                onValueChange={(v) => setFormData(prev => ({ ...prev, GuardrailProvider: v }))}
-                                disabled={!formData.GuardrailEnabled}
+                                value={formData.guardrail_provider}
+                                onValueChange={(v) => setFormData(prev => ({ ...prev, guardrail_provider: v }))}
+                                disabled={!formData.guardrail_enabled}
                             >
                                 <SelectTrigger className="h-9 text-sm">
                                     <SelectValue placeholder="Select" />
