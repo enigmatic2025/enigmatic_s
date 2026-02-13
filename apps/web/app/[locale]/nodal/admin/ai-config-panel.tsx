@@ -79,15 +79,21 @@ export function AIConfigPanel() {
     const handleSaveAll = async () => {
         setIsSaving(true)
         try {
-            await Promise.all([
+            const promises = [
                 saveField('ai_provider', formData.Provider),
                 saveField('ai_base_url', formData.BaseURL),
                 saveField('ai_model', formData.Model),
-                saveField('ai_api_key', formData.APIKey),
                 saveField('ai_guardrail_enabled', String(formData.GuardrailEnabled)),
                 saveField('ai_guardrail_provider', formData.GuardrailProvider),
                 saveField('ai_guardrail_model', formData.GuardrailModel),
-            ])
+            ]
+
+            // Only save API Key if it has changed from the obfuscated original
+            if (formData.APIKey !== config?.APIKey) {
+                promises.push(saveField('ai_api_key', formData.APIKey))
+            }
+
+            await Promise.all(promises)
             toast.success("Configuration saved")
             mutate()
         } catch {
@@ -164,6 +170,7 @@ export function AIConfigPanel() {
                             <Lock className="absolute left-2.5 top-2 h-3.5 w-3.5 text-zinc-400" />
                             <Input
                                 type="password"
+                                autoComplete="new-password"
                                 className="h-9 pl-8 text-sm font-mono"
                                 value={formData.APIKey}
                                 onChange={(e) => setFormData(prev => ({ ...prev, APIKey: e.target.value }))}
