@@ -27,8 +27,14 @@ type ChatPayload struct {
 }
 
 type UIMessage struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role    string   `json:"role"`
+	Content string   `json:"content"`
+	Parts   []UIPart `json:"parts,omitempty"`
+}
+
+type UIPart struct {
+	Type string `json:"type"`
+	Text string `json:"text,omitempty"`
 }
 
 type ConfigPayload struct {
@@ -49,7 +55,15 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		// Taking the last message as the new prompt
 		lastMsg := payload.Messages[len(payload.Messages)-1]
 		if lastMsg.Role == "user" {
-			payload.Message = lastMsg.Content
+			if lastMsg.Content != "" {
+				payload.Message = lastMsg.Content
+			} else if len(lastMsg.Parts) > 0 {
+				for _, p := range lastMsg.Parts {
+					if p.Type == "text" {
+						payload.Message += p.Text
+					}
+				}
+			}
 		}
 	}
 

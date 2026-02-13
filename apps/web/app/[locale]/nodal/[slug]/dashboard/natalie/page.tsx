@@ -26,7 +26,38 @@ export default function NataliePage() {
         if (session?.access_token) {
           headers.set('Authorization', `Bearer ${session.access_token}`);
         }
-        return fetch(url, { ...init, headers });
+
+        // Transform body for legacy backend (expects 'message' string, not 'messages' array)
+        let body = init?.body;
+        if (typeof body === 'string') {
+          try {
+            const parsed = JSON.parse(body);
+             if (parsed.messages && Array.isArray(parsed.messages)) {
+              const lastMsg = parsed.messages[parsed.messages.length - 1];
+              // Extract text from content string or parts
+              let messageText = "";
+              if (typeof lastMsg.content === 'string') {
+                  messageText = lastMsg.content;
+              } else if (lastMsg.parts && Array.isArray(lastMsg.parts)) {
+                  messageText = lastMsg.parts
+                    .filter((p: any) => p.type === 'text')
+                    .map((p: any) => p.text)
+                    .join('');
+              }
+              
+              if (messageText) {
+                 body = JSON.stringify({ 
+                     message: messageText,
+                     context: parsed.context || "" // Preserve context if present
+                 });
+              }
+            }
+          } catch (e) {
+            console.error("Failed to transform chat payload", e);
+          }
+        }
+
+        return fetch(url, { ...init, headers, body });
       },
       body: {
         context: "" // Global context is injected by backend
