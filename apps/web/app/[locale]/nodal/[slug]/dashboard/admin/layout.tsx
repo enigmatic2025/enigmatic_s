@@ -1,14 +1,15 @@
 import { redirect } from "next/navigation";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  if (params.slug !== "enigmatic-i2v2i") {
-    redirect(`/nodal/${params.slug}/dashboard`);
+  const { slug } = await params;
+  if (slug !== "enigmatic-i2v2i") {
+    redirect(`/nodal/${slug}/dashboard`);
   }
 
   return <>{children}</>;
