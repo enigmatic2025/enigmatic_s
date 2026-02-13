@@ -6,8 +6,11 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1
 	github.com/nedpals/supabase-go v0.4.0
+	github.com/sirupsen/logrus v1.4.2
 	go.temporal.io/sdk v1.26.0
 )
+
+require github.com/konsorten/go-windows-terminal-sequences v1.0.1 // indirect
 
 require (
 	github.com/MicahParks/keyfunc/v2 v2.1.0

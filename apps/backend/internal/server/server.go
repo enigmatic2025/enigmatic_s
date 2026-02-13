@@ -10,12 +10,14 @@ import (
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/handlers"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/services"
 	"go.temporal.io/sdk/client"
 )
 
 type Server struct {
 	config         *config.Config
 	temporalClient client.Client
+	aiService      *services.AIService
 }
 
 func NewServer(cfg *config.Config) *http.Server {
@@ -33,9 +35,13 @@ func NewServer(cfg *config.Config) *http.Server {
 		log.Printf("Failed to create Temporal client: %v", err)
 	}
 
+	dbClient := database.GetClient()
+	aiService := services.NewAIService(dbClient)
+
 	s := &Server{
 		config:         cfg,
 		temporalClient: c,
+		aiService:      aiService,
 	}
 
 	// Declare Server config
@@ -61,6 +67,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Initialize Handlers
 	adminHandler := handlers.NewAdminHandler()
+	aiHandler := handlers.NewAIHandler(s.aiService)
 
 	// Protected Admin Routes (Require Auth Middleware)
 	// User promotion
@@ -151,6 +158,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// User Routes (decoupled from direct Supabase frontend access)
 	mux.Handle("GET /api/user/memberships", middleware.Auth(http.HandlerFunc(orgHandler.GetUserMemberships)))
+
+	// AI Routes
+	mux.Handle("POST /api/ai/chat", middleware.Auth(http.HandlerFunc(aiHandler.ChatHandler)))
+	mux.Handle("GET /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.GetConfigHandler)))
+	mux.Handle("PUT /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.UpdateConfigHandler)))
 
 	return mux
 }

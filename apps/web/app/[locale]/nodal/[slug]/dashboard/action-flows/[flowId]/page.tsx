@@ -110,6 +110,53 @@ export default function ActionFlowDetailPage() {
   const [selectedActionId, setSelectedActionId] = useState<string | null>(null);
   const [isKeyDataExpanded, setIsKeyDataExpanded] = useState(false);
 
+  // Chat State
+  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([
+      { role: 'assistant', content: "I'm ready to assist with this workflow. Ask me anything about the risks, data, or actions." }
+  ]);
+  const [chatInput, setChatInput] = useState("");
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
+
+  const handleSendMessage = async () => {
+      if (!chatInput.trim() || isChatLoading) return;
+      
+      const userMsg = chatInput.trim();
+      setChatInput("");
+      setChatMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+      setIsChatLoading(true);
+
+      try {
+          // Prepare Context
+          const contextData = {
+              title: data?.title,
+              status: data?.status,
+              priority: data?.priority,
+              activities: data?.activities?.map(a => ({ name: a.name, status: a.status, output: a.output, type: a.type })),
+              key_data: data?.key_data
+          };
+
+          const res = await apiClient.post('/api/ai/chat', {
+              message: userMsg,
+              context: JSON.stringify(contextData)
+          });
+
+          if (!res.ok) throw new Error("Failed to get response");
+
+          const { response } = await res.json();
+          setChatMessages(prev => [...prev, { role: 'assistant', content: response }]);
+      } catch (e) {
+          toast.error("Natalie failed to respond.");
+          setChatMessages(prev => [...prev, { role: 'assistant', content: "I'm having trouble connecting right now. Please try again." }]);
+      } finally {
+          setIsChatLoading(false);
+      }
+  };
+
   // Removed manual useEffect fetch
 
 
@@ -690,69 +737,65 @@ export default function ActionFlowDetailPage() {
 
                    {/* Messages */}
                    <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
-                       
-                       {/* Bot Msg */}
-                       <div className="flex gap-4 max-w-2xl">
-                           <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
-                                <Bot className="w-3.5 h-3.5 stroke-[1.5]" />
-                           </div>
-                           <div>
-                               <div className="flex items-center gap-2 mb-1">
-                                   <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Natalie</span>
-                                   <span className="text-[10px] text-zinc-400">Just now</span>
-                               </div>
-                               <div className="text-sm text-zinc-800 dark:text-zinc-300 leading-relaxed">
-                                   <p className="mb-3">I'm ready to assist with the <strong>{data.title}</strong> workflow.</p>
-                                   <div className="flex flex-wrap gap-2">
-                                       {["Summarize Risks", "Query Data", "Draft Email"].map((label) => (
-                                           <button key={label} className="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 rounded-full hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors text-zinc-600 dark:text-zinc-400">
-                                               {label}
-                                           </button>
-                                       ))}
+                       {chatMessages.map((msg, idx) => (
+                           <div key={idx} className={`flex gap-4 max-w-2xl ${msg.role === 'user' ? 'justify-end ml-auto' : ''}`}>
+                               {msg.role === 'assistant' && (
+                                   <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
+                                       <Bot className="w-3.5 h-3.5 stroke-[1.5]" />
+                                   </div>
+                               )}
+                               
+                               <div className={`${msg.role === 'user' ? 'flex flex-col items-end' : ''}`}>
+                                   <div className={`flex items-center gap-2 mb-1 ${msg.role === 'user' ? 'justify-end' : ''}`}>
+                                       <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                                            {msg.role === 'assistant' ? 'Natalie' : 'You'}
+                                       </span>
+                                   </div>
+                                   <div className={`text-sm leading-relaxed ${
+                                       msg.role === 'user' 
+                                       ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-2.5 rounded-2xl rounded-tr-sm' 
+                                       : 'text-zinc-800 dark:text-zinc-300'
+                                   }`}>
+                                       {msg.role === 'assistant' ? (
+                                           <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.content.replace(/\n/g, '<br/>')) }} />
+                                       ) : (
+                                           msg.content
+                                       )}
                                    </div>
                                </div>
                            </div>
-                       </div>
-
-                        {/* User Msg */}
-                        <div className="flex flex-col items-end gap-1">
-                            <div className="bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-4 py-2.5 rounded-2xl rounded-tr-sm text-sm max-w-lg">
-                                Can you summarize the driver's risk factors?
-                            </div>
-                            <span className="text-[10px] text-zinc-400 mr-1">You • 1m ago</span>
-                        </div>
-
-                        {/* Bot Msg */}
-                        <div className="flex gap-4 max-w-2xl">
-                           <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
-                                <Bot className="w-3.5 h-3.5 stroke-[1.5]" />
-                           </div>
-                           <div>
-                               <div className="flex items-center gap-2 mb-1">
-                                   <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Natalie</span>
-                                   <span className="text-[10px] text-zinc-400">Just now</span>
+                       ))}
+                       {isChatLoading && (
+                           <div className="flex gap-4 max-w-2xl">
+                               <div className="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded flex items-center justify-center shrink-0 mt-1">
+                                   <Bot className="w-3.5 h-3.5 stroke-[1.5]" />
                                </div>
-                               <div className="text-sm text-zinc-800 dark:text-zinc-300 leading-relaxed space-y-2">
-                                   <p>Analysis for <strong>Phi Tran</strong>:</p>
-                                   <ul className="list-disc pl-4 space-y-1 marker:text-zinc-400">
-                                       <li><strong>Risk Score (85/100)</strong>: Exceeds safe threshold.</li>
-                                       <li><strong>Tenure</strong>: 3.5 Years (High value retention target).</li>
-                                   </ul>
-                                   <p className="text-zinc-600 dark:text-zinc-400 italic mt-2 text-xs">Recommended: Priority outreach.</p>
+                               <div className="space-y-2 pt-2">
+                                    <div className="h-2 w-16 bg-zinc-200 dark:bg-zinc-800 rounded animate-pulse" />
+                                    <div className="h-2 w-24 bg-zinc-200 dark:bg-zinc-800 rounded animate-pulse" />
                                </div>
                            </div>
-                       </div>
-
+                       )}
+                       <div ref={chatEndRef} />
                    </div>
 
                    {/* Input Area - Minimal */}
                    <div className="p-4 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
                        <div className="relative">
                            <Input 
-                               placeholder="Ask AI..." 
+                               placeholder="Ask Natalie..." 
+                               value={chatInput}
+                               onChange={(e) => setChatInput(e.target.value)}
+                               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                               disabled={isChatLoading}
                                className="bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm py-5 pl-4 pr-12 rounded-lg focus-visible:ring-1 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-600 focus-visible:border-zinc-400 dark:focus-visible:border-zinc-600 transition-all shadow-none placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
                            />
-                           <Button size="icon" className="absolute right-1.5 top-1.5 h-7 w-7 bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded">
+                           <Button 
+                                size="icon" 
+                                onClick={handleSendMessage}
+                                disabled={isChatLoading || !chatInput.trim()}
+                                className="absolute right-1.5 top-1.5 h-7 w-7 bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded"
+                            >
                                <Send className="w-3.5 h-3.5" />
                            </Button>
                        </div>

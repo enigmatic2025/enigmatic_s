@@ -174,38 +174,41 @@ export function UsersPanel() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-normal">All Users</h3>
-        <Button onClick={() => setIsCreateOpen(true)}>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center pb-4 border-b border-zinc-200 dark:border-zinc-800">
+        <div>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Users</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">Manage user access, roles, and security.</p>
+        </div>
+        <Button onClick={() => setIsCreateOpen(true)} className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900">
           <Plus className="mr-2 h-4 w-4" /> Create User
         </Button>
       </div>
 
-      <div className="rounded-md border border-border">
+      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm overflow-hidden">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Organization</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="font-semibold text-zinc-500">User</TableHead>
+              <TableHead className="font-semibold text-zinc-500">Organization</TableHead>
+              <TableHead className="font-semibold text-zinc-500">Role</TableHead>
+              <TableHead className="font-semibold text-zinc-500">Status</TableHead>
+              <TableHead className="text-right font-semibold text-zinc-500">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}>
+              <TableRow key={user.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50">
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9">
-                        <AvatarFallback className="bg-black text-white">
+                    <Avatar className="h-9 w-9 border border-zinc-200 dark:border-zinc-700">
+                        <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium">
                             {user.full_name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <span className="font-medium">{user.full_name}</span>
-                      <span className="text-sm text-muted-foreground">{user.email}</span>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{user.full_name}</span>
+                      <span className="text-xs text-zinc-500">{user.email}</span>
                     </div>
                   </div>
                 </TableCell>
@@ -214,16 +217,16 @@ export function UsersPanel() {
                        const userAny = user as any
                        if (userAny.memberships && userAny.memberships.length > 0 && userAny.memberships[0].organizations) {
                            return (
-                               <Badge variant="outline" className="font-normal">
+                               <Badge variant="outline" className="font-normal bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
                                    {userAny.memberships[0].organizations.name}
                                </Badge>
                            )
                        }
                        const orgName = orgs.find(o => o.id === user.organization_id)?.name
                        return orgName ? (
-                           <Badge variant="outline" className="font-normal">{orgName}</Badge>
+                           <Badge variant="outline" className="font-normal bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">{orgName}</Badge>
                        ) : (
-                           <span className="text-muted-foreground text-sm">No Org</span>
+                           <span className="text-zinc-400 text-sm italic">No Org</span>
                        )
                    })()}
                 </TableCell>
@@ -231,16 +234,12 @@ export function UsersPanel() {
                     {/* Show Organization Role if available, otherwise System Role */}
                     {(() => {
                         const userAny = user as any
-                        if (userAny.memberships && userAny.memberships.length > 0) {
-                            return (
-                                <Badge variant="secondary" className="capitalize">
-                                    {userAny.memberships[0].role}
-                                </Badge>
-                            )
-                        }
+                        const membershipRole = userAny.memberships?.[0]?.role
+                        const displayRole = membershipRole || user.system_role || 'member'
+                        const isAdmin = displayRole === 'admin' || displayRole === 'owner'
                         return (
-                            <Badge variant={user.system_role === 'admin' ? 'default' : 'secondary'}>
-                                {user.system_role}
+                            <Badge className={`capitalize ${isAdmin ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'}`}>
+                                {displayRole}
                             </Badge>
                         )
                     })()}
@@ -249,53 +248,35 @@ export function UsersPanel() {
                     {user.blocked ? (
                         <Badge variant="destructive">Blocked</Badge>
                     ) : (
-                        <Badge variant="success">Active</Badge>
+                        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 border-none hover:bg-emerald-100">
+                            Active
+                        </Badge>
                     )}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
+                      <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
+                        <MoreHorizontal className="h-4 w-4 text-zinc-500" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-[180px]">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => {
                           setSelectedUser(user)
                           setIsUpdateOpen(true)
                       }}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit Details
+                        <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> Edit Details
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
                           setSelectedUser(user)
                           setIsChangePasswordOpen(true)
                       }}>
-                        <Lock className="mr-2 h-4 w-4" /> Change Password
-                      </DropdownMenuItem>
-                      {/* Only show Change Role for non-system admins or if they have a membership */}
-                      {((user as any).memberships?.length > 0) && (
-                          <DropdownMenuItem onClick={() => {
-                              setSelectedUser(user)
-                              setIsChangeRoleOpen(true)
-                          }}>
-                            <UserCog className="mr-2 h-4 w-4" /> Change Org Role
-                          </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem onClick={() => handleResetMFA(user)}>
-                        <RotateCw className="mr-2 h-4 w-4" /> Reset MFA
-                      </DropdownMenuItem>
-                      {user.system_role !== 'admin' && (
-                          <DropdownMenuItem onClick={() => handlePromote(user)}>
-                            <Shield className="mr-2 h-4 w-4" /> Promote to Admin
-                          </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem onClick={() => handleBlock(user)}>
-                        <Ban className="mr-2 h-4 w-4" /> {user.blocked ? 'Unblock' : 'Block'}
+                        <Lock className="mr-2 h-4 w-4 text-zinc-500" /> Change Password
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(user)}>
+                      <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20" onClick={() => handleDelete(user)}>
                         <Trash className="mr-2 h-4 w-4" /> Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -305,7 +286,7 @@ export function UsersPanel() {
             ))}
             {users.length === 0 && (
                 <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-32 text-center text-zinc-500">
                         No users found.
                     </TableCell>
                 </TableRow>

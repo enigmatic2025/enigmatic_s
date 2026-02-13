@@ -75,7 +75,7 @@ func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	// Fetch users with their memberships and organization details
 	// Assuming foreign keys are set up: profiles -> memberships -> organizations
 	// Note: Column is org_id, not organization_id
-	err := client.DB.From("profiles").Select("*, memberships(org_id, organizations(name))").Execute(&users)
+	err := client.DB.From("profiles").Select("*, memberships(org_id, role, organizations(name))").Execute(&users)
 
 	if err != nil {
 		log.Printf("DEBUG: Failed to fetch users: %v", err)

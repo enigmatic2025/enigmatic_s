@@ -104,48 +104,51 @@ export function OrganizationsPanel() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-normal">All Organizations</h3>
-        <Button onClick={() => setIsCreateOpen(true)}>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center pb-4 border-b border-zinc-200 dark:border-zinc-800">
+        <div>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Organizations</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">Manage customer tenants and subscription plans.</p>
+        </div>
+        <Button onClick={() => setIsCreateOpen(true)} className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900">
           <Plus className="mr-2 h-4 w-4" /> Create Organization
         </Button>
       </div>
 
-      <div className="rounded-md border border-border">
+      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm overflow-hidden">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Plan</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="font-semibold text-zinc-500">Name</TableHead>
+              <TableHead className="font-semibold text-zinc-500">Slug</TableHead>
+              <TableHead className="font-semibold text-zinc-500">Plan</TableHead>
+              <TableHead className="text-right font-semibold text-zinc-500">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orgs.map((org) => (
-              <TableRow key={org.id}>
-                <TableCell className="font-medium">{org.name}</TableCell>
-                <TableCell className="text-muted-foreground">{org.slug}</TableCell>
+              <TableRow key={org.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50">
+                <TableCell className="font-medium text-zinc-900 dark:text-zinc-100">{org.name}</TableCell>
+                <TableCell className="text-zinc-500 font-mono text-xs">{org.slug}</TableCell>
                 <TableCell>
-                    <Badge variant="outline">
+                    <Badge variant="outline" className="bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 font-normal">
                         {org.subscription_plan || org.plan || 'Free'}
                     </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
+                      <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
+                        <MoreHorizontal className="h-4 w-4 text-zinc-500" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-[160px]">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => openUpdate(org)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
+                        <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(org)}>
+                      <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20" onClick={() => handleDelete(org)}>
                         <Trash className="mr-2 h-4 w-4" /> Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -155,7 +158,7 @@ export function OrganizationsPanel() {
             ))}
             {orgs.length === 0 && (
                 <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
+                    <TableCell colSpan={4} className="h-32 text-center text-zinc-500">
                         No organizations found.
                     </TableCell>
                 </TableRow>
