@@ -140,15 +140,74 @@ export default function ActionFlowDetailPage() {
               key_data: data?.key_data
           };
 
-          const res = await apiClient.post('/api/ai/chat', {
-              message: userMsg,
-              context: JSON.stringify(contextData)
+          // Get auth token
+          const { data: { session } } = await supabase.auth.getSession();
+          const token = session?.access_token;
+
+          const res = await fetch('/api/ai/chat/stream', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+              },
+              body: JSON.stringify({
+                  message: userMsg,
+                  context: JSON.stringify(contextData)
+              }),
           });
 
-          if (!res.ok) throw new Error("Failed to get response");
+          if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}));
+              if (errorData.error === 'guardrail_blocked') {
+                  toast.error("Message blocked by content filter.");
+                  setChatMessages(prev => [...prev, { role: 'assistant', content: errorData.message || "I can only help with business and automation-related questions." }]);
+              } else if (errorData.error === 'insufficient_credits') {
+                  toast.error("Out of AI credits.");
+                  setChatMessages(prev => [...prev, { role: 'assistant', content: errorData.message || "Your organization has run out of AI credits." }]);
+              } else {
+                  throw new Error("Failed to get response");
+              }
+              return;
+          }
 
-          const { response } = await res.json();
-          setChatMessages(prev => [...prev, { role: 'assistant', content: response }]);
+          // Stream SSE response
+          const reader = res.body?.getReader();
+          const decoder = new TextDecoder();
+          let assistantContent = "";
+
+          // Add empty assistant message to start streaming into
+          setChatMessages(prev => [...prev, { role: 'assistant', content: "" }]);
+
+          if (reader) {
+              let buffer = "";
+              while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+
+                  buffer += decoder.decode(value, { stream: true });
+                  const lines = buffer.split("\n");
+                  buffer = lines.pop() || ""; // Keep incomplete line in buffer
+
+                  for (const line of lines) {
+                      if (!line.startsWith("data: ")) continue;
+                      const data = line.slice(6);
+                      if (data === "[DONE]") break;
+
+                      try {
+                          const chunk = JSON.parse(data);
+                          const content = chunk.choices?.[0]?.delta?.content || "";
+                          if (content) {
+                              assistantContent += content;
+                              setChatMessages(prev => {
+                                  const updated = [...prev];
+                                  updated[updated.length - 1] = { role: 'assistant', content: assistantContent };
+                                  return updated;
+                              });
+                          }
+                      } catch { /* skip parse errors */ }
+                  }
+              }
+          }
       } catch (e) {
           toast.error("Natalie failed to respond.");
           setChatMessages(prev => [...prev, { role: 'assistant', content: "I'm having trouble connecting right now. Please try again." }]);

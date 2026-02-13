@@ -161,8 +161,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// AI Routes
 	mux.Handle("POST /api/ai/chat", middleware.Auth(http.HandlerFunc(aiHandler.ChatHandler)))
+	mux.Handle("POST /api/ai/chat/stream", middleware.Auth(http.HandlerFunc(aiHandler.StreamChatHandler)))
 	mux.Handle("GET /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.GetConfigHandler)))
 	mux.Handle("PUT /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.UpdateConfigHandler)))
+	mux.Handle("GET /api/admin/ai-stats", middleware.Auth(http.HandlerFunc(aiHandler.GetAIStatsHandler)))
 
 	return mux
 }

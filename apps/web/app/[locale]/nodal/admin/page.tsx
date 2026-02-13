@@ -12,6 +12,13 @@ interface User {
     email: string
 }
 
+interface AIStats {
+    total_requests: number
+    total_tokens: number
+    blocked_count: number
+    credits_used: number
+}
+
 export default function AdminOverviewPage() {
     const { data: orgs = [], isLoading: loadingOrgs } = useSWR<Organization[]>(
         '/api/admin/orgs',
@@ -19,6 +26,10 @@ export default function AdminOverviewPage() {
     )
     const { data: users = [], isLoading: loadingUsers } = useSWR<User[]>(
         '/api/admin/users',
+        (url: string) => apiClient.get(url).then(res => res.json())
+    )
+    const { data: aiStats, isLoading: loadingAI } = useSWR<AIStats>(
+        '/api/admin/ai-stats',
         (url: string) => apiClient.get(url).then(res => res.json())
     )
 
@@ -43,20 +54,17 @@ export default function AdminOverviewPage() {
                 <StatCard
                     icon={Bot}
                     label="AI Requests"
-                    value={null}
-                    sublabel="Coming soon"
+                    value={loadingAI ? null : (aiStats?.total_requests ?? 0)}
                 />
                 <StatCard
                     icon={Shield}
-                    label="Guardrails"
-                    value={null}
-                    sublabel="Coming soon"
+                    label="Blocked"
+                    value={loadingAI ? null : (aiStats?.blocked_count ?? 0)}
                 />
                 <StatCard
                     icon={Activity}
-                    label="Uptime"
-                    value={null}
-                    sublabel="Coming soon"
+                    label="Credits Used"
+                    value={loadingAI ? null : (aiStats?.credits_used ?? 0)}
                 />
             </div>
         </div>

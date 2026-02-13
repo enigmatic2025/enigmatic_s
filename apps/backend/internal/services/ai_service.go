@@ -1,12 +1,14 @@
 package services
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -14,12 +16,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// AIConfig holds the dynamic configuration
+// AIConfig holds the dynamic configuration loaded from system_settings
 type AIConfig struct {
-	Provider string
-	BaseURL  string
-	Model    string
-	APIKey   string
+	// Main model config
+	Provider string `json:"provider"`
+	BaseURL  string `json:"base_url"`
+	Model    string `json:"model"`
+	APIKey   string `json:"api_key"`
+
+	// Guardrail config
+	GuardrailEnabled  bool   `json:"guardrail_enabled"`
+	GuardrailProvider string `json:"guardrail_provider"`
+	GuardrailModel    string `json:"guardrail_model"`
+	GuardrailBaseURL  string `json:"guardrail_base_url"`
 }
 
 // AIService handles interactions with AI providers
@@ -34,7 +43,7 @@ type AIService struct {
 func NewAIService(client *supabase.Client) *AIService {
 	s := &AIService{
 		client:     client,
-		httpClient: &http.Client{Timeout: 60 * time.Second},
+		httpClient: &http.Client{Timeout: 90 * time.Second},
 		logger:     logrus.New(),
 	}
 	// Initial load
@@ -44,24 +53,26 @@ func NewAIService(client *supabase.Client) *AIService {
 	return s
 }
 
-// LoadConfig fetches settings from the database
+// LoadConfig fetches all AI settings from system_settings table
 func (s *AIService) LoadConfig() error {
 	var rows []struct {
 		Key   string `json:"key"`
 		Value string `json:"value"`
 	}
 
-	// Fetch all system settings related to AI (or all settings if filter fails)
-	// Using Like filter if supported, otherwise filter in memory
 	err := s.client.DB.From("system_settings").Select("key, value").Execute(&rows)
 	if err != nil {
 		return err
 	}
 
 	newConfig := &AIConfig{
-		Provider: "openrouter", // default
-		BaseURL:  "https://openrouter.ai/api/v1",
-		Model:    "google/gemini-2.0-flash-001",
+		Provider:          "openrouter",
+		BaseURL:           "https://openrouter.ai/api/v1",
+		Model:             "google/gemini-2.0-flash-001",
+		GuardrailEnabled:  true,
+		GuardrailProvider: "openrouter",
+		GuardrailModel:    "google/gemini-2.0-flash-lite-001",
+		GuardrailBaseURL:  "https://openrouter.ai/api/v1",
 	}
 
 	for _, row := range rows {
@@ -74,6 +85,14 @@ func (s *AIService) LoadConfig() error {
 			newConfig.Model = row.Value
 		case "ai_api_key":
 			newConfig.APIKey = row.Value
+		case "ai_guardrail_enabled":
+			newConfig.GuardrailEnabled = row.Value == "true"
+		case "ai_guardrail_provider":
+			newConfig.GuardrailProvider = row.Value
+		case "ai_guardrail_model":
+			newConfig.GuardrailModel = row.Value
+		case "ai_guardrail_base_url":
+			newConfig.GuardrailBaseURL = row.Value
 		}
 	}
 
@@ -81,7 +100,7 @@ func (s *AIService) LoadConfig() error {
 	s.config = newConfig
 	s.configMu.Unlock()
 
-	s.logger.Infof("AI Config Loaded: Provider=%s, Model=%s", newConfig.Provider, newConfig.Model)
+	s.logger.Infof("AI Config Loaded: Provider=%s, Model=%s, Guardrail=%v", newConfig.Provider, newConfig.Model, newConfig.GuardrailEnabled)
 	return nil
 }
 
@@ -95,10 +114,17 @@ func (s *AIService) GetConfig() AIConfig {
 	return *s.config
 }
 
-// ChatRequest is the standard OpenAI format
+// GetClient returns the supabase client for direct queries
+func (s *AIService) GetClient() *supabase.Client {
+	return s.client
+}
+
+// ---- OpenAI-compatible types ----
+
 type ChatRequest struct {
 	Model    string    `json:"model"`
 	Messages []Message `json:"messages"`
+	Stream   bool      `json:"stream,omitempty"`
 }
 
 type Message struct {
@@ -110,14 +136,204 @@ type ChatResponse struct {
 	Choices []struct {
 		Message Message `json:"message"`
 	} `json:"choices"`
+	Usage *UsageInfo `json:"usage,omitempty"`
 }
 
-// GenerateResponse sends a prompt to the configured AI
-func (s *AIService) GenerateResponse(ctx context.Context, systemPrompt, userMessage string) (string, error) {
+type UsageInfo struct {
+	PromptTokens     int `json:"prompt_tokens"`
+	CompletionTokens int `json:"completion_tokens"`
+	TotalTokens      int `json:"total_tokens"`
+}
+
+type StreamChunk struct {
+	Choices []struct {
+		Delta struct {
+			Content string `json:"content"`
+		} `json:"delta"`
+		FinishReason *string `json:"finish_reason"`
+	} `json:"choices"`
+	Usage *UsageInfo `json:"usage,omitempty"`
+}
+
+// ---- Guardrail Classification ----
+
+// ClassifyPrompt uses a cheap model to determine if a prompt is business-related
+func (s *AIService) ClassifyPrompt(ctx context.Context, userMessage string) (allowed bool, reason string, err error) {
+	config := s.GetConfig()
+
+	if !config.GuardrailEnabled {
+		return true, "", nil
+	}
+
+	if config.APIKey == "" {
+		return true, "", nil // If no API key, skip guardrail
+	}
+
+	classificationPrompt := `You are a prompt classifier for a business automation platform called Enigmatic.
+Your ONLY job is to determine if the user's message is related to:
+- Business automation, workflows, or process management
+- Data analysis, reporting, or business intelligence
+- Technical questions about the platform, APIs, or integrations
+- General business operations, productivity, or professional tasks
+- Debugging errors, analyzing logs, or troubleshooting
+
+Respond with EXACTLY one word:
+- "ALLOWED" if the message is business/platform related
+- "BLOCKED" if the message is clearly personal, inappropriate, or completely unrelated to business (e.g., writing poems, personal advice, games, etc.)
+
+Be lenient — if there is ANY reasonable business interpretation, respond ALLOWED.`
+
+	// Use guardrail-specific config (cheap/fast model)
+	baseURL := config.GuardrailBaseURL
+	if baseURL == "" {
+		baseURL = config.BaseURL
+	}
+	model := config.GuardrailModel
+	if model == "" {
+		model = config.Model
+	}
+
+	reqBody := ChatRequest{
+		Model: model,
+		Messages: []Message{
+			{Role: "system", Content: classificationPrompt},
+			{Role: "user", Content: userMessage},
+		},
+	}
+
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return true, "", err // Fail open
+	}
+
+	url := fmt.Sprintf("%s/chat/completions", baseURL)
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return true, "", err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
+	if config.GuardrailProvider == "openrouter" || config.Provider == "openrouter" {
+		req.Header.Set("HTTP-Referer", "https://enigmatic.app")
+		req.Header.Set("X-Title", "Enigmatic Guardrail")
+	}
+
+	// Use a short timeout for classification
+	classifyClient := &http.Client{Timeout: 10 * time.Second}
+	resp, err := classifyClient.Do(req)
+	if err != nil {
+		s.logger.Warnf("Guardrail request failed, allowing through: %v", err)
+		return true, "", nil // Fail open
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		s.logger.Warnf("Guardrail returned status %d, allowing through", resp.StatusCode)
+		return true, "", nil // Fail open
+	}
+
+	var chatResp ChatResponse
+	if err := json.NewDecoder(resp.Body).Decode(&chatResp); err != nil {
+		return true, "", nil // Fail open
+	}
+
+	if len(chatResp.Choices) == 0 {
+		return true, "", nil
+	}
+
+	result := strings.TrimSpace(strings.ToUpper(chatResp.Choices[0].Message.Content))
+	if strings.Contains(result, "BLOCKED") {
+		return false, "This question doesn't appear to be related to business automation or the Enigmatic platform. Please ask something related to your workflows, data, or platform features.", nil
+	}
+
+	return true, "", nil
+}
+
+// ---- Credit System ----
+
+// CheckAndDeductCredits atomically checks and deducts credits from an org
+func (s *AIService) CheckAndDeductCredits(orgID string, cost int) error {
+	// First check balance
+	var orgs []struct {
+		AICreditsBalance int `json:"ai_credits_balance"`
+	}
+
+	err := s.client.DB.From("organizations").Select("ai_credits_balance").Eq("id", orgID).Execute(&orgs)
+	if err != nil {
+		return fmt.Errorf("failed to check credits: %w", err)
+	}
+
+	if len(orgs) == 0 {
+		return fmt.Errorf("organization not found")
+	}
+
+	if orgs[0].AICreditsBalance < cost {
+		return fmt.Errorf("insufficient AI credits (balance: %d, cost: %d)", orgs[0].AICreditsBalance, cost)
+	}
+
+	// Deduct credits
+	newBalance := orgs[0].AICreditsBalance - cost
+	var result []map[string]interface{}
+	err = s.client.DB.From("organizations").Update(map[string]interface{}{
+		"ai_credits_balance": newBalance,
+	}).Eq("id", orgID).Execute(&result)
+
+	if err != nil {
+		return fmt.Errorf("failed to deduct credits: %w", err)
+	}
+
+	return nil
+}
+
+// GetUserOrgID looks up the user's primary organization
+func (s *AIService) GetUserOrgID(userID string) (string, error) {
+	var memberships []struct {
+		OrgID string `json:"org_id"`
+	}
+
+	err := s.client.DB.From("memberships").Select("org_id").Eq("user_id", userID).Execute(&memberships)
+	if err != nil {
+		return "", err
+	}
+
+	if len(memberships) == 0 {
+		return "", fmt.Errorf("user has no organization membership")
+	}
+
+	return memberships[0].OrgID, nil
+}
+
+// ---- Usage Logging ----
+
+// LogUsage writes a record to ai_usage_log
+func (s *AIService) LogUsage(userID, orgID, model, guardrailResult string, promptTokens, completionTokens, totalTokens, creditsCharged int) {
+	row := map[string]interface{}{
+		"user_id":           userID,
+		"org_id":            orgID,
+		"model":             model,
+		"guardrail_result":  guardrailResult,
+		"prompt_tokens":     promptTokens,
+		"completion_tokens": completionTokens,
+		"total_tokens":      totalTokens,
+		"credits_charged":   creditsCharged,
+	}
+
+	var result []interface{}
+	err := s.client.DB.From("ai_usage_log").Insert(row).Execute(&result)
+	if err != nil {
+		s.logger.Errorf("Failed to log AI usage: %v", err)
+	}
+}
+
+// ---- Core Generation ----
+
+// GenerateResponse sends a prompt to the configured AI (non-streaming)
+func (s *AIService) GenerateResponse(ctx context.Context, systemPrompt, userMessage string) (string, *UsageInfo, error) {
 	config := s.GetConfig()
 
 	if config.APIKey == "" {
-		return "", fmt.Errorf("AI API Key is not configured")
+		return "", nil, fmt.Errorf("AI API Key is not configured")
 	}
 
 	reqBody := ChatRequest{
@@ -130,20 +346,18 @@ func (s *AIService) GenerateResponse(ctx context.Context, systemPrompt, userMess
 
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
-
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
 
-	// OpenRouter specific headers
 	if config.Provider == "openrouter" {
 		req.Header.Set("HTTP-Referer", "https://enigmatic.app")
 		req.Header.Set("X-Title", "Enigmatic Flow Studio")
@@ -151,26 +365,122 @@ func (s *AIService) GenerateResponse(ctx context.Context, systemPrompt, userMess
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return "", fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
+		return "", nil, fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
 	}
 
 	var chatResp ChatResponse
 	if err := json.NewDecoder(resp.Body).Decode(&chatResp); err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	if len(chatResp.Choices) == 0 {
-		return "", fmt.Errorf("empty response from AI")
+		return "", nil, fmt.Errorf("empty response from AI")
 	}
 
-	return chatResp.Choices[0].Message.Content, nil
+	return chatResp.Choices[0].Message.Content, chatResp.Usage, nil
 }
+
+// GenerateStreamingResponse sends a prompt and streams SSE chunks to the writer
+func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.ResponseWriter, systemPrompt, userMessage string) (*UsageInfo, error) {
+	config := s.GetConfig()
+
+	if config.APIKey == "" {
+		return nil, fmt.Errorf("AI API Key is not configured")
+	}
+
+	reqBody := ChatRequest{
+		Model:  config.Model,
+		Stream: true,
+		Messages: []Message{
+			{Role: "system", Content: systemPrompt},
+			{Role: "user", Content: userMessage},
+		},
+	}
+
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
+
+	if config.Provider == "openrouter" {
+		req.Header.Set("HTTP-Referer", "https://enigmatic.app")
+		req.Header.Set("X-Title", "Enigmatic Flow Studio")
+	}
+
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
+	}
+
+	// Set SSE headers
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		return nil, fmt.Errorf("streaming not supported")
+	}
+
+	scanner := bufio.NewScanner(resp.Body)
+	var usage *UsageInfo
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if !strings.HasPrefix(line, "data: ") {
+			continue
+		}
+
+		data := strings.TrimPrefix(line, "data: ")
+
+		if data == "[DONE]" {
+			fmt.Fprintf(w, "data: [DONE]\n\n")
+			flusher.Flush()
+			break
+		}
+
+		// Parse chunk to extract content and usage
+		var chunk StreamChunk
+		if err := json.Unmarshal([]byte(data), &chunk); err != nil {
+			continue
+		}
+
+		// Capture usage info from the last chunk
+		if chunk.Usage != nil {
+			usage = chunk.Usage
+		}
+
+		// Forward the SSE event to the client
+		fmt.Fprintf(w, "data: %s\n\n", data)
+		flusher.Flush()
+	}
+
+	return usage, nil
+}
+
+// ---- Config Management ----
 
 // UpdateConfig updates a specific setting in the DB and reloads
 func (s *AIService) UpdateConfig(key, value string) error {
@@ -179,12 +489,10 @@ func (s *AIService) UpdateConfig(key, value string) error {
 		"value": value,
 	}
 	var result []interface{}
-	// Upsert using Supabase
 	err := s.client.DB.From("system_settings").Upsert(row).Execute(&result)
 	if err != nil {
 		return err
 	}
 
-	// Reload Config
 	return s.LoadConfig()
 }
