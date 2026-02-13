@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -94,6 +95,20 @@ func (s *AIService) LoadConfig() error {
 		case "ai_guardrail_base_url":
 			newConfig.GuardrailBaseURL = row.Value
 		}
+	}
+
+	// Environment variable overrides/fallbacks
+	if val, ok := os.LookupEnv("AI_PROVIDER"); ok && newConfig.Provider == "openrouter" {
+		newConfig.Provider = val
+	}
+	if val, ok := os.LookupEnv("AI_BASE_URL"); ok {
+		newConfig.BaseURL = val
+	}
+	if val, ok := os.LookupEnv("AI_MODEL"); ok {
+		newConfig.Model = val
+	}
+	if val, ok := os.LookupEnv("AI_API_KEY"); ok && newConfig.APIKey == "" {
+		newConfig.APIKey = val
 	}
 
 	s.configMu.Lock()

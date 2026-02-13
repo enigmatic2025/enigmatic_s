@@ -57,7 +57,26 @@ export default function NataliePage() {
           }
         }
 
-        return fetch(url, { ...init, headers, body });
+        const res = await fetch(url, { ...init, headers, body });
+        
+        if (!res.ok) {
+            let errorMsg = `Error ${res.status}: ${res.statusText}`;
+            try {
+                const text = await res.text();
+                // Try JSON parse
+                const json = JSON.parse(text);
+                if (json.error || json.message) {
+                    errorMsg = json.message || json.error || errorMsg;
+                } else {
+                    errorMsg += ` - ${text.substring(0, 100)}`;
+                }
+            } catch (e) {
+                // Ignore parse error
+            }
+            throw new Error(errorMsg);
+        }
+        
+        return res;
       },
       body: {
         context: "" // Global context is injected by backend
