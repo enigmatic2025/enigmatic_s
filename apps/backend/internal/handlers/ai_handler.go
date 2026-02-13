@@ -19,9 +19,16 @@ func NewAIHandler(aiService *services.AIService) *AIHandler {
 	return &AIHandler{aiService: aiService}
 }
 
+// ChatPayload defines the request structure for chat endpoints
 type ChatPayload struct {
-	Message string `json:"message"`
-	Context string `json:"context"` // Optional context from frontend (e.g. flow run data)
+	Message  string      `json:"message"`            // Legacy single message
+	Messages []UIMessage `json:"messages,omitempty"` // Vercel AI SDK format
+	Context  string      `json:"context"`            // Optional context
+}
+
+type UIMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
 }
 
 type ConfigPayload struct {
@@ -35,6 +42,15 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
+	}
+
+	// Extract message from Messages array if Message is empty
+	if payload.Message == "" && len(payload.Messages) > 0 {
+		// Taking the last message as the new prompt
+		lastMsg := payload.Messages[len(payload.Messages)-1]
+		if lastMsg.Role == "user" {
+			payload.Message = lastMsg.Content
+		}
 	}
 
 	if payload.Message == "" {
@@ -132,6 +148,17 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
+	}
+
+	// Extract message from Messages array if Message is empty
+	if payload.Message == "" && len(payload.Messages) > 0 {
+		// Taking the last message as the new prompt
+		// In a real Vercel AI implementation we might want to pass history,
+		// but AI Service currently takes a single prompt.
+		lastMsg := payload.Messages[len(payload.Messages)-1]
+		if lastMsg.Role == "user" {
+			payload.Message = lastMsg.Content
+		}
 	}
 
 	if payload.Message == "" {

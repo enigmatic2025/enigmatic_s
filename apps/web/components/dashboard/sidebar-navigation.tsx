@@ -213,7 +213,7 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
             <NavItem
               href={`/nodal/${currentOrg?.slug}/dashboard/admin`}
               icon={LayoutDashboard}
-              label="Overview"
+              label="Platform Stats"
               sidebarOpen={sidebarOpen}
               active={pathname === `/nodal/${currentOrg?.slug}/dashboard/admin`}
             />
