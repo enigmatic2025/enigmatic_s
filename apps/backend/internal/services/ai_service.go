@@ -495,10 +495,12 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 		return nil, fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
 	}
 
-	// Set SSE headers
-	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	// Header for Vercel AI SDK Data Stream Protocol
+	w.Header().Set("X-Vercel-AI-Data-Stream", "v1")
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -518,8 +520,6 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 		data := strings.TrimPrefix(line, "data: ")
 
 		if data == "[DONE]" {
-			fmt.Fprintf(w, "data: [DONE]\n\n")
-			flusher.Flush()
 			break
 		}
 
@@ -534,9 +534,19 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 			usage = chunk.Usage
 		}
 
-		// Forward the SSE event to the client
-		fmt.Fprintf(w, "data: %s\n\n", data)
-		flusher.Flush()
+		// Extract content
+		var content string
+		if len(chunk.Choices) > 0 {
+			content = chunk.Choices[0].Delta.Content
+		}
+
+		// Format as Data Stream Protocol text part (0)
+		if content != "" {
+			// 0: "text_content_json_encoded"\n
+			jsonContent, _ := json.Marshal(content)
+			fmt.Fprintf(w, "0:%s\n", jsonContent)
+			flusher.Flush()
+		}
 	}
 
 	return usage, nil
