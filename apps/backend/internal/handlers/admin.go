@@ -375,6 +375,8 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		Email      string `json:"email"`
 		FullName   string `json:"full_name"`
 		SystemRole string `json:"system_role"`
+		Role       string `json:"role"`   // Organization role
+		OrgID      string `json:"org_id"` // Target organization
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -382,35 +384,66 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	client := database.GetClient()
 	updates := make(map[string]interface{})
+
 	if req.FullName != "" {
 		updates["full_name"] = req.FullName
 	}
 	if req.SystemRole != "" {
-		// Validate role
-		if req.SystemRole != "admin" && req.SystemRole != "user" {
-			http.Error(w, "Invalid system role. Must be 'admin' or 'user'", http.StatusBadRequest)
+		// Validate system role
+		if req.SystemRole != "admin" && req.SystemRole != "member" && req.SystemRole != "user" {
+			http.Error(w, "Invalid system role. Must be 'admin', 'member' or 'user'", http.StatusBadRequest)
 			return
 		}
 		updates["system_role"] = req.SystemRole
 	}
 
-	if len(updates) == 0 {
-		http.Error(w, "No fields to update", http.StatusBadRequest)
-		return
+	// Update Profile
+	if len(updates) > 0 {
+		var results []map[string]interface{}
+		err := client.DB.From("profiles").Update(updates).Eq("id", userID).Execute(&results)
+		if err != nil {
+			http.Error(w, "Failed to update user profile: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
-	client := database.GetClient()
-	var results []map[string]interface{}
-	err := client.DB.From("profiles").Update(updates).Eq("id", userID).Execute(&results)
+	// Update Organization Role if provided
+	if req.Role != "" {
+		if req.OrgID == "" {
+			// If OrgID is missing, try to find the user's primary organization
+			var memberships []struct {
+				OrgID string `json:"org_id"`
+			}
+			err := client.DB.From("memberships").Select("org_id").Eq("user_id", userID).Execute(&memberships)
+			if err == nil && len(memberships) > 0 {
+				req.OrgID = memberships[0].OrgID
+			}
+		}
 
-	if err != nil {
-		http.Error(w, "Failed to update user: "+err.Error(), http.StatusInternalServerError)
-		return
+		if req.OrgID != "" {
+			// Validate org role
+			if req.Role != "owner" && req.Role != "admin" && req.Role != "member" {
+				http.Error(w, "Invalid organization role", http.StatusBadRequest)
+				return
+			}
+
+			roleUpdate := map[string]interface{}{
+				"role": req.Role,
+			}
+
+			var memberResults []map[string]interface{}
+			err := client.DB.From("memberships").Update(roleUpdate).Eq("user_id", userID).Eq("org_id", req.OrgID).Execute(&memberResults)
+			if err != nil {
+				http.Error(w, "Failed to update organization role: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results[0])
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"status":"success"}`))
 }
 
 // DeleteUser deletes a user account

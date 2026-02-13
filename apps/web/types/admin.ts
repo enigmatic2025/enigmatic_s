@@ -15,6 +15,13 @@ export interface User {
     organization_id?: string
     blocked?: boolean
     created_at?: string
+    memberships?: {
+        org_id: string
+        role: string
+        organizations: {
+            name: string
+        }
+    }[]
 }
 
 export interface MFAFactor {

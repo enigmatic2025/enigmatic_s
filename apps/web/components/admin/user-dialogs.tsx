@@ -156,14 +156,16 @@ interface UpdateUserDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   user: User | null
+  currentRole?: string
   onSubmit: (data: any) => Promise<void>
 }
 
-export function UpdateUserDialog({ open, onOpenChange, user, onSubmit }: UpdateUserDialogProps) {
+export function UpdateUserDialog({ open, onOpenChange, user, currentRole, onSubmit }: UpdateUserDialogProps) {
   const [formData, setFormData] = useState({
     email: '',
     full_name: '',
     system_role: 'user',
+    role: 'member',
   })
   const [loading, setLoading] = useState(false)
 
@@ -173,9 +175,10 @@ export function UpdateUserDialog({ open, onOpenChange, user, onSubmit }: UpdateU
         email: user.email,
         full_name: user.full_name,
         system_role: user.system_role || 'user',
+        role: currentRole || 'member',
       })
     }
-  }, [user])
+  }, [user, currentRole])
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -227,6 +230,22 @@ export function UpdateUserDialog({ open, onOpenChange, user, onSubmit }: UpdateU
               </div>
             </div>
           </div>
+
+          {formData.system_role !== 'admin' && (
+              <div className="grid gap-2">
+                <Label htmlFor="edit-role">Organization Role</Label>
+                <Select value={formData.role} onValueChange={(val) => setFormData({...formData, role: val})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value="owner">Owner</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="member">Member</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>

@@ -306,6 +306,7 @@ export function UsersPanel() {
         open={isUpdateOpen} 
         onOpenChange={setIsUpdateOpen} 
         user={selectedUser} 
+        currentRole={(selectedUser as any)?.memberships?.[0]?.role}
         onSubmit={handleUpdate} 
       />
 

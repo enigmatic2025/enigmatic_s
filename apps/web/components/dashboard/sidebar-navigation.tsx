@@ -190,6 +190,34 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
           />
         </nav>
       </div>
+
+      {/* Admin Group (Restricted) */}
+      {currentOrg?.slug === 'enigmatic-i2v2i' && (
+        <div
+          className={
+            !sidebarOpen ? "w-full flex flex-col items-center" : ""
+          }
+        >
+          {sidebarOpen && (
+            <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
+              Admin
+            </h4>
+          )}
+          <nav
+            className={`space-y-1 ${
+              !sidebarOpen ? "w-full flex flex-col items-center" : ""
+            }`}
+          >
+            <NavItem
+              href={`/nodal/admin`}
+              icon={Users} // Or Shield check icon imports
+              label="Admin Panel"
+              sidebarOpen={sidebarOpen}
+              active={pathname.startsWith('/nodal/admin')}
+            />
+          </nav>
+        </div>
+      )}
     </div>
   );
 }
