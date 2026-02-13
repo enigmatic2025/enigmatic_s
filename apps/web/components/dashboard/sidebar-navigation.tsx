@@ -9,6 +9,8 @@ import {
   Library,
   Workflow,
   Users,
+  Building2,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -209,11 +211,32 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
             }`}
           >
             <NavItem
-              href={`/nodal/admin`}
-              icon={Users} // Or Shield check icon imports
-              label="Admin Panel"
+              href={`/nodal/${currentOrg?.slug}/dashboard/admin`}
+              icon={LayoutDashboard}
+              label="Overview"
               sidebarOpen={sidebarOpen}
-              active={pathname.startsWith('/nodal/admin')}
+              active={pathname === `/nodal/${currentOrg?.slug}/dashboard/admin`}
+            />
+            <NavItem
+              href={`/nodal/${currentOrg?.slug}/dashboard/admin/users`}
+              icon={Users}
+              label="Users"
+              sidebarOpen={sidebarOpen}
+              active={pathname.includes('/dashboard/admin/users')}
+            />
+            <NavItem
+              href={`/nodal/${currentOrg?.slug}/dashboard/admin/organizations`}
+              icon={Building2}
+              label="Organizations"
+              sidebarOpen={sidebarOpen}
+              active={pathname.includes('/dashboard/admin/organizations')}
+            />
+            <NavItem
+              href={`/nodal/${currentOrg?.slug}/dashboard/admin/ai`}
+              icon={Bot}
+              label="AI Config"
+              sidebarOpen={sidebarOpen}
+              active={pathname.includes('/dashboard/admin/ai')}
             />
           </nav>
         </div>

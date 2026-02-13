@@ -17,9 +17,17 @@ export default function NataliePage() {
   // Manual input state
   const [input, setInput] = useState("");
 
-    const { messages, sendMessage, status, stop } = useChat({
+  const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/ai/chat/stream',
+      fetch: async (url, init) => {
+        const { data: { session } } = await supabase.auth.getSession();
+        const headers = new Headers(init?.headers);
+        if (session?.access_token) {
+          headers.set('Authorization', `Bearer ${session.access_token}`);
+        }
+        return fetch(url, { ...init, headers });
+      },
       body: {
         context: "" // Global context is injected by backend
       }
