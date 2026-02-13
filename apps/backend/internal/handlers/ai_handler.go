@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/services"
@@ -88,10 +90,14 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Build system prompt
-	systemPrompt := buildSystemPrompt(payload.Context)
+	// 5. Fetch Context Details
+	userName, userRole, _ := h.aiService.GetUserProfile(userID)
+	orgName, orgSlug, _ := h.aiService.GetOrgDetails(orgID)
 
-	// 6. Generate response
+	// 6. Build system prompt
+	systemPrompt := buildSystemPrompt(userName, userRole, orgName, orgSlug, payload.Context)
+
+	// 7. Generate response
 	response, usage, err := h.aiService.GenerateResponse(r.Context(), systemPrompt, payload.Message)
 	if err != nil {
 		log.Printf("AI Chat: generation error: %v", err)
@@ -99,7 +105,7 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 7. Log usage
+	// 8. Log usage
 	promptTokens, completionTokens, totalTokens := 0, 0, 0
 	if usage != nil {
 		promptTokens = usage.PromptTokens
@@ -173,10 +179,14 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Build system prompt
-	systemPrompt := buildSystemPrompt(payload.Context)
+	// 5. Fetch Context Details
+	userName, userRole, _ := h.aiService.GetUserProfile(userID)
+	orgName, orgSlug, _ := h.aiService.GetOrgDetails(orgID)
 
-	// 6. Stream response
+	// 6. Build system prompt
+	systemPrompt := buildSystemPrompt(userName, userRole, orgName, orgSlug, payload.Context)
+
+	// 7. Stream response
 	usage, err := h.aiService.GenerateStreamingResponse(r.Context(), w, systemPrompt, payload.Message)
 	if err != nil {
 		log.Printf("AI Stream: generation error: %v", err)
@@ -185,7 +195,7 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 7. Log usage
+	// 8. Log usage
 	promptTokens, completionTokens, totalTokens := 0, 0, 0
 	if usage != nil {
 		promptTokens = usage.PromptTokens
@@ -269,8 +279,16 @@ func (h *AIHandler) GetAIStatsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // buildSystemPrompt constructs the system prompt with optional context
-func buildSystemPrompt(contextData string) string {
-	prompt := `You are Natalie, an expert automation and workflow assistant for the Enigmatic platform.
+func buildSystemPrompt(userName, userRole, orgName, orgSlug, contextData string) string {
+	timestamp := time.Now().Format(time.RFC1123)
+
+	prompt := fmt.Sprintf(`You are Natalie, an expert automation and workflow assistant for the Enigmatic platform.
+
+Current Context:
+- Time: %s
+- User: %s (%s)
+- Organization: %s
+- Access Level: %s
 
 Your role:
 - Help users understand their automation workflows, action flows, and execution results
@@ -283,10 +301,17 @@ Guidelines:
 - Use bullet points for lists
 - When explaining errors, suggest specific solutions
 - Reference specific step names and data when available
-- If you don't have enough context, ask for clarification`
+- If you don't have enough context, ask for clarification`,
+		timestamp, userName, userRole, orgName,
+		func() string {
+			if orgSlug == "enigmatic-i2v2i" {
+				return "SUPER ADMIN (Access to ALL organizations and system data)"
+			}
+			return "STANDARD (Access restricted to current organization only)"
+		}())
 
 	if contextData != "" {
-		prompt += "\n\n## Current Context\nThe user is viewing the following data from their automation platform:\n" + contextData
+		prompt += "\n\n## Additional Data Context\n" + contextData
 	}
 
 	return prompt

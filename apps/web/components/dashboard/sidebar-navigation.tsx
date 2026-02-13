@@ -130,7 +130,7 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/natalie`}
             icon={MessageSquare}
-            label={t("items.natalie")}
+            label="Natalie AI"
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/natalie`)}
           />

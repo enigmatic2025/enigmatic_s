@@ -122,14 +122,40 @@ func (s *AIService) GetClient() *supabase.Client {
 // ---- OpenAI-compatible types ----
 
 type ChatRequest struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
-	Stream   bool      `json:"stream,omitempty"`
+	Model      string    `json:"model"`
+	Messages   []Message `json:"messages"`
+	Stream     bool      `json:"stream,omitempty"`
+	Tools      []Tool    `json:"tools,omitempty"`
+	ToolChoice any       `json:"tool_choice,omitempty"`
 }
 
 type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role       string     `json:"role"`
+	Content    string     `json:"content"`
+	ToolCalls  []ToolCall `json:"tool_calls,omitempty"`
+	ToolCallID string     `json:"tool_call_id,omitempty"` // For tool response messages
+}
+
+type Tool struct {
+	Type     string   `json:"type"`
+	Function Function `json:"function"`
+}
+
+type Function struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Parameters  any    `json:"parameters"`
+}
+
+type ToolCall struct {
+	ID       string       `json:"id"`
+	Type     string       `json:"type"`
+	Function FunctionCall `json:"function"`
+}
+
+type FunctionCall struct {
+	Name      string `json:"name"`
+	Arguments string `json:"arguments"`
 }
 
 type ChatResponse struct {
@@ -148,7 +174,8 @@ type UsageInfo struct {
 type StreamChunk struct {
 	Choices []struct {
 		Delta struct {
-			Content string `json:"content"`
+			Content   string     `json:"content"`
+			ToolCalls []ToolCall `json:"tool_calls,omitempty"`
 		} `json:"delta"`
 		FinishReason *string `json:"finish_reason"`
 	} `json:"choices"`
@@ -176,12 +203,13 @@ Your ONLY job is to determine if the user's message is related to:
 - Technical questions about the platform, APIs, or integrations
 - General business operations, productivity, or professional tasks
 - Debugging errors, analyzing logs, or troubleshooting
+- Greetings, polite small talk, or asking for help/capabilities
 
 Respond with EXACTLY one word:
-- "ALLOWED" if the message is business/platform related
+- "ALLOWED" if the message is business/platform related or a benign greeting
 - "BLOCKED" if the message is clearly personal, inappropriate, or completely unrelated to business (e.g., writing poems, personal advice, games, etc.)
 
-Be lenient — if there is ANY reasonable business interpretation, respond ALLOWED.`
+Be lenient — if there is ANY reasonable business interpretation OR if it is a greeting, respond ALLOWED.`
 
 	// Use guardrail-specific config (cheap/fast model)
 	baseURL := config.GuardrailBaseURL
@@ -302,6 +330,40 @@ func (s *AIService) GetUserOrgID(userID string) (string, error) {
 	}
 
 	return memberships[0].OrgID, nil
+}
+
+// ---- Usage Logging ----
+
+// GetOrgDetails returns organization details
+func (s *AIService) GetOrgDetails(orgID string) (string, string, error) {
+	var orgs []struct {
+		Name string `json:"name"`
+		Slug string `json:"slug"`
+	}
+	err := s.client.DB.From("organizations").Select("name, slug").Eq("id", orgID).Execute(&orgs)
+	if err != nil {
+		return "", "", err
+	}
+	if len(orgs) == 0 {
+		return "", "", fmt.Errorf("organization not found")
+	}
+	return orgs[0].Name, orgs[0].Slug, nil
+}
+
+// GetUserProfile returns user details
+func (s *AIService) GetUserProfile(userID string) (string, string, error) {
+	var profiles []struct {
+		FullName   string `json:"full_name"`
+		SystemRole string `json:"system_role"`
+	}
+	err := s.client.DB.From("profiles").Select("full_name, system_role").Eq("id", userID).Execute(&profiles)
+	if err != nil {
+		return "", "", err
+	}
+	if len(profiles) == 0 {
+		return "Unknown User", "user", nil
+	}
+	return profiles[0].FullName, profiles[0].SystemRole, nil
 }
 
 // ---- Usage Logging ----
