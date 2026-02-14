@@ -3,9 +3,12 @@ export interface Organization {
     name: string
     slug: string
     plan: string
-    subscription_plan?: string // Handling potential inconsistency
-    ai_credits_balance?: number // AI credits balance
-    ai_unlimited_access?: boolean // Unlimited AI access flag
+    subscription_plan?: string
+    ai_credits_balance?: number
+    ai_unlimited_access?: boolean
+    total_tokens_used?: number
+    total_credits_used?: number
+    total_requests?: number
     created_at?: string
 }
 

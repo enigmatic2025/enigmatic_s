@@ -88,26 +88,60 @@ func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-// ListOrgs lists all organizations
+// ListOrgs lists all organizations with aggregated usage stats
 func (h *AdminHandler) ListOrgs(w http.ResponseWriter, r *http.Request) {
 	client := database.GetClient()
 
-	// Fetch all organizations
-	// Note: This relies on the Service Role Key (SUPABASE_KEY) being used in the client
-	// to bypass RLS policies that might restrict visibility.
-	// Fetch all organizations
-	// Note: This relies on the Service Role Key (SUPABASE_KEY) being used in the client
-	// to bypass RLS policies that might restrict visibility.
+	// Fetch all organizations (service role key bypasses RLS)
 	var orgs []map[string]interface{}
-	// Fetching 'subscription_plan' as it exists in schema.sql
-	err := client.DB.From("organizations").Select("id, name, slug, subscription_plan, created_at").Execute(&orgs)
+	err := client.DB.From("organizations").Select("id, name, slug, subscription_plan, ai_credits_balance, ai_unlimited_access, created_at").Execute(&orgs)
 
 	if err != nil {
-		log.Printf("DEBUG: Failed to fetch orgs: %v", err)
+		log.Printf("Failed to fetch orgs: %v", err)
 		http.Error(w, "Failed to fetch orgs", http.StatusInternalServerError)
 		return
 	}
-	log.Printf("DEBUG: Successfully fetched %d orgs", len(orgs))
+
+	// Fetch usage stats from ai_usage_log to aggregate per org
+	var logs []struct {
+		OrgID          string `json:"org_id"`
+		TotalTokens    int    `json:"total_tokens"`
+		CreditsCharged int    `json:"credits_charged"`
+	}
+	err = client.DB.From("ai_usage_log").Select("org_id, total_tokens, credits_charged").Execute(&logs)
+	if err != nil {
+		log.Printf("Failed to fetch usage logs (continuing without stats): %v", err)
+	}
+
+	// Aggregate stats per org
+	type orgStats struct {
+		TotalTokens   int
+		TotalCredits  int
+		TotalRequests int
+	}
+	stats := make(map[string]*orgStats)
+	for _, l := range logs {
+		if _, ok := stats[l.OrgID]; !ok {
+			stats[l.OrgID] = &orgStats{}
+		}
+		stats[l.OrgID].TotalTokens += l.TotalTokens
+		stats[l.OrgID].TotalCredits += l.CreditsCharged
+		stats[l.OrgID].TotalRequests++
+	}
+
+	// Merge stats into org records
+	for i, org := range orgs {
+		orgID, _ := org["id"].(string)
+		if s, ok := stats[orgID]; ok {
+			orgs[i]["total_tokens_used"] = s.TotalTokens
+			orgs[i]["total_credits_used"] = s.TotalCredits
+			orgs[i]["total_requests"] = s.TotalRequests
+		} else {
+			orgs[i]["total_tokens_used"] = 0
+			orgs[i]["total_credits_used"] = 0
+			orgs[i]["total_requests"] = 0
+		}
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(orgs)

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "@/navigation";
+import useSWR from "swr";
 import { supabase } from "@/lib/supabase";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { TopBar } from "@/components/dashboard/top-bar";
@@ -15,11 +16,13 @@ export default function DashboardLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [currentOrg, setCurrentOrg] = useState<any>(null);
+  const [authReady, setAuthReady] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
+  // Auth + MFA check (not data fetching — stays as useEffect)
   useEffect(() => {
-    const getUser = async () => {
+    const checkAuth = async () => {
       const {
         data: { user },
         error,
@@ -30,46 +33,48 @@ export default function DashboardLayout({
       }
       setUser(user);
 
-      // Check for MFA factors
-      // @ts-ignore - Supabase type definitions might be slightly outdated on listFactors directly on auth
+      // @ts-ignore
       const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
       if (!factorsError && (!factorsData?.totp || factorsData.totp.length === 0 || factorsData.totp[0].status !== 'verified')) {
-         // No Verified MFA found -> Redirect to Setup
-         router.push("/account/security/mfa-setup");
-         return;
+        router.push("/account/security/mfa-setup");
+        return;
       }
 
-      // Fetch user's organizations via backend API (decoupled from direct Supabase DB access)
-      try {
-        const session = (await supabase.auth.getSession()).data.session;
-        const res = await fetch("/api/user/memberships", {
-          headers: session?.access_token
-            ? { Authorization: `Bearer ${session.access_token}` }
-            : {},
-        });
-
-        if (res.ok) {
-          const memberships = await res.json();
-          if (memberships && memberships.length > 0) {
-            const organizations = memberships.map((m: any) => m.organizations);
-            setCurrentOrg(organizations[0]);
-          } else {
-            router.push("/onboarding");
-          }
-        } else {
-          console.error("Failed to fetch memberships:", res.status);
-          router.push("/onboarding");
-        }
-      } catch (err) {
-        console.error("Error fetching memberships:", err);
-        router.push("/onboarding");
-      }
+      setAuthReady(true);
     };
 
-    getUser();
+    checkAuth();
   }, [router]);
 
+  // Fetch memberships via SWR (only after auth is confirmed)
+  const { data: memberships } = useSWR(
+    authReady ? "/api/user/memberships" : null,
+    async (url: string) => {
+      const session = (await supabase.auth.getSession()).data.session;
+      const res = await fetch(url, {
+        headers: session?.access_token
+          ? { Authorization: `Bearer ${session.access_token}` }
+          : {},
+      });
+      if (!res.ok) throw new Error("Failed to fetch memberships");
+      return res.json();
+    }
+  );
+
+  // Handle membership data — redirect to onboarding or set current org
+  useEffect(() => {
+    if (memberships === undefined) return; // still loading
+    if (memberships && memberships.length > 0) {
+      const organizations = memberships.map((m: any) => m.organizations);
+      setCurrentOrg(organizations[0]);
+    } else {
+      router.push("/onboarding");
+    }
+  }, [memberships, router]);
+
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  const isFlowStudioDesign = pathname?.includes("/flow-studio/design");
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -83,8 +88,8 @@ export default function DashboardLayout({
       {/* Main Content Wrapper */}
       <div
         className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
-          sidebarOpen 
-            ? (usePathname().includes("/flow-studio/design") ? "lg:ml-[400px]" : "lg:ml-64")
+          sidebarOpen
+            ? (isFlowStudioDesign ? "lg:ml-[400px]" : "lg:ml-64")
             : "lg:ml-16"
         }`}
       >

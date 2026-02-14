@@ -10,6 +10,7 @@ import {
 import { Link } from "@/navigation";
 import React from "react";
 import { createPortal } from "react-dom";
+import useSWR from "swr";
 import { Logo } from "@/components/ui/logo";
 import { MenuToggleIcon } from "@/components/menu-toggle-icon";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ import { useScroll } from "@/hooks/use-scroll";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { usePathname } from "@/navigation"; 
+import { usePathname } from "@/navigation";
 import { useAuth } from "@/components/auth-provider";
 import { supabase } from "@/lib/supabase";
 import { useTranslations } from "next-intl";
@@ -42,7 +43,31 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   const pathname = usePathname();
   const isArticlePage = pathname?.startsWith("/insights/articles/");
   const { user, loading } = useAuth();
-  const [dashboardUrl, setDashboardUrl] = React.useState<string | null>(null);
+
+  const { data: memberships } = useSWR(
+    user ? "/api/user/memberships" : null,
+    async (url: string) => {
+      const session = (await supabase.auth.getSession()).data.session;
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+      if (!res.ok) return null;
+      return res.json();
+    }
+  );
+
+  const dashboardUrl = React.useMemo(() => {
+    if (!user) return null;
+    if (memberships === undefined) return null; // still loading
+    if (!memberships || memberships.length === 0) return "/nodal/admin";
+    const org = Array.isArray(memberships[0].organizations)
+      ? memberships[0].organizations[0]
+      : memberships[0].organizations;
+    if (org?.slug) return `/nodal/${org.slug}/dashboard`;
+    return "/nodal/admin";
+  }, [user, memberships]);
 
   const [open, setOpen] = React.useState(false);
   const [scrollDirection, setScrollDirection] = React.useState<"up" | "down">(
@@ -80,48 +105,6 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
       icon: Users,
     },
   ];
-
-  // Get user's dashboard URL
-  React.useEffect(() => {
-    const getDashboardUrl = async () => {
-      if (!user) {
-        setDashboardUrl(null);
-        return;
-      }
-
-      try {
-        // Use backend API instead of direct Supabase DB access
-        const res = await fetch("/api/user/memberships", {
-          headers: {
-            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-          },
-        });
-
-        if (!res.ok) {
-          setDashboardUrl("/nodal/admin");
-          return;
-        }
-
-        const memberships = await res.json();
-
-        if (memberships && memberships.length > 0 && memberships[0].organizations) {
-          const org = Array.isArray(memberships[0].organizations)
-            ? memberships[0].organizations[0]
-            : memberships[0].organizations;
-
-          if (org && org.slug) {
-            setDashboardUrl(`/nodal/${org.slug}/dashboard`);
-          }
-        } else {
-          setDashboardUrl("/nodal/admin");
-        }
-      } catch {
-        setDashboardUrl("/nodal/admin");
-      }
-    };
-
-    getDashboardUrl();
-  }, [user]);
 
   React.useEffect(() => {
     if (open) {
