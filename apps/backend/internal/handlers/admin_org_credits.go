@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
@@ -17,7 +16,7 @@ type OrgCreditsHandler struct {
 
 func NewOrgCreditsHandler() *OrgCreditsHandler {
 	logger := logrus.New()
-	logger.SetFormatter(&logrus.JSONFormatter())
+	logger.SetFormatter(&logrus.JSONFormatter{})
 	return &OrgCreditsHandler{
 		logger: logger,
 	}
