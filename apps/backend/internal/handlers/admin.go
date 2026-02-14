@@ -31,14 +31,14 @@ func (h *AdminHandler) PromoteToAdmin(w http.ResponseWriter, r *http.Request) {
 
 	client := database.GetClient()
 
-	// 2. Check if Caller is System Admin
+	// 2. Check if Caller is Platform Admin
 	var caller []struct {
 		SystemRole string `json:"system_role"`
 	}
 	err := client.DB.From("profiles").Select("system_role").Eq("id", callerID).Execute(&caller)
-	if err != nil || len(caller) == 0 || caller[0].SystemRole != "admin" {
+	if err != nil || len(caller) == 0 || (caller[0].SystemRole != "platform_admin" && caller[0].SystemRole != "admin") {
 		// Unauthorized promotion attempt
-		http.Error(w, "Forbidden: Only admins can promote users", http.StatusForbidden)
+		http.Error(w, "Forbidden: Only platform admins can promote users", http.StatusForbidden)
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *AdminHandler) PromoteToAdmin(w http.ResponseWriter, r *http.Request) {
 	// 4. Update Profile
 	var results []map[string]interface{}
 	err = client.DB.From("profiles").Update(map[string]interface{}{
-		"system_role": "admin",
+		"system_role": "platform_admin",
 	}).Eq("id", req.UserID).Execute(&results)
 
 	if err != nil {
@@ -63,7 +63,7 @@ func (h *AdminHandler) PromoteToAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"status": "success", "message": "User promoted to admin"})
+	json.NewEncoder(w).Encode(map[string]string{"status": "success", "message": "User promoted to platform admin"})
 }
 
 // ListUsers lists all users
@@ -320,8 +320,8 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		"full_name": req.FullName,
 	}
 
-	if req.UserType == "system" {
-		profileUpdates["system_role"] = "admin"
+	if req.UserType == "platform_admin" {
+		profileUpdates["system_role"] = "platform_admin"
 	} else {
 		profileUpdates["system_role"] = "user"
 	}
@@ -338,8 +338,8 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		// For System Admins, we force role to 'member' in the Enigmatic org (as per frontend logic)
 		// For Standard Users, we use the requested role
 		orgRole := req.Role
-		if req.UserType == "system" {
-			orgRole = "member" // System admins are just members of the Enigmatic org
+		if req.UserType == "platform_admin" {
+			orgRole = "member" // Platform admins are just members of the Enigmatic org
 		}
 
 		var memberResults []map[string]interface{}
@@ -392,8 +392,8 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.SystemRole != "" {
 		// Validate system role
-		if req.SystemRole != "admin" && req.SystemRole != "member" && req.SystemRole != "user" {
-			http.Error(w, "Invalid system role. Must be 'admin', 'member' or 'user'", http.StatusBadRequest)
+		if req.SystemRole != "platform_admin" && req.SystemRole != "user" {
+			http.Error(w, "Invalid system role. Must be 'platform_admin' or 'user'", http.StatusBadRequest)
 			return
 		}
 		updates["system_role"] = req.SystemRole

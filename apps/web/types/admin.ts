@@ -13,7 +13,7 @@ export interface User {
     id: string
     email: string
     full_name: string
-    system_role: 'admin' | 'member' | 'user'
+    system_role: 'platform_admin' | 'user'
     organization_id?: string
     blocked?: boolean
     created_at?: string

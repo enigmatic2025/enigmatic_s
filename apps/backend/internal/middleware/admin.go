@@ -45,8 +45,8 @@ func AdminOnly(supabaseClient *supabase.Client) func(http.Handler) http.Handler 
 
 			profile := profiles[0]
 
-			// Check if user has admin or super_admin role
-			isAdmin := profile.SystemRole == "admin" || profile.SystemRole == "super_admin"
+			// Check if user has platform_admin, admin (legacy), or super_admin role
+			isAdmin := profile.SystemRole == "platform_admin" || profile.SystemRole == "admin" || profile.SystemRole == "super_admin"
 
 			// Also allow SUPER_ADMIN_EMAIL from env (fallback)
 			superAdminEmail := os.Getenv("SUPER_ADMIN_EMAIL")

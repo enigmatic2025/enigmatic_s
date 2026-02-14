@@ -97,7 +97,7 @@ export function UsersPanel() {
   }
 
   const handlePromote = async (user: User) => {
-    if (!confirm(`Promote ${user.email} to System Admin?`)) return
+    if (!confirm(`Promote ${user.email} to Platform Admin?`)) return
 
     try {
         const res = await apiClient.post('/api/admin/promote', { user_id: user.id })
@@ -231,18 +231,29 @@ export function UsersPanel() {
                    })()}
                 </TableCell>
                 <TableCell>
-                    {/* Show Organization Role if available, otherwise System Role */}
-                    {(() => {
-                        const userAny = user as any
-                        const membershipRole = userAny.memberships?.[0]?.role
-                        const displayRole = membershipRole || user.system_role || 'member'
-                        const isAdmin = displayRole === 'admin' || displayRole === 'owner'
-                        return (
-                            <Badge className={`capitalize ${isAdmin ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'}`}>
-                                {displayRole}
+                    <div className="flex flex-col gap-1">
+                        {user.system_role === 'platform_admin' && (
+                            <Badge className="bg-violet-600 text-white dark:bg-violet-500 dark:text-white hover:bg-violet-600">
+                                Platform Admin
                             </Badge>
-                        )
-                    })()}
+                        )}
+                        {(() => {
+                            const userAny = user as any
+                            const membershipRole = userAny.memberships?.[0]?.role
+                            if (!membershipRole) return null
+                            const isOrgAdmin = membershipRole === 'admin' || membershipRole === 'owner'
+                            return (
+                                <Badge className={`capitalize ${isOrgAdmin ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'}`}>
+                                    {membershipRole}
+                                </Badge>
+                            )
+                        })()}
+                        {user.system_role === 'user' && !(user as any).memberships?.[0]?.role && (
+                            <Badge className="bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                                user
+                            </Badge>
+                        )}
+                    </div>
                 </TableCell>
                 <TableCell>
                     {user.blocked ? (

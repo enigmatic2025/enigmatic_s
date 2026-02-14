@@ -41,7 +41,10 @@ export function CreateUserDialog({ open, onOpenChange, orgs, onSubmit }: CreateU
 
   const handleSubmit = async () => {
     setLoading(true)
-    await onSubmit(formData)
+    await onSubmit({
+      ...formData,
+      user_type: formData.user_type === 'platform_admin' ? 'platform_admin' : 'standard',
+    })
     setLoading(false)
     setFormData({ email: '', full_name: '', password: '', user_type: 'standard', role: 'member', organization_id: '' })
   }
@@ -79,37 +82,43 @@ export function CreateUserDialog({ open, onOpenChange, orgs, onSubmit }: CreateU
                   onChange={() => setFormData({...formData, user_type: 'standard'})}
                   className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                 />
-                <Label htmlFor="type-standard" className="font-normal">Standard User</Label>
+                <Label htmlFor="type-standard" className="font-normal">Organization User</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <input
                   type="radio"
-                  id="type-system"
+                  id="type-platform-admin"
                   name="user_type"
-                  value="system"
-                  checked={formData.user_type === 'system'}
+                  value="platform_admin"
+                  checked={formData.user_type === 'platform_admin'}
                   onChange={() => {
                       const enigmaticOrg = orgs.find(o => o.name === 'Enigmatic')
                       setFormData({
-                          ...formData, 
-                          user_type: 'system',
+                          ...formData,
+                          user_type: 'platform_admin',
                           organization_id: enigmaticOrg?.id || '',
                           role: 'member'
                       })
                   }}
                   className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                 />
-                <Label htmlFor="type-system" className="font-normal">System Admin</Label>
+                <Label htmlFor="type-platform-admin" className="font-normal">Platform Admin</Label>
               </div>
             </div>
+            {formData.user_type === 'platform_admin' && (
+                <p className="text-xs text-muted-foreground">Platform Admins are Enigmatic team members with full system access.</p>
+            )}
+            {formData.user_type === 'standard' && (
+                <p className="text-xs text-muted-foreground">Organization Users are customers assigned to an organization with a specific role.</p>
+            )}
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="org">Organization</Label>
-            <Select 
+            <Select
               value={formData.organization_id}
               onValueChange={(val) => setFormData({...formData, organization_id: val})}
-              disabled={formData.user_type === 'system' && !!orgs.find(o => o.name === 'Enigmatic')}
+              disabled={formData.user_type === 'platform_admin' && !!orgs.find(o => o.name === 'Enigmatic')}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Organization" />
@@ -120,8 +129,8 @@ export function CreateUserDialog({ open, onOpenChange, orgs, onSubmit }: CreateU
                   ))}
               </SelectContent>
             </Select>
-            {formData.user_type === 'system' && (
-                <p className="text-xs text-muted-foreground">System Admins must belong to the Enigmatic organization.</p>
+            {formData.user_type === 'platform_admin' && (
+                <p className="text-xs text-muted-foreground">Platform Admins are automatically assigned to the Enigmatic organization.</p>
             )}
           </div>
 
@@ -210,28 +219,28 @@ export function UpdateUserDialog({ open, onOpenChange, user, currentRole, onSubm
                   id="edit-type-standard"
                   name="edit_user_type"
                   value="user"
-                  checked={formData.system_role !== 'admin'}
+                  checked={formData.system_role === 'user'}
                   onChange={() => setFormData({...formData, system_role: 'user'})}
                   className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                 />
-                <Label htmlFor="edit-type-standard" className="font-normal">Standard User</Label>
+                <Label htmlFor="edit-type-standard" className="font-normal">Organization User</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <input
                   type="radio"
-                  id="edit-type-system"
+                  id="edit-type-platform-admin"
                   name="edit_user_type"
-                  value="admin"
-                  checked={formData.system_role === 'admin'}
-                  onChange={() => setFormData({...formData, system_role: 'admin'})}
+                  value="platform_admin"
+                  checked={formData.system_role === 'platform_admin'}
+                  onChange={() => setFormData({...formData, system_role: 'platform_admin'})}
                   className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                 />
-                <Label htmlFor="edit-type-system" className="font-normal">System Admin</Label>
+                <Label htmlFor="edit-type-platform-admin" className="font-normal">Platform Admin</Label>
               </div>
             </div>
           </div>
 
-          {formData.system_role !== 'admin' && (
+          {formData.system_role === 'user' && (
               <div className="grid gap-2">
                 <Label htmlFor="edit-role">Organization Role</Label>
                 <Select value={formData.role} onValueChange={(val) => setFormData({...formData, role: val})}>
