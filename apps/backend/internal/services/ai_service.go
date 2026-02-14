@@ -317,12 +317,13 @@ func (s *AIService) CheckAndDeductCredits(orgID string, cost int) error {
 	for attempt := 0; attempt < maxRetries; attempt++ {
 		// 1. Get current balance with version
 		var orgs []struct {
-			AICreditsBalance int       `json:"ai_credits_balance"`
-			UpdatedAt        time.Time `json:"updated_at"`
+			AICreditsBalance  int       `json:"ai_credits_balance"`
+			AIUnlimitedAccess *bool     `json:"ai_unlimited_access"`
+			UpdatedAt         time.Time `json:"updated_at"`
 		}
 
 		err := s.client.DB.From("organizations").
-			Select("ai_credits_balance, updated_at").
+			Select("ai_credits_balance, ai_unlimited_access, updated_at").
 			Eq("id", orgID).
 			Execute(&orgs)
 
@@ -332,6 +333,11 @@ func (s *AIService) CheckAndDeductCredits(orgID string, cost int) error {
 
 		if len(orgs) == 0 {
 			return fmt.Errorf("organization not found")
+		}
+
+		// Skip credit check if org has unlimited access
+		if orgs[0].AIUnlimitedAccess != nil && *orgs[0].AIUnlimitedAccess {
+			return nil
 		}
 
 		currentBalance := orgs[0].AICreditsBalance
