@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import useSWR from 'swr'
-import { Plus, MoreHorizontal, Pencil, Trash, RotateCw, Shield, Lock, Ban, UserCog } from 'lucide-react'
+import { Plus, MoreHorizontal, Pencil, Trash, RotateCw, Shield, Lock, Ban, UserCog, Search, X } from 'lucide-react'
 import { apiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
 import { User, Organization } from '@/types/admin'
@@ -10,6 +10,14 @@ import { Spinner } from "@/components/ui/spinner"
 import LoadingPage from "@/components/loading-page"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -48,7 +56,41 @@ export function UsersPanel() {
   const [isChangeRoleOpen, setIsChangeRoleOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
-  // Removed useEffect
+  const [search, setSearch] = useState('')
+  const [filterOrg, setFilterOrg] = useState<string>('all')
+  const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [filterRole, setFilterRole] = useState<string>('all')
+
+  const hasActiveFilters = search || filterOrg !== 'all' || filterStatus !== 'all' || filterRole !== 'all'
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const userAny = user as any
+      // Search by name or email
+      if (search) {
+        const q = search.toLowerCase()
+        if (!user.full_name.toLowerCase().includes(q) && !user.email.toLowerCase().includes(q)) return false
+      }
+      // Filter by organization
+      if (filterOrg !== 'all') {
+        const orgId = userAny.memberships?.[0]?.org_id
+        if (orgId !== filterOrg) return false
+      }
+      // Filter by status
+      if (filterStatus !== 'all') {
+        if (filterStatus === 'active' && user.blocked) return false
+        if (filterStatus === 'blocked' && !user.blocked) return false
+      }
+      // Filter by role
+      if (filterRole !== 'all') {
+        if (filterRole === 'platform_admin' && user.system_role !== 'platform_admin') return false
+        if (filterRole === 'owner' && userAny.memberships?.[0]?.role !== 'owner') return false
+        if (filterRole === 'admin' && userAny.memberships?.[0]?.role !== 'admin') return false
+        if (filterRole === 'member' && userAny.memberships?.[0]?.role !== 'member') return false
+      }
+      return true
+    })
+  }, [users, search, filterOrg, filterStatus, filterRole])
 
 
   const handleCreate = async (data: any) => {
@@ -185,6 +227,61 @@ export function UsersPanel() {
         </Button>
       </div>
 
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+          <Input
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select value={filterOrg} onValueChange={setFilterOrg}>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="Organization" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Orgs</SelectItem>
+            {orgs.map(org => (
+              <SelectItem key={org.id} value={org.id}>{org.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={filterRole} onValueChange={setFilterRole}>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="Role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Roles</SelectItem>
+            <SelectItem value="platform_admin">Platform Admin</SelectItem>
+            <SelectItem value="owner">Owner</SelectItem>
+            <SelectItem value="admin">Admin</SelectItem>
+            <SelectItem value="member">Member</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-[130px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="blocked">Blocked</SelectItem>
+          </SelectContent>
+        </Select>
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => { setSearch(''); setFilterOrg('all'); setFilterStatus('all'); setFilterRole('all') }}
+            className="text-zinc-500 hover:text-zinc-700"
+          >
+            <X className="mr-1 h-3 w-3" /> Clear
+          </Button>
+        )}
+      </div>
+
       <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
@@ -197,7 +294,7 @@ export function UsersPanel() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <TableRow key={user.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50">
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -217,51 +314,52 @@ export function UsersPanel() {
                        const userAny = user as any
                        if (userAny.memberships && userAny.memberships.length > 0 && userAny.memberships[0].organizations) {
                            return (
-                               <Badge variant="outline" className="font-normal bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
+                               <span className="text-sm text-zinc-700 dark:text-zinc-300">
                                    {userAny.memberships[0].organizations.name}
-                               </Badge>
+                               </span>
                            )
                        }
                        const orgName = orgs.find(o => o.id === user.organization_id)?.name
                        return orgName ? (
-                           <Badge variant="outline" className="font-normal bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">{orgName}</Badge>
+                           <span className="text-sm text-zinc-700 dark:text-zinc-300">{orgName}</span>
                        ) : (
                            <span className="text-zinc-400 text-sm italic">No Org</span>
                        )
                    })()}
                 </TableCell>
                 <TableCell>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1.5">
                         {user.system_role === 'platform_admin' && (
-                            <Badge className="bg-violet-600 text-white dark:bg-violet-500 dark:text-white hover:bg-violet-600">
-                                Platform Admin
-                            </Badge>
+                            <span className="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">
+                                Platform
+                            </span>
                         )}
                         {(() => {
                             const userAny = user as any
                             const membershipRole = userAny.memberships?.[0]?.role
                             if (!membershipRole) return null
-                            const isOrgAdmin = membershipRole === 'admin' || membershipRole === 'owner'
                             return (
-                                <Badge className={`capitalize ${isOrgAdmin ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'}`}>
+                                <span className="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 capitalize dark:bg-zinc-800 dark:text-zinc-400">
                                     {membershipRole}
-                                </Badge>
+                                </span>
                             )
                         })()}
                         {user.system_role === 'user' && !(user as any).memberships?.[0]?.role && (
-                            <Badge className="bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                            <span className="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
                                 user
-                            </Badge>
+                            </span>
                         )}
                     </div>
                 </TableCell>
                 <TableCell>
                     {user.blocked ? (
-                        <Badge variant="destructive">Blocked</Badge>
+                        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                            Blocked
+                        </span>
                     ) : (
-                        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 border-none hover:bg-emerald-100">
+                        <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                             Active
-                        </Badge>
+                        </span>
                     )}
                 </TableCell>
                 <TableCell className="text-right">
@@ -295,10 +393,10 @@ export function UsersPanel() {
                 </TableCell>
               </TableRow>
             ))}
-            {users.length === 0 && (
+            {filteredUsers.length === 0 && (
                 <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center text-zinc-500">
-                        No users found.
+                        {hasActiveFilters ? 'No users match your filters.' : 'No users found.'}
                     </TableCell>
                 </TableRow>
             )}
