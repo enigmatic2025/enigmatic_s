@@ -94,6 +94,13 @@ export default function NataliePage() {
       // Create abort controller for cancellation
       abortControllerRef.current = new AbortController();
 
+      // Build conversation history for multi-turn context
+      // Include all previous messages + the new user message (already added to state)
+      const conversationHistory = [...messages, userMsg].map(m => ({
+        role: m.role,
+        content: m.content,
+      }));
+
       const response = await fetch('/api/ai/chat/stream', {
         method: 'POST',
         headers: {
@@ -101,7 +108,7 @@ export default function NataliePage() {
           ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {}),
         },
         body: JSON.stringify({
-          message: userMessage,
+          messages: conversationHistory,
           context: "",
         }),
         signal: abortControllerRef.current.signal,

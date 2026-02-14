@@ -140,6 +140,12 @@ export default function ActionFlowDetailPage() {
               key_data: data?.key_data
           };
 
+          // Build conversation history for multi-turn context
+          const allMessages = [...chatMessages, { role: 'user' as const, content: userMsg }];
+          const conversationHistory = allMessages
+              .filter(m => m.role === 'user' || m.role === 'assistant')
+              .map(m => ({ role: m.role, content: m.content }));
+
           // Get auth token
           const { data: { session } } = await supabase.auth.getSession();
           const token = session?.access_token;
@@ -151,7 +157,7 @@ export default function ActionFlowDetailPage() {
                   ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
               },
               body: JSON.stringify({
-                  message: userMsg,
+                  messages: conversationHistory,
                   context: JSON.stringify(contextData)
               }),
           });
@@ -170,10 +176,9 @@ export default function ActionFlowDetailPage() {
               return;
           }
 
-          // Stream SSE response
+          // Stream using Vercel AI Data Stream Protocol v1
           const reader = res.body?.getReader();
           const decoder = new TextDecoder();
-          let assistantContent = "";
 
           // Add empty assistant message to start streaming into
           setChatMessages(prev => [...prev, { role: 'assistant', content: "" }]);
@@ -186,25 +191,28 @@ export default function ActionFlowDetailPage() {
 
                   buffer += decoder.decode(value, { stream: true });
                   const lines = buffer.split("\n");
-                  buffer = lines.pop() || ""; // Keep incomplete line in buffer
+                  buffer = lines.pop() || "";
 
                   for (const line of lines) {
-                      if (!line.startsWith("data: ")) continue;
-                      const data = line.slice(6);
-                      if (data === "[DONE]") break;
+                      if (!line.trim()) continue;
 
-                      try {
-                          const chunk = JSON.parse(data);
-                          const content = chunk.choices?.[0]?.delta?.content || "";
-                          if (content) {
-                              assistantContent += content;
-                              setChatMessages(prev => {
-                                  const updated = [...prev];
-                                  updated[updated.length - 1] = { role: 'assistant', content: assistantContent };
-                                  return updated;
-                              });
-                          }
-                      } catch { /* skip parse errors */ }
+                      // Parse Data Stream Protocol v1 format
+                      if (line.startsWith('0:')) {
+                          try {
+                              const content = JSON.parse(line.slice(2));
+                              if (content) {
+                                  setChatMessages(prev => {
+                                      const updated = [...prev];
+                                      const last = updated[updated.length - 1];
+                                      if (last?.role === 'assistant') {
+                                          updated[updated.length - 1] = { ...last, content: last.content + content };
+                                      }
+                                      return updated;
+                                  });
+                              }
+                          } catch { /* skip parse errors */ }
+                      }
+                      // d: lines are finish metadata — ignore
                   }
               }
           }

@@ -166,6 +166,27 @@ func GetToolDefinitions() []Tool {
 				},
 			},
 		},
+		{
+			Type: "function",
+			Function: Function{
+				Name:        "list_comments",
+				Description: "List comments/discussion on a specific action flow execution. Returns comment id, content, user_name, created_at, and like_count. Use when the user asks about discussion, notes, or comments on a workflow run.",
+				Parameters: map[string]interface{}{
+					"type": "object",
+					"properties": map[string]interface{}{
+						"action_flow_id": map[string]interface{}{
+							"type":        "string",
+							"description": "The UUID of the action flow to get comments for.",
+						},
+						"limit": map[string]interface{}{
+							"type":        "integer",
+							"description": "Max number of results. Default 25, max 100.",
+						},
+					},
+					"required": []string{"action_flow_id"},
+				},
+			},
+		},
 	}
 }
 
@@ -198,6 +219,8 @@ func ExecuteTool(ctx ToolContext, toolCall ToolCall) (string, error) {
 		return executeQueryAuditLogs(ctx, args)
 	case "list_teams_and_members":
 		return executeListTeams(ctx, args)
+	case "list_comments":
+		return executeListComments(ctx, args)
 	default:
 		return fmt.Sprintf(`{"error": "unknown tool: %s"}`, toolCall.Function.Name), nil
 	}
@@ -461,6 +484,40 @@ func executeListTeams(ctx ToolContext, args map[string]interface{}) (string, err
 
 	var results []map[string]interface{}
 	if err := selectQuery.Execute(&results); err != nil {
+		return jsonError(err), nil
+	}
+
+	return marshalResult(results)
+}
+
+func executeListComments(ctx ToolContext, args map[string]interface{}) (string, error) {
+	actionFlowID := getStringArg(args, "action_flow_id")
+	if actionFlowID == "" || !uuidRegex.MatchString(actionFlowID) {
+		return `{"error": "valid action_flow_id (UUID) is required"}`, nil
+	}
+	limit := getIntArg(args, "limit", 25, 100)
+
+	// Verify the action flow belongs to this org (unless superadmin)
+	if !ctx.IsSuperAdmin {
+		afQuery := ctx.Client.DB.From("action_flows").
+			Select("id").
+			Limit(1).
+			Eq("id", actionFlowID).
+			Eq("org_id", ctx.OrgID)
+
+		var af []map[string]interface{}
+		if err := afQuery.Execute(&af); err != nil || len(af) == 0 {
+			return `{"error": "action flow not found or access denied"}`, nil
+		}
+	}
+
+	filterQuery := ctx.Client.DB.From("comments").
+		Select("id, content, user_name, created_at, like_count, parent_id").
+		Limit(limit).
+		Eq("action_flow_id", actionFlowID)
+
+	var results []map[string]interface{}
+	if err := filterQuery.Execute(&results); err != nil {
 		return jsonError(err), nil
 	}
 

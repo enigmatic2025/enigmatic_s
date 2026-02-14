@@ -63,6 +63,73 @@ type ConfigPayload struct {
 	Value string `json:"value"`
 }
 
+// extractLatestUserMessage pulls the latest user message from the payload for validation/guardrail
+func extractLatestUserMessage(payload *ChatPayload) string {
+	if payload.Message != "" {
+		return payload.Message
+	}
+	if len(payload.Messages) > 0 {
+		for i := len(payload.Messages) - 1; i >= 0; i-- {
+			if payload.Messages[i].Role == "user" {
+				content := payload.Messages[i].Content
+				if content == "" && len(payload.Messages[i].Parts) > 0 {
+					for _, p := range payload.Messages[i].Parts {
+						if p.Type == "text" {
+							content += p.Text
+						}
+					}
+				}
+				return content
+			}
+		}
+	}
+	return ""
+}
+
+// buildLLMMessages constructs the message array for the LLM from system prompt + conversation history
+func buildLLMMessages(systemPrompt string, payload ChatPayload) []services.Message {
+	const maxHistoryMessages = 20 // Cap conversation history to control token usage
+
+	messages := []services.Message{
+		{Role: "system", Content: systemPrompt},
+	}
+
+	// If frontend sent conversation history, use it
+	if len(payload.Messages) > 0 {
+		history := payload.Messages
+		if len(history) > maxHistoryMessages {
+			history = history[len(history)-maxHistoryMessages:]
+		}
+		for _, msg := range history {
+			if msg.Role != "user" && msg.Role != "assistant" {
+				continue
+			}
+			content := msg.Content
+			if content == "" && len(msg.Parts) > 0 {
+				for _, p := range msg.Parts {
+					if p.Type == "text" {
+						content += p.Text
+					}
+				}
+			}
+			if content != "" {
+				messages = append(messages, services.Message{
+					Role:    msg.Role,
+					Content: sanitizeInput(content),
+				})
+			}
+		}
+	} else if payload.Message != "" {
+		// Legacy single message
+		messages = append(messages, services.Message{
+			Role:    "user",
+			Content: payload.Message,
+		})
+	}
+
+	return messages
+}
+
 // ChatHandler handles POST /api/ai/chat (non-streaming)
 func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	var payload ChatPayload
@@ -71,37 +138,21 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract message from Messages array if Message is empty
-	if payload.Message == "" && len(payload.Messages) > 0 {
-		// Taking the last message as the new prompt
-		lastMsg := payload.Messages[len(payload.Messages)-1]
-		if lastMsg.Role == "user" {
-			if lastMsg.Content != "" {
-				payload.Message = lastMsg.Content
-			} else if len(lastMsg.Parts) > 0 {
-				for _, p := range lastMsg.Parts {
-					if p.Type == "text" {
-						payload.Message += p.Text
-					}
-				}
-			}
-		}
-	}
-
-	if payload.Message == "" {
+	// Extract latest user message for validation
+	latestMessage := extractLatestUserMessage(&payload)
+	if latestMessage == "" {
 		http.Error(w, "Message is required", http.StatusBadRequest)
 		return
 	}
 
-	// Validate message length (prevent abuse)
-	const MaxMessageLength = 10000 // 10k characters
-	if len(payload.Message) > MaxMessageLength {
+	const MaxMessageLength = 10000
+	if len(latestMessage) > MaxMessageLength {
 		http.Error(w, fmt.Sprintf("Message too long (max %d characters)", MaxMessageLength), http.StatusBadRequest)
 		return
 	}
 
-	// Sanitize message (remove null bytes and control characters)
-	payload.Message = sanitizeInput(payload.Message)
+	latestMessage = sanitizeInput(latestMessage)
+	payload.Message = latestMessage // Keep for backward compat
 
 	// 1. Get user ID from auth context
 	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
@@ -119,12 +170,11 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create structured logger with full context
 	logger := h.getRequestLogger(r, userID, orgID)
 	logger.Info("AI chat request received")
 
-	// 3. Check and deduct credits
-	if err := h.aiService.CheckAndDeductCredits(orgID, 1); err != nil {
+	// 3. Pre-flight credit check (no deduction yet — post-deduction model)
+	if err := h.aiService.HasMinimumCredits(orgID); err != nil {
 		logger.WithError(err).Warn("Credit check failed")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
@@ -135,18 +185,14 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 4. Run guardrail classification
-	allowed, reason, err := h.aiService.ClassifyPrompt(r.Context(), payload.Message)
+	// 4. Run guardrail classification (on latest message only)
+	allowed, reason, err := h.aiService.ClassifyPrompt(r.Context(), latestMessage)
 	if err != nil {
 		logger.WithError(err).Warn("Guardrail error (allowing through)")
 	}
 
 	if !allowed {
-		// Log the blocked attempt (refund the credit)
 		h.aiService.LogUsage(userID, orgID, "guardrail", "blocked", 0, 0, 0, 0)
-		// Refund the credit since we blocked it
-		h.aiService.CheckAndDeductCredits(orgID, -1) // negative cost = refund
-
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -156,14 +202,15 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Fetch Context Details
+	// 5. Fetch context details
 	userName, userRole, _ := h.aiService.GetUserProfile(userID)
 	orgName, orgSlug, _ := h.aiService.GetOrgDetails(orgID)
 
-	// 6. Build system prompt
+	// 6. Build system prompt and LLM messages (with conversation history)
 	systemPrompt := buildSystemPrompt(userName, userRole, orgName, orgSlug, payload.Context)
+	llmMessages := buildLLMMessages(systemPrompt, payload)
 
-	// 6.5 Build tool context
+	// 7. Build tool context
 	toolCtx := services.ToolContext{
 		OrgID:        orgID,
 		OrgSlug:      orgSlug,
@@ -173,39 +220,51 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tools := services.GetToolDefinitions()
 
-	// 7. Generate response with tool-calling loop
-	response, usage, err := h.aiService.GenerateWithToolLoop(r.Context(), systemPrompt, payload.Message, tools, toolCtx)
+	// 8. Generate response with tool-calling loop
+	response, summary, err := h.aiService.GenerateWithToolLoop(r.Context(), llmMessages, tools, toolCtx)
 	if err != nil {
 		logger.WithError(err).Error("AI generation failed")
 		http.Error(w, "AI Service Error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// 8. Log usage
-	promptTokens, completionTokens, totalTokens := 0, 0, 0
-	if usage != nil {
-		promptTokens = usage.PromptTokens
-		completionTokens = usage.CompletionTokens
-		totalTokens = usage.TotalTokens
+	// 9. Post-deduction: calculate weighted credits from actual token usage
+	creditsCharged := 1
+	if summary != nil {
+		creditsCharged = services.CalculateWeightedCredits(*summary)
 	}
-	config := h.aiService.GetConfig()
-	h.aiService.LogUsage(userID, orgID, config.Model, "allowed", promptTokens, completionTokens, totalTokens, 1)
+	if err := h.aiService.CheckAndDeductCredits(orgID, creditsCharged); err != nil {
+		logger.WithError(err).Warn("Post-deduction failed (response already generated)")
+		// Don't fail the request — user already got the response. Log it.
+	}
 
-	// Log successful completion
+	// 10. Log usage with per-model breakdown
+	if summary != nil {
+		h.aiService.LogWeightedUsage(userID, orgID, "allowed", *summary, creditsCharged)
+	}
+
+	totalPrompt := 0
+	totalCompletion := 0
+	if summary != nil {
+		totalPrompt = summary.PrimaryPromptTokens + summary.ReasoningPromptTokens
+		totalCompletion = summary.PrimaryCompletionTokens + summary.ReasoningCompletionTokens
+	}
+
 	logger.WithFields(logrus.Fields{
-		"model":             config.Model,
-		"prompt_tokens":     promptTokens,
-		"completion_tokens": completionTokens,
-		"total_tokens":      totalTokens,
+		"models_used":     summary.ModelsUsed,
+		"total_prompt":    totalPrompt,
+		"total_completion": totalCompletion,
+		"credits_charged": creditsCharged,
 	}).Info("AI chat request completed successfully")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"response": response,
 		"usage": map[string]int{
-			"prompt_tokens":     promptTokens,
-			"completion_tokens": completionTokens,
-			"total_tokens":      totalTokens,
+			"prompt_tokens":     totalPrompt,
+			"completion_tokens": totalCompletion,
+			"total_tokens":      totalPrompt + totalCompletion,
+			"credits_charged":   creditsCharged,
 		},
 	})
 }
@@ -218,31 +277,21 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract message from Messages array if Message is empty
-	if payload.Message == "" && len(payload.Messages) > 0 {
-		// Taking the last message as the new prompt
-		// In a real Vercel AI implementation we might want to pass history,
-		// but AI Service currently takes a single prompt.
-		lastMsg := payload.Messages[len(payload.Messages)-1]
-		if lastMsg.Role == "user" {
-			payload.Message = lastMsg.Content
-		}
-	}
-
-	if payload.Message == "" {
+	// Extract latest user message for validation
+	latestMessage := extractLatestUserMessage(&payload)
+	if latestMessage == "" {
 		http.Error(w, "Message is required", http.StatusBadRequest)
 		return
 	}
 
-	// Validate message length (prevent abuse)
-	const MaxMessageLength = 10000 // 10k characters
-	if len(payload.Message) > MaxMessageLength {
+	const MaxMessageLength = 10000
+	if len(latestMessage) > MaxMessageLength {
 		http.Error(w, fmt.Sprintf("Message too long (max %d characters)", MaxMessageLength), http.StatusBadRequest)
 		return
 	}
 
-	// Sanitize message (remove null bytes and control characters)
-	payload.Message = sanitizeInput(payload.Message)
+	latestMessage = sanitizeInput(latestMessage)
+	payload.Message = latestMessage
 
 	// 1. Get user ID
 	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
@@ -258,8 +307,8 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 3. Check credits
-	if err := h.aiService.CheckAndDeductCredits(orgID, 1); err != nil {
+	// 3. Pre-flight credit check (no deduction — post-deduction model)
+	if err := h.aiService.HasMinimumCredits(orgID); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -269,12 +318,10 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 4. Guardrail
-	allowed, reason, _ := h.aiService.ClassifyPrompt(r.Context(), payload.Message)
+	// 4. Guardrail (on latest message only)
+	allowed, reason, _ := h.aiService.ClassifyPrompt(r.Context(), latestMessage)
 	if !allowed {
 		h.aiService.LogUsage(userID, orgID, "guardrail", "blocked", 0, 0, 0, 0)
-		h.aiService.CheckAndDeductCredits(orgID, -1)
-
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -284,14 +331,15 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Fetch Context Details
+	// 5. Fetch context details
 	userName, userRole, _ := h.aiService.GetUserProfile(userID)
 	orgName, orgSlug, _ := h.aiService.GetOrgDetails(orgID)
 
-	// 6. Build system prompt
+	// 6. Build system prompt and LLM messages (with conversation history)
 	systemPrompt := buildSystemPrompt(userName, userRole, orgName, orgSlug, payload.Context)
+	llmMessages := buildLLMMessages(systemPrompt, payload)
 
-	// 6.5 Build tool context
+	// 7. Build tool context
 	toolCtx := services.ToolContext{
 		OrgID:        orgID,
 		OrgSlug:      orgSlug,
@@ -301,24 +349,27 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tools := services.GetToolDefinitions()
 
-	// 7. Stream response with tool-calling loop
-	usage, err := h.aiService.GenerateStreamingWithToolLoop(r.Context(), w, systemPrompt, payload.Message, tools, toolCtx)
+	// 8. Stream response with tool-calling loop
+	summary, err := h.aiService.GenerateStreamingWithToolLoop(r.Context(), w, llmMessages, tools, toolCtx)
 	if err != nil {
 		log.Printf("AI Stream: generation error: %v", err)
-		// If headers haven't been sent yet, we can send an error
 		http.Error(w, "AI Service Error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// 8. Log usage
-	promptTokens, completionTokens, totalTokens := 0, 0, 0
-	if usage != nil {
-		promptTokens = usage.PromptTokens
-		completionTokens = usage.CompletionTokens
-		totalTokens = usage.TotalTokens
+	// 9. Post-deduction: calculate weighted credits from actual token usage
+	creditsCharged := 1
+	if summary != nil {
+		creditsCharged = services.CalculateWeightedCredits(*summary)
 	}
-	config := h.aiService.GetConfig()
-	h.aiService.LogUsage(userID, orgID, config.Model, "allowed", promptTokens, completionTokens, totalTokens, 1)
+	if err := h.aiService.CheckAndDeductCredits(orgID, creditsCharged); err != nil {
+		log.Printf("AI Stream: post-deduction failed (response already streamed): %v", err)
+	}
+
+	// 10. Log usage with per-model breakdown
+	if summary != nil {
+		h.aiService.LogWeightedUsage(userID, orgID, "allowed", *summary, creditsCharged)
+	}
 }
 
 // GetConfigHandler handles GET /api/admin/ai-config
@@ -326,25 +377,22 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 func (h *AIHandler) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 	config := h.aiService.GetConfig()
 
-	// Create safe response without API key
 	safeConfig := struct {
-		Provider           string `json:"provider"`
-		Model              string `json:"model"`
-		BaseURL            string `json:"base_url"`
-		APIKeyConfigured   bool   `json:"api_key_configured"`   // Just indicates if key exists
-		GuardrailEnabled   bool   `json:"guardrail_enabled"`
-		GuardrailProvider  string `json:"guardrail_provider"`
-		GuardrailModel     string `json:"guardrail_model"`
-		GuardrailBaseURL   string `json:"guardrail_base_url"`
+		Provider         string `json:"provider"`
+		Model            string `json:"model"`
+		BaseURL          string `json:"base_url"`
+		APIKeyConfigured bool   `json:"api_key_configured"`
+		ReasoningModel   string `json:"reasoning_model"`
+		GuardrailEnabled bool   `json:"guardrail_enabled"`
+		GuardrailModel   string `json:"guardrail_model"`
 	}{
-		Provider:           config.Provider,
-		Model:              config.Model,
-		BaseURL:            config.BaseURL,
-		APIKeyConfigured:   config.APIKey != "",
-		GuardrailEnabled:   config.GuardrailEnabled,
-		GuardrailProvider:  config.GuardrailProvider,
-		GuardrailModel:     config.GuardrailModel,
-		GuardrailBaseURL:   config.GuardrailBaseURL,
+		Provider:         config.Provider,
+		Model:            config.Model,
+		BaseURL:          config.BaseURL,
+		APIKeyConfigured: config.APIKey != "",
+		ReasoningModel:   config.ReasoningModel,
+		GuardrailEnabled: config.GuardrailEnabled,
+		GuardrailModel: config.GuardrailModel,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -428,17 +476,27 @@ Your role:
 
 Data Access:
 - You have tools to query the organization's database for real-time data
-- When users ask about workflows, executions, tasks, teams, or activity — ALWAYS use your tools to get real data
-- NEVER fabricate or make up data. If a tool returns no results, tell the user honestly
-- You can list flows, view action flow executions, check human tasks, query audit logs, and view teams
+- When users ask about workflows, executions, tasks, teams, activity, or comments — ALWAYS use your tools first
+- NEVER fabricate or make up data. If a tool returns no results, say so honestly
+- Available tools: list_flows, get_flow_details, list_action_flows, get_action_flow_details, list_human_tasks, query_audit_logs, list_teams_and_members, list_comments
+
+Visualization:
+- When the user asks for a process flow, diagram, or visualization, use Mermaid syntax in a mermaid code block
+- For workflow visualizations, use flowchart (graph TD/LR) showing steps and decision points
+- For timelines, use Mermaid gantt charts
+- For status overviews, use Mermaid pie charts
+- For step sequences, use Mermaid sequence diagrams
+- Example: to show a process flow, output a fenced code block with language "mermaid"
+- Keep diagrams clean — 3-10 nodes is ideal, summarize if more
 
 Guidelines:
 - Be concise but thorough
-- Use bullet points for lists
+- Use bullet points for lists, markdown tables for structured data
 - When explaining errors, suggest specific solutions
 - Reference specific step names and data when available
 - If you don't have enough context, ask for clarification
-- When presenting data from tools, format it clearly with tables or bullet points`,
+- Format numbers with commas and dates in readable format
+- You maintain conversation context — reference previous messages when relevant`,
 		timestamp, userName, userRole, orgName,
 		func() string {
 			if orgSlug == "enigmatic-i2v2i" {

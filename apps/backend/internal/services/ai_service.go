@@ -21,17 +21,26 @@ import (
 
 // AIConfig holds the dynamic configuration loaded from system_settings
 type AIConfig struct {
-	// Main model config
+	// Connection (shared across all models)
 	Provider string `json:"provider"`
 	BaseURL  string `json:"base_url"`
-	Model    string `json:"model"`
 	APIKey   string `json:"api_key"`
 
-	// Guardrail config
-	GuardrailEnabled  bool   `json:"guardrail_enabled"`
-	GuardrailProvider string `json:"guardrail_provider"`
-	GuardrailModel    string `json:"guardrail_model"`
-	GuardrailBaseURL  string `json:"guardrail_base_url"`
+	// Model IDs per role
+	Model          string `json:"model"`           // Primary: fast streaming & final answers
+	ReasoningModel string `json:"reasoning_model"` // Reasoning: tool-calling & analysis (optional, falls back to primary)
+	GuardrailModel string `json:"guardrail_model"` // Guardrail: cheap classifier
+
+	// Guardrail toggle
+	GuardrailEnabled bool `json:"guardrail_enabled"`
+}
+
+// ModelEndpoint holds connection details for a specific model role
+type ModelEndpoint struct {
+	Provider string
+	BaseURL  string
+	Model    string
+	APIKey   string
 }
 
 // AIService handles interactions with AI providers
@@ -75,13 +84,11 @@ func (s *AIService) LoadConfig() error {
 	}
 
 	newConfig := &AIConfig{
-		Provider:          "openrouter",
-		BaseURL:           "https://openrouter.ai/api/v1",
-		Model:             "google/gemini-2.0-flash-001",
-		GuardrailEnabled:  true,
-		GuardrailProvider: "openrouter",
-		GuardrailModel:    "google/gemini-2.0-flash-lite-001",
-		GuardrailBaseURL:  "https://openrouter.ai/api/v1",
+		Provider:         "openrouter",
+		BaseURL:          "https://openrouter.ai/api/v1",
+		Model:            "google/gemini-2.0-flash-001",
+		GuardrailEnabled: true,
+		GuardrailModel:   "google/gemini-2.0-flash-lite-001",
 	}
 
 	for _, row := range rows {
@@ -94,14 +101,12 @@ func (s *AIService) LoadConfig() error {
 			newConfig.Model = row.Value
 		case "ai_api_key":
 			newConfig.APIKey = row.Value
+		case "ai_reasoning_model":
+			newConfig.ReasoningModel = row.Value
 		case "ai_guardrail_enabled":
 			newConfig.GuardrailEnabled = row.Value == "true"
-		case "ai_guardrail_provider":
-			newConfig.GuardrailProvider = row.Value
 		case "ai_guardrail_model":
 			newConfig.GuardrailModel = row.Value
-		case "ai_guardrail_base_url":
-			newConfig.GuardrailBaseURL = row.Value
 		}
 	}
 
@@ -118,12 +123,19 @@ func (s *AIService) LoadConfig() error {
 	if val, ok := os.LookupEnv("AI_API_KEY"); ok && newConfig.APIKey == "" {
 		newConfig.APIKey = val
 	}
+	if val, ok := os.LookupEnv("AI_REASONING_MODEL"); ok {
+		newConfig.ReasoningModel = val
+	}
 
 	s.configMu.Lock()
 	s.config = newConfig
 	s.configMu.Unlock()
 
-	s.logger.Infof("AI Config Loaded: Provider=%s, Model=%s, Guardrail=%v", newConfig.Provider, newConfig.Model, newConfig.GuardrailEnabled)
+	reasoningInfo := "none"
+	if newConfig.ReasoningModel != "" {
+		reasoningInfo = newConfig.ReasoningModel
+	}
+	s.logger.Infof("AI Config Loaded: Primary=%s, Reasoning=%s, Guardrail=%v", newConfig.Model, reasoningInfo, newConfig.GuardrailEnabled)
 	return nil
 }
 
@@ -140,6 +152,64 @@ func (s *AIService) GetConfig() AIConfig {
 // GetClient returns the supabase client for direct queries
 func (s *AIService) GetClient() *supabase.Client {
 	return s.client
+}
+
+// getPrimaryEndpoint returns the primary (fast) model endpoint
+func (s *AIService) getPrimaryEndpoint() ModelEndpoint {
+	config := s.GetConfig()
+	return ModelEndpoint{
+		Provider: config.Provider,
+		BaseURL:  config.BaseURL,
+		Model:    config.Model,
+		APIKey:   config.APIKey,
+	}
+}
+
+// getReasoningEndpoint returns the reasoning model endpoint (falls back to primary if not configured)
+func (s *AIService) getReasoningEndpoint() ModelEndpoint {
+	config := s.GetConfig()
+	if config.ReasoningModel != "" {
+		return ModelEndpoint{
+			Provider: config.Provider,
+			BaseURL:  config.BaseURL,
+			Model:    config.ReasoningModel,
+			APIKey:   config.APIKey,
+		}
+	}
+	return s.getPrimaryEndpoint()
+}
+
+// buildHTTPRequest creates an HTTP request for a model endpoint
+func (s *AIService) buildHTTPRequest(ctx context.Context, endpoint ModelEndpoint, messages []Message, tools []Tool, stream bool) (*http.Request, error) {
+	reqBody := ChatRequest{
+		Model:    endpoint.Model,
+		Messages: messages,
+		Stream:   stream,
+	}
+	if len(tools) > 0 {
+		reqBody.Tools = tools
+		reqBody.ToolChoice = "auto"
+	}
+
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%s/chat/completions", endpoint.BaseURL)
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", endpoint.APIKey))
+	if endpoint.Provider == "openrouter" {
+		req.Header.Set("HTTP-Referer", "https://enigmatic.works")
+		req.Header.Set("X-Title", "Enigmatic Flow Studio")
+	}
+
+	return req, nil
 }
 
 // ---- OpenAI-compatible types ----
@@ -241,11 +311,8 @@ Respond with EXACTLY one word:
 
 Be lenient — if there is ANY reasonable business interpretation OR if it is a greeting, respond ALLOWED.`
 
-	// Use guardrail-specific config (cheap/fast model)
-	baseURL := config.GuardrailBaseURL
-	if baseURL == "" {
-		baseURL = config.BaseURL
-	}
+	// Use guardrail model (shares connection with primary)
+	baseURL := config.BaseURL
 	model := config.GuardrailModel
 	if model == "" {
 		model = config.Model
@@ -272,7 +339,7 @@ Be lenient — if there is ANY reasonable business interpretation OR if it is a 
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
-	if config.GuardrailProvider == "openrouter" || config.Provider == "openrouter" {
+	if config.Provider == "openrouter" {
 		req.Header.Set("HTTP-Referer", "https://enigmatic.works")
 		req.Header.Set("X-Title", "Enigmatic Guardrail")
 	}
@@ -308,6 +375,76 @@ Be lenient — if there is ANY reasonable business interpretation OR if it is a 
 }
 
 // ---- Credit System ----
+
+// Credit rate per 1,000 tokens by model tier
+const (
+	CreditRateGuardrail = 0  // Free — protects your spend
+	CreditRatePrimary   = 1  // 1 credit per 1K tokens
+	CreditRateReasoning = 5  // 5 credits per 1K tokens
+	MinimumCreditBalance = 5 // Must have at least this many credits to start a request
+)
+
+// UsageSummary tracks token usage across models for a single request
+type UsageSummary struct {
+	PrimaryPromptTokens     int
+	PrimaryCompletionTokens int
+	ReasoningPromptTokens   int
+	ReasoningCompletionTokens int
+	ModelsUsed              []string
+}
+
+// CalculateWeightedCredits computes the credit cost from token usage
+func CalculateWeightedCredits(summary UsageSummary) int {
+	primaryTokens := summary.PrimaryPromptTokens + summary.PrimaryCompletionTokens
+	reasoningTokens := summary.ReasoningPromptTokens + summary.ReasoningCompletionTokens
+
+	// Credits = (primaryTokens / 1000 * rate) + (reasoningTokens / 1000 * rate)
+	// Use integer math: (tokens * rate + 999) / 1000 for ceiling division
+	primaryCredits := 0
+	if primaryTokens > 0 {
+		primaryCredits = (primaryTokens*CreditRatePrimary + 999) / 1000
+	}
+	reasoningCredits := 0
+	if reasoningTokens > 0 {
+		reasoningCredits = (reasoningTokens*CreditRateReasoning + 999) / 1000
+	}
+
+	total := primaryCredits + reasoningCredits
+	if total < 1 {
+		total = 1 // Minimum 1 credit per successful request
+	}
+	return total
+}
+
+// HasMinimumCredits checks if an org can start a request (pre-flight, no deduction)
+func (s *AIService) HasMinimumCredits(orgID string) error {
+	var orgs []struct {
+		AICreditsBalance  int   `json:"ai_credits_balance"`
+		AIUnlimitedAccess *bool `json:"ai_unlimited_access"`
+	}
+
+	err := s.client.DB.From("organizations").
+		Select("ai_credits_balance, ai_unlimited_access").
+		Eq("id", orgID).
+		Execute(&orgs)
+
+	if err != nil {
+		return fmt.Errorf("failed to check credits: %w", err)
+	}
+	if len(orgs) == 0 {
+		return fmt.Errorf("organization not found")
+	}
+
+	// Unlimited orgs always pass
+	if orgs[0].AIUnlimitedAccess != nil && *orgs[0].AIUnlimitedAccess {
+		return nil
+	}
+
+	if orgs[0].AICreditsBalance < MinimumCreditBalance {
+		return fmt.Errorf("insufficient AI credits (balance: %d, minimum: %d)", orgs[0].AICreditsBalance, MinimumCreditBalance)
+	}
+	return nil
+}
 
 // CheckAndDeductCredits atomically checks and deducts credits from an org
 // Uses optimistic locking with retry to prevent race conditions
@@ -448,6 +585,38 @@ func (s *AIService) LogUsage(userID, orgID, model, guardrailResult string, promp
 		"prompt_tokens":     promptTokens,
 		"completion_tokens": completionTokens,
 		"total_tokens":      totalTokens,
+		"credits_charged":   creditsCharged,
+	}
+
+	var result []interface{}
+	err := s.client.DB.From("ai_usage_log").Insert(row).Execute(&result)
+	if err != nil {
+		s.logger.Errorf("Failed to log AI usage: %v", err)
+	}
+}
+
+// LogWeightedUsage writes a detailed usage record with per-model token breakdown
+func (s *AIService) LogWeightedUsage(userID, orgID, guardrailResult string, summary UsageSummary, creditsCharged int) {
+	totalPrompt := summary.PrimaryPromptTokens + summary.ReasoningPromptTokens
+	totalCompletion := summary.PrimaryCompletionTokens + summary.ReasoningCompletionTokens
+	reasoningTokens := summary.ReasoningPromptTokens + summary.ReasoningCompletionTokens
+
+	// Use primary model as the "model" field for backward compat, store all in models_used
+	primaryModel := ""
+	if len(summary.ModelsUsed) > 0 {
+		primaryModel = summary.ModelsUsed[0]
+	}
+
+	row := map[string]interface{}{
+		"user_id":           userID,
+		"org_id":            orgID,
+		"model":             primaryModel,
+		"guardrail_result":  guardrailResult,
+		"prompt_tokens":     totalPrompt,
+		"completion_tokens": totalCompletion,
+		"total_tokens":      totalPrompt + totalCompletion,
+		"reasoning_tokens":  reasoningTokens,
+		"models_used":       summary.ModelsUsed,
 		"credits_charged":   creditsCharged,
 	}
 
@@ -649,45 +818,23 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 
 // ---- Tool-Calling Agent Loop ----
 
-// GenerateWithToolLoop sends a prompt with tools and resolves tool calls in a loop (non-streaming)
-func (s *AIService) GenerateWithToolLoop(ctx context.Context, systemPrompt, userMessage string, tools []Tool, toolCtx ToolContext) (string, *UsageInfo, error) {
-	config := s.GetConfig()
-	if config.APIKey == "" {
+// GenerateWithToolLoop sends messages with tools and resolves tool calls in a loop (non-streaming)
+// Uses reasoning model for tool-calling iterations, falls back to primary if not configured.
+func (s *AIService) GenerateWithToolLoop(ctx context.Context, messages []Message, tools []Tool, toolCtx ToolContext) (string, *UsageSummary, error) {
+	reasoningEP := s.getReasoningEndpoint()
+	primaryEP := s.getPrimaryEndpoint()
+	if reasoningEP.APIKey == "" {
 		return "", nil, fmt.Errorf("AI API Key is not configured")
 	}
 
-	messages := []Message{
-		{Role: "system", Content: systemPrompt},
-		{Role: "user", Content: userMessage},
-	}
-
 	const maxIterations = 5
-	var totalUsage UsageInfo
+	summary := &UsageSummary{}
+	usedReasoning := false
 
 	for i := 0; i < maxIterations; i++ {
-		reqBody := ChatRequest{
-			Model:      config.Model,
-			Messages:   messages,
-			Tools:      tools,
-			ToolChoice: "auto",
-		}
-
-		jsonBody, err := json.Marshal(reqBody)
+		req, err := s.buildHTTPRequest(ctx, reasoningEP, messages, tools, false)
 		if err != nil {
 			return "", nil, err
-		}
-
-		url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
-		req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
-		if err != nil {
-			return "", nil, err
-		}
-
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
-		if config.Provider == "openrouter" {
-			req.Header.Set("HTTP-Referer", "https://enigmatic.works")
-			req.Header.Set("X-Title", "Enigmatic Flow Studio")
 		}
 
 		resp, err := s.retryableHTTPDo(s.httpClient, req, 2)
@@ -706,21 +853,34 @@ func (s *AIService) GenerateWithToolLoop(ctx context.Context, systemPrompt, user
 		resp.Body.Close()
 
 		if chatResp.Usage != nil {
-			totalUsage.PromptTokens += chatResp.Usage.PromptTokens
-			totalUsage.CompletionTokens += chatResp.Usage.CompletionTokens
-			totalUsage.TotalTokens += chatResp.Usage.TotalTokens
+			// Track reasoning model tokens
+			summary.ReasoningPromptTokens += chatResp.Usage.PromptTokens
+			summary.ReasoningCompletionTokens += chatResp.Usage.CompletionTokens
 		}
 
 		if len(chatResp.Choices) == 0 {
-			return "", &totalUsage, fmt.Errorf("empty response from AI")
+			return "", summary, fmt.Errorf("empty response from AI")
 		}
 
 		assistantMsg := chatResp.Choices[0].Message
 
 		// If no tool calls, return the text content
 		if len(assistantMsg.ToolCalls) == 0 {
-			return assistantMsg.Content, &totalUsage, nil
+			// If this was the first iteration (no tools used), tokens count as primary not reasoning
+			if !usedReasoning && reasoningEP.Model == primaryEP.Model {
+				summary.PrimaryPromptTokens = summary.ReasoningPromptTokens
+				summary.PrimaryCompletionTokens = summary.ReasoningCompletionTokens
+				summary.ReasoningPromptTokens = 0
+				summary.ReasoningCompletionTokens = 0
+				summary.ModelsUsed = []string{primaryEP.Model}
+			} else {
+				summary.ModelsUsed = uniqueStrings(summary.ModelsUsed, reasoningEP.Model)
+			}
+			return assistantMsg.Content, summary, nil
 		}
+
+		usedReasoning = true
+		summary.ModelsUsed = uniqueStrings(summary.ModelsUsed, reasoningEP.Model)
 
 		// Append assistant message (with tool calls) to history
 		messages = append(messages, assistantMsg)
@@ -737,51 +897,41 @@ func (s *AIService) GenerateWithToolLoop(ctx context.Context, systemPrompt, user
 				ToolCallID: tc.ID,
 			})
 		}
+
+		s.logger.Debugf("Tool loop iteration %d: %d tool calls resolved (model: %s)", i+1, len(assistantMsg.ToolCalls), reasoningEP.Model)
 	}
 
-	return "I was unable to complete the lookup. Please try a more specific question.", &totalUsage, nil
+	return "I was unable to complete the lookup. Please try a more specific question.", summary, nil
 }
 
-// GenerateStreamingWithToolLoop resolves tool calls non-streaming, then streams the final answer
-func (s *AIService) GenerateStreamingWithToolLoop(ctx context.Context, w http.ResponseWriter, systemPrompt, userMessage string, tools []Tool, toolCtx ToolContext) (*UsageInfo, error) {
-	config := s.GetConfig()
-	if config.APIKey == "" {
+// uniqueStrings appends s to slice if not already present
+func uniqueStrings(slice []string, s string) []string {
+	for _, v := range slice {
+		if v == s {
+			return slice
+		}
+	}
+	return append(slice, s)
+}
+
+// GenerateStreamingWithToolLoop resolves tool calls non-streaming with reasoning model,
+// then streams the final answer with primary model.
+func (s *AIService) GenerateStreamingWithToolLoop(ctx context.Context, w http.ResponseWriter, messages []Message, tools []Tool, toolCtx ToolContext) (*UsageSummary, error) {
+	reasoningEP := s.getReasoningEndpoint()
+	primaryEP := s.getPrimaryEndpoint()
+	if reasoningEP.APIKey == "" {
 		return nil, fmt.Errorf("AI API Key is not configured")
 	}
 
-	messages := []Message{
-		{Role: "system", Content: systemPrompt},
-		{Role: "user", Content: userMessage},
-	}
-
 	const maxIterations = 5
-	var totalUsage UsageInfo
+	summary := &UsageSummary{}
+	usedReasoning := false
 
-	// Phase 1: Non-streaming tool-calling loop
+	// Phase 1: Non-streaming tool-calling loop (reasoning model)
 	for i := 0; i < maxIterations; i++ {
-		reqBody := ChatRequest{
-			Model:      config.Model,
-			Messages:   messages,
-			Tools:      tools,
-			ToolChoice: "auto",
-		}
-
-		jsonBody, err := json.Marshal(reqBody)
+		req, err := s.buildHTTPRequest(ctx, reasoningEP, messages, tools, false)
 		if err != nil {
 			return nil, err
-		}
-
-		url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
-		req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
-		if err != nil {
-			return nil, err
-		}
-
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
-		if config.Provider == "openrouter" {
-			req.Header.Set("HTTP-Referer", "https://enigmatic.works")
-			req.Header.Set("X-Title", "Enigmatic Flow Studio")
 		}
 
 		resp, err := s.retryableHTTPDo(s.httpClient, req, 2)
@@ -800,23 +950,37 @@ func (s *AIService) GenerateStreamingWithToolLoop(ctx context.Context, w http.Re
 		resp.Body.Close()
 
 		if chatResp.Usage != nil {
-			totalUsage.PromptTokens += chatResp.Usage.PromptTokens
-			totalUsage.CompletionTokens += chatResp.Usage.CompletionTokens
-			totalUsage.TotalTokens += chatResp.Usage.TotalTokens
+			summary.ReasoningPromptTokens += chatResp.Usage.PromptTokens
+			summary.ReasoningCompletionTokens += chatResp.Usage.CompletionTokens
 		}
 
 		if len(chatResp.Choices) == 0 {
-			return &totalUsage, fmt.Errorf("empty response from AI")
+			return summary, fmt.Errorf("empty response from AI")
 		}
 
 		assistantMsg := chatResp.Choices[0].Message
 
 		// No tool calls — proceed to streaming phase
 		if len(assistantMsg.ToolCalls) == 0 {
-			// LLM produced a final answer without needing tools (e.g. greeting)
-			// Stream it using the existing protocol
-			return s.streamPrecomputedResponse(w, assistantMsg.Content, &totalUsage)
+			if i == 0 {
+				// First iteration, no tools needed — these are primary tokens
+				if reasoningEP.Model == primaryEP.Model {
+					summary.PrimaryPromptTokens = summary.ReasoningPromptTokens
+					summary.PrimaryCompletionTokens = summary.ReasoningCompletionTokens
+					summary.ReasoningPromptTokens = 0
+					summary.ReasoningCompletionTokens = 0
+				}
+				summary.ModelsUsed = uniqueStrings(summary.ModelsUsed, reasoningEP.Model)
+				return s.streamPrecomputedResponse(w, assistantMsg.Content, summary)
+			}
+			// Tools were used in previous iterations — stream final answer with primary model
+			summary.ModelsUsed = uniqueStrings(summary.ModelsUsed, primaryEP.Model)
+			return s.streamFinalResponse(ctx, w, primaryEP, messages, summary)
 		}
+
+		usedReasoning = true
+		summary.ModelsUsed = uniqueStrings(summary.ModelsUsed, reasoningEP.Model)
+		_ = usedReasoning // tracked for clarity
 
 		// Append assistant + tool results
 		messages = append(messages, assistantMsg)
@@ -832,39 +996,29 @@ func (s *AIService) GenerateStreamingWithToolLoop(ctx context.Context, w http.Re
 			})
 		}
 
-		s.logger.Debugf("Tool loop iteration %d: %d tool calls resolved", i+1, len(assistantMsg.ToolCalls))
+		s.logger.Debugf("Tool loop iteration %d: %d tool calls resolved (model: %s)", i+1, len(assistantMsg.ToolCalls), reasoningEP.Model)
 	}
 
-	// Phase 2: Stream the final answer
-	// Re-send the full conversation (with tool results) in streaming mode, no tools
-	return s.streamFinalResponse(ctx, w, config, messages, &totalUsage)
+	// Max iterations reached — stream final answer with primary model
+	summary.ModelsUsed = uniqueStrings(summary.ModelsUsed, primaryEP.Model)
+	return s.streamFinalResponse(ctx, w, primaryEP, messages, summary)
 }
 
-// streamFinalResponse makes a streaming LLM call with the full conversation history (no tools)
-func (s *AIService) streamFinalResponse(ctx context.Context, w http.ResponseWriter, config AIConfig, messages []Message, totalUsage *UsageInfo) (*UsageInfo, error) {
-	reqBody := ChatRequest{
-		Model:    config.Model,
-		Messages: messages,
-		Stream:   true,
-		// No tools — force text response
+// streamFinalResponse makes a streaming LLM call with full conversation history (no tools)
+func (s *AIService) streamFinalResponse(ctx context.Context, w http.ResponseWriter, endpoint ModelEndpoint, messages []Message, summary *UsageSummary) (*UsageSummary, error) {
+	// Strip tool_calls from messages to avoid confusing the primary model
+	cleanMessages := make([]Message, 0, len(messages))
+	for _, m := range messages {
+		if m.Role == "tool" {
+			continue // Skip tool result messages
+		}
+		clean := Message{Role: m.Role, Content: m.Content}
+		cleanMessages = append(cleanMessages, clean)
 	}
 
-	jsonBody, err := json.Marshal(reqBody)
+	req, err := s.buildHTTPRequest(ctx, endpoint, cleanMessages, nil, true)
 	if err != nil {
 		return nil, err
-	}
-
-	url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
-	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
-	if config.Provider == "openrouter" {
-		req.Header.Set("HTTP-Referer", "https://enigmatic.works")
-		req.Header.Set("X-Title", "Enigmatic Flow Studio")
 	}
 
 	resp, err := s.retryableHTTPDo(s.streamingHTTPClient, req, 2)
@@ -928,32 +1082,31 @@ func (s *AIService) streamFinalResponse(ctx context.Context, w http.ResponseWrit
 		}
 	}
 
-	// Merge stream usage into total
+	// Merge stream usage into summary as primary model tokens
 	if streamUsage != nil {
-		totalUsage.PromptTokens += streamUsage.PromptTokens
-		totalUsage.CompletionTokens += streamUsage.CompletionTokens
-		totalUsage.TotalTokens += streamUsage.TotalTokens
+		summary.PrimaryPromptTokens += streamUsage.PromptTokens
+		summary.PrimaryCompletionTokens += streamUsage.CompletionTokens
 	}
 
 	// Send finish message
+	totalPrompt := summary.PrimaryPromptTokens + summary.ReasoningPromptTokens
+	totalCompletion := summary.PrimaryCompletionTokens + summary.ReasoningCompletionTokens
 	finishData := map[string]interface{}{
 		"finishReason": finishReason,
-	}
-	if totalUsage != nil {
-		finishData["usage"] = map[string]interface{}{
-			"promptTokens":     totalUsage.PromptTokens,
-			"completionTokens": totalUsage.CompletionTokens,
-		}
+		"usage": map[string]interface{}{
+			"promptTokens":     totalPrompt,
+			"completionTokens": totalCompletion,
+		},
 	}
 	finishJSON, _ := json.Marshal(finishData)
 	fmt.Fprintf(w, "d:%s\n", finishJSON)
 	flusher.Flush()
 
-	return totalUsage, nil
+	return summary, nil
 }
 
 // streamPrecomputedResponse sends a pre-computed text response using the streaming protocol
-func (s *AIService) streamPrecomputedResponse(w http.ResponseWriter, content string, usage *UsageInfo) (*UsageInfo, error) {
+func (s *AIService) streamPrecomputedResponse(w http.ResponseWriter, content string, summary *UsageSummary) (*UsageSummary, error) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
@@ -969,20 +1122,20 @@ func (s *AIService) streamPrecomputedResponse(w http.ResponseWriter, content str
 	fmt.Fprintf(w, "0:%s\n", jsonContent)
 	flusher.Flush()
 
+	totalPrompt := summary.PrimaryPromptTokens + summary.ReasoningPromptTokens
+	totalCompletion := summary.PrimaryCompletionTokens + summary.ReasoningCompletionTokens
 	finishData := map[string]interface{}{
 		"finishReason": "stop",
-	}
-	if usage != nil {
-		finishData["usage"] = map[string]interface{}{
-			"promptTokens":     usage.PromptTokens,
-			"completionTokens": usage.CompletionTokens,
-		}
+		"usage": map[string]interface{}{
+			"promptTokens":     totalPrompt,
+			"completionTokens": totalCompletion,
+		},
 	}
 	finishJSON, _ := json.Marshal(finishData)
 	fmt.Fprintf(w, "d:%s\n", finishJSON)
 	flusher.Flush()
 
-	return usage, nil
+	return summary, nil
 }
 
 // ---- Config Management ----
