@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Send, Terminal, Loader2, StopCircle } from "lucide-react";
+import { Send, Terminal, Loader2, StopCircle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Streamdown } from "streamdown";
@@ -22,6 +22,34 @@ export default function NataliePage() {
   const [isLoading, setIsLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const storageKey = `natalie-chat-${slug}`;
+
+  // Load chat history from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
+      }
+    } catch {
+      // Ignore corrupted data
+    }
+  }, [storageKey]);
+
+  // Save chat history to localStorage when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(messages));
+      } catch {
+        // Storage full or unavailable — silently ignore
+      }
+    }
+  }, [messages, storageKey]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -170,8 +198,14 @@ export default function NataliePage() {
     }
   };
 
+  const clearChat = () => {
+    stop();
+    setMessages([]);
+    localStorage.removeItem(storageKey);
+  };
+
   return (
-    <div className="flex flex-col h-full w-full bg-white dark:bg-black relative overflow-hidden">
+    <div className="flex flex-col h-full w-full relative overflow-hidden">
 
         {/* Header - Minimalist */}
         <div className="flex-none p-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
@@ -188,11 +222,24 @@ export default function NataliePage() {
                 </div>
             </div>
 
-            {slug === 'enigmatic-i2v2i' && (
-                 <div className="px-2 py-0.5 border border-zinc-200 dark:border-zinc-800 text-zinc-500 text-[10px] font-medium uppercase tracking-wider rounded">
-                     System Context
-                 </div>
-            )}
+            <div className="flex items-center gap-2">
+                {slug === 'enigmatic-i2v2i' && (
+                     <div className="px-2 py-0.5 border border-zinc-200 dark:border-zinc-800 text-zinc-500 text-[10px] font-medium uppercase tracking-wider rounded">
+                         System Context
+                     </div>
+                )}
+                {messages.length > 0 && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={clearChat}
+                        className="h-7 w-7 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                        title="Clear chat"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                )}
+            </div>
         </div>
 
         {/* Chat Area */}
@@ -247,7 +294,7 @@ export default function NataliePage() {
         </div>
 
         {/* Input Area */}
-        <div className="flex-none p-4 md:p-6 bg-white dark:bg-black z-20">
+        <div className="flex-none p-4 md:p-6 z-20">
             <div className="max-w-3xl mx-auto">
                 <form onSubmit={handleSubmit} className="relative flex items-center bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 dark:border-zinc-800 focus-within:border-zinc-400 dark:focus-within:border-zinc-600 transition-colors">
                     <input
