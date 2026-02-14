@@ -16,6 +16,7 @@ import (
 
 	"github.com/nedpals/supabase-go"
 	"github.com/sirupsen/logrus"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/metrics"
 )
 
 // AIConfig holds the dynamic configuration loaded from system_settings
@@ -35,18 +36,24 @@ type AIConfig struct {
 
 // AIService handles interactions with AI providers
 type AIService struct {
-	client     *supabase.Client
-	httpClient *http.Client
-	config     *AIConfig
-	configMu   sync.RWMutex
-	logger     *logrus.Logger
+	client              *supabase.Client
+	httpClient          *http.Client // For non-streaming requests (30s timeout)
+	streamingHTTPClient *http.Client // For streaming requests (60s timeout)
+	guardrailHTTPClient *http.Client // For guardrail checks (10s timeout)
+	config              *AIConfig
+	configMu            sync.RWMutex
+	logger              *logrus.Logger
+	circuitBreaker      *CircuitBreaker // Circuit breaker for AI API calls
 }
 
 func NewAIService(client *supabase.Client) *AIService {
 	s := &AIService{
-		client:     client,
-		httpClient: &http.Client{Timeout: 90 * time.Second},
-		logger:     logrus.New(),
+		client:              client,
+		httpClient:          &http.Client{Timeout: 30 * time.Second},  // Non-streaming: 30s
+		streamingHTTPClient: &http.Client{Timeout: 60 * time.Second},  // Streaming: 60s
+		guardrailHTTPClient: &http.Client{Timeout: 10 * time.Second},  // Guardrail: 10s (fast check)
+		logger:              logrus.New(),
+		circuitBreaker:      NewCircuitBreaker(5, 30*time.Second), // Open after 5 failures, retry after 30s
 	}
 	// Initial load
 	if err := s.LoadConfig(); err != nil {
@@ -215,6 +222,7 @@ func (s *AIService) ClassifyPrompt(ctx context.Context, userMessage string) (all
 	// First, check for PII (Personally Identifiable Information)
 	if hasPII, piiType := detectPII(userMessage); hasPII {
 		s.logger.Warnf("PII detected in prompt: %s", piiType)
+		metrics.RecordPIIDetection(piiType) // Record metrics
 		return false, fmt.Sprintf("Your message contains sensitive information (%s). Please remove it and try again.", piiType), nil
 	}
 
@@ -265,13 +273,12 @@ Be lenient — if there is ANY reasonable business interpretation OR if it is a 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
 	if config.GuardrailProvider == "openrouter" || config.Provider == "openrouter" {
-		req.Header.Set("HTTP-Referer", "https://enigmatic.app")
+		req.Header.Set("HTTP-Referer", "https://enigmatic.works")
 		req.Header.Set("X-Title", "Enigmatic Guardrail")
 	}
 
-	// Use a short timeout for classification
-	classifyClient := &http.Client{Timeout: 10 * time.Second}
-	resp, err := classifyClient.Do(req)
+	// Use guardrail HTTP client with 10s timeout
+	resp, err := s.guardrailHTTPClient.Do(req)
 	if err != nil {
 		s.logger.Warnf("Guardrail request failed, allowing through: %v", err)
 		return true, "", nil // Fail open
@@ -478,11 +485,12 @@ func (s *AIService) GenerateResponse(ctx context.Context, systemPrompt, userMess
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
 
 	if config.Provider == "openrouter" {
-		req.Header.Set("HTTP-Referer", "https://enigmatic.app")
+		req.Header.Set("HTTP-Referer", "https://enigmatic.works")
 		req.Header.Set("X-Title", "Enigmatic Flow Studio")
 	}
 
-	resp, err := s.httpClient.Do(req)
+	// Use retry logic (3 attempts for transient failures)
+	resp, err := s.retryableHTTPDo(s.httpClient, req, 2) // 2 retries = 3 total attempts
 	if err != nil {
 		return "", nil, err
 	}
@@ -537,11 +545,13 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
 
 	if config.Provider == "openrouter" {
-		req.Header.Set("HTTP-Referer", "https://enigmatic.app")
+		req.Header.Set("HTTP-Referer", "https://enigmatic.works")
 		req.Header.Set("X-Title", "Enigmatic Flow Studio")
 	}
 
-	resp, err := s.httpClient.Do(req)
+	// Use retry logic for initial connection (streaming can't retry mid-stream)
+	// Only retry the connection establishment, not the streaming itself
+	resp, err := s.retryableHTTPDo(s.streamingHTTPClient, req, 2) // 2 retries = 3 total attempts
 	if err != nil {
 		return nil, err
 	}
@@ -646,6 +656,80 @@ func (s *AIService) UpdateConfig(key, value string) error {
 	}
 
 	return s.LoadConfig()
+}
+
+// ---- HTTP Retry Logic ----
+
+// retryableHTTPDo executes an HTTP request with exponential backoff retry logic
+// Retries on 429 (rate limit) and 5xx (server errors)
+func (s *AIService) retryableHTTPDo(client *http.Client, req *http.Request, maxRetries int) (*http.Response, error) {
+	var resp *http.Response
+	var err error
+
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		// Clone the request body for retries (since body can only be read once)
+		var bodyBytes []byte
+		if req.Body != nil {
+			bodyBytes, err = io.ReadAll(req.Body)
+			if err != nil {
+				return nil, fmt.Errorf("failed to read request body: %w", err)
+			}
+			req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		}
+
+		// Attempt the request
+		resp, err = client.Do(req)
+
+		// If no error and status is OK, return immediately
+		if err == nil && resp.StatusCode < 500 && resp.StatusCode != http.StatusTooManyRequests {
+			return resp, nil
+		}
+
+		// Log the retry
+		if err != nil {
+			s.logger.Warnf("HTTP request failed (attempt %d/%d): %v", attempt+1, maxRetries+1, err)
+			metrics.RecordRetry("network_error")
+		} else {
+			s.logger.Warnf("HTTP request returned %d (attempt %d/%d)", resp.StatusCode, attempt+1, maxRetries+1)
+			if resp.StatusCode == http.StatusTooManyRequests {
+				metrics.RecordRetry("rate_limit_429")
+			} else {
+				metrics.RecordRetry("server_error_5xx")
+			}
+			if resp != nil {
+				resp.Body.Close() // Close before retry
+			}
+		}
+
+		// If this was the last attempt, return the error
+		if attempt == maxRetries {
+			if err != nil {
+				return nil, fmt.Errorf("request failed after %d retries: %w", maxRetries+1, err)
+			}
+			// Re-execute one final time to get the response for the caller
+			if req.Body != nil && len(bodyBytes) > 0 {
+				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+			}
+			return client.Do(req)
+		}
+
+		// Calculate exponential backoff: 100ms * 2^attempt (100ms, 200ms, 400ms, 800ms)
+		backoff := time.Duration(100*(1<<uint(attempt))) * time.Millisecond
+
+		// Add jitter to prevent thundering herd (random 0-50% of backoff)
+		jitter := time.Duration(float64(backoff) * (0.5 * (float64(attempt%10) / 10.0)))
+		sleepDuration := backoff + jitter
+
+		s.logger.Debugf("Retrying in %v...", sleepDuration)
+		time.Sleep(sleepDuration)
+
+		// Reset request body for next attempt
+		if req.Body != nil && len(bodyBytes) > 0 {
+			req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		}
+	}
+
+	return resp, err
 }
 
 // ---- PII Detection ----

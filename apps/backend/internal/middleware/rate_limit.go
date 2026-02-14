@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/metrics"
 )
 
 // RateLimiter implements a simple in-memory rate limiter
@@ -54,6 +55,7 @@ func (rl *RateLimiter) Middleware(next http.Handler) http.Handler {
 		// Check rate limit
 		if !rl.allow(userID) {
 			rl.logger.Warnf("Rate limit exceeded for user %s", userID)
+			metrics.RecordRateLimitHit(r.URL.Path) // Record metrics
 			w.Header().Set("X-RateLimit-Limit", string(rune(rl.requestsPerMinute)))
 			w.Header().Set("X-RateLimit-Remaining", "0")
 			w.Header().Set("Retry-After", "60")

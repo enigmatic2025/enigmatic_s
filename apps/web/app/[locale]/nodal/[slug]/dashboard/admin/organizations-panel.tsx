@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import useSWR from 'swr'
-import { Plus, Pencil, Trash, MoreHorizontal } from 'lucide-react'
+import { Plus, Pencil, Trash, MoreHorizontal, Coins, Infinity } from 'lucide-react'
 import { apiClient } from "@/lib/api-client"
 import { toast } from 'sonner'
 import { Organization } from '@/types/admin'
@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { CreateOrgDialog, UpdateOrgDialog } from "@/components/admin/org-dialogs"
+import { OrgCreditsDialog } from "./org-credits-dialog"
 
 export function OrganizationsPanel() {
   const { data: orgs = [], error, mutate, isLoading: loading } = useSWR<Organization[]>('/api/admin/orgs', (url: string) => apiClient.get(url).then(async res => {
@@ -36,6 +37,7 @@ export function OrganizationsPanel() {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
+  const [isCreditsOpen, setIsCreditsOpen] = useState(false)
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null)
 
   // Removed useEffect and fetchOrgs
@@ -97,6 +99,11 @@ export function OrganizationsPanel() {
       setIsUpdateOpen(true)
   }
 
+  const openCredits = (org: Organization) => {
+      setSelectedOrg(org)
+      setIsCreditsOpen(true)
+  }
+
   if (loading) {
     return (
       <LoadingPage />
@@ -108,7 +115,7 @@ export function OrganizationsPanel() {
       <div className="flex justify-between items-center pb-4 border-b border-zinc-200 dark:border-zinc-800">
         <div>
             <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Organizations</h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Manage customer tenants and subscription plans.</p>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">Manage customer tenants, subscriptions, and AI credits.</p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)} className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900">
           <Plus className="mr-2 h-4 w-4" /> Create Organization
@@ -122,6 +129,7 @@ export function OrganizationsPanel() {
               <TableHead className="font-semibold text-zinc-500">Name</TableHead>
               <TableHead className="font-semibold text-zinc-500">Slug</TableHead>
               <TableHead className="font-semibold text-zinc-500">Plan</TableHead>
+              <TableHead className="font-semibold text-zinc-500">AI Credits</TableHead>
               <TableHead className="text-right font-semibold text-zinc-500">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -135,6 +143,26 @@ export function OrganizationsPanel() {
                         {org.subscription_plan || org.plan || 'Free'}
                     </Badge>
                 </TableCell>
+                <TableCell>
+                  <button
+                    onClick={() => openCredits(org)}
+                    className="flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 px-3 py-1.5 rounded-md transition-colors"
+                  >
+                    {org.ai_unlimited_access ? (
+                      <Badge className="bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300">
+                        <Infinity className="h-3 w-3 mr-1" />
+                        Unlimited
+                      </Badge>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <Coins className="h-4 w-4 text-amber-500" />
+                        <span className="font-mono text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                          {(org.ai_credits_balance || 0).toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                  </button>
+                </TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -143,8 +171,11 @@ export function OrganizationsPanel() {
                         <MoreHorizontal className="h-4 w-4 text-zinc-500" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[160px]">
+                    <DropdownMenuContent align="end" className="w-[180px]">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => openCredits(org)}>
+                        <Coins className="mr-2 h-4 w-4 text-amber-500" /> Manage Credits
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => openUpdate(org)}>
                         <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> Edit
                       </DropdownMenuItem>
@@ -158,7 +189,7 @@ export function OrganizationsPanel() {
             ))}
             {orgs.length === 0 && (
                 <TableRow>
-                    <TableCell colSpan={4} className="h-32 text-center text-zinc-500">
+                    <TableCell colSpan={5} className="h-32 text-center text-zinc-500">
                         No organizations found.
                     </TableCell>
                 </TableRow>
@@ -167,17 +198,24 @@ export function OrganizationsPanel() {
         </Table>
       </div>
 
-      <CreateOrgDialog 
-        open={isCreateOpen} 
-        onOpenChange={setIsCreateOpen} 
-        onSubmit={handleCreate} 
+      <CreateOrgDialog
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        onSubmit={handleCreate}
       />
 
-      <UpdateOrgDialog 
-        open={isUpdateOpen} 
-        onOpenChange={setIsUpdateOpen} 
-        org={selectedOrg} 
-        onSubmit={handleUpdate} 
+      <UpdateOrgDialog
+        open={isUpdateOpen}
+        onOpenChange={setIsUpdateOpen}
+        org={selectedOrg}
+        onSubmit={handleUpdate}
+      />
+
+      <OrgCreditsDialog
+        open={isCreditsOpen}
+        onOpenChange={setIsCreditsOpen}
+        org={selectedOrg}
+        onSuccess={mutate}
       />
     </div>
   )

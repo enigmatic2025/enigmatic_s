@@ -9,16 +9,35 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/sirupsen/logrus"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/services"
 )
 
 type AIHandler struct {
 	aiService *services.AIService
+	logger    *logrus.Logger
 }
 
 func NewAIHandler(aiService *services.AIService) *AIHandler {
-	return &AIHandler{aiService: aiService}
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{}) // JSON format for structured logging
+	return &AIHandler{
+		aiService: aiService,
+		logger:    logger,
+	}
+}
+
+// getRequestLogger creates a logger with contextual fields (request ID, user ID, org ID)
+func (h *AIHandler) getRequestLogger(r *http.Request, userID, orgID string) *logrus.Entry {
+	requestID := middleware.GetRequestID(r.Context())
+	return h.logger.WithFields(logrus.Fields{
+		"request_id": requestID,
+		"user_id":    userID,
+		"org_id":     orgID,
+		"path":       r.URL.Path,
+		"method":     r.Method,
+	})
 }
 
 // ChatPayload defines the request structure for chat endpoints
@@ -94,14 +113,19 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// 2. Look up user's organization
 	orgID, err := h.aiService.GetUserOrgID(userID)
 	if err != nil {
-		log.Printf("AI Chat: failed to get org for user %s: %v", userID, err)
+		logger := h.getRequestLogger(r, userID, "")
+		logger.WithError(err).Error("Failed to get organization for user")
 		http.Error(w, "User has no organization membership", http.StatusForbidden)
 		return
 	}
 
+	// Create structured logger with full context
+	logger := h.getRequestLogger(r, userID, orgID)
+	logger.Info("AI chat request received")
+
 	// 3. Check and deduct credits
 	if err := h.aiService.CheckAndDeductCredits(orgID, 1); err != nil {
-		log.Printf("AI Chat: credit check failed for org %s: %v", orgID, err)
+		logger.WithError(err).Warn("Credit check failed")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -114,7 +138,7 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// 4. Run guardrail classification
 	allowed, reason, err := h.aiService.ClassifyPrompt(r.Context(), payload.Message)
 	if err != nil {
-		log.Printf("AI Chat: guardrail error (allowing through): %v", err)
+		logger.WithError(err).Warn("Guardrail error (allowing through)")
 	}
 
 	if !allowed {
@@ -142,7 +166,7 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// 7. Generate response
 	response, usage, err := h.aiService.GenerateResponse(r.Context(), systemPrompt, payload.Message)
 	if err != nil {
-		log.Printf("AI Chat: generation error: %v", err)
+		logger.WithError(err).Error("AI generation failed")
 		http.Error(w, "AI Service Error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -156,6 +180,14 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	config := h.aiService.GetConfig()
 	h.aiService.LogUsage(userID, orgID, config.Model, "allowed", promptTokens, completionTokens, totalTokens, 1)
+
+	// Log successful completion
+	logger.WithFields(logrus.Fields{
+		"model":             config.Model,
+		"prompt_tokens":     promptTokens,
+		"completion_tokens": completionTokens,
+		"total_tokens":      totalTokens,
+	}).Info("AI chat request completed successfully")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
@@ -270,18 +302,33 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetConfigHandler handles GET /api/admin/ai-config
+// SECURITY: Never returns API keys - only config status
 func (h *AIHandler) GetConfigHandler(w http.ResponseWriter, r *http.Request) {
 	config := h.aiService.GetConfig()
 
-	// Obfuscate API Key
-	if len(config.APIKey) > 4 {
-		config.APIKey = "..." + config.APIKey[len(config.APIKey)-4:]
-	} else {
-		config.APIKey = "****"
+	// Create safe response without API key
+	safeConfig := struct {
+		Provider           string `json:"provider"`
+		Model              string `json:"model"`
+		BaseURL            string `json:"base_url"`
+		APIKeyConfigured   bool   `json:"api_key_configured"`   // Just indicates if key exists
+		GuardrailEnabled   bool   `json:"guardrail_enabled"`
+		GuardrailProvider  string `json:"guardrail_provider"`
+		GuardrailModel     string `json:"guardrail_model"`
+		GuardrailBaseURL   string `json:"guardrail_base_url"`
+	}{
+		Provider:           config.Provider,
+		Model:              config.Model,
+		BaseURL:            config.BaseURL,
+		APIKeyConfigured:   config.APIKey != "",
+		GuardrailEnabled:   config.GuardrailEnabled,
+		GuardrailProvider:  config.GuardrailProvider,
+		GuardrailModel:     config.GuardrailModel,
+		GuardrailBaseURL:   config.GuardrailBaseURL,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(config)
+	json.NewEncoder(w).Encode(safeConfig)
 }
 
 // UpdateConfigHandler handles PUT /api/admin/ai-config
@@ -374,10 +421,61 @@ Guidelines:
 		}())
 
 	if contextData != "" {
-		prompt += "\n\n## Additional Data Context\n" + contextData
+		// SECURITY: Sanitize and validate context data
+		sanitizedContext := sanitizeContextData(contextData)
+		if sanitizedContext != "" {
+			prompt += "\n\n## Additional Data Context\n" + sanitizedContext
+		}
 	}
 
 	return prompt
+}
+
+// sanitizeContextData validates and sanitizes context data to prevent prompt injection
+func sanitizeContextData(contextData string) string {
+	const MaxContextLength = 5000 // 5k characters max for context
+
+	// 1. Length validation
+	if len(contextData) > MaxContextLength {
+		contextData = contextData[:MaxContextLength] + "... [truncated]"
+	}
+
+	// 2. Remove null bytes and control characters (keep newlines and tabs)
+	contextData = sanitizeInput(contextData)
+
+	// 3. Detect and block prompt injection attempts
+	suspiciousPatterns := []string{
+		"ignore previous instructions",
+		"ignore all previous",
+		"disregard previous",
+		"forget previous",
+		"system:",
+		"</system>",
+		"<|im_start|>",
+		"<|im_end|>",
+		"[INST]",
+		"[/INST]",
+		"### Instruction:",
+		"### Response:",
+	}
+
+	lowerContext := strings.ToLower(contextData)
+	for _, pattern := range suspiciousPatterns {
+		if strings.Contains(lowerContext, pattern) {
+			// Log the attempt but don't fail - just sanitize
+			log.Printf("SECURITY: Potential prompt injection detected in context: %s", pattern)
+			// Remove the suspicious pattern
+			contextData = strings.ReplaceAll(contextData, pattern, "[REDACTED]")
+			contextData = strings.ReplaceAll(contextData, strings.ToUpper(pattern), "[REDACTED]")
+			contextData = strings.ReplaceAll(contextData, strings.Title(pattern), "[REDACTED]")
+		}
+	}
+
+	// 4. Escape any markdown code blocks that could be used for injection
+	// Replace triple backticks with escaped version
+	contextData = strings.ReplaceAll(contextData, "```", "'''")
+
+	return contextData
 }
 
 // sanitizeInput removes potentially harmful characters from user input

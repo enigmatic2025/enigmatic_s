@@ -46,8 +46,9 @@ func NewServer(cfg *config.Config) *http.Server {
 
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%s", cfg.Server.Port),
-		Handler:      middleware.CORS(s.RegisterRoutes()),
+		Addr: fmt.Sprintf(":%s", cfg.Server.Port),
+		// Apply middleware: RequestID -> CORS -> Routes
+		Handler:      middleware.RequestID(middleware.CORS(s.RegisterRoutes())),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
@@ -68,9 +69,14 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Initialize Handlers
 	adminHandler := handlers.NewAdminHandler()
 	aiHandler := handlers.NewAIHandler(s.aiService)
+	orgCreditsHandler := handlers.NewOrgCreditsHandler()
 
 	// Initialize Rate Limiter (10 requests per minute for AI endpoints)
 	aiRateLimiter := middleware.NewRateLimiter(10)
+
+	// Initialize Admin Middleware
+	dbClient := database.GetClient()
+	adminOnly := middleware.AdminOnly(dbClient)
 
 	// Protected Admin Routes (Require Auth Middleware)
 	// User promotion
@@ -84,6 +90,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("POST /api/admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.CreateOrganization)))
 	mux.Handle("PUT /api/admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
 	mux.Handle("DELETE /api/admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
+
+	// Organization AI Credits Management (Admin only)
+	mux.Handle("PUT /api/admin/orgs/{id}/credits", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.SetOrgCredits))))
+	mux.Handle("POST /api/admin/orgs/{id}/credits/add", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.AddOrgCredits))))
+	mux.Handle("PUT /api/admin/orgs/{id}/unlimited", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.SetUnlimitedAccess))))
+	mux.Handle("GET /api/admin/orgs/{id}/credits/stats", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.GetOrgCreditsStats))))
 
 	// User Management
 	mux.Handle("POST /api/admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
@@ -165,9 +177,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// AI Routes (with rate limiting)
 	mux.Handle("POST /api/ai/chat", middleware.Auth(aiRateLimiter.Middleware(http.HandlerFunc(aiHandler.ChatHandler))))
 	mux.Handle("POST /api/ai/chat/stream", middleware.Auth(aiRateLimiter.Middleware(http.HandlerFunc(aiHandler.StreamChatHandler))))
-	mux.Handle("GET /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.GetConfigHandler)))
-	mux.Handle("PUT /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.UpdateConfigHandler)))
-	mux.Handle("GET /api/admin/ai-stats", middleware.Auth(http.HandlerFunc(aiHandler.GetAIStatsHandler)))
+
+	// AI Admin Routes (require admin role)
+	mux.Handle("GET /api/admin/ai-config", middleware.Auth(adminOnly(http.HandlerFunc(aiHandler.GetConfigHandler))))
+	mux.Handle("PUT /api/admin/ai-config", middleware.Auth(adminOnly(http.HandlerFunc(aiHandler.UpdateConfigHandler))))
+	mux.Handle("GET /api/admin/ai-stats", middleware.Auth(adminOnly(http.HandlerFunc(aiHandler.GetAIStatsHandler))))
 
 	return mux
 }

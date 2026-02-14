@@ -4,6 +4,8 @@ export interface Organization {
     slug: string
     plan: string
     subscription_plan?: string // Handling potential inconsistency
+    ai_credits_balance?: number // AI credits balance
+    ai_unlimited_access?: boolean // Unlimited AI access flag
     created_at?: string
 }
 
