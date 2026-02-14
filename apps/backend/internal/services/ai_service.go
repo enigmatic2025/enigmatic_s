@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -211,6 +212,12 @@ func (s *AIService) ClassifyPrompt(ctx context.Context, userMessage string) (all
 		return true, "", nil // If no API key, skip guardrail
 	}
 
+	// First, check for PII (Personally Identifiable Information)
+	if hasPII, piiType := detectPII(userMessage); hasPII {
+		s.logger.Warnf("PII detected in prompt: %s", piiType)
+		return false, fmt.Sprintf("Your message contains sensitive information (%s). Please remove it and try again.", piiType), nil
+	}
+
 	classificationPrompt := `You are a prompt classifier for a business automation platform called Enigmatic.
 Your ONLY job is to determine if the user's message is related to:
 - Business automation, workflows, or process management
@@ -296,37 +303,72 @@ Be lenient — if there is ANY reasonable business interpretation OR if it is a 
 // ---- Credit System ----
 
 // CheckAndDeductCredits atomically checks and deducts credits from an org
+// Uses optimistic locking with retry to prevent race conditions
 func (s *AIService) CheckAndDeductCredits(orgID string, cost int) error {
-	// First check balance
-	var orgs []struct {
-		AICreditsBalance int `json:"ai_credits_balance"`
+	const maxRetries = 3
+
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		// 1. Get current balance with version
+		var orgs []struct {
+			AICreditsBalance int       `json:"ai_credits_balance"`
+			UpdatedAt        time.Time `json:"updated_at"`
+		}
+
+		err := s.client.DB.From("organizations").
+			Select("ai_credits_balance, updated_at").
+			Eq("id", orgID).
+			Execute(&orgs)
+
+		if err != nil {
+			return fmt.Errorf("failed to check credits: %w", err)
+		}
+
+		if len(orgs) == 0 {
+			return fmt.Errorf("organization not found")
+		}
+
+		currentBalance := orgs[0].AICreditsBalance
+		lastUpdated := orgs[0].UpdatedAt
+
+		// 2. Check if sufficient balance
+		if currentBalance < cost {
+			return fmt.Errorf("insufficient AI credits (balance: %d, cost: %d)", currentBalance, cost)
+		}
+
+		// 3. Try to update with optimistic locking
+		newBalance := currentBalance - cost
+		var result []map[string]interface{}
+
+		// Update only if updated_at hasn't changed (optimistic lock)
+		err = s.client.DB.From("organizations").
+			Update(map[string]interface{}{
+				"ai_credits_balance": newBalance,
+				"updated_at":         time.Now(),
+			}).
+			Eq("id", orgID).
+			Eq("updated_at", lastUpdated.Format(time.RFC3339Nano)).
+			Execute(&result)
+
+		if err != nil {
+			return fmt.Errorf("failed to deduct credits: %w", err)
+		}
+
+		// 4. Check if update was successful (row was actually updated)
+		if len(result) > 0 {
+			// Success! The row was updated
+			return nil
+		}
+
+		// Update failed - another request modified the row
+		// Retry with exponential backoff
+		if attempt < maxRetries-1 {
+			time.Sleep(time.Duration(10*(attempt+1)) * time.Millisecond)
+			s.logger.Debugf("Credit deduction retry %d for org %s", attempt+1, orgID)
+			continue
+		}
 	}
 
-	err := s.client.DB.From("organizations").Select("ai_credits_balance").Eq("id", orgID).Execute(&orgs)
-	if err != nil {
-		return fmt.Errorf("failed to check credits: %w", err)
-	}
-
-	if len(orgs) == 0 {
-		return fmt.Errorf("organization not found")
-	}
-
-	if orgs[0].AICreditsBalance < cost {
-		return fmt.Errorf("insufficient AI credits (balance: %d, cost: %d)", orgs[0].AICreditsBalance, cost)
-	}
-
-	// Deduct credits
-	newBalance := orgs[0].AICreditsBalance - cost
-	var result []map[string]interface{}
-	err = s.client.DB.From("organizations").Update(map[string]interface{}{
-		"ai_credits_balance": newBalance,
-	}).Eq("id", orgID).Execute(&result)
-
-	if err != nil {
-		return fmt.Errorf("failed to deduct credits: %w", err)
-	}
-
-	return nil
+	return fmt.Errorf("failed to deduct credits after %d retries (concurrent modification)", maxRetries)
 }
 
 // GetUserOrgID looks up the user's primary organization
@@ -604,4 +646,65 @@ func (s *AIService) UpdateConfig(key, value string) error {
 	}
 
 	return s.LoadConfig()
+}
+
+// ---- PII Detection ----
+
+var (
+	// Credit card pattern (basic Luhn algorithm check would be better)
+	creditCardPattern = regexp.MustCompile(`\b(?:\d[ -]*?){13,16}\b`)
+
+	// SSN pattern (US)
+	ssnPattern = regexp.MustCompile(`\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b`)
+
+	// Email pattern
+	emailPattern = regexp.MustCompile(`\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b`)
+
+	// Phone number pattern (US/International)
+	phonePattern = regexp.MustCompile(`\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b`)
+
+	// API key patterns (common formats)
+	apiKeyPattern = regexp.MustCompile(`\b(?:api[_-]?key|apikey|access[_-]?token|secret[_-]?key|auth[_-]?token)[:\s=]+['\"]?([a-zA-Z0-9_\-]{20,})['\"]?\b`)
+
+	// Password patterns
+	passwordPattern = regexp.MustCompile(`\b(?:password|passwd|pwd)[:\s=]+['\"]?([^\s'"]{6,})['\"]?\b`)
+)
+
+// detectPII checks if the message contains Personally Identifiable Information
+// Returns true if PII is detected, along with the type of PII
+func detectPII(message string) (bool, string) {
+	// Check for credit card numbers
+	if creditCardPattern.MatchString(message) {
+		return true, "credit card number"
+	}
+
+	// Check for SSN
+	if ssnPattern.MatchString(message) {
+		return true, "social security number"
+	}
+
+	// Check for email addresses (be lenient, emails in business context are OK)
+	// Only flag if there are multiple emails or it looks like a list
+	emails := emailPattern.FindAllString(message, -1)
+	if len(emails) > 3 {
+		return true, "multiple email addresses"
+	}
+
+	// Check for phone numbers (be lenient, single phone in business context is OK)
+	phones := phonePattern.FindAllString(message, -1)
+	if len(phones) > 2 {
+		return true, "multiple phone numbers"
+	}
+
+	// Check for API keys or tokens
+	if apiKeyPattern.MatchString(message) {
+		return true, "API key or access token"
+	}
+
+	// Check for passwords
+	if passwordPattern.MatchString(message) {
+		return true, "password"
+	}
+
+	return false, ""
 }

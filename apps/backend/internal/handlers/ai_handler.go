@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
+	"unicode"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/services"
@@ -71,6 +73,16 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Message is required", http.StatusBadRequest)
 		return
 	}
+
+	// Validate message length (prevent abuse)
+	const MaxMessageLength = 10000 // 10k characters
+	if len(payload.Message) > MaxMessageLength {
+		http.Error(w, fmt.Sprintf("Message too long (max %d characters)", MaxMessageLength), http.StatusBadRequest)
+		return
+	}
+
+	// Sanitize message (remove null bytes and control characters)
+	payload.Message = sanitizeInput(payload.Message)
 
 	// 1. Get user ID from auth context
 	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
@@ -179,6 +191,16 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Message is required", http.StatusBadRequest)
 		return
 	}
+
+	// Validate message length (prevent abuse)
+	const MaxMessageLength = 10000 // 10k characters
+	if len(payload.Message) > MaxMessageLength {
+		http.Error(w, fmt.Sprintf("Message too long (max %d characters)", MaxMessageLength), http.StatusBadRequest)
+		return
+	}
+
+	// Sanitize message (remove null bytes and control characters)
+	payload.Message = sanitizeInput(payload.Message)
 
 	// 1. Get user ID
 	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
@@ -356,4 +378,23 @@ Guidelines:
 	}
 
 	return prompt
+}
+
+// sanitizeInput removes potentially harmful characters from user input
+func sanitizeInput(input string) string {
+	// Remove null bytes
+	input = strings.ReplaceAll(input, "\x00", "")
+
+	// Remove control characters except newlines, tabs, and carriage returns
+	var cleaned strings.Builder
+	cleaned.Grow(len(input))
+
+	for _, r := range input {
+		// Allow printable characters, newlines, tabs, and carriage returns
+		if unicode.IsPrint(r) || r == '\n' || r == '\t' || r == '\r' {
+			cleaned.WriteRune(r)
+		}
+	}
+
+	return cleaned.String()
 }

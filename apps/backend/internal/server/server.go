@@ -69,6 +69,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	adminHandler := handlers.NewAdminHandler()
 	aiHandler := handlers.NewAIHandler(s.aiService)
 
+	// Initialize Rate Limiter (10 requests per minute for AI endpoints)
+	aiRateLimiter := middleware.NewRateLimiter(10)
+
 	// Protected Admin Routes (Require Auth Middleware)
 	// User promotion
 	mux.Handle("POST /api/admin/promote", middleware.Auth(http.HandlerFunc(adminHandler.PromoteToAdmin)))
@@ -159,9 +162,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// User Routes (decoupled from direct Supabase frontend access)
 	mux.Handle("GET /api/user/memberships", middleware.Auth(http.HandlerFunc(orgHandler.GetUserMemberships)))
 
-	// AI Routes
-	mux.Handle("POST /api/ai/chat", middleware.Auth(http.HandlerFunc(aiHandler.ChatHandler)))
-	mux.Handle("POST /api/ai/chat/stream", middleware.Auth(http.HandlerFunc(aiHandler.StreamChatHandler)))
+	// AI Routes (with rate limiting)
+	mux.Handle("POST /api/ai/chat", middleware.Auth(aiRateLimiter.Middleware(http.HandlerFunc(aiHandler.ChatHandler))))
+	mux.Handle("POST /api/ai/chat/stream", middleware.Auth(aiRateLimiter.Middleware(http.HandlerFunc(aiHandler.StreamChatHandler))))
 	mux.Handle("GET /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.GetConfigHandler)))
 	mux.Handle("PUT /api/admin/ai-config", middleware.Auth(http.HandlerFunc(aiHandler.UpdateConfigHandler)))
 	mux.Handle("GET /api/admin/ai-stats", middleware.Auth(http.HandlerFunc(aiHandler.GetAIStatsHandler)))
