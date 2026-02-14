@@ -32,6 +32,7 @@ export default function NataliePage() {
         if (typeof body === 'string') {
           try {
             const parsed = JSON.parse(body);
+            console.log('[Natalie] Sending request:', parsed);
              if (parsed.messages && Array.isArray(parsed.messages)) {
               const lastMsg = parsed.messages[parsed.messages.length - 1];
               // Extract text from content string or parts
@@ -44,21 +45,25 @@ export default function NataliePage() {
                     .map((p: any) => p.text)
                     .join('');
               }
-              
+
               if (messageText) {
-                 body = JSON.stringify({ 
+                 body = JSON.stringify({
                      message: messageText,
                      context: parsed.context || "" // Preserve context if present
                  });
+                 console.log('[Natalie] Transformed to backend format:', body);
               }
             }
           } catch (e) {
-            console.error("Failed to transform chat payload", e);
+            console.error("[Natalie] Failed to transform chat payload", e);
           }
         }
 
+        console.log('[Natalie] Fetching:', url);
         const res = await fetch(url, { ...init, headers, body });
-        
+        console.log('[Natalie] Response status:', res.status, res.statusText);
+        console.log('[Natalie] Response headers:', Object.fromEntries(res.headers.entries()));
+
         if (!res.ok) {
             let errorMsg = `Error ${res.status}: ${res.statusText}`;
             try {
@@ -75,7 +80,7 @@ export default function NataliePage() {
             }
             throw new Error(errorMsg);
         }
-        
+
         return res;
       },
       body: {
@@ -83,6 +88,7 @@ export default function NataliePage() {
       }
     }),
     onError: (e: Error) => {
+        console.error('[Natalie] Error:', e);
         toast.error(e.message || "Something went wrong connected to Natalie.");
     }
   });
@@ -91,6 +97,11 @@ export default function NataliePage() {
   const isLoading = status === 'submitted' || status === 'streaming';
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Debug: Log messages when they change
+  useEffect(() => {
+    console.log('[Natalie] Messages updated:', messages);
+  }, [messages]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -157,10 +168,17 @@ export default function NataliePage() {
                 )}
 
                 {messages.map((msg, idx) => {
-                    const content = msg.parts 
-                        ? msg.parts.filter(p => p.type === 'text').map(p => p.text).join('')
-                        : '';
-                        
+                    // Extract content from parts or fallback to content property
+                    let content = '';
+                    if (msg.parts && msg.parts.length > 0) {
+                        content = msg.parts
+                            .filter(p => p.type === 'text')
+                            .map(p => p.text)
+                            .join('');
+                    } else if (typeof msg.content === 'string') {
+                        content = msg.content;
+                    }
+
                     return (
                     <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : ''} animate-in fade-in duration-300`}>
                         {msg.role === 'assistant' && (

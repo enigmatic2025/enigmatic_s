@@ -510,11 +510,11 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 		return nil, fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
 	}
 
+	// Set headers for Vercel AI SDK Data Stream Protocol v1
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	// Header for Vercel AI SDK Data Stream Protocol
 	w.Header().Set("X-Vercel-AI-Data-Stream", "v1")
 
 	flusher, ok := w.(http.Flusher)
@@ -524,6 +524,7 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 
 	scanner := bufio.NewScanner(resp.Body)
 	var usage *UsageInfo
+	var finishReason string = "stop"
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -549,20 +550,41 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 			usage = chunk.Usage
 		}
 
-		// Extract content
+		// Extract content and finish reason
 		var content string
 		if len(chunk.Choices) > 0 {
 			content = chunk.Choices[0].Delta.Content
+			if chunk.Choices[0].FinishReason != nil && *chunk.Choices[0].FinishReason != "" {
+				finishReason = *chunk.Choices[0].FinishReason
+			}
 		}
 
 		// Format as Data Stream Protocol text part (0)
 		if content != "" {
-			// 0: "text_content_json_encoded"\n
+			// Send text chunk: 0:"text_content"\n
 			jsonContent, _ := json.Marshal(content)
 			fmt.Fprintf(w, "0:%s\n", jsonContent)
 			flusher.Flush()
 		}
 	}
+
+	// Send finish message with metadata
+	finishData := map[string]interface{}{
+		"finishReason": finishReason,
+	}
+
+	// Add usage info if available
+	if usage != nil {
+		finishData["usage"] = map[string]interface{}{
+			"promptTokens":     usage.PromptTokens,
+			"completionTokens": usage.CompletionTokens,
+		}
+	}
+
+	// Send finish message: d:{metadata}\n
+	finishJSON, _ := json.Marshal(finishData)
+	fmt.Fprintf(w, "d:%s\n", finishJSON)
+	flusher.Flush()
 
 	return usage, nil
 }
