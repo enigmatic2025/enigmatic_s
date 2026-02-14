@@ -647,6 +647,344 @@ func (s *AIService) GenerateStreamingResponse(ctx context.Context, w http.Respon
 	return usage, nil
 }
 
+// ---- Tool-Calling Agent Loop ----
+
+// GenerateWithToolLoop sends a prompt with tools and resolves tool calls in a loop (non-streaming)
+func (s *AIService) GenerateWithToolLoop(ctx context.Context, systemPrompt, userMessage string, tools []Tool, toolCtx ToolContext) (string, *UsageInfo, error) {
+	config := s.GetConfig()
+	if config.APIKey == "" {
+		return "", nil, fmt.Errorf("AI API Key is not configured")
+	}
+
+	messages := []Message{
+		{Role: "system", Content: systemPrompt},
+		{Role: "user", Content: userMessage},
+	}
+
+	const maxIterations = 5
+	var totalUsage UsageInfo
+
+	for i := 0; i < maxIterations; i++ {
+		reqBody := ChatRequest{
+			Model:      config.Model,
+			Messages:   messages,
+			Tools:      tools,
+			ToolChoice: "auto",
+		}
+
+		jsonBody, err := json.Marshal(reqBody)
+		if err != nil {
+			return "", nil, err
+		}
+
+		url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
+		req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
+		if err != nil {
+			return "", nil, err
+		}
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
+		if config.Provider == "openrouter" {
+			req.Header.Set("HTTP-Referer", "https://enigmatic.works")
+			req.Header.Set("X-Title", "Enigmatic Flow Studio")
+		}
+
+		resp, err := s.retryableHTTPDo(s.httpClient, req, 2)
+		if err != nil {
+			return "", nil, err
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			body, _ := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			return "", nil, fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
+		}
+
+		var chatResp ChatResponse
+		json.NewDecoder(resp.Body).Decode(&chatResp)
+		resp.Body.Close()
+
+		if chatResp.Usage != nil {
+			totalUsage.PromptTokens += chatResp.Usage.PromptTokens
+			totalUsage.CompletionTokens += chatResp.Usage.CompletionTokens
+			totalUsage.TotalTokens += chatResp.Usage.TotalTokens
+		}
+
+		if len(chatResp.Choices) == 0 {
+			return "", &totalUsage, fmt.Errorf("empty response from AI")
+		}
+
+		assistantMsg := chatResp.Choices[0].Message
+
+		// If no tool calls, return the text content
+		if len(assistantMsg.ToolCalls) == 0 {
+			return assistantMsg.Content, &totalUsage, nil
+		}
+
+		// Append assistant message (with tool calls) to history
+		messages = append(messages, assistantMsg)
+
+		// Execute each tool call and append results
+		for _, tc := range assistantMsg.ToolCalls {
+			result, err := ExecuteTool(toolCtx, tc)
+			if err != nil {
+				result = fmt.Sprintf(`{"error": "%s"}`, err.Error())
+			}
+			messages = append(messages, Message{
+				Role:       "tool",
+				Content:    result,
+				ToolCallID: tc.ID,
+			})
+		}
+	}
+
+	return "I was unable to complete the lookup. Please try a more specific question.", &totalUsage, nil
+}
+
+// GenerateStreamingWithToolLoop resolves tool calls non-streaming, then streams the final answer
+func (s *AIService) GenerateStreamingWithToolLoop(ctx context.Context, w http.ResponseWriter, systemPrompt, userMessage string, tools []Tool, toolCtx ToolContext) (*UsageInfo, error) {
+	config := s.GetConfig()
+	if config.APIKey == "" {
+		return nil, fmt.Errorf("AI API Key is not configured")
+	}
+
+	messages := []Message{
+		{Role: "system", Content: systemPrompt},
+		{Role: "user", Content: userMessage},
+	}
+
+	const maxIterations = 5
+	var totalUsage UsageInfo
+
+	// Phase 1: Non-streaming tool-calling loop
+	for i := 0; i < maxIterations; i++ {
+		reqBody := ChatRequest{
+			Model:      config.Model,
+			Messages:   messages,
+			Tools:      tools,
+			ToolChoice: "auto",
+		}
+
+		jsonBody, err := json.Marshal(reqBody)
+		if err != nil {
+			return nil, err
+		}
+
+		url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
+		req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
+		if config.Provider == "openrouter" {
+			req.Header.Set("HTTP-Referer", "https://enigmatic.works")
+			req.Header.Set("X-Title", "Enigmatic Flow Studio")
+		}
+
+		resp, err := s.retryableHTTPDo(s.httpClient, req, 2)
+		if err != nil {
+			return nil, err
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			body, _ := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			return nil, fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
+		}
+
+		var chatResp ChatResponse
+		json.NewDecoder(resp.Body).Decode(&chatResp)
+		resp.Body.Close()
+
+		if chatResp.Usage != nil {
+			totalUsage.PromptTokens += chatResp.Usage.PromptTokens
+			totalUsage.CompletionTokens += chatResp.Usage.CompletionTokens
+			totalUsage.TotalTokens += chatResp.Usage.TotalTokens
+		}
+
+		if len(chatResp.Choices) == 0 {
+			return &totalUsage, fmt.Errorf("empty response from AI")
+		}
+
+		assistantMsg := chatResp.Choices[0].Message
+
+		// No tool calls — proceed to streaming phase
+		if len(assistantMsg.ToolCalls) == 0 {
+			// LLM produced a final answer without needing tools (e.g. greeting)
+			// Stream it using the existing protocol
+			return s.streamPrecomputedResponse(w, assistantMsg.Content, &totalUsage)
+		}
+
+		// Append assistant + tool results
+		messages = append(messages, assistantMsg)
+		for _, tc := range assistantMsg.ToolCalls {
+			result, err := ExecuteTool(toolCtx, tc)
+			if err != nil {
+				result = fmt.Sprintf(`{"error": "%s"}`, err.Error())
+			}
+			messages = append(messages, Message{
+				Role:       "tool",
+				Content:    result,
+				ToolCallID: tc.ID,
+			})
+		}
+
+		s.logger.Debugf("Tool loop iteration %d: %d tool calls resolved", i+1, len(assistantMsg.ToolCalls))
+	}
+
+	// Phase 2: Stream the final answer
+	// Re-send the full conversation (with tool results) in streaming mode, no tools
+	return s.streamFinalResponse(ctx, w, config, messages, &totalUsage)
+}
+
+// streamFinalResponse makes a streaming LLM call with the full conversation history (no tools)
+func (s *AIService) streamFinalResponse(ctx context.Context, w http.ResponseWriter, config AIConfig, messages []Message, totalUsage *UsageInfo) (*UsageInfo, error) {
+	reqBody := ChatRequest{
+		Model:    config.Model,
+		Messages: messages,
+		Stream:   true,
+		// No tools — force text response
+	}
+
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%s/chat/completions", config.BaseURL)
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
+	if config.Provider == "openrouter" {
+		req.Header.Set("HTTP-Referer", "https://enigmatic.works")
+		req.Header.Set("X-Title", "Enigmatic Flow Studio")
+	}
+
+	resp, err := s.retryableHTTPDo(s.streamingHTTPClient, req, 2)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("AI Provider Error (%d): %s", resp.StatusCode, string(body))
+	}
+
+	// Stream using existing Vercel AI Data Stream Protocol v1
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("X-Vercel-AI-Data-Stream", "v1")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		return nil, fmt.Errorf("streaming not supported")
+	}
+
+	scanner := bufio.NewScanner(resp.Body)
+	var streamUsage *UsageInfo
+	finishReason := "stop"
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		if !strings.HasPrefix(line, "data: ") {
+			continue
+		}
+		data := strings.TrimPrefix(line, "data: ")
+		if data == "[DONE]" {
+			break
+		}
+
+		var chunk StreamChunk
+		if err := json.Unmarshal([]byte(data), &chunk); err != nil {
+			continue
+		}
+
+		if chunk.Usage != nil {
+			streamUsage = chunk.Usage
+		}
+
+		var content string
+		if len(chunk.Choices) > 0 {
+			content = chunk.Choices[0].Delta.Content
+			if chunk.Choices[0].FinishReason != nil && *chunk.Choices[0].FinishReason != "" {
+				finishReason = *chunk.Choices[0].FinishReason
+			}
+		}
+
+		if content != "" {
+			jsonContent, _ := json.Marshal(content)
+			fmt.Fprintf(w, "0:%s\n", jsonContent)
+			flusher.Flush()
+		}
+	}
+
+	// Merge stream usage into total
+	if streamUsage != nil {
+		totalUsage.PromptTokens += streamUsage.PromptTokens
+		totalUsage.CompletionTokens += streamUsage.CompletionTokens
+		totalUsage.TotalTokens += streamUsage.TotalTokens
+	}
+
+	// Send finish message
+	finishData := map[string]interface{}{
+		"finishReason": finishReason,
+	}
+	if totalUsage != nil {
+		finishData["usage"] = map[string]interface{}{
+			"promptTokens":     totalUsage.PromptTokens,
+			"completionTokens": totalUsage.CompletionTokens,
+		}
+	}
+	finishJSON, _ := json.Marshal(finishData)
+	fmt.Fprintf(w, "d:%s\n", finishJSON)
+	flusher.Flush()
+
+	return totalUsage, nil
+}
+
+// streamPrecomputedResponse sends a pre-computed text response using the streaming protocol
+func (s *AIService) streamPrecomputedResponse(w http.ResponseWriter, content string, usage *UsageInfo) (*UsageInfo, error) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("X-Vercel-AI-Data-Stream", "v1")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		return nil, fmt.Errorf("streaming not supported")
+	}
+
+	jsonContent, _ := json.Marshal(content)
+	fmt.Fprintf(w, "0:%s\n", jsonContent)
+	flusher.Flush()
+
+	finishData := map[string]interface{}{
+		"finishReason": "stop",
+	}
+	if usage != nil {
+		finishData["usage"] = map[string]interface{}{
+			"promptTokens":     usage.PromptTokens,
+			"completionTokens": usage.CompletionTokens,
+		}
+	}
+	finishJSON, _ := json.Marshal(finishData)
+	fmt.Fprintf(w, "d:%s\n", finishJSON)
+	flusher.Flush()
+
+	return usage, nil
+}
+
 // ---- Config Management ----
 
 // UpdateConfig updates a specific setting in the DB and reloads

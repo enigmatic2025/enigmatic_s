@@ -163,8 +163,18 @@ func (h *AIHandler) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// 6. Build system prompt
 	systemPrompt := buildSystemPrompt(userName, userRole, orgName, orgSlug, payload.Context)
 
-	// 7. Generate response
-	response, usage, err := h.aiService.GenerateResponse(r.Context(), systemPrompt, payload.Message)
+	// 6.5 Build tool context
+	toolCtx := services.ToolContext{
+		OrgID:        orgID,
+		OrgSlug:      orgSlug,
+		IsSuperAdmin: orgSlug == "enigmatic-i2v2i",
+		Client:       h.aiService.GetClient(),
+		Logger:       h.logger,
+	}
+	tools := services.GetToolDefinitions()
+
+	// 7. Generate response with tool-calling loop
+	response, usage, err := h.aiService.GenerateWithToolLoop(r.Context(), systemPrompt, payload.Message, tools, toolCtx)
 	if err != nil {
 		logger.WithError(err).Error("AI generation failed")
 		http.Error(w, "AI Service Error: "+err.Error(), http.StatusInternalServerError)
@@ -281,8 +291,18 @@ func (h *AIHandler) StreamChatHandler(w http.ResponseWriter, r *http.Request) {
 	// 6. Build system prompt
 	systemPrompt := buildSystemPrompt(userName, userRole, orgName, orgSlug, payload.Context)
 
-	// 7. Stream response
-	usage, err := h.aiService.GenerateStreamingResponse(r.Context(), w, systemPrompt, payload.Message)
+	// 6.5 Build tool context
+	toolCtx := services.ToolContext{
+		OrgID:        orgID,
+		OrgSlug:      orgSlug,
+		IsSuperAdmin: orgSlug == "enigmatic-i2v2i",
+		Client:       h.aiService.GetClient(),
+		Logger:       h.logger,
+	}
+	tools := services.GetToolDefinitions()
+
+	// 7. Stream response with tool-calling loop
+	usage, err := h.aiService.GenerateStreamingWithToolLoop(r.Context(), w, systemPrompt, payload.Message, tools, toolCtx)
 	if err != nil {
 		log.Printf("AI Stream: generation error: %v", err)
 		// If headers haven't been sent yet, we can send an error
@@ -406,12 +426,19 @@ Your role:
 - Provide clear, concise, and professional answers
 - When analyzing flow data, focus on actionable insights
 
+Data Access:
+- You have tools to query the organization's database for real-time data
+- When users ask about workflows, executions, tasks, teams, or activity — ALWAYS use your tools to get real data
+- NEVER fabricate or make up data. If a tool returns no results, tell the user honestly
+- You can list flows, view action flow executions, check human tasks, query audit logs, and view teams
+
 Guidelines:
 - Be concise but thorough
 - Use bullet points for lists
 - When explaining errors, suggest specific solutions
 - Reference specific step names and data when available
-- If you don't have enough context, ask for clarification`,
+- If you don't have enough context, ask for clarification
+- When presenting data from tools, format it clearly with tables or bullet points`,
 		timestamp, userName, userRole, orgName,
 		func() string {
 			if orgSlug == "enigmatic-i2v2i" {
