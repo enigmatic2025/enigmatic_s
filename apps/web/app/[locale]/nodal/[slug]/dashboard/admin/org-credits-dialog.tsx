@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -35,50 +36,32 @@ interface CreditStats {
 
 export function OrgCreditsDialog({ open, onOpenChange, org, onSuccess }: OrgCreditsDialogProps) {
   const [loading, setLoading] = useState(false)
-  const [stats, setStats] = useState<CreditStats | null>(null)
   const [newBalance, setNewBalance] = useState('')
   const [addAmount, setAddAmount] = useState('')
   const [unlimited, setUnlimited] = useState(() => Boolean(org?.ai_unlimited_access))
   const [activeTab, setActiveTab] = useState<'set' | 'add'>('add')
-  const prevOrgRef = useRef<string | null>(null)
 
-  // When org changes (or dialog opens with a different org), sync unlimited immediately
   const orgId = org?.id ?? null
-  const orgUnlimited = Boolean(org?.ai_unlimited_access)
-  if (orgId !== prevOrgRef.current) {
-    prevOrgRef.current = orgId
-    // This runs during render — no flash, no extra frame
-    if (unlimited !== orgUnlimited) {
-      setUnlimited(orgUnlimited)
-    }
-  }
 
-  // Also sync when the org prop updates (e.g. after mutate() refreshes)
+  // Fetch credit stats via SWR (only when dialog is open with an org)
+  const { data: stats, mutate: mutateStats } = useSWR<CreditStats>(
+    open && orgId ? `/api/admin/orgs/${orgId}/credits/stats` : null,
+    async (url: string) => {
+      const res = await apiClient.get(url)
+      if (!res.ok) throw new Error('Failed to fetch credit stats')
+      return res.json()
+    }
+  )
+
+  // Sync form state when stats load or org changes
   useEffect(() => {
-    setUnlimited(orgUnlimited)
-  }, [orgUnlimited])
-
-  useEffect(() => {
-    if (open && org) {
-      setStats(null)
-      fetchStats()
+    if (stats) {
+      setUnlimited(stats.unlimited_access)
+      setNewBalance(stats.current_balance.toString())
+    } else if (org) {
+      setUnlimited(Boolean(org.ai_unlimited_access))
     }
-  }, [open, orgId])
-
-  const fetchStats = async () => {
-    if (!org) return
-    try {
-      const res = await apiClient.get(`/api/admin/orgs/${org.id}/credits/stats`)
-      if (res.ok) {
-        const data = await res.json()
-        setStats(data)
-        setUnlimited(data.unlimited_access)
-        setNewBalance(data.current_balance.toString())
-      }
-    } catch (error) {
-      console.error('Failed to fetch credit stats:', error)
-    }
-  }
+  }, [stats, org, orgId])
 
   const handleSetCredits = async () => {
     if (!org || !newBalance) return
@@ -90,7 +73,7 @@ export function OrgCreditsDialog({ open, onOpenChange, org, onSuccess }: OrgCred
       if (!res.ok) throw new Error('Failed to set credits')
       toast.success(`Credits set to ${newBalance}`)
       onSuccess()
-      fetchStats()
+      mutateStats()
     } catch (error) {
       toast.error('Failed to set credits')
     } finally {
@@ -110,7 +93,7 @@ export function OrgCreditsDialog({ open, onOpenChange, org, onSuccess }: OrgCred
       toast.success(`Added ${addAmount} credits (new balance: ${data.new_balance})`)
       setAddAmount('')
       onSuccess()
-      fetchStats()
+      mutateStats()
     } catch (error) {
       toast.error('Failed to add credits')
     } finally {
@@ -129,7 +112,7 @@ export function OrgCreditsDialog({ open, onOpenChange, org, onSuccess }: OrgCred
       setUnlimited(checked)
       toast.success(`Unlimited access ${checked ? 'enabled' : 'disabled'}`)
       onSuccess()
-      fetchStats()
+      mutateStats()
     } catch (error) {
       toast.error('Failed to update unlimited access')
       setUnlimited(!checked)

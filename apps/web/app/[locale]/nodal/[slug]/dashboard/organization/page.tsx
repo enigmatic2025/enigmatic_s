@@ -109,15 +109,13 @@ export default function OrganizationPage() {
   const [submitting, setSubmitting] = useState(false);
 
   // 1. Fetch Org ID by slug
-  const { data: orgId } = useSWR(
+  const { data: orgId, isLoading: loadingOrg } = useSWR(
     slug ? `/api/orgs/lookup?slug=${slug}` : null,
     async (url) => {
       const res = await apiClient.get(url);
-      if (res.ok) {
-        const data = await res.json();
-        return data.id as string;
-      }
-      return null;
+      if (!res.ok) throw new Error("Failed to load organization");
+      const data = await res.json();
+      return data.id as string;
     },
     { onError: () => toast.error("Failed to load organization") }
   );
@@ -129,8 +127,7 @@ export default function OrganizationPage() {
     mutate: mutateMembers,
   } = useSWR<OrganizationMember[]>(
     orgId ? `/api/orgs/${orgId}/members` : null,
-    () => organizationService.getMembers(orgId!),
-    { fallbackData: [] }
+    () => organizationService.getMembers(orgId!)
   );
 
   const {
@@ -139,8 +136,7 @@ export default function OrganizationPage() {
     mutate: mutateTeams,
   } = useSWR<Team[]>(
     orgId ? `/api/orgs/${orgId}/teams` : null,
-    () => organizationService.getTeams(orgId!),
-    { fallbackData: [] }
+    () => organizationService.getTeams(orgId!)
   );
 
   // Team members for detail sheet
@@ -153,7 +149,8 @@ export default function OrganizationPage() {
     { fallbackData: [] }
   );
 
-  const loading = !orgId || loadingMembers || loadingTeams;
+  // Only show full-screen loader on initial load (isLoading is false once data is cached)
+  const loading = loadingOrg || loadingMembers || loadingTeams;
 
   // Filtered members
   const filteredMembers = useMemo(() => {

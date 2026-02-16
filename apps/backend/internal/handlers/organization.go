@@ -31,7 +31,7 @@ func (h *OrganizationHandler) GetMembers(w http.ResponseWriter, r *http.Request)
 	// Fetch memberships with profile and supervisor info
 	var members []map[string]interface{}
 	err := client.DB.From("memberships").
-		Select("id, role, user_id, status, job_title, supervisor_id, profiles(id, full_name, email, avatar_url, system_role)").
+		Select("id, role, user_id, status, job_title, supervisor_id, profiles!memberships_user_id_fkey(id, full_name, email, avatar_url, system_role)").
 		Eq("org_id", orgID).
 		Execute(&members)
 
