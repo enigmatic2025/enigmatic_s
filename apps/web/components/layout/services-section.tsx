@@ -8,25 +8,26 @@ export function ServicesSection() {
   const t = useTranslations("Services");
 
   return (
-    <section className="w-full min-h-dvh flex items-center justify-center py-16 md:py-24 px-4 md:px-6">
+    <section className="w-full min-h-full flex flex-col items-center justify-center py-12 md:py-20">
+      <div className="max-w-7xl mx-auto px-6 w-full mb-8 md:mb-10">
+        <div className="w-full px-0">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
+          >
+            <span className="text-foreground">{t("title")}{" "}</span>
+            <span className="text-muted-foreground">
+              {t("description")}
+            </span>
+          </motion.h2>
+        </div>
+      </div>
+
       <div className="w-full max-w-[95%] bg-muted/25 text-foreground rounded-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 w-full">
-          {/* Section Header */}
-          <div className="mb-8 md:mb-10 w-full">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-8"
-            >
-              <span className="text-foreground">{t("title")}{" "}</span>
-              <span className="text-muted-foreground">
-                {t("description")}
-              </span>
-            </motion.h2>
-          </div>
-
           {/* Main Grid Layout */}
           <div className="border-t border-border">
             {/* Top Row - 2 Columns */}

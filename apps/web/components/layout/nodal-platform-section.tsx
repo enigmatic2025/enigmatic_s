@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Link } from "@/navigation";
+import { ArrowRight } from "lucide-react";
 import {
   VisualCanvasPreview,
   PowerfulBlocksPreview,
@@ -14,7 +16,7 @@ export function NodalPlatformSection() {
   const t = useTranslations("NodalPlatform");
 
   return (
-    <section className="flex flex-col bg-background text-foreground px-4 md:px-6 py-16 md:py-24 min-h-dvh">
+    <section className="flex flex-col bg-background text-foreground py-12 md:py-20 min-h-full">
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col px-6">
         {/* Nodal SVG Logo */}
         <div className="flex justify-center mb-12 md:mb-24">
@@ -26,7 +28,7 @@ export function NodalPlatformSection() {
         </div>
 
         {/* Section Header */}
-        <div className="mb-12 md:mb-24 flex flex-col items-start gap-4">
+        <div className="mb-12 md:mb-24 flex flex-col items-start gap-4 px-0">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -39,6 +41,14 @@ export function NodalPlatformSection() {
               {t("description")}
             </span>
           </motion.h2>
+
+          <Link 
+            href="/product/use-cases" 
+            className="group inline-flex items-center gap-2 text-violet-500 text-lg mt-2"
+          >
+            <span>{t("seeUseCases")}</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
 
         {/* Bento Grid Layout */}

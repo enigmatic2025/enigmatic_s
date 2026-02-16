@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
+import Image from "next/image";
+import { Link } from "@/navigation";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
   LucideIcon
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 
 type IndustryItem = {
@@ -49,6 +50,58 @@ const industries: IndustryItem[] = [
   }
 ];
 
+function ParallaxStat({ 
+  image, 
+  stat, 
+  desc, 
+  delay 
+}: { 
+  image: string; 
+  stat: string; 
+  desc: string; 
+  delay: number;
+}) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["-25%", "25%"]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+      className="relative h-200 w-full flex flex-col justify-end p-8 md:p-12 group overflow-hidden"
+    >
+      <motion.div 
+        style={{ y }} 
+        className="absolute inset-0 h-[130%] w-full -top-[15%]"
+      >
+        <Image
+          src={image}
+          alt={desc}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      </motion.div>
+      <div className="absolute inset-0 bg-black/40 dark:bg-black/70" />
+      <div className="relative z-10 flex flex-col gap-4">
+        <span className="text-5xl md:text-6xl font-light tracking-tight text-white">
+          {stat}
+        </span>
+        <p className="text-lg text-white/90 leading-relaxed max-w-sm min-h-22.5 flex items-start">
+          {desc}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 export function MissionQuote() {
   const t = useTranslations("Mission");
 
@@ -57,7 +110,7 @@ export function MissionQuote() {
       <div className="w-full max-w-7xl mx-auto px-6 flex flex-col gap-12 md:gap-24">
 
         {/* Mission Statement */}
-        <div className="w-full">
+        <div className="w-full px-0 flex flex-col items-start gap-8">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -70,6 +123,14 @@ export function MissionQuote() {
               {t("description")}
             </span>
           </motion.h2>
+
+          <Link 
+            href="/company/about-us" 
+            className="group inline-flex items-center gap-2 text-violet-500 text-lg"
+          >
+            <span>{t("aboutUs")}</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
 
         {/* Industry Grid */}
@@ -110,53 +171,26 @@ export function MissionQuote() {
       </div>
 
       {/* Statistics */}
-      <div className="w-full bg-muted/30 py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-7xl mx-auto px-6 flex flex-col gap-4"
-          >
-            <span className="text-5xl md:text-6xl font-light tracking-tight text-foreground">
-              {t("stats.stat1")}
-            </span>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {t("stats.desc1")}
-            </p>
-          </motion.div>
+      <div className="w-full grid grid-cols-1 md:grid-cols-3">
+        <ParallaxStat 
+          image="/images/home/stat1.jpg"
+          stat={t("stats.stat1")}
+          desc={t("stats.desc1")}
+          delay={0.2}
+        />
+        <ParallaxStat 
+          image="/images/home/stat2.jpg"
+          stat={t("stats.stat2")}
+          desc={t("stats.desc2")}
+          delay={0.3}
+        />
+        <ParallaxStat 
+          image="/images/home/stat3.jpg"
+          stat={t("stats.stat3")}
+          desc={t("stats.desc3")}
+          delay={0.4}
+        />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="max-w-7xl mx-auto px-6 flex flex-col gap-4"
-          >
-            <span className="text-5xl md:text-6xl font-light tracking-tight text-foreground">
-              {t("stats.stat2")}
-            </span>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {t("stats.desc2")}
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="max-w-7xl mx-auto px-6 flex flex-col gap-4"
-          >
-            <span className="text-5xl md:text-6xl font-light tracking-tight text-foreground">
-              {t("stats.stat3")}
-            </span>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {t("stats.desc3")}
-            </p>
-          </motion.div>
-        </div>
       </div>
     </section>
   );

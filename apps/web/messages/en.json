@@ -50,7 +50,8 @@
       "desc2": "of operational bandwidth is consumed by manual coordination between field and office.",
       "stat3": "30–40%",
       "desc3": "of potential margin is eroded by reactive problem-solving instead of strategic planning."
-    }
+    },
+    "aboutUs": "About Us"
   },
   "Problem": {
     "title": "The Operational Fragmentation Problem.",
@@ -106,7 +107,8 @@
       "extendDesc": "Add custom calculations and automated alerts. Get full visibility into your data without changing your existing tech stack.",
       "human": "Human-in-the-loop control.",
       "humanDesc": "Seamlessly route exceptions to operators. Ensure critical decisions get human attention while keeping the rest of your process running on autopilot."
-    }
+    },
+    "seeUseCases": "See Use Cases"
   },
   "Principles": {
     "title": "Generic software ignores operational reality.",

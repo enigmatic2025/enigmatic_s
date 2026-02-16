@@ -50,7 +50,8 @@
       "desc2": "băng thông vận hành bị tiêu tốn bởi sự phối hợp thủ công giữa hiện trường và văn phòng.",
       "stat3": "30–40%",
       "desc3": "biên lợi nhuận tiềm năng bị xói mòn do giải quyết vấn đề thụ động thay vì lập kế hoạch chiến lược."
-    }
+    },
+    "aboutUs": "Về chúng tôi"
   },
   "Problem": {
     "title": "Vấn đề Phân mảnh Vận hành.",
@@ -106,7 +107,8 @@
       "extendDesc": "Thêm các tính toán tùy chỉnh và cảnh báo tự động. Có được khả năng hiển thị đầy đủ vào dữ liệu của bạn mà không cần thay đổi hệ thống công nghệ hiện có.",
       "human": "Kiểm soát con người trong vòng lặp.",
       "humanDesc": "Định tuyến ngoại lệ liền mạch đến người vận hành. Đảm bảo các quyết định quan trọng nhận được sự chú ý của con người trong khi vẫn giữ cho phần còn lại của quy trình chạy tự động."
-    }
+    },
+    "seeUseCases": "Xem các trường hợp sử dụng"
   },
   "Principles": {
     "title": "Phần mềm chung chung bỏ qua thực tế vận hành.",
