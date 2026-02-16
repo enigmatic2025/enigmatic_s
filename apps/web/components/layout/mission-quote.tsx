@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Link } from "@/navigation";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   LucideIcon
@@ -15,38 +15,46 @@ type IndustryItem = {
   descriptionKey: string;
   icon?: LucideIcon;
   image?: string;
+  objectPosition?: string;
+  className?: string;
 };
 
 const industries: IndustryItem[] = [
   {
     nameKey: "industries.transportation",
-    image: "/images/home/transportation.svg",
-    descriptionKey: "industries.transportationDesc"
+    image: "/images/home/transportation.png",
+    descriptionKey: "industries.transportationDesc",
+    objectPosition: "object-bottom"
   },
   {
     nameKey: "industries.supplyChain",
-    image: "/images/home/supply chain.svg",
-    descriptionKey: "industries.supplyChainDesc"
+    image: "/images/home/supplychain.png",
+    descriptionKey: "industries.supplyChainDesc",
+    className: "brightness-[0.8]"
   },
   {
     nameKey: "industries.manufacturing",
-    image: "/images/home/manufacturing.svg",
-    descriptionKey: "industries.manufacturingDesc"
+    image: "/images/home/manufacturing.png",
+    descriptionKey: "industries.manufacturingDesc",
+    objectPosition: "object-bottom"
   },
   {
     nameKey: "industries.construction",
-    image: "/images/home/construction.svg",
-    descriptionKey: "industries.constructionDesc"
+    image: "/images/home/construction.png",
+    descriptionKey: "industries.constructionDesc",
+    objectPosition: "object-bottom"
   },
   {
     nameKey: "industries.storage",
-    image: "/images/home/storage.svg",
-    descriptionKey: "industries.storageDesc"
+    image: "/images/home/storage.png",
+    descriptionKey: "industries.storageDesc",
+    className: "brightness-[0.8]"
   },
   {
     nameKey: "industries.energy",
-    image: "/images/home/energy.svg",
-    descriptionKey: "industries.energyDesc"
+    image: "/images/home/energy.png",
+    descriptionKey: "industries.energyDesc",
+    className: "brightness-[0.9]"
   }
 ];
 
@@ -86,10 +94,10 @@ function ParallaxStat({
           src={image}
           alt={desc}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-700"
         />
       </motion.div>
-      <div className="absolute inset-0 bg-black/40 dark:bg-black/70" />
+      <div className="absolute inset-0 bg-black/40" />
       <div className="relative z-10 flex flex-col gap-4">
         <span className="text-5xl md:text-6xl font-light tracking-tight text-white">
           {stat}
@@ -104,6 +112,14 @@ function ParallaxStat({
 
 export function MissionQuote() {
   const t = useTranslations("Mission");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % industries.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <section className="w-full flex flex-col items-center justify-center pt-16 md:pt-24 bg-background overflow-hidden space-y-24">
@@ -133,41 +149,61 @@ export function MissionQuote() {
           </Link>
         </div>
 
-        {/* Industry Grid */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border border-y border-border overflow-hidden">
-          {industries.map((item, i) => (
-            <div
-              key={item.nameKey}
-              className="bg-background p-12"
+        {/* Industry Gallery Carousel */}
+        <div className="w-full aspect-video md:aspect-21/9 relative overflow-hidden rounded-2xl">
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={currentIndex}
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full"
             >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="flex flex-col gap-4"
-              >
-                {item.image ? (
-                   <div className="w-64 h-64 relative">
-                     <img
-                       src={item.image}
-                       alt={t(item.nameKey)}
-                       className="w-full h-full object-contain object-left"
-                     />
-                   </div>
-                ) : (
-                  <div className="p-2 w-fit rounded-lg bg-black dark:bg-white">
-                    {item.icon && <item.icon className="w-5 h-5 text-background" />}
-                  </div>
-                )}
-                <div>
-                  <h3 className="font-medium text-foreground text-lg">{t(item.nameKey)}</h3>
-                  <p className="text-base text-muted-foreground mt-2">{t(item.descriptionKey)}</p>
-                </div>
-              </motion.div>
-            </div>
-          ))}
+              <Image
+                src={industries[currentIndex].image!}
+                alt={t(industries[currentIndex].nameKey)}
+                fill
+                className={`object-cover ${industries[currentIndex].objectPosition || "object-center"} ${industries[currentIndex].className || ""}`}
+                priority
+              />
+              <div className="absolute inset-0" />
+              <div className="absolute bottom-0 left-0 p-8 md:p-12 max-w-2xl">
+                <motion.h3
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-3xl md:text-4xl font-normal text-white mb-4"
+                >
+                  {t(industries[currentIndex].nameKey)}
+                </motion.h3>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-lg text-white/90 leading-relaxed"
+                >
+                  {t(industries[currentIndex].descriptionKey)}
+                </motion.p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+          
+          {/* Indicators */}
+          <div className="absolute bottom-8 right-8 flex gap-2 z-10">
+            {industries.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex ? "bg-white w-6" : "bg-white/50 hover:bg-white/80"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
         </div>
+
       </div>
 
       {/* Statistics */}

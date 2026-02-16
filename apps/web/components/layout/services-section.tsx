@@ -53,7 +53,7 @@ export function ServicesSection() {
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 bg-muted/30 rounded-xl border border-border/50 relative overflow-hidden flex items-center justify-center">
                   <img
-                    src="/images/home/consultation.jpg"
+                    src="/images/home/office.jpeg"
                     alt="Consulting Service"
                     className="object-cover w-full h-full rounded-xl"
                   />

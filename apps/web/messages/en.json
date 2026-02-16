@@ -8,7 +8,90 @@
   "ServicesPage": {
     "title": "Services",
     "subtitle": "Professional services tailored to your needs.",
-    "description": "We help you design, build, and optimize your operations."
+    "description": "We help you design, build, and optimize your operations.",
+    "steps": {
+      "step0": {
+        "title": "0. Executive Alignment",
+        "lists": {
+          "left": [
+            "Define measurable transformation objectives",
+            "Define EBITDA or operational target",
+            "Define executive sponsor"
+          ],
+          "right": [
+            "Secure executive sponsor and backup sponsor"
+          ]
+        }
+      },
+      "step1": {
+        "title": "1. Diagnostic & Financial Modeling",
+        "lists": {
+          "left": [
+            "Current-state mapping",
+            "System mapping",
+            "Financial baseline modeling",
+            "Bottleneck identification"
+          ],
+          "right": [
+            "Transformation thesis with quantified impact"
+          ]
+        }
+      },
+      "step2": {
+        "title": "2. Future State Architecture",
+        "lists": {
+          "left": [
+            "Workflow redesign",
+            "Technology blueprint",
+            "SLA definitions",
+            "Governance model",
+            "Change rollout plan"
+          ],
+          "right": [
+            "An operating model specification for the future state."
+          ]
+        }
+      },
+      "step3": {
+        "title": "3. Controlled Pilot Deployment",
+        "lists": {
+          "left": [
+            "Engineer build inside Nodal",
+            "Limited-scope rollout",
+            "KPI tracking",
+            "Adoption measurement"
+          ],
+          "right": [
+            "Initial solution",
+            "Impact case study"
+          ]
+        }
+      },
+      "step4": {
+        "title": "4. Scaled Rollout",
+        "lists": {
+          "left": [
+            "Expand workflows",
+            "Expand departments",
+            "Institutionalized governance"
+          ],
+          "right": [
+            "Full solution rollout & adoption"
+          ]
+        }
+      },
+      "step5": {
+        "title": "5. Continuous Optimization/White Glove",
+        "lists": {
+          "left": [
+            "Quarterly solution review (for 1 year)"
+          ],
+          "right": [
+            "Solution review & improvement."
+          ]
+        }
+      }
+    }
   },
   "Navigation": {
     "dashboard": "Dashboard",

@@ -8,7 +8,90 @@
   "ServicesPage": {
     "title": "Dịch vụ",
     "subtitle": "Các dịch vụ chuyên nghiệp phù hợp với nhu cầu của bạn.",
-    "description": "Chúng tôi giúp bạn thiết kế, xây dựng và tối ưu hóa quy trình hoạt động."
+    "description": "Chúng tôi giúp bạn thiết kế, xây dựng và tối ưu hóa quy trình hoạt động.",
+    "steps": {
+      "step0": {
+        "title": "0. Căn chỉnh Điều hành",
+        "lists": {
+          "left": [
+            "Xác định mục tiêu chuyển đổi có thể đo lường",
+            "Xác định EBITDA hoặc mục tiêu hoạt động",
+            "Xác định nhà tài trợ điều hành"
+          ],
+          "right": [
+            "Đảm bảo nhà tài trợ điều hành và nhà tài trợ dự phòng"
+          ]
+        }
+      },
+      "step1": {
+        "title": "1. Chẩn đoán & Lập mô hình tài chính",
+        "lists": {
+          "left": [
+            "Lập bản đồ hiện trạng",
+            "Lập bản đồ hệ thống",
+            "Lập mô hình cơ sở tài chính",
+            "Xác định nút thắt"
+          ],
+          "right": [
+            "Luận án chuyển đổi với tác động định lượng"
+          ]
+        }
+      },
+      "step2": {
+        "title": "2. Kiến trúc Trạng thái Tương lai",
+        "lists": {
+          "left": [
+            "Thiết kế lại quy trình làm việc",
+            "Bản thiết kế công nghệ",
+            "Định nghĩa SLA",
+            "Mô hình quản trị",
+            "Kế hoạch triển khai thay đổi"
+          ],
+          "right": [
+            "Đặc tả mô hình hoạt động cho trạng thái tương lai."
+          ]
+        }
+      },
+      "step3": {
+        "title": "3. Triển khai Thí điểm có Kiểm soát",
+        "lists": {
+          "left": [
+            "Xây dựng kỹ thuật bên trong Nodal",
+            "Triển khai phạm vi giới hạn",
+            "Theo dõi KPI",
+            "Đo lường mức độ chấp nhận"
+          ],
+          "right": [
+            "Giải pháp ban đầu",
+            "nghiên cứu trường hợp tác động"
+          ]
+        }
+      },
+      "step4": {
+        "title": "4. Triển khai Mở rộng",
+        "lists": {
+          "left": [
+            "Mở rộng quy trình làm việc",
+            "Mở rộng các phòng ban",
+            "Quản trị thể chế hóa"
+          ],
+          "right": [
+            "Triển khai và áp dụng giải pháp đầy đủ"
+          ]
+        }
+      },
+      "step5": {
+        "title": "5. Tối ưu hóa Liên tục",
+        "lists": {
+          "left": [
+            "Đánh giá giải pháp hàng quý (trong 1 năm)"
+          ],
+          "right": [
+            "Đánh giá và cải tiến giải pháp."
+          ]
+        }
+      }
+    }
   },
   "Navigation": {
     "dashboard": "Bảng điều khiển",
