@@ -122,9 +122,9 @@ export default function ServicesPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex justify-center -mb-12"
+              className="flex justify-center"
             >
-              <div className="bg-background px-6 py-2 border rounded-full z-20">
+              <div className="bg-background px-6 py-12 z-20">
                 <h3 className="text-xl md:text-2xl font-normal text-foreground">
                   {t("phases.consulting")}
                 </h3>
@@ -151,7 +151,7 @@ export default function ServicesPage() {
               viewport={{ once: true }}
               className="flex flex-col items-center gap-6 py-12 backdrop-blur-sm z-20 -my-12"
             >
-              <div className="bg-background px-6 py-2 border rounded-full">
+              <div className="bg-background px-6 py-2">
                 <h3 className="text-xl md:text-2xl font-normal text-foreground">
                   {t("phases.engineering")}
                 </h3>
