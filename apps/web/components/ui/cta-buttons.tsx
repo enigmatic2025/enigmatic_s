@@ -6,7 +6,7 @@ import { Link } from "@/navigation";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth-provider";
-import { supabase } from "@/lib/supabase";
+import { getUserOrgSlug } from "@/lib/supabase";
 import { useTranslations } from "next-intl";
 
 interface CTAButtonsProps {
@@ -26,16 +26,9 @@ export function CTAButtons({ className, hideSignIn = false }: CTAButtonsProps) {
         return;
       }
 
-      const { data: memberships } = await supabase
-        .from('memberships')
-        .select('organizations(slug)')
-        .limit(1);
-
-      if (memberships && memberships.length > 0 && memberships[0].organizations) {
-        // @ts-ignore
-        setDashboardUrl(`/nodal/${memberships[0].organizations.slug}/dashboard`);
-      } else {
-        setDashboardUrl('/nodal/admin');
+      const slug = await getUserOrgSlug();
+      if (slug) {
+        setDashboardUrl(`/nodal/${slug}/dashboard/flow-studio`);
       }
     };
 

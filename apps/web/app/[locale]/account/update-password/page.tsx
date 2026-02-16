@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { toast } from "sonner"
 import { Loader2, ArrowLeft } from "lucide-react"
+import { WaveLoader } from "@/components/ui/wave-loader"
 
 function UpdatePasswordContent() {
   const [password, setPassword] = useState('')
@@ -178,7 +179,7 @@ function UpdatePasswordContent() {
   if (verifying) {
     return (
       <div className="flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <WaveLoader size="md" barClassName="bg-primary" />
         <p className="text-muted-foreground">Verifying secure link...</p>
       </div>
     )
@@ -312,7 +313,7 @@ function UpdatePasswordContent() {
 export default function UpdatePasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Suspense fallback={<div className="flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <Suspense fallback={<div className="flex items-center justify-center"><WaveLoader size="md" barClassName="bg-primary" /></div>}>
         <UpdatePasswordContent />
       </Suspense>
     </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 
-import { supabase } from "@/lib/supabase";
+import { supabase, getUserOrgSlug } from "@/lib/supabase";
 import { useRouter } from "@/navigation";
 import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { WaveLoader } from "@/components/ui/wave-loader";
 import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
@@ -30,33 +30,23 @@ export default function LoginPage() {
   const t = useTranslations("Login");
 
   // useSWR for Check and Redirect logic
-  const { data: loginCheck, isLoading: isChecking } = useSWR(
+  const { data: loginCheck } = useSWR(
     user && !authLoading ? 'login-check' : null,
     async () => {
-        // Check if user has MFA enabled but only AAL1 session
-        const { data: { session } } = await supabase.auth.getSession();
+        // Check MFA assurance level using proper Supabase API
+        const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
         const { data: factors } = await supabase.auth.mfa.listFactors();
 
         const hasVerifiedMFA = factors?.totp?.some(
           (f) => f.status === "verified"
         );
 
-        let needsMFA = false;
-        if (hasVerifiedMFA) {
-          // Let's check the assurance level from the session
-          const currentLevel = session?.user?.app_metadata?.aal || "aal1";
-          if (currentLevel === "aal1") {
-            needsMFA = true;
-          }
-        }
+        // User has MFA set up but session is only AAL1 — needs to verify
+        const needsMFA = hasVerifiedMFA && aalData?.currentLevel === "aal1";
 
-        // Fetch memberships for redirect
-        const { data: memberships } = await supabase
-          .from("memberships")
-          .select("organizations(slug)")
-          .limit(1);
-        
-        return { needsMFA, memberships };
+        const orgSlug = await getUserOrgSlug();
+
+        return { needsMFA, orgSlug };
     },
     {
         shouldRetryOnError: false
@@ -68,20 +58,14 @@ export default function LoginPage() {
     if (!loginCheck) return;
 
     if (loginCheck.needsMFA) {
-       // Stop redirect, let MFA flow happen (handled by UI state if we were showing it, but here we just return)
-       return; 
+       router.push("/login/mfa-verify");
+       return;
     }
 
-    const { memberships } = loginCheck;
-    if (
-        memberships &&
-        memberships.length > 0 &&
-        memberships[0].organizations
-    ) {
-        // @ts-ignore
-        router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`);
+    if (loginCheck.orgSlug) {
+        router.push(`/nodal/${loginCheck.orgSlug}/dashboard`);
     } else {
-        router.push("/nodal/admin");
+        toast.error("No organization found. Please contact an administrator.");
     }
 
   }, [loginCheck, router]);
@@ -90,7 +74,7 @@ export default function LoginPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <WaveLoader size="md" barClassName="bg-muted-foreground" />
       </div>
     );
   }
@@ -100,22 +84,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        // Check if MFA is required
-        if (error.message.includes("MFA") || error.message.includes("factor")) {
-          toast.info(
-            "MFA verification required. Please check your authenticator app."
-          );
-          // Store email for MFA challenge page
-          sessionStorage.setItem("mfa_email", email);
-          router.push("/login/mfa-verify");
-          return;
-        }
         throw error;
       }
 
@@ -127,48 +101,13 @@ export default function LoginPage() {
         factorsData.totp.length > 0 &&
         factorsData.totp[0].status === "verified"
       ) {
-        // MFA is enabled, redirect to challenge
-        sessionStorage.setItem("mfa_email", email);
-        sessionStorage.setItem("mfa_password", password);
+        // MFA is enabled — session is at AAL1, redirect to verify
         router.push("/login/mfa-verify");
         return;
       }
 
       // MFA NOT ENABLED - Force enrollment
-      if (
-        !factorsData?.totp ||
-        factorsData.totp.length === 0 ||
-        factorsData.totp[0].status !== "verified"
-      ) {
-        // Redirect to mandatory MFA setup
-        router.push("/account/security/mfa-setup");
-        return;
-      }
-
-      // This code should never be reached due to mandatory MFA
-      // But kept as fallback
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data: memberships } = await supabase
-          .from("memberships")
-          .select("organizations(slug)")
-          .limit(1);
-
-        if (
-          memberships &&
-          memberships.length > 0 &&
-          memberships[0].organizations
-        ) {
-          // @ts-ignore
-          router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`);
-        } else {
-          toast.error(
-            "No organization found. Please contact an administrator."
-          );
-        }
-      }
+      router.push("/account/security/mfa-setup");
     } catch (err: any) {
       toast.error(err.message);
     } finally {

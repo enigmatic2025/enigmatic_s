@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { supabase } from "@/lib/supabase";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { TopBar } from "@/components/dashboard/top-bar";
+import { WaveLoader } from "@/components/ui/wave-loader";
 
 export default function DashboardLayout({
   children,
@@ -33,7 +34,6 @@ export default function DashboardLayout({
       }
       setUser(user);
 
-      // @ts-ignore
       const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
       if (!factorsError && (!factorsData?.totp || factorsData.totp.length === 0 || factorsData.totp[0].status !== 'verified')) {
         router.push("/account/security/mfa-setup");
@@ -61,20 +61,29 @@ export default function DashboardLayout({
     }
   );
 
-  // Handle membership data — redirect to onboarding or set current org
+  // Handle membership data — set current org or redirect to login
   useEffect(() => {
     if (memberships === undefined) return; // still loading
     if (memberships && memberships.length > 0) {
       const organizations = memberships.map((m: any) => m.organizations);
       setCurrentOrg(organizations[0]);
     } else {
-      router.push("/onboarding");
+      router.push("/login");
     }
   }, [memberships, router]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const isFlowStudioDesign = pathname?.includes("/flow-studio/design");
+
+  // Don't render dashboard until auth is confirmed and org is resolved
+  if (!authReady || !currentOrg) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <WaveLoader size="md" barClassName="bg-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex">

@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
+import { WaveLoader } from "@/components/ui/wave-loader"
 
 interface AIConfig {
     provider: string
@@ -101,7 +102,7 @@ export function AIConfigPanel() {
         }
     }
 
-    if (isLoading) return <div className="py-12 flex justify-center"><Spinner /></div>
+    if (isLoading) return <div className="py-12 flex justify-center"><WaveLoader size="sm" barClassName="bg-muted-foreground" /></div>
 
     return (
         <div className="space-y-8">

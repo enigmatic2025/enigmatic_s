@@ -20,3 +20,25 @@ export const supabase = createClient(
         }
     }
 )
+
+/** Shape returned by `select('organizations(slug)')` on the memberships table. */
+interface MembershipWithOrg {
+    organizations: { slug: string } | null
+}
+
+/**
+ * Fetches the first org slug for the current user.
+ * Returns the slug string or null if the user has no memberships.
+ */
+export async function getUserOrgSlug(): Promise<string | null> {
+    const { data } = await supabase
+        .from('memberships')
+        .select('organizations(slug)')
+        .limit(1)
+
+    const memberships = data as MembershipWithOrg[] | null
+    if (memberships && memberships.length > 0 && memberships[0].organizations) {
+        return memberships[0].organizations.slug
+    }
+    return null
+}

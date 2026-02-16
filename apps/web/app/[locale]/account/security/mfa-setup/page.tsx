@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, getUserOrgSlug } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth-provider'
 import { toast } from 'sonner'
@@ -13,6 +13,7 @@ export default function MFAEnrollmentPage() {
   const [factorId, setFactorId] = useState('')
   const [verifyCode, setVerifyCode] = useState('')
   const [loading, setLoading] = useState(false)
+  const [redirecting, setRedirecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [step, setStep] = useState<'enroll' | 'verify'>('enroll')
   const router = useRouter()
@@ -44,8 +45,8 @@ export default function MFAEnrollmentPage() {
         const existingFactor = existingFactors.totp[0]
         
         if (existingFactor.status === 'verified') {
-          // Already verified, redirect to dashboard
-          router.push('/nodal/admin')
+          // Already verified, redirect to login to complete flow
+          router.push('/login')
           return
         }
         
@@ -97,7 +98,7 @@ export default function MFAEnrollmentPage() {
       }
 
       // Verify the code
-      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+      const { error } = await supabase.auth.mfa.challengeAndVerify({
         factorId: factorId,
         code: verifyCode,
       })
@@ -105,37 +106,21 @@ export default function MFAEnrollmentPage() {
       if (error) throw error
 
       toast.success(t("success"))
-      
-      // Redirect based on user role
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: memberships } = await supabase
-          .from('memberships')
-          .select('organizations(slug)')
-          .limit(1)
-        
-        if (memberships && memberships.length > 0 && memberships[0].organizations) {
-          // @ts-ignore
-          router.push(`/nodal/${memberships[0].organizations.slug}/dashboard`)
-        } else {
-          // Check if system admin
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('system_role')
-            .eq('id', user.id)
-            .single()
-          
-          if (profile?.system_role === 'admin') {
-            router.push('/nodal/admin')
-          } else {
-            router.push('/nodal/admin') // Fallback
-          }
-        }
+
+      // Mark as redirecting so the button stays disabled
+      setRedirecting(true)
+
+      // Redirect based on memberships
+      const orgSlug = await getUserOrgSlug()
+      if (orgSlug) {
+        router.push(`/nodal/${orgSlug}/dashboard`)
+      } else {
+        toast.error('No organization found. Please contact an administrator.')
+        setRedirecting(false)
       }
     } catch (err: any) {
       toast.error(err.message || 'Invalid code. Please try again.')
       setError(err.message || 'Invalid code. Please try again.')
-    } finally {
       setLoading(false)
     }
   }
@@ -250,10 +235,10 @@ export default function MFAEnrollmentPage() {
 
               <button
                 type="submit"
-                disabled={loading || verifyCode.length !== 6}
+                disabled={loading || redirecting || verifyCode.length !== 6}
                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-foreground text-background px-4 py-3 text-sm font-light hover:bg-foreground/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
-                {loading ? t("verifying") : t("verifyAndContinue")}
+                {loading || redirecting ? t("verifying") : t("verifyAndContinue")}
               </button>
             </form>
           </div>

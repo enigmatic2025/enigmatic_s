@@ -61,12 +61,12 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   const dashboardUrl = React.useMemo(() => {
     if (!user) return null;
     if (memberships === undefined) return null; // still loading
-    if (!memberships || memberships.length === 0) return "/nodal/admin";
+    if (!memberships || memberships.length === 0) return null;
     const org = Array.isArray(memberships[0].organizations)
       ? memberships[0].organizations[0]
       : memberships[0].organizations;
-    if (org?.slug) return `/nodal/${org.slug}/dashboard`;
-    return "/nodal/admin";
+    if (org?.slug) return `/nodal/${org.slug}/dashboard/flow-studio`;
+    return null;
   }, [user, memberships]);
 
   const [open, setOpen] = React.useState(false);

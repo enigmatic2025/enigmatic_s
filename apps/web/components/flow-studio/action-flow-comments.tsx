@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Reply, ThumbsUp, Hash, AtSign, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
+import { WaveLoader } from "@/components/ui/wave-loader";
 
 interface Comment {
   id: string;
@@ -172,8 +173,8 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
         <ScrollArea className="flex-1 pr-4 -mr-4">
             <div className="space-y-6 pb-4">
                 {isLoading ? (
-                   <div className="flex justify-center py-4 text-zinc-400">
-                       <Loader2 className="w-4 h-4 animate-spin" />
+                   <div className="flex justify-center py-4">
+                       <WaveLoader size="sm" barClassName="bg-zinc-400" />
                    </div>
                 ) : comments.length === 0 ? (
                     <div className="text-center py-8 text-zinc-400 text-xs italic">
