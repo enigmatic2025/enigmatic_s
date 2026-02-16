@@ -144,6 +144,11 @@
     },
     "deliverables": "Entregables",
     "tools": "Herramientas",
+    "phases": {
+        "consulting": "Fase de Consultoría",
+        "engineering": "Fase de Ingeniería de Sistemas",
+        "engineeringNote": "Idealmente, construimos lo que diseñamos. Pero los clientes pueden optar por concluir el compromiso aquí, armados con una hoja de ruta completa para la ejecución interna."
+    },
     "steps": {
       "step1": {
         "title": "Alineación Ejecutiva",
@@ -192,8 +197,8 @@
         ]
       },
       "step4": {
-        "title": "Despliegue Piloto Controlado",
-        "description": "Validar la solución a través de un piloto de alcance limitado, rastreando KPIs y métricas de adopción mientras se ingenia la construcción dentro de Nodal.",
+        "title": "Ingeniería de Soluciones y Piloto",
+        "description": "Validar la solución a través de un piloto de alcance limitado. Diseñamos soluciones independientes pero recomendamos encarecidamente adoptar Nodal para organizar y escalar sus flujos de trabajo de manera eficiente.",
         "deliverables": [
             "Configuración del entorno Nodal",
             "Solución piloto funcional",
@@ -202,6 +207,7 @@
         ],
         "tools": [
             "Nodal",
+            "n8n",
             "Atlassian Jira",
             "Atlassian Confluence"
         ]
@@ -215,7 +221,8 @@
             "Adopción completa de la solución"
         ],
         "tools": [
-            "Nodal"
+            "Nodal",
+            "n8n"
         ]
       },
       "step6": {
@@ -232,6 +239,39 @@
             "Atlassian Confluence"
         ]
       }
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "items": [
+        {
+          "question": "¿Cómo funcionan los compromisos?",
+          "answer": "Asignamos un consultor dedicado para servir como su socio estratégico y punto de contacto principal. Coordinan todo el proceso de diagnóstico y diseño, trabajando directamente con el equipo de ingeniería de Enigmatic para construir, probar y desplegar su solución personalizada."
+        },
+        {
+          "question": "¿Necesito usar la plataforma Nodal?",
+          "answer": "No. Podemos ingeniar soluciones independientes que se integren directamente con su infraestructura existente. Sin embargo, recomendamos encarecidamente Nodal como una capa de orquestación para centralizar la gobernanza, el monitoreo y el despliegue a medida que escala de uno a muchos flujos de trabajo."
+        },
+        {
+          "question": "¿Cuánto tiempo toma un compromiso típico?",
+          "answer": "Los plazos varían según el alcance, pero nos movemos rápido. Una fase de diagnóstico típica se completa en 2-3 semanas, y nuestro objetivo es tener una solución piloto en vivo dentro de 6-8 semanas. Nuestro objetivo es entregar valor medible en un solo trimestre."
+        },
+        {
+          "question": "¿Esto requiere reemplazar nuestro software actual?",
+          "answer": "Raramente. Nuestra filosofía es conectar y orquestar, no arrancar y reemplazar. Construimos el \"intermedio faltante\" que une su ERP, CRM y sistemas heredados para cerrar brechas en sus operaciones."
+        },
+        {
+          "question": "¿Qué sucede después del piloto?",
+          "answer": "Una vez que el piloto valida el ROI, pasamos a un despliegue escalado. Le ayudamos a institucionalizar la solución a través de departamentos y proporcionamos soporte continuo. Puede optar por gestionarlo internamente o retener a nuestro equipo para una optimización continua."
+        },
+        {
+          "question": "¿Cómo manejan la seguridad de los datos?",
+          "answer": "La seguridad es primordial. Diseñamos arquitecturas que respetan su soberanía de datos. Ya sea usando Nodal o construcciones independientes, nos adherimos a estrictos estándares de seguridad empresarial y podemos desplegar soluciones dentro de su entorno de nube privada si es necesario."
+        }
+      ]
+    },
+    "cta": {
+      "title": "¿Listo para optimizar sus operaciones?",
+      "description": "Programe una consulta para descubrir dónde puede desbloquear eficiencia."
     }
   },
   "Navigation": {
