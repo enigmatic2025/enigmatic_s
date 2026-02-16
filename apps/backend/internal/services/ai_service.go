@@ -1006,14 +1006,45 @@ func (s *AIService) GenerateStreamingWithToolLoop(ctx context.Context, w http.Re
 
 // streamFinalResponse makes a streaming LLM call with full conversation history (no tools)
 func (s *AIService) streamFinalResponse(ctx context.Context, w http.ResponseWriter, endpoint ModelEndpoint, messages []Message, summary *UsageSummary) (*UsageSummary, error) {
-	// Strip tool_calls from messages to avoid confusing the primary model
+	// Collapse tool-call interactions (assistant tool_calls + tool results) into
+	// plain assistant messages so the primary model sees retrieved data without
+	// needing tool-call support in the message format.
 	cleanMessages := make([]Message, 0, len(messages))
-	for _, m := range messages {
-		if m.Role == "tool" {
-			continue // Skip tool result messages
+	idx := 0
+	for idx < len(messages) {
+		m := messages[idx]
+
+		if m.Role == "assistant" && len(m.ToolCalls) > 0 {
+			// Collect the tool results that follow this assistant message
+			var parts []string
+			j := idx + 1
+			for j < len(messages) && messages[j].Role == "tool" {
+				toolName := messages[j].ToolCallID
+				for _, tc := range m.ToolCalls {
+					if tc.ID == messages[j].ToolCallID {
+						toolName = tc.Function.Name
+						break
+					}
+				}
+				parts = append(parts, fmt.Sprintf("[%s result]:\n%s", toolName, messages[j].Content))
+				j++
+			}
+			cleanMessages = append(cleanMessages, Message{
+				Role:    "assistant",
+				Content: strings.Join(parts, "\n\n"),
+			})
+			idx = j
+			continue
 		}
-		clean := Message{Role: m.Role, Content: m.Content}
-		cleanMessages = append(cleanMessages, clean)
+
+		// Skip orphan tool messages (shouldn't happen but defensive)
+		if m.Role == "tool" {
+			idx++
+			continue
+		}
+
+		cleanMessages = append(cleanMessages, Message{Role: m.Role, Content: m.Content})
+		idx++
 	}
 
 	req, err := s.buildHTTPRequest(ctx, endpoint, cleanMessages, nil, true)
