@@ -962,5 +962,17 @@
     "button": "Buscar...",
     "placeholder": "Escriba un comando o búsqueda...",
     "noResults": "No se encontraron resultados."
+  },
+  "Metadata": {
+    "site": {
+      "title": "Enigmatic | Diseñamos, conectamos y orquestamos los procesos que sus sistemas centrales ignoran.",
+      "description": "Las cadenas de suministro modernas se están derrumbando bajo el peso de herramientas obsoletas y sistemas desconectados. Los flujos de trabajo manuales, los módulos TMS desconectados y los procesos fragmentados erosionan silenciosamente los márgenes y crean cuellos de botella. Descubra cómo Enigmatic ayuda a resolver la fragmentación logística.",
+      "ogImageAlt": "Enigmatic — Plataforma de orquestación operacional",
+      "twitterTitle": "Enigmatic | Plataforma de orquestación operacional",
+      "twitterDescription": "Diseñamos, conectamos y orquestamos los procesos que sus sistemas centrales ignoran. Resuelva la fragmentación logística con flujos automatizados."
+    },
+    "org": {
+      "description": "Diseñamos, conectamos y orquestamos los procesos que sus sistemas centrales ignoran. Orquestación operacional para cadenas de suministro modernas."
+    }
   }
 }

@@ -2,6 +2,7 @@
 import { insightPostsEn } from "./insights-data-en";
 import { insightPostsVi } from "./insights-data-vi";
 import { insightPostsZhTw } from "./insights-data-zh-tw";
+import { insightPostsEs } from "./insights-data-es";
 
 export const getInsightPosts = (locale: string) => {
   switch (locale) {
@@ -9,6 +10,8 @@ export const getInsightPosts = (locale: string) => {
       return insightPostsVi;
     case "zh-TW":
       return insightPostsZhTw;
+    case "es":
+      return insightPostsEs;
     default:
       return insightPostsEn;
   }

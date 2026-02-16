@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { insightPosts } from "@/lib/insights-data";
+import { getInsightPosts } from "@/lib/insights-data";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = insightPosts.find((p) => p.slug === slug);
+  const { slug, locale } = await params;
+  const post = getInsightPosts(locale).find((p) => p.slug === slug);
 
   if (!post) {
     return { title: "Article Not Found" };
@@ -20,6 +20,7 @@ export async function generateMetadata({
       title: `${post.title} | Enigmatic`,
       description: post.excerpt,
       type: "article",
+      locale: locale.replace('-', '_'),
       publishedTime: post.date,
       authors: [post.author],
       ...(post.image && {
@@ -36,7 +37,7 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  return insightPosts.map((post) => ({ slug: post.slug }));
+  return getInsightPosts('en').map((post) => ({ slug: post.slug }));
 }
 
 export default function ArticleLayout({

@@ -966,5 +966,17 @@
     "button": "搜尋...",
     "placeholder": "輸入指令或搜尋...",
     "noResults": "找不到結果."
+  },
+  "Metadata": {
+    "site": {
+      "title": "Enigmatic | 我們設計、連結並協調您的核心系統所忽略的流程。",
+      "description": "現代供應鏈正因過時的工具和斷開連接的系統而不堪重負。手動工作流程、斷開的 TMS 模組和碎片化流程正悄然侵蝕利潤並製造瓶頸。了解 Enigmatic 如何幫助解決物流碎片化問題。",
+      "ogImageAlt": "Enigmatic — 運營編排平台",
+      "twitterTitle": "Enigmatic | 運營編排平台",
+      "twitterDescription": "我們設計、連結並協調您的核心系統所忽略的流程。透過自動化流程解決物流碎片化問題。"
+    },
+    "org": {
+      "description": "我們設計、連結並協調您的核心系統所忽略的流程。為現代供應鏈提供運營編排。"
+    }
   }
 }

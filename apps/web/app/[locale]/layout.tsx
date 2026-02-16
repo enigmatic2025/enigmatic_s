@@ -5,69 +5,80 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Toaster } from "sonner";
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
+import { locales } from '@/navigation';
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://enigmatic.works"),
-  title: {
-    default: "Enigmatic | We design, connect, and orchestrate the processes your core systems ignore.",
-    template: "%s | Enigmatic",
-  },
-  description:
-    "Modern supply chains are breaking under the weight of outdated tools and disconnected systems. Manual workflows, disconnected TMS modules, and fragmented processes quietly eat margins and create bottlenecks. Discover how Enigmatic helps solve logistics fragmentation.",
-  openGraph: {
-    type: "website",
-    siteName: "Enigmatic",
-    locale: "en_US",
-    images: [
-      {
-        url: "/images/brand/brand-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Enigmatic — Operational Orchestration Platform",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Enigmatic | Operational Orchestration Platform",
-    description:
-      "We design, connect, and orchestrate the processes your core systems ignore. Solve logistics fragmentation with automated flows.",
-    images: ["/images/brand/brand-image.jpg"],
-  },
-  icons: {
-    icon: [
-      {
-        url: "/Enigmatic/favicon-96x96.png",
-        sizes: "96x96",
-        type: "image/png",
-      },
-      { url: "/Enigmatic/favicon.svg", type: "image/svg+xml" },
-    ],
-    shortcut: "/Enigmatic/favicon.ico",
-    apple: [{ url: "/Enigmatic/apple-touch-icon.png", sizes: "180x180" }],
-  },
-  manifest: "/Enigmatic/site.webmanifest",
-  appleWebApp: {
-    title: "Enigmatic",
-  },
-  alternates: {
-    languages: {
-      en: "/en",
-      vi: "/vi",
-      "zh-TW": "/zh-TW",
-      es: "/es",
-      de: "/de",
-      ja: "/ja",
-      pt: "/pt",
-    },
-  },
+const localeToOgLocale: Record<string, string> = {
+  en: "en_US",
+  vi: "vi_VN",
+  "zh-TW": "zh_TW",
+  es: "es_ES",
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
+
+  const alternateLanguages = Object.fromEntries(
+    locales.map((loc) => [loc, `/${loc}`])
+  );
+
+  return {
+    metadataBase: new URL("https://enigmatic.works"),
+    title: {
+      default: t('site.title'),
+      template: "%s | Enigmatic",
+    },
+    description: t('site.description'),
+    openGraph: {
+      type: "website",
+      siteName: "Enigmatic",
+      locale: localeToOgLocale[locale] || locale,
+      images: [
+        {
+          url: "/images/brand/brand-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: t('site.ogImageAlt'),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t('site.twitterTitle'),
+      description: t('site.twitterDescription'),
+      images: ["/images/brand/brand-image.jpg"],
+    },
+    icons: {
+      icon: [
+        {
+          url: "/Enigmatic/favicon-96x96.png",
+          sizes: "96x96",
+          type: "image/png",
+        },
+        { url: "/Enigmatic/favicon.svg", type: "image/svg+xml" },
+      ],
+      shortcut: "/Enigmatic/favicon.ico",
+      apple: [{ url: "/Enigmatic/apple-touch-icon.png", sizes: "180x180" }],
+    },
+    manifest: "/Enigmatic/site.webmanifest",
+    appleWebApp: {
+      title: "Enigmatic",
+    },
+    alternates: {
+      languages: alternateLanguages,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -79,6 +90,8 @@ export default async function RootLayout({
   const { locale } = await params;
   const messages = await getMessages({ locale });
 
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -87,14 +100,13 @@ export default async function RootLayout({
         name: "Enigmatic",
         url: "https://enigmatic.works",
         logo: "https://enigmatic.works/images/brand/enigmatic-logo.png",
-        description:
-          "We design, connect, and orchestrate the processes your core systems ignore. Operational orchestration for modern supply chains.",
+        description: t('org.description'),
       },
       {
         "@type": "WebSite",
         name: "Enigmatic",
         url: "https://enigmatic.works",
-        inLanguage: ["en", "vi", "zh-TW", "es", "de", "ja", "pt"],
+        inLanguage: [...locales],
       },
     ],
   };

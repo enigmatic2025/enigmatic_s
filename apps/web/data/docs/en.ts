@@ -167,6 +167,7 @@ export const enDocs: DocSection[] = [
                     { name: "English", type: "JSON", desc: "https://enigmatic.works/docs/en.json" },
                     { name: "Vietnamese", type: "JSON", desc: "https://enigmatic.works/docs/vi.json" },
                     { name: "Traditional Chinese", type: "JSON", desc: "https://enigmatic.works/docs/zh-TW.json" },
+                    { name: "Spanish", type: "JSON", desc: "https://enigmatic.works/docs/es.json" },
                 ]
             },
 

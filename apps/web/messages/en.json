@@ -962,5 +962,17 @@
     "button": "Search...",
     "placeholder": "Type a command or search...",
     "noResults": "No results found."
+  },
+  "Metadata": {
+    "site": {
+      "title": "Enigmatic | We design, connect, and orchestrate the processes your core systems ignore.",
+      "description": "Modern supply chains are breaking under the weight of outdated tools and disconnected systems. Manual workflows, disconnected TMS modules, and fragmented processes quietly eat margins and create bottlenecks. Discover how Enigmatic helps solve logistics fragmentation.",
+      "ogImageAlt": "Enigmatic — Operational Orchestration Platform",
+      "twitterTitle": "Enigmatic | Operational Orchestration Platform",
+      "twitterDescription": "We design, connect, and orchestrate the processes your core systems ignore. Solve logistics fragmentation with automated flows."
+    },
+    "org": {
+      "description": "We design, connect, and orchestrate the processes your core systems ignore. Operational orchestration for modern supply chains."
+    }
   }
 }

@@ -8,6 +8,7 @@ import { useLocale } from "next-intl";
 import { enSidebar, enDocs } from "@/data/docs/en";
 import { viSidebar, viDocs } from "@/data/docs/vi";
 import { zhTwSidebar, zhTwDocs } from "@/data/docs/zh-TW";
+import { esSidebar, esDocs } from "@/data/docs/es";
 import { SidebarGroup, DocSection } from "@/data/docs/types";
 
 // Sidebar data mapping
@@ -15,6 +16,7 @@ const sidebarDataMap: Record<string, SidebarGroup[]> = {
   en: enSidebar,
   vi: viSidebar,
   "zh-TW": zhTwSidebar,
+  es: esSidebar,
 };
 
 // Full docs data mapping for search
@@ -22,6 +24,7 @@ const docsDataMap: Record<string, DocSection[]> = {
   en: enDocs,
   vi: viDocs,
   "zh-TW": zhTwDocs,
+  es: esDocs,
 };
 
 

@@ -966,5 +966,17 @@
     "button": "Tìm kiếm...",
     "placeholder": "Nhập lệnh hoặc tìm kiếm...",
     "noResults": "Không tìm thấy kết quả."
+  },
+  "Metadata": {
+    "site": {
+      "title": "Enigmatic | Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua.",
+      "description": "Chuỗi cung ứng hiện đại đang sụp đổ dưới sức nặng của các công cụ lỗi thời và hệ thống rời rạc. Quy trình thủ công, các module TMS không kết nối và quy trình phân mảnh âm thầm ăn mòn lợi nhuận và tạo ra tắc nghẽn. Khám phá cách Enigmatic giúp giải quyết sự phân mảnh logistics.",
+      "ogImageAlt": "Enigmatic — Nền tảng điều phối vận hành",
+      "twitterTitle": "Enigmatic | Nền tảng điều phối vận hành",
+      "twitterDescription": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua. Giải quyết sự phân mảnh logistics bằng các luồng tự động."
+    },
+    "org": {
+      "description": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua. Điều phối vận hành cho chuỗi cung ứng hiện đại."
+    }
   }
 }

@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import { insightPosts } from "@/lib/insights-data";
+import { locales } from "@/navigation";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://enigmatic.works";
-  const locales = ["en", "vi", "zh-TW"];
   const now = new Date();
 
   const staticPages = [
@@ -17,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const entries: MetadataRoute.Sitemap = [];
 
-  // Static pages for each locale
+  // Static pages for each locale with hreflang alternates
   for (const page of staticPages) {
     for (const locale of locales) {
       entries.push({
@@ -25,11 +25,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
         lastModified: now,
         changeFrequency: page.changeFrequency,
         priority: page.priority,
+        alternates: {
+          languages: Object.fromEntries(
+            locales.map((loc) => [loc, `${baseUrl}/${loc}${page.path}`])
+          ),
+        },
       });
     }
   }
 
-  // Dynamic article pages
+  // Dynamic article pages with hreflang alternates
   for (const post of insightPosts) {
     for (const locale of locales) {
       entries.push({
@@ -37,6 +42,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
         lastModified: now,
         changeFrequency: "monthly" as const,
         priority: 0.6,
+        alternates: {
+          languages: Object.fromEntries(
+            locales.map((loc) => [loc, `${baseUrl}/${loc}/insights/articles/${post.slug}`])
+          ),
+        },
       });
     }
   }

@@ -23,6 +23,7 @@ import { useLocale } from "next-intl";
 import { enDocs } from "@/data/docs/en";
 import { viDocs } from "@/data/docs/vi";
 import { zhTwDocs } from "@/data/docs/zh-TW";
+import { esDocs } from "@/data/docs/es";
 import { DocBlock, DocSection } from "@/data/docs/types";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,7 @@ const docsData: Record<string, DocSection[]> = {
   en: enDocs,
   vi: viDocs,
   "zh-TW": zhTwDocs,
+  es: esDocs,
 };
 
 /* ── Section Router ─────────────────────────────────────── */
