@@ -18,7 +18,7 @@ export default function ServicesPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 50%", "end 50%"]
+    offset: ["start 50%", "end center"]
   });
 
   const parallaxRef = useRef(null);
@@ -26,14 +26,14 @@ export default function ServicesPage() {
     target: parallaxRef,
     offset: ["start end", "end start"]
   });
-  const parallaxY = useTransform(parallaxProgress, [0, 1], ["-15%", "15%"]);
+  const parallaxY = useTransform(parallaxProgress, [0, 1], ["-25%", "25%"]);
 
   const scrollYProgressSpring = useSpring(scrollYProgress, {
     stiffness: 500,
     damping: 90,
   });
 
-  const lineHeight = useTransform(scrollYProgressSpring, [0, 1], ["0%", "100%"]);
+  const lineHeight = useTransform(scrollYProgressSpring, [0, 1], ["0%", "103%"]);
 
   return (
     <main className="flex min-h-screen flex-col bg-background">
@@ -100,15 +100,16 @@ export default function ServicesPage() {
       </section>
 
       {/* Timeline Section */}
-      <section className="w-full py-20 px-4 md:px-6 relative" ref={containerRef}>
+      <section className="w-full pt-20 pb-80 px-4 md:px-6 relative" ref={containerRef}>
         <div className="max-w-5xl mx-auto relative">
           
           {/* Timeline Line Container */}
-          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-0.5 h-full bg-border -translate-x-1/2">
+          <div className="absolute left-5 md:left-1/2 top-10 bottom-10 w-px -translate-x-1/2">
+            <div className="w-full h-full border-l border-dashed border-border" />
             {/* The Beam */}
             <motion.div 
               style={{ height: lineHeight }}
-              className="absolute top-0 left-0 w-full bg-linear-to-b from-violet-400 via-violet-400 to-transparent origin-top"
+              className="absolute top-0 left-0 w-full border-l border-dashed border-violet-400 origin-top overflow-hidden"
             />
           </div>
 
@@ -175,7 +176,7 @@ function TimelineItem({
             {index}
           </span>
           <div className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
-            <h3 className="text-2xl md:text-3xl font-medium text-foreground">
+            <h3 className="text-2xl md:text-3xl text-foreground">
               {title}
             </h3>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
@@ -207,7 +208,7 @@ function TimelineItem({
                 {tools.map((item, i) => (
                   <span 
                     key={i} 
-                    className="text-xs md:text-sm px-2.5 py-1 rounded-md bg-muted text-muted-foreground border border-border font-medium"
+                    className="text-xs md:text-sm px-2.5 py-1 rounded-sm text-violet-500 border border-violet-500"
                   >
                     {item}
                   </span>
