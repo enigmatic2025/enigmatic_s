@@ -107,7 +107,7 @@ export function ActionFlowList({ data, isLoading }: ActionFlowListProps) {
         return (
             <Card 
                 key={exec.id} 
-                className="group border border-border/60 shadow-none hover:border-foreground/20 transition-all cursor-pointer overflow-hidden bg-background"
+                className="group border border-border/60 shadow-none transition-all cursor-pointer overflow-hidden bg-background"
                 onClick={() => router.push(`${pathname}/${exec.id}`)}
             >
             {/* Top Row: Main Info */}

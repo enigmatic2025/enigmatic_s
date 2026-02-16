@@ -40,9 +40,7 @@ export function DashboardSearch({ slug }: DashboardSearchProps) {
   return (
     <form onSubmit={handleSubmit} className="mb-6">
       <div
-        className={`flex items-center gap-3 rounded-xl border bg-card px-4 py-2.5 transition-colors ${
-          focused ? "border-foreground/20" : "border-border"
-        }`}
+        className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-2.5 transition-colors"
       >
         <Search className="h-4 w-4 text-muted-foreground shrink-0" />
         <input

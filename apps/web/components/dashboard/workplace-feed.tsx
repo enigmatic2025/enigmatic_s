@@ -154,7 +154,7 @@ function WorkplaceItem({
         {(details.reference_id || flowId) && (
           <div 
              onClick={() => flowId && onFlowClick(flowId)}
-             className="flex items-center justify-between rounded-lg border border-border bg-gray-50 dark:bg-accent/10 p-3 hover:bg-gray-100 dark:hover:bg-accent/20 transition-colors cursor-pointer"
+             className="flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3 hover:bg-muted/60 transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg border border-border flex items-center justify-center bg-card">

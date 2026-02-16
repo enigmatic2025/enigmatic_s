@@ -303,7 +303,7 @@ export default function NataliePage() {
         {/* Input Area */}
         <div className="flex-none p-4 md:p-6 z-20">
             <div className="max-w-3xl mx-auto">
-                <form onSubmit={handleSubmit} className="relative flex items-center bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 dark:border-zinc-800 focus-within:border-zinc-400 dark:focus-within:border-zinc-600 transition-colors">
+                <form onSubmit={handleSubmit} className="relative flex items-center bg-white dark:bg-zinc-950 rounded-lg border border-zinc-200 dark:border-zinc-800 transition-colors">
                     <input
                         ref={inputRef}
                         type="text"

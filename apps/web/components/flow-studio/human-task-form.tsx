@@ -70,7 +70,7 @@ function StarRating({ value, onChange, disabled }: { value: number; onChange: (v
           onMouseEnter={() => setHoverValue(star)}
           onMouseLeave={() => setHoverValue(null)}
           className={cn(
-            "p-1 rounded-full transition-all hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/50",
+            "p-1 rounded-full transition-all hover:bg-muted focus:outline-none",
             disabled ? "cursor-default opacity-50" : "cursor-pointer"
           )}
         >

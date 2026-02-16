@@ -145,7 +145,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
 
         {/* New Comment Input */}
         <div className="mb-4">
-            <div className="flex flex-col gap-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md px-3 py-2 focus-within:ring-1 focus-within:ring-zinc-900 dark:focus-within:ring-zinc-100 focus-within:border-zinc-900 dark:focus-within:border-zinc-100 transition-all">
+            <div className="flex flex-col gap-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md px-3 py-2 transition-all">
                 <Textarea 
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}

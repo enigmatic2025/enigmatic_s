@@ -200,9 +200,9 @@ export function OrganizationsPanel() {
         )}
       </div>
 
-      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm overflow-hidden">
+      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
         <Table>
-          <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
+          <TableHeader>
             <TableRow>
               <TableHead className="font-semibold text-zinc-500">{t("Organizations.table.name")}</TableHead>
               <TableHead className="font-semibold text-zinc-500">{t("Organizations.table.plan")}</TableHead>
