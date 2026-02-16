@@ -97,7 +97,7 @@ function ParallaxStat({
           className="object-cover transition-transform duration-700"
         />
       </motion.div>
-      <div className="absolute inset-0 bg-black/40 dark:bg-black/70" />
+      <div className="absolute inset-0 bg-black/20 dark:bg-black/70" />
       <div className="relative z-10 flex flex-col gap-4">
         <span className="text-5xl md:text-6xl font-light tracking-tight text-white">
           {stat}
@@ -167,7 +167,7 @@ export function MissionQuote() {
                 className={`object-cover ${industries[currentIndex].objectPosition || "object-center"} ${industries[currentIndex].className || ""}`}
                 priority
               />
-              <div className="absolute inset-0" />
+              <div className="absolute inset-0 dark:bg-black/40" />
               <div className="absolute bottom-0 left-0 p-8 md:p-12 max-w-2xl">
                 <motion.h3
                   initial={{ opacity: 0, y: 20 }}
