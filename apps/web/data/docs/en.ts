@@ -167,10 +167,7 @@ export const enDocs: DocSection[] = [
                     { name: "Traditional Chinese", type: "JSON", desc: "https://enigmatic.works/api/docs/zh-TW" },
                 ]
             },
-            {
-                type: "callout",
-                content: "These endpoints are optimized for machine consumption. They contain the same content as the visual documentation but stripped of UI markup."
-            }
+
         ]
     },
     {
@@ -239,10 +236,7 @@ export const enDocs: DocSection[] = [
                 label: "Bash",
                 code: `curl -X POST https://enigmatic.works/api/flows/YOUR_FLOW_ID/execute \\\n  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "order_id": "ORD-12345",\n    "customer_name": "Acme Corp"\n  }'`
             },
-            {
-                type: "callout",
-                content: "The API Trigger requires authentication. The JWT token comes from Supabase Auth. For unauthenticated external webhooks, use the <a href='#' data-nav='wait-for-event' class='underline underline-offset-2 hover:text-primary'>Wait for Event</a> node instead."
-            }
+
         ]
     },
     {
@@ -310,10 +304,7 @@ export const enDocs: DocSection[] = [
                 id: "ht-output",
                 code: `// The assignee's form responses are available as:\n{{ steps.ReviewTask.output.approval }}    // "approved"\n{{ steps.ReviewTask.output.comments }}    // "Looks good"\n{{ steps.ReviewTask.output.rating }}      // 5`
             },
-            {
-                type: "callout",
-                content: "Human Tasks are the core of human-in-the-loop automation. Use them for approvals, quality checks, data entry, document review, or any step that requires human judgment."
-            }
+
         ]
     },
     {
@@ -396,10 +387,7 @@ export const enDocs: DocSection[] = [
                 id: "wfe-var",
                 code: `{{ steps.WaitForPayment.output.webhook_url }}`
             },
-            {
-                type: "callout",
-                content: "For advanced use cases where multiple flows listen for the same event type, see <a href='#' data-nav='correlation' class='underline underline-offset-2 hover:text-primary'>Correlation Signals</a>."
-            }
+
         ]
     },
     {
@@ -445,10 +433,7 @@ export const enDocs: DocSection[] = [
                 id: "http-output",
                 code: `{{ steps.CallAPI.output.status }}       // 200\n{{ steps.CallAPI.output.data }}         // Parsed JSON response body\n{{ steps.CallAPI.output.data.result }}  // Nested field access`
             },
-            {
-                type: "callout",
-                content: "HTTP Request nodes have a 10-second timeout. For long-running external operations, use Wait for Event with a callback pattern instead."
-            }
+
         ]
     },
     {
@@ -469,10 +454,7 @@ export const enDocs: DocSection[] = [
                     { title: "Matching", desc: "You need to match on business keys (e.g., order_id, customer_id)" },
                 ]
             },
-            {
-                type: "callout",
-                content: "For most integrations, the <a href='#' data-nav='wait-for-event' class='underline underline-offset-2 hover:text-primary'>webhook URL approach</a> is simpler and recommended. Use correlation only when the external system cannot call a specific URL."
-            },
+
             {
                 type: "h3",
                 content: "Endpoint"
@@ -688,10 +670,7 @@ export const enDocs: DocSection[] = [
                 id: "loop-item",
                 code: `{{ steps.MyLoop.item }}           // The current item object\n{{ steps.MyLoop.item.order_id }}  // A field on the current item\n{{ steps.MyLoop.item.total }}     // Another field`
             },
-            {
-                type: "callout",
-                content: "Nodes placed inside the loop body run once per item in the array. This is useful for sending individual notifications, processing records, or calling APIs for each item."
-            }
+
         ]
     },
     {

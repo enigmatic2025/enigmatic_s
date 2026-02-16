@@ -167,10 +167,7 @@ export const zhTwDocs: DocSection[] = [
                     { name: "繁體中文", type: "JSON", desc: "https://enigmatic.works/api/docs/zh-TW" },
                 ]
             },
-            {
-                type: "callout",
-                content: "這些 Endpoint 針對機器讀取進行了最佳化。它們包含與視覺化文件相同的內容，但剔除了 UI 標記。"
-            }
+
         ]
     },
     {
@@ -239,10 +236,7 @@ export const zhTwDocs: DocSection[] = [
                 label: "Bash",
                 code: `curl -X POST https://enigmatic.works/api/flows/YOUR_FLOW_ID/execute \\\n  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "order_id": "ORD-12345",\n    "customer_name": "Acme Corp"\n  }'`
             },
-            {
-                type: "callout",
-                content: "API Trigger 需要驗證。JWT token 來自 Supabase Auth。對於無需驗證的外部 Webhook，請改用 <a href='#' data-nav='wait-for-event' class='underline underline-offset-2 hover:text-primary'>Wait for Event</a> 節點。"
-            }
+
         ]
     },
     {
@@ -310,10 +304,7 @@ export const zhTwDocs: DocSection[] = [
                 id: "ht-output",
                 code: `// 被分配者的表單回應可透過以下方式存取：\n{{ steps.ReviewTask.output.approval }}    // "approved"\n{{ steps.ReviewTask.output.comments }}    // "Looks good"\n{{ steps.ReviewTask.output.rating }}      // 5`
             },
-            {
-                type: "callout",
-                content: "Human Tasks 是「人機協作 (Human-in-the-Loop)」自動化的核心。將其用於審批、品質檢查、資料輸入、文件審閱或任何需要人工判斷的步驟。"
-            }
+
         ]
     },
     {
@@ -396,10 +387,7 @@ export const zhTwDocs: DocSection[] = [
                 id: "wfe-var",
                 code: `{{ steps.WaitForPayment.output.webhook_url }}`
             },
-            {
-                type: "callout",
-                content: "對於多個流程監聽同一類型事件的進階案例，請參閱 <a href='#' data-nav='correlation' class='underline underline-offset-2 hover:text-primary'>Correlation Signals</a>。"
-            }
+
         ]
     },
     {
@@ -445,10 +433,7 @@ export const zhTwDocs: DocSection[] = [
                 id: "http-output",
                 code: `{{ steps.CallAPI.output.status }}       // 200\n{{ steps.CallAPI.output.data }}         // 解析後的 JSON response body\n{{ steps.CallAPI.output.data.result }}  // 存取巢狀欄位`
             },
-            {
-                type: "callout",
-                content: "HTTP Request 節點的逾時 (timeout) 時間為 10 秒。對於執行時間較長的外部操作，請改用 Wait for Event 搭配 Callback 模式。"
-            }
+
         ]
     },
     {
@@ -469,10 +454,7 @@ export const zhTwDocs: DocSection[] = [
                     { title: "匹配", desc: "您需要根據業務鍵值 (如 order_id, customer_id) 進行匹配" },
                 ]
             },
-            {
-                type: "callout",
-                content: "對於大多數整合，<a href='#' data-nav='wait-for-event' class='underline underline-offset-2 hover:text-primary'>Webhook URL</a> 方法更簡單且被推薦使用。僅當外部系統無法呼叫特定 URL 時才使用 Correlation。"
-            },
+
             {
                 type: "h3",
                 content: "Endpoint"
@@ -688,10 +670,7 @@ export const zhTwDocs: DocSection[] = [
                 id: "loop-item",
                 code: `{{ steps.MyLoop.item }}           // 當前項目物件\n{{ steps.MyLoop.item.order_id }}  // 當前項目的一個欄位\n{{ steps.MyLoop.item.total }}     // 另一個欄位`
             },
-            {
-                type: "callout",
-                content: "放置在迴圈主體內部的節點將為陣列中的每個項目執行一次。這對於發送個別通知、處理記錄或為每個項目呼叫 API 非常有用。"
-            }
+
         ]
     },
     {

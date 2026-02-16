@@ -167,10 +167,7 @@ export const viDocs: DocSection[] = [
                     { name: "Phồn thể", type: "JSON", desc: "https://enigmatic.works/api/docs/zh-TW" },
                 ]
             },
-            {
-                type: "callout",
-                content: "Các endpoint này được tối ưu hóa cho máy đọc. Chúng chứa nội dung giống hệt tài liệu trực quan nhưng đã loại bỏ các thẻ UI."
-            }
+
         ]
     },
     {
@@ -239,10 +236,7 @@ export const viDocs: DocSection[] = [
                 label: "Bash",
                 code: `curl -X POST https://enigmatic.works/api/flows/YOUR_FLOW_ID/execute \\\n  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "order_id": "ORD-12345",\n    "customer_name": "Acme Corp"\n  }'`
             },
-            {
-                type: "callout",
-                content: "API Trigger yêu cầu xác thực. JWT token được lấy từ Supabase Auth. Đối với các webhook bên ngoài không cần xác thực, hãy sử dụng node <a href='#' data-nav='wait-for-event' class='underline underline-offset-2 hover:text-primary'>Wait for Event</a>."
-            }
+
         ]
     },
     {
@@ -310,10 +304,7 @@ export const viDocs: DocSection[] = [
                 id: "ht-output",
                 code: `// Phản hồi biểu mẫu của người dùng được truy cập như sau:\n{{ steps.ReviewTask.output.approval }}    // "approved"\n{{ steps.ReviewTask.output.comments }}    // "Looks good"\n{{ steps.ReviewTask.output.rating }}      // 5`
             },
-            {
-                type: "callout",
-                content: "Human Tasks là cốt lõi của tự động hóa &quot;human-in-the-loop&quot;. Hãy sử dụng chúng cho việc phê duyệt, kiểm tra chất lượng, nhập liệu, xem xét tài liệu, hoặc bất kỳ bước nào cần sự đánh giá của con người."
-            }
+
         ]
     },
     {
@@ -396,10 +387,7 @@ export const viDocs: DocSection[] = [
                 id: "wfe-var",
                 code: `{{ steps.WaitForPayment.output.webhook_url }}`
             },
-            {
-                type: "callout",
-                content: "Đối với các trường hợp nâng cao nơi nhiều luồng cùng lắng nghe một loại sự kiện, hãy xem <a href='#' data-nav='correlation' class='underline underline-offset-2 hover:text-primary'>Correlation Signals</a>."
-            }
+
         ]
     },
     {
@@ -445,10 +433,7 @@ export const viDocs: DocSection[] = [
                 id: "http-output",
                 code: `{{ steps.CallAPI.output.status }}       // 200\n{{ steps.CallAPI.output.data }}         // Parsed JSON response body\n{{ steps.CallAPI.output.data.result }}  // Truy cập trường lồng nhau`
             },
-            {
-                type: "callout",
-                content: "HTTP Request node có thời gian chờ (timeout) là 10 giây. Với các thao tác bên ngoài chạy lâu, hãy dùng Wait for Event với mô hình callback."
-            }
+
         ]
     },
     {
@@ -469,10 +454,7 @@ export const viDocs: DocSection[] = [
                     { title: "Khớp dữ liệu", desc: "Bạn cần khớp dựa trên khóa nghiệp vụ (ví dụ: order_id, customer_id)" },
                 ]
             },
-            {
-                type: "callout",
-                content: "Với hầu hết tích hợp, cách tiếp cận <a href='#' data-nav='wait-for-event' class='underline underline-offset-2 hover:text-primary'>webhook URL</a> đơn giản hơn và được khuyến nghị. Chỉ dùng correlation khi hệ thống bên ngoài không thể gọi một URL cụ thể."
-            },
+
             {
                 type: "h3",
                 content: "Endpoint"
@@ -688,10 +670,7 @@ export const viDocs: DocSection[] = [
                 id: "loop-item",
                 code: `{{ steps.MyLoop.item }}           // Đối tượng item hiện tại\n{{ steps.MyLoop.item.order_id }}  // Một trường trên item hiện tại\n{{ steps.MyLoop.item.total }}     // Trường khác`
             },
-            {
-                type: "callout",
-                content: "Các node đặt bên trong thân vòng lặp sẽ chạy một lần cho mỗi item trong mảng. Hữu ích cho việc gửi thông báo riêng lẻ, xử lý bản ghi, hoặc gọi API cho từng item."
-            }
+
         ]
     },
     {
