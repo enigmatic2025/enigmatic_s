@@ -5,10 +5,16 @@
     "description": "我們設計、連結並協調您的核心系統所忽略的流程。",
     "poweredBy": "由現代技術驅動。"
   },
+  "ServicesPage": {
+    "title": "服務",
+    "subtitle": "為您量身打造的專業服務。",
+    "description": "我們協助您設計、建構並優化您的營運流程。"
+  },
   "Navigation": {
     "dashboard": "儀表板",
     "collaborate": "合作",
     "product": "產品",
+    "services": "服務",
     "company": "公司",
     "insights": "洞察",
     "signIn": "登入",
@@ -50,7 +56,8 @@
       "desc2": "的運營帶寬消耗在現場和辦公室之間的手動協調上。",
       "stat3": "30–40%",
       "desc3": "的潛在利潤因被動解決問題而不是戰略規劃而被侵蝕。"
-    }
+    },
+    "aboutUs": "關於我們"
   },
   "Problem": {
     "title": "運營碎片化問題.",
@@ -67,6 +74,7 @@
   "Services": {
     "title": "編排您的運營.",
     "description": "從混亂走向清晰。Enigmatic 將您碎片化的工具和工作流程統一到一個單一、智能的數位生態系統中。",
+    "learnMore": "了解更多",
     "panels": {
       "consulting": "戰略數位轉型",
       "consultingDesc": "我們不只是修補漏洞。我們重新設計您的核心運營工作流程，用適合您獨特基礎設施的可擴展、自動化解決方案取代手動瓶頸。",
@@ -85,6 +93,7 @@
   "Process": {
     "title": "從混亂到清晰.",
     "description": "我們實現運營現代化的三步法。",
+    "learnMore": "了解更多",
     "steps": {
       "step1": "繪製當前狀態",
       "step1Desc": "我們與您的團隊合作, 可視化您當前的運營, 識別瓶頸、效率低下和隱藏的改進機會。",
@@ -106,7 +115,8 @@
       "extendDesc": "添加自定義計算和自動警報。在不更改現有技術堆疊的情況下獲得對數據的完全可視化。",
       "human": "人在回路控制.",
       "humanDesc": "將異常情況無縫路由給操作員。確保關鍵決策得到人工關注，同時保持其餘流程自動駕駛。"
-    }
+    },
+    "seeUseCases": "查看使用案例"
   },
   "Principles": {
     "title": "通用軟體忽略了運營現實.",

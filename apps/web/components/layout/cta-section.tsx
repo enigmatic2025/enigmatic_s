@@ -29,12 +29,10 @@ export function CTASection({
   const contentButtonText = buttonText || t("button");
 
   return (
-    <section className="w-full bg-black text-white py-24 md:py-32 px-6 overflow-hidden relative min-h-[600px] flex items-center">
+    <section className="w-full bg-black text-white py-16 md:py-24 overflow-hidden relative min-h-[600px] flex items-center">
       <div className="w-full max-w-7xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
         <div className="max-w-2xl flex flex-col gap-8 z-10">
           <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-lg tracking-tight leading-[1.15] text-neutral-400"
           >
@@ -67,10 +65,10 @@ export function CTASection({
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
           >
-            <Button size="lg" className="text-base md:text-lg px-6 md:px-8 h-12 md:h-14 sm:w-auto bg-white text-black hover:bg-white" asChild>
+            <Button className="sm:w-auto bg-white text-black hover:bg-white" asChild>
               <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
                 {contentButtonText}
-                <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
+                <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </Button>
           </motion.div>

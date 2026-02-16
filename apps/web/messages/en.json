@@ -5,10 +5,16 @@
     "description": "We design, connect, and orchestrate the processes your core systems ignore.",
     "poweredBy": "Powered by modern technologies."
   },
+  "ServicesPage": {
+    "title": "Services",
+    "subtitle": "Professional services tailored to your needs.",
+    "description": "We help you design, build, and optimize your operations."
+  },
   "Navigation": {
     "dashboard": "Dashboard",
     "collaborate": "Collaborate",
-    "product": "Product",
+    "product": "Products",
+    "services": "Services",
     "company": "Company",
     "insights": "Insights",
     "signIn": "Sign In",
@@ -50,7 +56,8 @@
       "desc2": "of operational bandwidth is consumed by manual coordination between field and office.",
       "stat3": "30–40%",
       "desc3": "of potential margin is eroded by reactive problem-solving instead of strategic planning."
-    }
+    },
+    "aboutUs": "About Us"
   },
   "Problem": {
     "title": "The Operational Fragmentation Problem.",
@@ -67,6 +74,7 @@
   "Services": {
     "title": "Orchestrate Your Operations.",
     "description": "Move from chaos to clarity. Enigmatic unifies your fragmented tools and workflows into a single, intelligent digital ecosystem.",
+    "learnMore": "Learn More",
     "panels": {
       "consulting": "Strategic Digital Transformation",
       "consultingDesc": "We don't just patch holes. We re-engineer your core operational workflows, replacing manual bottlenecks with scalable, automated solutions tailored to your unique infrastructure.",
@@ -85,6 +93,7 @@
   "Process": {
     "title": "From Chaos to Clarity.",
     "description": "Our three-step approach to modernizing your operations.",
+    "learnMore": "Learn More",
     "steps": {
       "step1": "Map Current State",
       "step1Desc": "We partner with your team to visualize your current operations, identifying bottlenecks, inefficiencies, and hidden opportunities for improvement.",
@@ -106,7 +115,8 @@
       "extendDesc": "Add custom calculations and automated alerts. Get full visibility into your data without changing your existing tech stack.",
       "human": "Human-in-the-loop control.",
       "humanDesc": "Seamlessly route exceptions to operators. Ensure critical decisions get human attention while keeping the rest of your process running on autopilot."
-    }
+    },
+    "seeUseCases": "See Use Cases"
   },
   "Principles": {
     "title": "Generic software ignores operational reality.",

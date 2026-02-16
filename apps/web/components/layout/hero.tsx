@@ -19,7 +19,7 @@ export function Hero() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="inline-block text-4xl font-light tracking-tight sm:text-6xl md:text-7xl lg:text-8xl bg-linear-to-r from-blue-500 via-violet-500 to-pink-500 bg-clip-text text-transparent px-1 pb-4 -mb-4">
+          <div className="inline-block text-3xl font-light tracking-tight sm:text-5xl md:text-6xl lg:text-7xl bg-linear-to-r from-blue-500 via-violet-500 to-pink-500 bg-clip-text text-transparent px-1 pb-4 -mb-4">
             {t("title")}
           </div>
         </motion.div>
@@ -30,7 +30,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="text-3xl font-light tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
             {t("subtitle")}
           </h1>
         </motion.div>

@@ -31,9 +31,9 @@ export function ProblemSection() {
   ];
 
   return (
-    <section className="w-full min-h-dvh flex items-center justify-center py-16 md:py-24 px-4 md:px-6 bg-background">
+    <section className="w-full min-h-full flex items-center justify-center py-12 md:py-20 bg-background">
       <div className="w-full max-w-7xl mx-auto px-6 text-foreground">
-        <div className="w-full">
+        <div className="w-full px-0">
           <div className="mb-12 md:mb-24">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
