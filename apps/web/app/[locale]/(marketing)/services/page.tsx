@@ -1,10 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { motion, useScroll, useTransform, useSpring, easeOut } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, easeOut, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { CTASection } from "@/components/layout/cta-section";
 
 
 const timelineVariants = {
@@ -129,11 +131,74 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <section className="w-full pb-32 px-4 md:px-6">
+        <div className="max-w-3xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl md:text-4xl font-normal tracking-tight mb-12 text-center"
+          >
+            {t("faq.title")}
+          </motion.h2>
+          <div className="flex flex-col gap-4">
+            {(t.raw("faq.items") as Array<{ question: string; answer: string }>).map((item, index) => (
+              <FAQItem key={index} question={item.question} answer={item.answer} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <CTASection
+        title={t("cta.title")}
+        description={t("cta.description")}
+      />
     </main>
   );
 }
 
-function TimelineItem({ 
+function FAQItem({ question, answer }: { question: string, answer: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className="border-b border-border pb-4"
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center justify-between py-4 text-left hover:text-primary transition-colors"
+      >
+        <span className="text-lg font-medium">{question}</span>
+        {isOpen ? (
+          <ChevronUp className="h-5 w-5 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="h-5 w-5 text-muted-foreground" />
+        )}
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <p className="pb-4 text-muted-foreground leading-relaxed">
+              {answer}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function TimelineItem({  
   index, 
   title, 
   description,
@@ -221,9 +286,7 @@ function TimelineItem({
 
       {/* Center Point */}
       <div className="absolute left-5 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
-        <div className="w-4 h-4 rounded-full bg-background border-2 border-violet-500 z-10 relative">
-          <div className="absolute inset-0 rounded-full bg-violet-500/20 animate-ping" />
-        </div>
+        <div className="w-4 h-4 rounded-full bg-background border-2 border-violet-500 z-10 relative" />
       </div>
 
       {/* Empty Side (Spacer for Desktop) */}
