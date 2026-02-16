@@ -146,7 +146,7 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
           <NavItem
             href={`/nodal/${currentOrg?.slug}/dashboard/organization`}
             icon={Users}
-            label={t("items.organization")}
+            label={t("items.peopleAndTeams")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/organization`)}
           />

@@ -163,8 +163,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 	orgHandler := handlers.NewOrganizationHandler()
 	mux.Handle("GET /api/orgs/lookup", middleware.Auth(http.HandlerFunc(orgHandler.GetOrgBySlug)))
 	mux.Handle("GET /api/orgs/{orgId}/members", middleware.Auth(http.HandlerFunc(orgHandler.GetMembers)))
+	mux.Handle("POST /api/orgs/{orgId}/members", middleware.Auth(http.HandlerFunc(orgHandler.CreateMember)))
+	mux.Handle("PATCH /api/orgs/{orgId}/members/{userId}", middleware.Auth(http.HandlerFunc(orgHandler.UpdateMember)))
+	mux.Handle("DELETE /api/orgs/{orgId}/members/{userId}", middleware.Auth(http.HandlerFunc(orgHandler.RemoveMember)))
 	mux.Handle("GET /api/orgs/{orgId}/teams", middleware.Auth(http.HandlerFunc(orgHandler.GetTeams)))
 	mux.Handle("POST /api/orgs/{orgId}/teams", middleware.Auth(http.HandlerFunc(orgHandler.CreateTeam)))
+	mux.Handle("PATCH /api/orgs/{orgId}/teams/{teamId}", middleware.Auth(http.HandlerFunc(orgHandler.UpdateTeam)))
+	mux.Handle("DELETE /api/orgs/{orgId}/teams/{teamId}", middleware.Auth(http.HandlerFunc(orgHandler.DeleteTeam)))
+	mux.Handle("GET /api/orgs/{orgId}/teams/{teamId}/members", middleware.Auth(http.HandlerFunc(orgHandler.GetTeamMembers)))
+	mux.Handle("POST /api/orgs/{orgId}/teams/{teamId}/members", middleware.Auth(http.HandlerFunc(orgHandler.AddTeamMember)))
+	mux.Handle("DELETE /api/orgs/{orgId}/teams/{teamId}/members/{userId}", middleware.Auth(http.HandlerFunc(orgHandler.RemoveTeamMember)))
+	mux.Handle("PATCH /api/orgs/{orgId}/teams/{teamId}/members/{userId}", middleware.Auth(http.HandlerFunc(orgHandler.UpdateTeamMemberRole)))
 	mux.Handle("GET /api/orgs/{orgId}/assignees", middleware.Auth(http.HandlerFunc(orgHandler.GetAssignees)))
 
 	// Activity Feed Routes
