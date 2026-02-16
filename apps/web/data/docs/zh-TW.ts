@@ -585,29 +585,29 @@ export const zhTwDocs: DocSection[] = [
             },
             {
                 type: "prose",
-                content: "定義一個條件：左值、運算符和右值。所有值都支援 expressions。"
-            },
-            {
-                type: "code",
-                id: "cond-example",
-                label: "Example",
-                code: `Left:      {{ steps.trigger.data.amount }}\nOperator:  >\nRight:     1000`
-            },
-            {
-                type: "h3",
-                content: "運算符"
+                content: "Condition 節點使用視覺化建構器來定義邏輯。它使用運算符比較兩個值。"
             },
             {
                 type: "paramTable",
                 rows: [
-                    { name: "==", type: "equals", desc: "值相等 (字串或數字)。" },
-                    { name: "!=", type: "not equals", desc: "值不相等。" },
-                    { name: ">", type: "greater than", desc: "左大於右 (數字)。" },
-                    { name: "<", type: "less than", desc: "左小於右 (數字)。" },
-                    { name: ">=", type: "greater or equal", desc: "左大於或等於右。" },
-                    { name: "<=", type: "less or equal", desc: "左小於或等於右。" },
-                    { name: "contains", type: "substring", desc: "左字串包含右字串。" },
-                    { name: "matches", type: "regex", desc: "左字串匹配右正則表達式。" },
+                    { name: "值 A", type: "expression", desc: " 比對的左側 (例如：{{ steps.trigger.data.amount }})。" },
+                    { name: "運算符", type: "select", desc: " 應用的邏輯 (例如：等於，大於)。" },
+                    { name: "值 B", type: "expression", desc: " 比對的右側 (例如：100)。" },
+                ]
+            },
+            {
+                type: "h3",
+                content: "可用運算符"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "==", type: "equals", desc: "檢查值是否相等。" },
+                    { name: "!=", type: "not equals", desc: "檢查值是否不相等。" },
+                    { name: ">", type: "greater than", desc: "如果值 A 嚴格大於值 B 則為真。" },
+                    { name: "<", type: "less than", desc: "如果值 A 嚴格小於值 B 則為真。" },
+                    { name: "contains", type: "includes", desc: "如果值 A (字串/陣列) 包含值 B 則為真。" },
+                    { name: "matches", type: "regex", desc: "如果值 A 匹配值 B 中的正則表達式則為真。" },
                 ]
             },
             {
@@ -616,12 +616,7 @@ export const zhTwDocs: DocSection[] = [
             },
             {
                 type: "prose",
-                content: "Condition 節點有兩條輸出路徑：<strong>True</strong> 和 <strong>False</strong>。將不同的節點連接到每條路徑以建立分支邏輯。檢查結果也可作為輸出存取："
-            },
-            {
-                type: "code",
-                id: "cond-output",
-                code: `{{ steps.CheckAmount.output.result }}  // true 或 false`
+                content: "流程分為兩條路徑：<strong>True</strong> 和 <strong>False</strong>。您可以將不同的動作連接到每條路徑。"
             }
         ]
     },
@@ -707,13 +702,34 @@ export const zhTwDocs: DocSection[] = [
         blocks: [
             {
                 type: "prose",
-                content: "過濾對於處理數據子集非常重要，例如僅選擇活躍使用者或高價值訂單。"
+                content: "使用 Filter 節點將列表縮減為僅包含符合您標準的項目。"
             },
             {
-                type: "code",
-                id: "filter-example",
-                label: "Example",
-                code: `Items: {{ steps.GetUsers.output.data }}\nCondition: item.status == "active"`
+                type: "h3",
+                content: "配置"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "陣列變數", type: "expression", desc: "要過濾的列表 (例如：{{ steps.GetUsers.data }})。" },
+                    { name: "匹配類型", type: "enum", desc: "ALL (AND) 要求所有條件都必須為真。ANY (OR) 要求至少一個條件為真。" },
+                ]
+            },
+            {
+                type: "h3",
+                content: "條件建構器"
+            },
+            {
+                type: "prose",
+                content: "新增一個或多個條件以定義要保留的項目。對於每個條件，請指定："
+            },
+            {
+                type: "stepList",
+                steps: [
+                    { title: "項目欄位", desc: "要檢查的項目屬性 (例如 'status' 或 'price')。" },
+                    { title: "運算符", desc: "邏輯 (等於，包含，大於 等)。" },
+                    { title: "值", desc: "要比較的值。" },
+                ]
             }
         ]
     },
@@ -725,13 +741,29 @@ export const zhTwDocs: DocSection[] = [
         blocks: [
             {
                 type: "prose",
-                content: "使用 Map 在發送至 API 或其他系統之前重塑數據。"
+                content: "使用 Map 轉換或重塑數據。它作為一個視覺化映射器，允許您精確定義輸出結構的外觀。"
             },
             {
-                type: "code",
-                id: "map-example",
-                label: "Example",
-                code: `Items: {{ steps.GetUsers.output.data }}\nTransform: { "id": item.id, "fullName": item.first + " " + item.last }`
+                type: "h3",
+                content: "配置"
+            },
+            {
+                type: "stepList",
+                steps: [
+                    { title: "輸入陣列 (可選)", desc: "如果提供，Map 操作將為列表中的每個項目執行。如果留空，則對單個物件執行一次。" },
+                    { title: "映射欄位", desc: "新增欄位以定義輸出物件。「Key」是您的新屬性名稱，「Value」是數據來源。" },
+                ]
+            },
+            {
+                type: "h3",
+                content: "範例"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "鍵 (目標)", type: "string", desc: "full_name" },
+                    { name: "值 (來源)", type: "expression", desc: "{{ item.first_name }} {{ item.last_name }}" },
+                ]
             }
         ]
     },

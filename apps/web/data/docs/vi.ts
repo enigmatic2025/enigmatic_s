@@ -585,29 +585,29 @@ export const viDocs: DocSection[] = [
             },
             {
                 type: "prose",
-                content: "Định nghĩa điều kiện với giá trị trái, toán tử, và giá trị phải. Tất cả đều hỗ trợ expressions."
-            },
-            {
-                type: "code",
-                id: "cond-example",
-                label: "Example",
-                code: `Left:      {{ steps.trigger.data.amount }}\nOperator:  >\nRight:     1000`
-            },
-            {
-                type: "h3",
-                content: "Toán tử"
+                content: "Node Condition sử dụng trình tạo trực quan để định nghĩa logic. Nó so sánh hai giá trị bằng một toán tử."
             },
             {
                 type: "paramTable",
                 rows: [
-                    { name: "==", type: "equals", desc: "Giá trị bằng nhau (chuỗi hoặc số)." },
-                    { name: "!=", type: "not equals", desc: "Giá trị không bằng nhau." },
-                    { name: ">", type: "greater than", desc: "Trái lớn hơn phải (số)." },
-                    { name: "<", type: "less than", desc: "Trái nhỏ hơn phải (số)." },
-                    { name: ">=", type: "greater or equal", desc: "Trái lớn hơn hoặc bằng phải." },
-                    { name: "<=", type: "less or equal", desc: "Trái nhỏ hơn hoặc bằng phải." },
-                    { name: "contains", type: "substring", desc: "Chuỗi trái chứa chuỗi phải." },
-                    { name: "matches", type: "regex", desc: "Chuỗi trái khớp mẫu regex phải." },
+                    { name: "Giá trị A", type: "expression", desc: " Vế trái của phép so sánh (ví dụ: {{ steps.trigger.data.amount }})." },
+                    { name: "Toán tử", type: "select", desc: " Logic áp dụng (ví dụ: Bằng, Lớn hơn)." },
+                    { name: "Giá trị B", type: "expression", desc: " Vế phải để so sánh (ví dụ: 100)." },
+                ]
+            },
+            {
+                type: "h3",
+                content: "Các toán tử có sẵn"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "==", type: "equals", desc: "Kiểm tra nếu giá trị bằng nhau." },
+                    { name: "!=", type: "not equals", desc: "Kiểm tra nếu giá trị khác nhau." },
+                    { name: ">", type: "greater than", desc: "Đúng nếu Giá trị A lớn hơn Giá trị B." },
+                    { name: "<", type: "less than", desc: "Đúng nếu Giá trị A nhỏ hơn Giá trị B." },
+                    { name: "contains", type: "includes", desc: "Đúng nếu Giá trị A (chuỗi/mảng) chứa Giá trị B." },
+                    { name: "matches", type: "regex", desc: "Đúng nếu Giá trị A khớp mẫu Regex trong Giá trị B." },
                 ]
             },
             {
@@ -616,12 +616,7 @@ export const viDocs: DocSection[] = [
             },
             {
                 type: "prose",
-                content: "Node Condition có hai đường ra: <strong>True</strong> và <strong>False</strong>. Nối các node khác nhau vào mỗi đường để tạo logic rẽ nhánh. Kết quả kiểm tra cũng có thể truy cập được:"
-            },
-            {
-                type: "code",
-                id: "cond-output",
-                code: `{{ steps.CheckAmount.output.result }}  // true hoặc false`
+                content: "Luồng chia thành hai nhánh: <strong>True</strong> và <strong>False</strong>. Bạn có thể nối các hành động khác nhau vào mỗi nhánh."
             }
         ]
     },
@@ -707,13 +702,34 @@ export const viDocs: DocSection[] = [
         blocks: [
             {
                 type: "prose",
-                content: "Filter rất cần thiết để xử lý tập con dữ liệu, ví dụ như chọn ra người dùng đang hoạt động (active) hoặc đơn hàng giá trị cao."
+                content: "Sử dụng node Filter để lọc danh sách các mục và chỉ giữ lại những mục khớp với tiêu chí của bạn."
             },
             {
-                type: "code",
-                id: "filter-example",
-                label: "Example",
-                code: `Items: {{ steps.GetUsers.output.data }}\nCondition: item.status == "active"`
+                type: "h3",
+                content: "Cấu hình"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "Mảng đầu vào", type: "expression", desc: "Danh sách cần lọc (ví dụ: {{ steps.GetUsers.data }})." },
+                    { name: "Loại khớp", type: "enum", desc: "ALL (AND) yêu cầu tất cả điều kiện phải đúng. ANY (OR) yêu cầu ít nhất một điều kiện đúng." },
+                ]
+            },
+            {
+                type: "h3",
+                content: "Trình tạo điều kiện"
+            },
+            {
+                type: "prose",
+                content: "Thêm một hoặc nhiều điều kiện để xác định mục nào cần giữ lại. Với mỗi điều kiện, hãy chỉ định:"
+            },
+            {
+                type: "stepList",
+                steps: [
+                    { title: "Trường Item", desc: "Thuộc tính trên item để kiểm tra (ví dụ: 'status' hoặc 'price')." },
+                    { title: "Toán tử", desc: "Logic kiểm tra (Bằng, Chứa, Lớn hơn, v.v.)." },
+                    { title: "Giá trị", desc: "Giá trị để so sánh." },
+                ]
             }
         ]
     },
@@ -725,13 +741,29 @@ export const viDocs: DocSection[] = [
         blocks: [
             {
                 type: "prose",
-                content: "Sử dụng Map để định hình lại dữ liệu trước khi gửi tới API hoặc hệ thống khác."
+                content: "Sử dụng Map để chuyển đổi hoặc định hình lại dữ liệu. Nó hoạt động như một trình ánh xạ trực quan, cho phép bạn định nghĩa chính xác cấu trúc đầu ra."
             },
             {
-                type: "code",
-                id: "map-example",
-                label: "Example",
-                code: `Items: {{ steps.GetUsers.output.data }}\nTransform: { "id": item.id, "fullName": item.first + " " + item.last }`
+                type: "h3",
+                content: "Cấu hình"
+            },
+            {
+                type: "stepList",
+                steps: [
+                    { title: "Mảng đầu vào (Tùy chọn)", desc: "Nếu được cung cấp, thao tác Map chạy cho mỗi mục trong danh sách này. Nếu để trống, nó chạy một lần cho một đối tượng đơn lẻ." },
+                    { title: "Các trường ánh xạ", desc: "Thêm các trường để định nghĩa đối tượng đầu ra. 'Key' là tên thuộc tính mới, và 'Value' là nguồn dữ liệu." },
+                ]
+            },
+            {
+                type: "h3",
+                content: "Ví dụ"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "Khóa (Đích)", type: "string", desc: "full_name" },
+                    { name: "Giá trị (Nguồn)", type: "expression", desc: "{{ item.first_name }} {{ item.last_name }}" },
+                ]
             }
         ]
     },

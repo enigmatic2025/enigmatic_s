@@ -585,29 +585,29 @@ export const enDocs: DocSection[] = [
             },
             {
                 type: "prose",
-                content: "Define a condition with a left value, an operator, and a right value. All values support expressions."
-            },
-            {
-                type: "code",
-                id: "cond-example",
-                label: "Example",
-                code: `Left:      {{ steps.trigger.data.amount }}\nOperator:  >\nRight:     1000`
-            },
-            {
-                type: "h3",
-                content: "Operators"
+                content: "The Condition node uses a visual builder to define logic. It compares two values using an operator."
             },
             {
                 type: "paramTable",
                 rows: [
-                    { name: "==", type: "equals", desc: "Values are equal (strings or numbers)." },
-                    { name: "!=", type: "not equals", desc: "Values are not equal." },
-                    { name: ">", type: "greater than", desc: "Left is greater than right (numeric)." },
-                    { name: "<", type: "less than", desc: "Left is less than right (numeric)." },
-                    { name: ">=", type: "greater or equal", desc: "Left is greater than or equal to right." },
-                    { name: "<=", type: "less or equal", desc: "Left is less than or equal to right." },
-                    { name: "contains", type: "substring", desc: "Left string contains right string." },
-                    { name: "matches", type: "regex", desc: "Left string matches the right regex pattern." },
+                    { name: "Value A", type: "expression", desc: " The left side of the comparison (e.g., {{ steps.trigger.data.amount }})." },
+                    { name: "Operator", type: "select", desc: " The logic to apply (e.g., Is Equal To, Is Greater Than)." },
+                    { name: "Value B", type: "expression", desc: " The right side to compare against (e.g., 100)." },
+                ]
+            },
+            {
+                type: "h3",
+                content: "Available Operators"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "==", type: "equals", desc: "Check if values are identical." },
+                    { name: "!=", type: "not equals", desc: "Check if values are different." },
+                    { name: ">", type: "greater than", desc: "True if Value A is strictly greater than Value B." },
+                    { name: "<", type: "less than", desc: "True if Value A is strictly less than Value B." },
+                    { name: "contains", type: "includes", desc: "True if Value A (string/array) contains Value B." },
+                    { name: "matches", type: "regex", desc: "True if Value A matches the Regular Expression in Value B." },
                 ]
             },
             {
@@ -616,12 +616,7 @@ export const enDocs: DocSection[] = [
             },
             {
                 type: "prose",
-                content: "The Condition node has two output paths: <strong>True</strong> and <strong>False</strong>. Connect different nodes to each path to create branching logic. The result is also available as output:"
-            },
-            {
-                type: "code",
-                id: "cond-output",
-                code: `{{ steps.CheckAmount.output.result }}  // true or false`
+                content: "The flow splits into two paths: <strong>True</strong> and <strong>False</strong>. You can connect different actions to each path."
             }
         ]
     },
@@ -707,13 +702,34 @@ export const enDocs: DocSection[] = [
         blocks: [
             {
                 type: "prose",
-                content: "Filters are essential for processing subsets of data, like selecting only active users or high-value orders."
+                content: "Use the Filter node to reduce a list of items to only those that match your criteria."
             },
             {
-                type: "code",
-                id: "filter-example",
-                label: "Example",
-                code: `Items: {{ steps.GetUsers.output.data }}\nCondition: item.status == "active"`
+                type: "h3",
+                content: "Configuration"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "Array Variable", type: "expression", desc: "The list to filter (e.g. {{ steps.GetUsers.data }})." },
+                    { name: "Match Type", type: "enum", desc: "ALL (AND) requires every condition to be true. ANY (OR) requires at least one." },
+                ]
+            },
+            {
+                type: "h3",
+                content: "Condition Builder"
+            },
+            {
+                type: "prose",
+                content: "Add one or more conditions to define which items to keep. For each condition, specify:"
+            },
+            {
+                type: "stepList",
+                steps: [
+                    { title: "Item Field", desc: "The property on the item to check (e.g. 'status' or 'price')." },
+                    { title: "Operator", desc: "The logic (Equals, Contains, Greater Than, etc.)." },
+                    { title: "Value", desc: "The value to compare against." },
+                ]
             }
         ]
     },
@@ -725,13 +741,29 @@ export const enDocs: DocSection[] = [
         blocks: [
             {
                 type: "prose",
-                content: "Use Map to reshape data before sending it to an API or another system."
+                content: "Use Map to transform or reshape data. It acts as a visual mapper, allowing you to define exactly what the output structure should look like."
             },
             {
-                type: "code",
-                id: "map-example",
-                label: "Example",
-                code: `Items: {{ steps.GetUsers.output.data }}\nTransform: { "id": item.id, "fullName": item.first + " " + item.last }`
+                type: "h3",
+                content: "Configuration"
+            },
+            {
+                type: "stepList",
+                steps: [
+                    { title: "Input Array (Optional)", desc: "If provided, the Map operation runs for every item in this list. If left empty, it runs once for a single object." },
+                    { title: "Mapping Fields", desc: "Add fields to define the output object. The 'Key' is your new property name, and the 'Value' is the data source." },
+                ]
+            },
+            {
+                type: "h3",
+                content: "Example"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "Key (Target)", type: "string", desc: "full_name" },
+                    { name: "Value (Source)", type: "expression", desc: "{{ item.first_name }} {{ item.last_name }}" },
+                ]
             }
         ]
     },
