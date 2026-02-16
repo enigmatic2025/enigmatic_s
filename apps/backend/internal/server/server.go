@@ -133,8 +133,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Automation Routes
 	if s.temporalClient != nil {
 		automationHandler := handlers.NewAutomationHandler(s.temporalClient)
-		mux.Handle("POST /api/automation/resume", http.HandlerFunc(automationHandler.ResumeAutomationHandler))
-		mux.Handle("POST /api/automation/signal", http.HandlerFunc(automationHandler.SignalAutomationHandler))
+		// Public: webhook endpoint (token IS authentication)
+		mux.Handle("POST /api/webhooks/{token}", http.HandlerFunc(automationHandler.WebhookHandler))
+		// Internal: require auth for signal/resume (these use internal IDs)
+		mux.Handle("POST /api/automation/resume", middleware.Auth(http.HandlerFunc(automationHandler.ResumeAutomationHandler)))
+		mux.Handle("POST /api/automation/signal", middleware.Auth(http.HandlerFunc(automationHandler.SignalAutomationHandler)))
 	}
 
 	// Task Routes

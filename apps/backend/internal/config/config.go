@@ -12,7 +12,8 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Port string
+	Port      string
+	PublicURL string // Public-facing URL for constructing webhook URLs
 }
 
 type DatabaseConfig struct {
@@ -32,7 +33,8 @@ type AuthConfig struct {
 func Load() *Config {
 	return &Config{
 		Server: ServerConfig{
-			Port: getEnv("PORT", "8000"),
+			Port:      getEnv("PORT", "8000"),
+			PublicURL: getEnv("PUBLIC_URL", ""),
 		},
 		Database: DatabaseConfig{
 			URL: getEnv("DATABASE_URL", ""),

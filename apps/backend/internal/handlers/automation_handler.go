@@ -209,3 +209,70 @@ func (h *AutomationHandler) resumeByActionID(w http.ResponseWriter, r *http.Requ
 
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
+
+// WebhookHandler handles incoming webhooks via unique token
+// POST /api/webhooks/{token}
+// External systems call this URL — no auth needed, the token IS the authentication.
+func (h *AutomationHandler) WebhookHandler(w http.ResponseWriter, r *http.Request) {
+	token := r.PathValue("token")
+	if token == "" {
+		http.Error(w, "Token required", http.StatusBadRequest)
+		return
+	}
+
+	// Parse request body as output data
+	var body map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		// Empty body is fine — not all webhooks send data
+		body = make(map[string]interface{})
+	}
+
+	// Lookup subscription by webhook token
+	dbClient := database.GetClient()
+	type WebhookSub struct {
+		ID         string `json:"id"`
+		WorkflowID string `json:"workflow_id"`
+		RunID      string `json:"run_id"`
+		StepID     string `json:"step_id"`
+	}
+	var subs []WebhookSub
+
+	err := dbClient.DB.From("automation_subscriptions").
+		Select("id, workflow_id, run_id, step_id").
+		Eq("webhook_token", token).
+		Eq("status", "active").
+		Execute(&subs)
+
+	if err != nil || len(subs) == 0 {
+		http.Error(w, "Webhook not found or already used", http.StatusNotFound)
+		return
+	}
+
+	sub := subs[0]
+	actionID := fmt.Sprintf("%s:%s", sub.RunID, sub.StepID)
+	signalName := "AutomationSignal-" + actionID
+
+	signalArg := map[string]interface{}{
+		"action_id": actionID,
+		"output":    body,
+	}
+
+	err = h.TemporalClient.SignalWorkflow(r.Context(), sub.WorkflowID, sub.RunID, signalName, signalArg)
+	if err != nil {
+		fmt.Printf("ERROR: Webhook signal failed for token %s: %v\n", token, err)
+		http.Error(w, "Failed to resume workflow", http.StatusInternalServerError)
+		return
+	}
+
+	// Mark as completed
+	dbClient.DB.From("automation_subscriptions").
+		Update(map[string]any{"status": "completed"}).
+		Eq("id", sub.ID).
+		Execute(nil)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "ok",
+		"message": "Workflow resumed successfully",
+	})
+}
