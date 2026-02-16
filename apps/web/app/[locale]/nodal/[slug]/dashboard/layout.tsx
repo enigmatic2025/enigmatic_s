@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { supabase } from "@/lib/supabase";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { TopBar } from "@/components/dashboard/top-bar";
-import { WaveLoader } from "@/components/ui/wave-loader";
+import LoadingPage from "@/components/loading-page";
 
 export default function DashboardLayout({
   children,
@@ -78,11 +78,7 @@ export default function DashboardLayout({
 
   // Don't render dashboard until auth is confirmed and org is resolved
   if (!authReady || !currentOrg) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <WaveLoader size="md" barClassName="bg-muted-foreground" />
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   return (

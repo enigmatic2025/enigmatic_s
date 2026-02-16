@@ -25,9 +25,6 @@ export function LanguageSwitcher() {
     vi: "Tiếng Việt",
     "zh-TW": "繁體中文",
     es: "Español",
-    de: "Deutsch",
-    ja: "日本語",
-    pt: "Português",
   };
 
   return (
@@ -50,15 +47,6 @@ export function LanguageSwitcher() {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleLocaleChange("es")}>
           Español
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLocaleChange("de")}>
-          Deutsch
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLocaleChange("ja")}>
-          日本語
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLocaleChange("pt")}>
-          Português
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
