@@ -5,9 +5,13 @@ import { Link } from "@/navigation";
 import Image from "next/image";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { CTASection } from "@/components/layout/cta-section";
-import { insightPosts } from "@/lib/insights-data";
+import { getInsightPosts } from "@/lib/insights-data";
+import { useLocale } from "next-intl";
 
 export default function InsightsPage() {
+  const locale = useLocale();
+  const insightPosts = getInsightPosts(locale);
+
   return (
     <main className="flex min-h-screen flex-col">
       {/* Hero Section */}

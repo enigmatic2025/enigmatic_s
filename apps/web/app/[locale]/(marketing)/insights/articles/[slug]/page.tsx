@@ -5,13 +5,15 @@ import { Link } from "@/navigation";
 import Image from "next/image";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
-import { insightPosts } from "@/lib/insights-data";
+import { getInsightPosts } from "@/lib/insights-data";
 import { CTASection } from "@/components/layout/cta-section";
+import { useLocale } from "next-intl";
 
 export default function InsightPostPage() {
+  const locale = useLocale();
   const params = useParams();
   const slug = params.slug as string;
-  const post = insightPosts.find((p) => p.slug === slug);
+  const post = getInsightPosts(locale).find((p) => p.slug === slug);
 
   if (!post) {
     return notFound();
