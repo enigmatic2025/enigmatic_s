@@ -3,7 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Map, PenTool, Cpu } from "lucide-react";
+import { Map, PenTool, Cpu, ArrowRight } from "lucide-react";
+import { Link } from "@/navigation";
 
 export function ProcessSection() {
   const t = useTranslations("Process");
@@ -32,7 +33,7 @@ export function ProcessSection() {
   return (
     <section className="w-full min-h-full bg-background flex flex-col items-center justify-center">
       <div className="max-w-7xl mx-auto px-6 w-full mb-8 md:mb-10">
-        <div className="w-full px-0">
+        <div className="w-full px-0 flex flex-col items-start gap-8">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -45,6 +46,14 @@ export function ProcessSection() {
               {t("description")}
             </span>
           </motion.h2>
+
+          <Link
+            href="/services"
+            className="group inline-flex items-center gap-2 text-violet-500 text-lg"
+          >
+            <span>{t("learnMore")}</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
 

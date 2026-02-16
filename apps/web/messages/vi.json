@@ -5,10 +5,16 @@
     "description": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua.",
     "poweredBy": "Được vận hành bởi các công nghệ hiện đại."
   },
+  "ServicesPage": {
+    "title": "Dịch vụ",
+    "subtitle": "Các dịch vụ chuyên nghiệp phù hợp với nhu cầu của bạn.",
+    "description": "Chúng tôi giúp bạn thiết kế, xây dựng và tối ưu hóa quy trình hoạt động."
+  },
   "Navigation": {
     "dashboard": "Bảng điều khiển",
     "collaborate": "Hợp tác",
     "product": "Sản phẩm",
+    "services": "Dịch vụ",
     "company": "Công ty",
     "insights": "Thông tin chi tiết",
     "signIn": "Đăng nhập",
@@ -68,6 +74,7 @@
   "Services": {
     "title": "Điều phối Hoạt động của Bạn.",
     "description": "Chuyển từ hỗn loạn sang rõ ràng. Enigmatic hợp nhất các công cụ và quy trình làm việc phân mảnh của bạn thành một hệ sinh thái kỹ thuật số thông minh duy nhất.",
+    "learnMore": "Tìm hiểu thêm",
     "panels": {
       "consulting": "Chuyển đổi Kỹ thuật số Chiến lược",
       "consultingDesc": "Chúng tôi không chỉ vá lỗi. Chúng tôi tái thiết kế các quy trình vận hành cốt lõi của bạn, thay thế các nút thắt thủ công bằng các giải pháp tự động, có thể mở rộng phù hợp với cơ sở hạ tầng độc đáo của bạn.",
@@ -86,6 +93,7 @@
   "Process": {
     "title": "Từ Hỗn loạn đến Rõ ràng.",
     "description": "Tiếp cận ba bước để hiện đại hóa hoạt động của bạn.",
+    "learnMore": "Tìm hiểu thêm",
     "steps": {
       "step1": "Lập bản đồ Hiện trạng",
       "step1Desc": "Chúng tôi làm việc cùng đội ngũ của bạn để hình dung các hoạt động hiện tại, xác định các nút thắt, sự kém hiệu quả và các cơ hội cải tiến tiềm ẩn.",

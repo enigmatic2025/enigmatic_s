@@ -179,6 +179,14 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
+              <NavigationMenuLink asChild className="px-4">
+                <Link
+                  className="rounded-md p-2 text-sm hover:bg-accent"
+                  href="/services"
+                >
+                  {t("services")}
+                </Link>
+              </NavigationMenuLink>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent cursor-pointer">
                   {t("company")}
@@ -266,6 +274,13 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 {t(link.titleKey)}
               </Link>
             ))}
+            <Link
+              href="/services"
+              className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2"
+              onClick={() => setOpen(false)}
+            >
+              {t("services")}
+            </Link>
             <span className="text-sm font-medium mt-2">{t("company")}</span>
             {companyLinks.map((link) => (
               <Link

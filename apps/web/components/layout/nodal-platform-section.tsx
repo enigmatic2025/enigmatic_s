@@ -28,7 +28,7 @@ export function NodalPlatformSection() {
         </div>
 
         {/* Section Header */}
-        <div className="mb-12 md:mb-24 flex flex-col items-start gap-4 px-0">
+        <div className="mb-12 md:mb-24 flex flex-col items-start gap-8 px-0">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +44,7 @@ export function NodalPlatformSection() {
 
           <Link 
             href="/product/use-cases" 
-            className="group inline-flex items-center gap-2 text-violet-500 text-lg mt-2"
+            className="group inline-flex items-center gap-2 text-violet-500 text-lg"
           >
             <span>{t("seeUseCases")}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
