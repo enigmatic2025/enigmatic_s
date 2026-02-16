@@ -26,6 +26,27 @@ type Subscription struct {
 }
 
 func (e *AutomationNodeExecutor) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
+	// 0. Check for mock data (test mode) — skip real webhook creation
+	if mockDataMap, ok := input.InputData["__mock_data"].(map[string]interface{}); ok {
+		if nodeMock, ok := mockDataMap[input.StepID].(map[string]interface{}); ok {
+			if payload, ok := nodeMock["payload"].(map[string]interface{}); ok {
+				fmt.Printf("[TEST MODE] Automation node '%s' auto-resumed with mock payload\n", input.StepID)
+				output := map[string]interface{}{
+					"webhook_url": "mock://test-mode",
+					"status":      "completed",
+					"message":     "Auto-resumed with mock data (test mode)",
+				}
+				for k, v := range payload {
+					output[k] = v
+				}
+				return &NodeResult{
+					Status: StatusSuccess,
+					Output: output,
+				}, nil
+			}
+		}
+	}
+
 	actionID := fmt.Sprintf("%s:%s", input.RunID, input.StepID)
 
 	// Generate unique webhook token

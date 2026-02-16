@@ -7,9 +7,10 @@ import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import { getInsightPosts } from "@/lib/insights-data";
 import { CTASection } from "@/components/layout/cta-section";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function InsightPostPage() {
+  const t = useTranslations("Insights");
   const locale = useLocale();
   const params = useParams();
   const slug = params.slug as string;
@@ -47,7 +48,7 @@ export default function InsightPostPage() {
               className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Insights
+              {t("backToInsights")}
             </Link>
           </div>
         </div>
@@ -94,7 +95,7 @@ export default function InsightPostPage() {
               </div>
               <div className="flex flex-col text-white">
                 <span className="text-sm font-medium">{post.author}</span>
-                <span className="text-xs text-white/80">Author</span>
+                <span className="text-xs text-white/80">{t("author")}</span>
               </div>
             </motion.div>
           </div>

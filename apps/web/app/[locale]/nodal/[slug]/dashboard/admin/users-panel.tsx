@@ -2,14 +2,13 @@
 
 import { useState, useMemo } from 'react'
 import useSWR from 'swr'
-import { Plus, MoreHorizontal, Pencil, Trash, RotateCw, Shield, Lock, Ban, UserCog, Search, X } from 'lucide-react'
+import {  useTranslations } from 'next-intl'
+import { Plus, MoreHorizontal, Pencil, Trash, Search, X, Lock } from 'lucide-react'
 import { apiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
 import { User, Organization } from '@/types/admin'
-import { Spinner } from "@/components/ui/spinner"
 import LoadingPage from "@/components/loading-page"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -38,6 +37,7 @@ import { Button } from "@/components/ui/button"
 import { CreateUserDialog, UpdateUserDialog, ChangePasswordDialog, ChangeRoleDialog } from "@/components/admin/user-dialogs"
 
 export function UsersPanel() {
+  const t = useTranslations("Admin");
   const { data: users = [], mutate: mutateUsers, isLoading: loadingUsers } = useSWR<User[]>('/api/admin/users', (url: string) => apiClient.get(url).then(async res => {
       if (!res.ok) throw new Error('Failed to fetch users');
       return res.json();
@@ -101,7 +101,7 @@ export function UsersPanel() {
 
       setIsCreateOpen(false)
       mutateUsers()
-      toast.success("User created successfully")
+      toast.success('User created successfully')
     } catch (error) {
       toast.error('Error creating user')
     }
@@ -138,48 +138,6 @@ export function UsersPanel() {
     }
   }
 
-  const handlePromote = async (user: User) => {
-    if (!confirm(`Promote ${user.email} to Platform Admin?`)) return
-
-    try {
-        const res = await apiClient.post('/api/admin/promote', { user_id: user.id })
-
-        if (!res.ok) throw new Error('Failed to promote')
-        mutateUsers()
-        toast.success('User promoted successfully')
-    } catch (error) {
-        toast.error('Error promoting user')
-    }
-  }
-
-  const handleBlock = async (user: User) => {
-    const action = user.blocked ? 'unblock' : 'block'
-    if (!confirm(`Are you sure you want to ${action} ${user.email}?`)) return
-
-    try {
-        const res = await apiClient.post(`/api/admin/users/${user.id}/block`, { blocked: !user.blocked })
-
-        if (!res.ok) throw new Error(`Failed to ${action} user`)
-        mutateUsers()
-        toast.success(`User ${action}ed successfully`)
-    } catch (error) {
-        toast.error(`Error: ${error}`)
-    }
-  }
-
-  const handleResetMFA = async (user: User) => {
-    if (!confirm(`Reset MFA for ${user.email}?`)) return
-
-    try {
-        const res = await apiClient.post(`/api/admin/users/${user.id}/reset-mfa`, {})
-
-        if (!res.ok) throw new Error('Failed to reset MFA')
-        toast.success('MFA reset successfully')
-    } catch (error) {
-        toast.error('Error resetting MFA')
-    }
-  }
-
   const handleChangePassword = async (password: string) => {
     if (!selectedUser) return
     try {
@@ -209,6 +167,7 @@ export function UsersPanel() {
     }
   }
 
+
   if (loading) {
     return (
       <LoadingPage />
@@ -219,11 +178,11 @@ export function UsersPanel() {
     <div className="space-y-6">
       <div className="flex justify-between items-center pb-4 border-b border-zinc-200 dark:border-zinc-800">
         <div>
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Users</h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Manage user access, roles, and security.</p>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">{t("Users.title")}</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("Users.subtitle")}</p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)} className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900">
-          <Plus className="mr-2 h-4 w-4" /> Create User
+          <Plus className="mr-2 h-4 w-4" /> {t("Users.create")}
         </Button>
       </div>
 
@@ -231,7 +190,7 @@ export function UsersPanel() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
           <Input
-            placeholder="Search by name or email..."
+            placeholder={t("Users.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -239,10 +198,10 @@ export function UsersPanel() {
         </div>
         <Select value={filterOrg} onValueChange={setFilterOrg}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Organization" />
+            <SelectValue placeholder={t("filters.organization")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Orgs</SelectItem>
+            <SelectItem value="all">{t("filters.allOrgs")}</SelectItem>
             {orgs.map(org => (
               <SelectItem key={org.id} value={org.id}>{org.name}</SelectItem>
             ))}
@@ -250,24 +209,24 @@ export function UsersPanel() {
         </Select>
         <Select value={filterRole} onValueChange={setFilterRole}>
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Role" />
+             <SelectValue placeholder={t("filters.role")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="platform_admin">Platform Admin</SelectItem>
-            <SelectItem value="owner">Owner</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-            <SelectItem value="member">Member</SelectItem>
+            <SelectItem value="all">{t("filters.allRoles")}</SelectItem>
+            <SelectItem value="platform_admin">{t("roles.platformAdmin")}</SelectItem>
+            <SelectItem value="owner">{t("roles.owner")}</SelectItem>
+            <SelectItem value="admin">{t("roles.admin")}</SelectItem>
+            <SelectItem value="member">{t("roles.member")}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-[130px]">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={t("filters.status")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="blocked">Blocked</SelectItem>
+            <SelectItem value="all">{t("filters.allStatus")}</SelectItem>
+            <SelectItem value="active">{t("status.active")}</SelectItem>
+            <SelectItem value="blocked">{t("status.blocked")}</SelectItem>
           </SelectContent>
         </Select>
         {hasActiveFilters && (
@@ -277,7 +236,7 @@ export function UsersPanel() {
             onClick={() => { setSearch(''); setFilterOrg('all'); setFilterStatus('all'); setFilterRole('all') }}
             className="text-zinc-500 hover:text-zinc-700"
           >
-            <X className="mr-1 h-3 w-3" /> Clear
+            <X className="mr-1 h-3 w-3" /> {t("common.clear")}
           </Button>
         )}
       </div>
@@ -286,11 +245,11 @@ export function UsersPanel() {
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
             <TableRow>
-              <TableHead className="font-semibold text-zinc-500">User</TableHead>
-              <TableHead className="font-semibold text-zinc-500">Organization</TableHead>
-              <TableHead className="font-semibold text-zinc-500">Role</TableHead>
-              <TableHead className="font-semibold text-zinc-500">Status</TableHead>
-              <TableHead className="text-right font-semibold text-zinc-500">Actions</TableHead>
+              <TableHead className="font-semibold text-zinc-500">{t("Users.table.user")}</TableHead>
+              <TableHead className="font-semibold text-zinc-500">{t("Users.table.org")}</TableHead>
+              <TableHead className="font-semibold text-zinc-500">{t("Users.table.role")}</TableHead>
+              <TableHead className="font-semibold text-zinc-500">{t("Users.table.status")}</TableHead>
+              <TableHead className="text-right font-semibold text-zinc-500">{t("Users.table.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -323,7 +282,7 @@ export function UsersPanel() {
                        return orgName ? (
                            <span className="text-sm text-zinc-700 dark:text-zinc-300">{orgName}</span>
                        ) : (
-                           <span className="text-zinc-400 text-sm italic">No Org</span>
+                           <span className="text-zinc-400 text-sm italic">{t("common.noOrg")}</span>
                        )
                    })()}
                 </TableCell>
@@ -331,7 +290,7 @@ export function UsersPanel() {
                     <div className="flex items-center gap-1.5">
                         {user.system_role === 'platform_admin' && (
                             <span className="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">
-                                Platform
+                                {t("common.platform")}
                             </span>
                         )}
                         {(() => {
@@ -340,7 +299,7 @@ export function UsersPanel() {
                             if (!membershipRole) return null
                             return (
                                 <span className="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 capitalize dark:bg-zinc-800 dark:text-zinc-400">
-                                    {membershipRole}
+                                    {t(`roles.${membershipRole}`)}
                                 </span>
                             )
                         })()}
@@ -354,11 +313,11 @@ export function UsersPanel() {
                 <TableCell>
                     {user.blocked ? (
                         <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                            Blocked
+                            {t("status.blocked")}
                         </span>
                     ) : (
                         <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                            Active
+                            {t("status.active")}
                         </span>
                     )}
                 </TableCell>
@@ -371,22 +330,22 @@ export function UsersPanel() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[180px]">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t("common.actions")}</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => {
                           setSelectedUser(user)
                           setIsUpdateOpen(true)
                       }}>
-                        <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> Edit Details
+                        <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> {t("Users.actions.edit")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
                           setSelectedUser(user)
                           setIsChangePasswordOpen(true)
                       }}>
-                        <Lock className="mr-2 h-4 w-4 text-zinc-500" /> Change Password
+                        <Lock className="mr-2 h-4 w-4 text-zinc-500" /> {t("Users.actions.changePassword")}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20" onClick={() => handleDelete(user)}>
-                        <Trash className="mr-2 h-4 w-4" /> Delete
+                        <Trash className="mr-2 h-4 w-4" /> {t("Users.actions.delete")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -396,7 +355,7 @@ export function UsersPanel() {
             {filteredUsers.length === 0 && (
                 <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center text-zinc-500">
-                        {hasActiveFilters ? 'No users match your filters.' : 'No users found.'}
+                        {hasActiveFilters ? t("Users.table.noMatches") : t("Users.table.noResults")}
                     </TableCell>
                 </TableRow>
             )}

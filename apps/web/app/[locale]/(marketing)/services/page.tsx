@@ -121,6 +121,8 @@ export default function ServicesPage() {
                 description={t(`steps.step${index}.description`)}
                 deliverables={t.raw(`steps.step${index}.deliverables`)}
                 tools={t.raw(`steps.step${index}.tools`)}
+                deliverablesLabel={t('deliverables')}
+                toolsLabel={t('tools')}
               />
             ))}
           </div>
@@ -135,13 +137,17 @@ function TimelineItem({
   title, 
   description,
   deliverables,
-  tools
+  tools,
+  deliverablesLabel,
+  toolsLabel
 }: { 
   index: number, 
   title: string, 
   description: string,
   deliverables: string[],
-  tools: string[]
+  tools: string[],
+  deliverablesLabel: string,
+  toolsLabel: string
 }) {
   const isEven = index % 2 === 0;
 
@@ -180,7 +186,7 @@ function TimelineItem({
           <div className={cn("flex flex-col gap-6 mt-2 w-full", isEven ? "items-start" : "items-start md:items-end")}>
             {/* Deliverables */}
             <div className={cn("flex flex-col gap-3", isEven ? "items-start" : "items-start md:items-end")}>
-              <h4 className="text-sm font-semibold text-foreground">Deliverables</h4>
+              <h4 className="text-sm font-semibold text-foreground">{deliverablesLabel}</h4>
               <ul className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
                 {deliverables.map((item, i) => (
                   <li key={i} className={cn(
@@ -196,7 +202,7 @@ function TimelineItem({
 
             {/* Tools */}
             <div className={cn("flex flex-col gap-3", isEven ? "items-start" : "items-start md:items-end")}>
-              <h4 className="text-sm font-semibold text-foreground">Tools</h4>
+              <h4 className="text-sm font-semibold text-foreground">{toolsLabel}</h4>
               <div className={cn("flex flex-wrap items-center gap-4", isEven ? "justify-start" : "justify-start md:justify-end")}>
                 {tools.map((item, i) => (
                   <span 

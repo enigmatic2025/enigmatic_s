@@ -8,6 +8,7 @@ import { Send, Reply, ThumbsUp, Hash, AtSign, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 import { WaveLoader } from "@/components/ui/wave-loader";
+import { useTranslations } from "next-intl";
 
 interface Comment {
   id: string;
@@ -32,6 +33,9 @@ const fetcher = (url: string) => apiClient.get(url).then(res => {
 });
 
 export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsProps) {
+  const t = useTranslations("FlowStudio.comments");
+  const tToasts = useTranslations("FlowStudio.toasts");
+
   const { data: comments = [], error, isLoading, mutate } = useSWR<Comment[]>(
     actionFlowId ? `/comments?action_flow_id=${actionFlowId}` : null,
     fetcher,
@@ -83,10 +87,10 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
       } else {
         setNewComment("");
       }
-      toast.success("Comment posted");
+      toast.success(tToasts("commentPosted"));
     } catch (e: any) {
       console.error("Post Comment Error:", e);
-      toast.error(e.message || "Failed to post comment");
+      toast.error(e.message || tToasts("commentError"));
     } finally {
       setSubmitting(false);
     }
@@ -120,7 +124,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
         mutate(); 
     } catch (e: any) {
         // 5. Rollback on Error
-        toast.error("Failed to like comment");
+        toast.error(tToasts("likeError"));
         mutate(currentComments, false);
     }
   };
@@ -133,9 +137,9 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
   return (
     <div className="flex flex-col h-full">
          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Discussion</h3>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t("title")}</h3>
             <span className="text-[10px] text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-2 py-1 rounded-full border border-zinc-100 dark:border-zinc-800">
-                Global Context
+                {t("globalContext")}
             </span>
         </div>
 
@@ -146,7 +150,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     className="border-0 bg-transparent min-h-[40px] p-0 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-600 text-zinc-900 dark:text-zinc-100 focus-visible:ring-0 resize-none"
-                    placeholder="Comment on this workflow..."
+                    placeholder={t("placeholder")}
                 />
                 <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800 mt-2">
                      <div className="flex items-center gap-1">
@@ -164,7 +168,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
                         onClick={() => handlePostComment()}
                     >
                         {submitting ? <Loader2 className="w-3 h-3 animate-spin"/> : <Send className="w-3 h-3 mr-1" />}
-                        Post
+                        {t("post")}
                     </Button>
                 </div>
             </div>
@@ -178,7 +182,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
                    </div>
                 ) : comments.length === 0 ? (
                     <div className="text-center py-8 text-zinc-400 text-xs italic">
-                        No comments yet. Start the conversation.
+                        {t("noComments")}
                     </div>
                 ) : (
                     rootComments.map(comment => (
@@ -193,6 +197,7 @@ export function ActionFlowComments({ actionFlowId, orgId }: ActionFlowCommentsPr
                           handlePostComment={handlePostComment}
                           handleLike={handleLike}
                           submitting={submitting}
+                          t={t}
                         />
                     ))
                 )}
@@ -214,7 +219,8 @@ function CommentItem({
   setReplyContent, 
   handlePostComment, 
   handleLike,
-  submitting 
+  submitting,
+  t
 }: { 
   comment: Comment, 
   isReply?: boolean, 
@@ -225,7 +231,8 @@ function CommentItem({
   setReplyContent: (v: string) => void, 
   handlePostComment: (parentId?: string, content?: string) => void, 
   handleLike: (id: string) => void, 
-  submitting: boolean 
+  submitting: boolean,
+  t: any
 }) {
     const isReplying = replyTo === comment.id;
 
@@ -240,7 +247,7 @@ function CommentItem({
         
         <div className="flex-1 space-y-1">
             <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{comment.user_name || "Unknown"}</span>
+                <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{comment.user_name || t("unknown")}</span>
                 <span className="text-[10px] text-zinc-400">
                     {new Date(comment.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                 </span>
@@ -258,7 +265,7 @@ function CommentItem({
                     onClick={() => handleLike(comment.id)}
                 >
                     <ThumbsUp className={`w-3 h-3 mr-1 ${comment.is_liked ? 'fill-current' : ''}`} />
-                    Like {comment.like_count && comment.like_count > 0 ? `(${comment.like_count})` : ''}
+                    {t("like")} {comment.like_count && comment.like_count > 0 ? `(${comment.like_count})` : ''}
                 </Button>
 
                 {!isReply && (
@@ -269,7 +276,7 @@ function CommentItem({
                         onClick={() => setReplyTo(isReplying ? null : comment.id)}
                     >
                         <Reply className="w-3 h-3 mr-1" />
-                        Reply
+                        {t("reply")}
                     </Button>
                 )}
             </div>
@@ -280,7 +287,7 @@ function CommentItem({
                     <Textarea 
                         value={replyContent}
                         onChange={(e) => setReplyContent(e.target.value)}
-                        placeholder="Write a reply..."
+                        placeholder={t("writeReply")}
                         className="min-h-[60px] text-xs bg-zinc-50 dark:bg-zinc-900 resize-none"
                     />
                     <Button 
@@ -289,7 +296,7 @@ function CommentItem({
                         disabled={submitting || !replyContent.trim()}
                         onClick={() => handlePostComment(comment.id, replyContent)}
                     >
-                        Reply
+                        {t("reply")}
                     </Button>
                 </div>
             )}
@@ -309,6 +316,7 @@ function CommentItem({
                           handlePostComment={handlePostComment}
                           handleLike={handleLike}
                           submitting={submitting}
+                          t={t}
                         />
                     ))}
                 </div>

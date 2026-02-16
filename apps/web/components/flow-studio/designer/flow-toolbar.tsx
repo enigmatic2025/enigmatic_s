@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Play, Square, Trash, Wand2, Rocket, Terminal, Loader2, Eraser } from "lucide-react";
 import { useRouter } from "@/navigation";
 import { useParams } from "next/navigation";
+import { formatDistanceToNow } from "date-fns";
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +32,8 @@ interface FlowToolbarProps {
   setIsDeleteModalOpen: (open: boolean) => void;
   onLayout: (direction: string) => void;
   onClearTestResults: () => void;
+  isSaving?: boolean;
+  lastSavedAt?: Date | null;
 }
 
 export function FlowToolbar({
@@ -50,6 +53,8 @@ export function FlowToolbar({
   setIsDeleteModalOpen,
   onLayout,
   onClearTestResults,
+  isSaving,
+  lastSavedAt,
 }: FlowToolbarProps) {
   const router = useRouter();
   const params = useParams();
@@ -104,7 +109,9 @@ export function FlowToolbar({
           )}
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">
-              {flowId ? t("toolbar.lastSaved") : t("toolbar.unsavedChanges")}
+              {lastSavedAt
+                ? `Saved ${formatDistanceToNow(lastSavedAt, { addSuffix: true })}`
+                : flowId ? t("toolbar.lastSaved") : t("toolbar.unsavedChanges")}
             </span>
             
             {publishStatus === 'published' && (
@@ -210,12 +217,12 @@ export function FlowToolbar({
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleSave}>
-                <Save className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleSave} disabled={isSaving}>
+                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{t("tooltips.saveDraft")}</p>
+              <p>{isSaving ? 'Saving...' : `${t("tooltips.saveDraft")} (Ctrl+S)`}</p>
             </TooltipContent>
           </Tooltip>
 

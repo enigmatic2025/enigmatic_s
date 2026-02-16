@@ -61,6 +61,10 @@ export const metadata: Metadata = {
       en: "/en",
       vi: "/vi",
       "zh-TW": "/zh-TW",
+      es: "/es",
+      de: "/de",
+      ja: "/ja",
+      pt: "/pt",
     },
   },
 };
@@ -73,7 +77,7 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
-  const messages = await getMessages();
+  const messages = await getMessages({ locale });
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -90,7 +94,7 @@ export default async function RootLayout({
         "@type": "WebSite",
         name: "Enigmatic",
         url: "https://enigmatic.works",
-        inLanguage: ["en", "vi", "zh-TW"],
+        inLanguage: ["en", "vi", "zh-TW", "es", "de", "ja", "pt"],
       },
     ],
   };

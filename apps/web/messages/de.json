@@ -1,0 +1,966 @@
+{
+  "HomePage": {
+    "title": "Enigmatic",
+    "subtitle": "Kartieren. Bauen. Verbessern.",
+    "description": "Wir entwerfen, verbinden und orchestrieren die Prozesse, die Ihre Kernsysteme ignorieren.",
+    "poweredBy": "Unterstützt durch moderne Technologien."
+  },
+  "Insights": {
+    "title": "Einblicke",
+    "backToInsights": "Zurück zu Einblicke",
+    "author": "Autor",
+    "allContent": "Alle Inhalte"
+  },
+  "Admin": {
+    "overview": "Übersicht",
+    "overviewDesc": "Plattform-Metriken auf einen Blick.",
+    "totalUsers": "Gesamte Benutzer",
+    "organizations": "Organisationen",
+    "aiRequests": "KI-Anfragen",
+    "blocked": "Blockiert",
+    "creditsUsed": "Verwendete Kredite",
+    "common": {
+        "clear": "Löschen",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "delete": "Löschen",
+        "edit": "Bearbeiten",
+        "create": "Erstellen",
+        "select": "Auswählen",
+        "actions": "Aktionen",
+        "noOrg": "Keine Org",
+        "platform": "Plattform"
+    },
+    "filters": {
+        "organization": "Organisation",
+        "role": "Rolle",
+        "status": "Status",
+        "plan": "Plan",
+        "aiAccess": "KI-Zugriff",
+        "allOrgs": "Alle Orgs",
+        "allRoles": "Alle Rollen",
+        "allStatus": "Alle Status",
+        "allPlans": "Alle Pläne",
+        "allAccess": "Alle Zugriffe"
+    },
+    "roles": {
+        "platformAdmin": "Plattform-Admin",
+        "owner": "Eigentümer",
+        "admin": "Admin",
+        "member": "Mitglied"
+    },
+    "status": {
+        "active": "Aktiv",
+        "blocked": "Blockiert"
+    },
+    "types": {
+        "unlimited": "Unbegrenzt",
+        "creditBased": "Kredit-basiert"
+    },
+    "Users": {
+      "title": "Benutzer",
+      "subtitle": "Benutzerzugriff, Rollen und Sicherheit verwalten.",
+      "create": "Benutzer erstellen",
+      "searchPlaceholder": "Nach Name oder E-Mail suchen...",
+      "table": {
+        "user": "Benutzer",
+        "org": "Organisation",
+        "role": "Rolle",
+        "status": "Status",
+        "actions": "Aktionen",
+        "noResults": "Keine Benutzer gefunden.",
+        "noMatches": "Keine Benutzer entsprechen Ihren Filtern."
+      },
+      "actions": {
+        "edit": "Details bearbeiten",
+        "changePassword": "Passwort ändern",
+        "delete": "Löschen"
+      }
+    },
+    "Organizations": {
+      "title": "Organisationen",
+      "subtitle": "Kunden-Tenants, Abonnements und KI-Kredite verwalten.",
+      "create": "Organisation erstellen",
+      "searchPlaceholder": "Nach Name oder Slug suchen...",
+      "table": {
+        "name": "Name",
+        "plan": "Plan",
+        "aiAccess": "KI-Zugriff",
+        "tokens": "Verwendete Token",
+        "requests": "Anfragen",
+        "actions": "Aktionen"
+      },
+      "actions": {
+        "manageCredits": "Kredite verwalten",
+        "edit": "Bearbeiten",
+        "delete": "Löschen"
+      },
+      "unlimited": "Unbegrenzt",
+      "credits": "Kredite"
+    },
+    "AI": {
+      "title": "KI-Konfiguration",
+      "subtitle": "Verbindung, Modell-Routing und Leitplanken verwalten.",
+      "save": "Speichern",
+      "routing": {
+        "title": "Modell-Routing",
+        "desc": "Natalie leitet Anfragen durch die unten stehende Pipeline. Alle Modelle teilen sich dieselbe Anbieterverbindung."
+      },
+      "connection": {
+        "title": "Verbindung",
+        "desc": "Geteilt zwischen allen Modellen",
+        "provider": "Anbieter",
+        "baseUrl": "Basis-URL",
+        "apiKey": "API-Schlüssel",
+        "configured": "konfiguriert"
+      },
+      "models": {
+        "title": "Modelle",
+        "desc": "Weisen Sie jeder Rolle in der Routing-Pipeline eine Modell-ID zu.",
+        "primary": "Primär",
+        "primaryDesc": "Schnelles Streaming & finale Antworten",
+        "reasoning": "Logik",
+        "reasoningDesc": "Werkzeugaufrufe & Datenanalyse",
+        "guardrail": "Leitplanke",
+        "guardrailDesc": "Filtert themenfremde Anfragen"
+      },
+      "placeholders": {
+        "leaveEmpty": "Leer lassen, um primäres Modell zu verwenden"
+      },
+      "hints": {
+        "fallback": "Fällt auf primäres Modell zurück. Setzen Sie ein stärkeres Modell für bessere Werkzeugaufrufe.",
+        "disabled": "Deaktiviert — alle Anfragen gehen direkt an das Modell.",
+        "cheapest": "(am günstigsten)"
+      }
+    }
+  },
+  "ServicesPage": {
+    "title": "Dienstleistungen",
+    "subtitle": "Professionelle Dienstleistungen, auf Ihre Bedürfnisse zugeschnitten.",
+    "description": "Wir helfen Ihnen, Ihre Operationen zu entwerfen, zu bauen und zu optimieren.",
+    "story": {
+      "title": "Partnerschaft für Operative Exzellenz.",
+      "description": "Verstehen Sie, wie unser Team Ihre Organisation bedient, um unsere Verpflichtungen zu erfüllen. Enigmatic verwendet BPMN 2.0 als Standard für Prozessdokumentation und Workflow-Modellierung, um Konsistenz, Klarheit und Portabilität über Organisationen hinweg zu gewährleisten."
+    },
+    "deliverables": "Ergebnisse",
+    "tools": "Werkzeuge",
+    "steps": {
+      "step1": {
+        "title": "Führungskräfte-Abstimmung",
+        "description": "Klare Transformationsziele festlegen und Führungskräfte-Sponsoring sichern, um die organisatorische Akzeptanz zu fördern und operative Ziele anzuvisieren.",
+        "deliverables": [
+          "Messbare Transformationsziele",
+          "Definition von EBITDA oder operativem Ziel",
+          "Führungskräfte-Sponsoring-Vereinbarung"
+        ],
+        "tools": [
+            "Atlassian Confluence"
+        ]
+      },
+      "step2": {
+        "title": "Diagnose & Finanzmodellierung",
+        "description": "Aktuelle Systeme und Arbeitsabläufe kartieren, um Engpässe zu identifizieren, eine finanzielle Basislinie und eine Transformationsthese mit quantifizierten Auswirkungen zu erstellen.",
+        "deliverables": [
+          "Prozesskarten des Ist-Zustands", 
+          "Systemarchitektur-Diagramm",
+          "Finanzielles Basismodell",
+          "Engpassanalyse",
+          "Transformationsthese"
+        ],
+        "tools": [
+            "Lucid Chart",
+            "Excel",
+            "SQL",
+            "BPMN 2.0",
+            "Atlassian Confluence"
+        ]
+      },
+      "step3": {
+        "title": "Architektur des Soll-Zustands",
+        "description": "Das Ziel-Betriebsmodell entwerfen, einschließlich Technologie-Bauplänen, Neugestaltung von Arbeitsabläufen und Governance-Strukturen für skalierbare Operationen.",
+        "deliverables": [
+            "Betriebsmodell des Soll-Zustands",
+            "Neugestaltung von Arbeitsabläufen",
+            "Technologie-Bauplan",
+            "Governance-Modell",
+            "Änderungs-Rollout-Plan"
+        ],
+        "tools": [
+            "BPMN 2.0",
+            "Lucid Chart",
+            "Atlassian Confluence"
+        ]
+      },
+      "step4": {
+        "title": "Kontrollierter Pilot-Einsatz",
+        "description": "Die Lösung durch einen Pilotversuch mit begrenztem Umfang validieren, KPIs und Adoptionsmetriken verfolgen, während der Bau innerhalb von Nodal entwickelt wird.",
+        "deliverables": [
+            "Nodal-Umgebungskonfiguration",
+            "Funktionierende Pilotlösung",
+            "KPI-Tracking-Dashboard",
+            "Bericht zur Adoptionsmessung"
+        ],
+        "tools": [
+            "Nodal",
+            "Atlassian Jira",
+            "Atlassian Confluence"
+        ]
+      },
+      "step5": {
+        "title": "Skalierter Rollout",
+        "description": "Erfolgreiche Arbeitsabläufe über Abteilungen und Standorte hinweg erweitern, Governance institutionalisieren, um die vollständige Lösungsadoption sicherzustellen.",
+        "deliverables": [
+            "Abteilungsübergreifende Workflow-Erweiterung",
+            "Institutionalisiertes Governance-Playbook",
+            "Vollständige Lösungsadoption"
+        ],
+        "tools": [
+            "Nodal"
+        ]
+      },
+      "step6": {
+        "title": "Kontinuierliche Optimierung",
+        "description": "Laufenden Premium-Support und vierteljährliche Überprüfungen bieten, um die Lösung zu verfeinern und kontinuierliche Verbesserungen voranzutreiben.",
+        "deliverables": [
+            "Vierteljährliche Lösungsüberprüfungen",
+            "Optimierungs-Roadmap",
+            "Bericht zur Leistungsverbesserung"
+        ],
+        "tools": [
+            "Nodal",
+            "PowerBI",
+            "Atlassian Confluence"
+        ]
+      }
+    }
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "collaborate": "Zusammenarbeiten",
+    "product": "Produkte",
+    "services": "Dienstleistungen",
+    "company": "Unternehmen",
+    "insights": "Einblicke",
+    "signIn": "Anmelden",
+    "loading": "Laden...",
+    "items": {
+      "nodal": "Nodal",
+      "nodalDesc": "Das zentrale Betriebssystem für moderne industrielle Operationen",
+      "docs": "Dokumentation",
+      "docsDesc": "Umfassende Anleitungen und API-Referenzen",
+      "useCases": "Anwendungsfälle",
+      "useCasesDesc": "Erfahren Sie, wie Enigmatic reale Probleme löst",
+      "about": "Über Uns",
+      "aboutDesc": "Erfahren Sie mehr über unsere Mission und unser Team",
+      "privacy": "Datenschutzrichtlinie",
+      "terms": "Nutzungsbedingungen"
+    }
+  },
+  "Mission": {
+    "label": "Die Mission.",
+    "description": "Als Ihr Partner für Prozessverbesserung nutzen wir Technologie, um Ihre Operationen integrierter, intelligenter und intuitiver zu gestalten.",
+    "industries": {
+      "transportation": "Transport",
+      "transportationDesc": "Vereinheitlichen Sie Frachtführer-Netzwerke in einer einzigen Kommandozentrale für nahtlose Ausführung.",
+      "supplyChain": "Lieferkette",
+      "supplyChainDesc": "Ersetzen Sie manuelle Verfolgung durch intelligente Orchestrierung, um Störungen vorherzusagen.",
+      "manufacturing": "Fertigung",
+      "manufacturingDesc": "Synchronisieren Sie Materialflüsse mit Produktionsplänen für verzögerungsfreie Operationen.",
+      "construction": "Bauwesen",
+      "constructionDesc": "Optimieren Sie die Koordination zwischen Baustellen und Lieferanten für präzise Lieferung.",
+      "storage": "Lagerung",
+      "storageDesc": "Beschleunigen Sie die Erfüllung durch intelligente Arbeitsabläufe, die den Bestand optimieren.",
+      "energy": "Energie",
+      "energyDesc": "Modernisieren Sie die Compliance-Verfolgung, um eine sichere, effiziente Infrastrukturlogistik zu gewährleisten."
+    },
+    "stats": {
+      "stat1": "80%+",
+      "desc1": "der Industrieunternehmen kämpfen mit fragmentierten Daten über getrennte Altsysteme hinweg.",
+      "stat2": "Bis zu 50%",
+      "desc2": "der operativen Bandbreite werden durch manuelle Koordination zwischen Feld und Büro verbraucht.",
+      "stat3": "30–40%",
+      "desc3": "der potenziellen Marge werden durch reaktive Problemlösung anstelle von strategischer Planung erodiert."
+    },
+    "aboutUs": "Über Uns"
+  },
+  "Problem": {
+    "title": "Das Problem der operativen Fragmentierung.",
+    "description": "Moderne industrielle Operationen brechen unter dem Gewicht veralteter Werkzeuge und getrennter Systeme zusammen.",
+    "cards": {
+      "manual": "Manuelle Koordination",
+      "manualDesc": "Teams kleben immer noch an Tabellenkalkulationen, E-Mails und Telefonanrufen, um komplexe Operationen zu koordinieren. Kritische Updates werden verpasst, Zeitpläne verschieben sich und jeder arbeitet nach unterschiedlichen Regeln.",
+      "disconnected": "Getrennte Daten",
+      "disconnectedDesc": "Silos zwischen ERPs, spezialisierter Software und Feldwerkzeugen schaffen blinde Flecken. Daten werden doppelt eingegeben, sind ungenau und in Systemen gefangen, die nicht miteinander sprechen.",
+      "reactive": "Reaktive Brandbekämpfung",
+      "reactiveDesc": "All diese Fragmentierung zwingt Ihre besten Leute dazu, den Tag mit der Suche nach Informationen und der Behebung von Fehlern zu verbringen, anstatt die Leistung zu optimieren und das Wachstum voranzutreiben."
+    }
+  },
+  "Services": {
+    "title": "Orchestrieren Sie Ihre Operationen.",
+    "description": "Vom Chaos zur Klarheit. Enigmatic vereint Ihre fragmentierten Werkzeuge und Arbeitsabläufe in einem einzigen, intelligenten digitalen Ökosystem.",
+    "learnMore": "Mehr Erfahren",
+    "panels": {
+      "consulting": "Strategische Digitale Transformation",
+      "consultingDesc": "Wir flicken nicht nur Löcher. Wir entwickeln Ihre zentralen operativen Arbeitsabläufe neu und ersetzen manuelle Engpässe durch skalierbare, automatisierte Lösungen, die auf Ihre einzigartige Infrastruktur zugeschnitten sind.",
+      "nodal": "Das Nodal Betriebssystem",
+      "nodalDesc": "Das zentrale Nervensystem für Ihr Unternehmen. Nodal verbindet Ihre Teams, Werkzeuge und Daten in einer einzigen, intelligenten Schnittstelle – und führt Aktionen aus, damit Sie es nicht tun müssen."
+    },
+    "grid": {
+      "triggers": "Intelligente Auslöser",
+      "triggersDesc": "Starten Sie komplexe Arbeitsabläufe automatisch basierend auf E-Mails, Statusaktualisierungen oder API-Ereignissen.",
+      "human": "Menschliche Kontrolle",
+      "humanDesc": "Leiten Sie kritische Ausnahmen an Experten weiter; automatisieren Sie den Rest.",
+      "connectivity": "Totale Konnektivität",
+      "connectivityDesc": "Vereinheitlichen Sie Daten von ERPs, Geräten und Partnern in einer Quelle."
+    }
+  },
+  "Process": {
+    "title": "Vom Chaos zur Klarheit.",
+    "description": "Unser dreistufiger Ansatz zur Modernisierung Ihrer Operationen.",
+    "learnMore": "Mehr Erfahren",
+    "steps": {
+      "step1": "Ist-Zustand Kartieren",
+      "step1Desc": "Wir arbeiten mit Ihrem Team zusammen, um Ihre aktuellen Operationen zu visualisieren und Engpässe, Ineffizienzen und verborgene Verbesserungsmöglichkeiten zu identifizieren.",
+      "step2": "Soll-Zustand Entwerfen",
+      "step2Desc": "Wir entwerfen einen optimierten Arbeitsablauf, der darauf ausgelegt ist, den finanziellen Wert und die operative Fluidität zu maximieren.",
+      "step3": "Bauen & Implementieren",
+      "step3Desc": "Wir bauen die Lösung mit modernen Technologien, wobei Nodal als zentrales Betriebssystem Ihr neues Ökosystem orchestriert."
+    }
+  },
+  "NodalPlatform": {
+    "title": "Vereinheitlichen Sie Ihre Systeme.",
+    "description": "Nodal fügt Ihren bestehenden Kernsystemen und Werkzeugen eine leistungsstarke Orchestrierungsschicht hinzu, die Ihnen perfekte Konsistenz und Sichtbarkeit bietet, ohne ein einziges Werkzeug zu ersetzen.",
+    "cards": {
+      "flow": "Orchestrieren mit Action Flows.",
+      "flowDesc": "Entwerfen Sie Pipelines, die Benutzer durch ihre täglichen Aufgaben führen. Ob ein Ereignisauslöser von Ihrem TMS oder ein manueller Start, Nodal stellt sicher, dass jeder dem gleichen standardisierten Prozess folgt.",
+      "connect": "Verbinden & Automatisieren.",
+      "connectDesc": "Erleichtern Sie Geschäftsprozesse durch Verbindung disparater Systeme. Lösen Sie Aktionen automatisch aus und überwachen Sie die Ausführung über Ihren gesamten Stack hinweg.",
+      "extend": "Erweitern Sie Ihre Fähigkeiten.",
+      "extendDesc": "Fügen Sie benutzerdefinierte Berechnungen und automatisierte Warnungen hinzu. Erhalten Sie volle Sichtbarkeit Ihrer Daten, ohne Ihren bestehenden Tech-Stack zu ändern.",
+      "human": "Menschliche Kontrolle im Regelkreis.",
+      "humanDesc": "Leiten Sie Ausnahmen nahtlos an Bediener weiter. Stellen Sie sicher, dass kritische Entscheidungen menschliche Aufmerksamkeit erhalten, während der Rest Ihres Prozesses auf Autopilot läuft."
+    },
+    "seeUseCases": "Anwendungsfälle Ansehen"
+  },
+  "Principles": {
+    "title": "Generische Software ignoriert die operative Realität.",
+    "description": "Um ein widerstandsfähiges Unternehmen aufzubauen, brauchen Sie mehr als nur Werkzeuge. Sie brauchen eine Philosophie des Ingenieurwesens.",
+    "cards": {
+      "intelligence": "Intelligenz, Verstärkt",
+      "intelligenceDesc": "Automatisierung sollte Ihr Team nicht ersetzen – sie sollte es fördern. Wir übernehmen die repetitive Ausführung, damit sich Ihre Experten auf hochwertige Entscheidungen konzentrieren können.",
+      "precision": "Missionskritische Präzision",
+      "precisionDesc": "Wenn Fehler Millionen kosten, ist 'gut genug' keine Option. Wir entwickeln fehlertolerante Arbeitsabläufe, die dem Druck realer Operationen standhalten.",
+      "visibility": "Totale Sichtbarkeit",
+      "visibilityDesc": "Keine Black Boxes oder Datensilos mehr. Wir vereinheitlichen Ihren operativen Kontext in einer einzigen Wahrheitsquelle und geben Ihnen die Klarheit, zu handeln, bevor Probleme eskalieren."
+    }
+  },
+  "CTA": {
+    "label": "In Kontakt Treten",
+    "title": "Modernisieren Sie, was die Welt bewegt.",
+    "description": "Helfen Sie uns, die komplexesten Systeme der Welt zu entwirren. Wenn Sie von echten Problemen und echtem Einfluss angetrieben werden, ist Enigmatic der Ort, an dem Ihre Arbeit zählt.",
+    "button": "Zusammenarbeiten"
+  },
+  "Visualizations": {
+    "rateCalculation": "Ratenberechnung",
+    "contractLogic": "Vertragslogik",
+    "checkCapacity": "Kapazität Prüfen",
+    "carrierApi": "Spediteur-API",
+    "full": "Voll",
+    "available": "Verfügbar",
+    "dispatchDriver": "Fahrer Entsenden",
+    "samsara": "Samsara",
+    "nextStep": "Nächster Schritt",
+    "isShipmentDelayed": "Ist Lieferung Verspätet?",
+    "isTrue": "Ist wahr",
+    "notifyCustomer": "Kunden Benachrichtigen",
+    "email": "E-Mail",
+    "isFalse": "Ist falsch",
+    "selectBlock": "Block auswählen",
+    "calculateEta": "ETA Berechnen",
+    "consolidateLoads": "Ladungen Konsolidieren",
+    "updateTms": "TMS Aktualisieren",
+    "exceptionReview": "Ausnahmeüberprüfung",
+    "humanAction": "Menschliche Aktion",
+    "rateVariance": "Ratenabweichung erkannt:",
+    "carrierInvoice": "Spediteur-Rechnung #INV-2024-001",
+    "approve": "Genehmigen",
+    "reject": "Ablehnen"
+  },
+  "Footer": {
+      "tagline": "Digitalisierung komplexer Arbeitsabläufe und Aufbau automatisierter Lösungen, die die Zukunft industrieller Operationen antreiben.",
+      "copyright": "© {year} Enigmatic Technologies. Alle Rechte vorbehalten.",
+      "legal": "Rechtliches"
+  },
+  "UseCasesPage": {
+      "title": "Anwendungsfälle.",
+      "description": "Sehen Sie, wie Enigmatic und Nodal manuelle Arbeitsabläufe digitalisieren und komplexe Operationen skalierbar orchestrieren.",
+      "ctaTitle": "Haben Sie eine einzigartige Herausforderung?",
+      "ctaDescription": "Unser Ingenieurteam kann benutzerdefinierte Arbeitsabläufe erstellen, die auf Ihre spezifischen operativen Bedürfnisse zugeschnitten sind.",
+      "cards": {
+          "onboarding": "Fahrer-Einstellung & Onboarding",
+          "onboardingDesc": "Jeder Spediteur kämpft mit chaotischen Onboarding-Abläufen, die über Tenstreet, HRIS, E-Mail, Tabellenkalkulationen und Sicherheitsüberprüfungen verteilt sind. Nodal komprimiert diesen unordentlichen Fluss in eine einheitliche Ansicht und automatisiert Compliance-Schritte und Dokumentensammlung.",
+          "maintenance": "Anlagenwartung & Inspektionen",
+          "maintenanceDesc": "Wartung ist oft reaktiv und fragmentiert. Mit Nodal löst ein Techniker, der einen DVIR einreicht, automatisch Teilebestellungen, Arbeitszuweisungen und Genehmigungen aus und orchestriert die Arbeit teamübergreifend über das TMS hinaus.",
+          "billing": "Abrechnung & Schadensabwicklung",
+          "billingDesc": "Beschleunigen Sie den Cashflow durch Reduzierung von Verlusten. Nodal bietet eine einzige Workflow-Ansicht für Abrechnung und Ansprüche, die Aufgaben, Anhänge und Validierungen behandelt, bevor saubere Daten an Ihr TMS oder Buchhaltungssystem gesendet werden.",
+          "predictive": "Vorausschauende Fertigungsoperationen",
+          "predictiveDesc": "Verbinden Sie die Werkstatt mit der Führungsebene. Erfassen Sie Live-Sensordaten, um Anomalien zu erkennen, Arbeitsaufträge automatisch in Ihrem CMMS auszulösen und Produktionsschichten in Ihrem ERP ohne manuellen Eingriff neu zu planen.",
+          "production": "Produktionslinien-Sichtbarkeit",
+          "productionDesc": "Echtzeitüberwachung von Materialein- und -ausgängen. Wenn der Bestand unter Schwellenwerte fällt, verhandeln KI-Agenten von Nodal sofort Nachschub mit Lieferanten.",
+          "field": "Außendienst-Kommunikationsintegration",
+          "fieldDesc": "Schließen Sie die Lücke zwischen Baustelle und Backoffice. Vorarbeiter können Probleme per SMS oder Chat melden, die Nodal in formelle RFI-Dokumente und Ticketanfragen übersetzt.",
+          "construction": "Baumaterial-Logistik",
+          "constructionDesc": "Just-in-Time-Lieferung für komplexe Baustellen. Koordinieren Sie Betongüsse und Materiallieferungen, indem Sie Baustellenanfragen direkt mit Mischanlagen und Logistik-Disponenten synchronisieren."
+      }
+  },
+  "Sidebar": {
+    "searchPlaceholder": "Suchen...",
+    "docs": "Doku",
+    "nodes": "Knoten",
+    "variables": "Variablen",
+    "seeMore": "Mehr sehen",
+    "seeLess": "Weniger sehen",
+    "sections": {
+      "workspace": "Arbeitsbereich",
+      "development": "Entwicklung",
+      "triggers": "Auslöser",
+      "humanInLoop": "Mensch im Regelkreis",
+      "automation": "Automatisierung",
+      "builtInTools": "Integrierte Werkzeuge",
+      "connectors": "Konnektoren",
+      "platform": "Plattform",
+      "intelligence": "Intelligenz",
+      "admin": "Admin"
+    },
+    "items": {
+      "overview": "Übersicht",
+      "natalie": "Natalie",
+      "actionFlows": "Action Flows",
+      "organization": "Organisation",
+      "peopleAndTeams": "Personal & Teams",
+      "flowStudio": "Flow Studio",
+      "integration": "Integration",
+      "knowledgeBase": "Wissensdatenbank",
+      "platformStats": "Plattform-Statistiken",
+      "users": "Benutzer",
+      "organizations": "Organisationen",
+      "aiConfig": "KI-Konfiguration"
+    },
+    "draggable": {
+      "triggerCreateFlow": "Auslöser: Flow Erstellen",
+      "humanTask": "Menschliche Aufgabe",
+      "automation": "Warte auf Ereignis",
+      "filterData": "Daten Filtern",
+      "setVariable": "Variable Setzen",
+      "mapData": "Daten Zuordnen",
+      "ifElse": "Wenn / Sonst",
+      "loop": "Schleife",
+      "switch": "Weiche",
+      "goto": "Gehe zu / Sprung",
+      "httpRequest": "HTTP-Anfrage"
+    },
+    "groups": {
+      "dataOperation": "Datenoperation",
+      "logic": "Logik",
+      "network": "Netzwerk"
+    },
+    "messages": {
+      "noConnectors": "Keine Konnektoren konfiguriert.",
+      "dragVariables": "Ziehen Sie Variablen in Knoteneingänge, um Daten aus vorherigen Schritten zu verwenden."
+    }
+  },
+  "AboutUs": {
+    "hero": {
+      "title": "Über Uns.",
+      "subtitle": "Wir bauen die Zukunft der Industrie mit Intelligenz und Präzision."
+    },
+    "team": {
+      "title": "Unser Team",
+      "samRole": "Vision",
+      "samDescription": "Sam formt die strategische Vision für Enigmatics Identität, Produkte und Dienstleistungen und vereint erstklassige Talente, um industrielle Softwaresysteme grundlegend neu zu denken.",
+      "chrisRole": "Vertrieb",
+      "chrisDescription": "Chris leitet Operationen und strategische Partnerschaften und konzentriert sich auf die Skalierung der Marktpräsenz von Enigmatic und die Bereitstellung von Wert für wichtige Interessenvertreter der Branche.",
+      "phiRole": "Technologie",
+      "phiDescription": "Phi architektoniert das technische Fundament von Enigmatic und leitet Forschung und Entwicklung, um hochmoderne, robuste Lösungen zu liefern, die die Grenzen der Industrietechnologie erweitern."
+    },
+    "story": {
+      "title": "Gegründet von Industrie-Enthusiasten.",
+      "description": "Wir sind ein Team von Fachleuten für industrielle Operationen mit jahrzehntelanger praktischer Erfahrung in der Optimierung von Arbeitsabläufen. Wir kombinieren diese operative Tiefe mit fundiertem Ingenieurswissen, um strategische Beratung und Nodal zu liefern, unsere Plattform zur Standardisierung und Orchestrierung von Geschäftsprozessen."
+    },
+    "cta": {
+      "title": "Begleiten Sie unsere Reise",
+      "description": "Interessiert an einer Zusammenarbeit oder mehr über unsere Plattform zu erfahren?"
+    }
+  },
+  "Login": {
+    "title": "Bei Nodal anmelden",
+    "subtitle": "Geben Sie Ihre Anmeldeinformationen ein, um auf die Plattform zuzugreifen",
+    "email": "E-Mail",
+    "emailPlaceholder": "name@beispiel.com",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "signIn": "Anmelden",
+    "resetEmailSent": "E-Mail zum Zurücksetzen des Passworts gesendet! Überprüfen Sie Ihren Posteingang.",
+    "enterEmailFirst": "Bitte geben Sie zuerst Ihre E-Mail-Adresse ein.",
+    "loading": "Laden..."
+  },
+  "Security": {
+    "title": "Kontosicherheit",
+    "subtitle": "Verwalten Sie Ihre Sicherheitseinstellungen und die Zwei-Faktor-Authentifizierung",
+    "mfaTitle": "Zwei-Faktor-Authentifizierung",
+    "mfaEnabled": "Ihr Konto ist mit 2FA gesichert",
+    "mfaDisabled": "Für alle Benutzer erforderlich – bitte aktivieren, um die Plattform weiter zu nutzen",
+    "enabledBadge": "✓ Aktiviert",
+    "disabledBadge": "Deaktiviert",
+    "requiredWarning": "⚠️ Die Zwei-Faktor-Authentifizierung ist für alle Konten erforderlich. Bitte aktivieren Sie sie, um fortzufahren.",
+    "enableButton": "Zwei-Faktor-Authentifizierung Aktivieren",
+    "appBased": "Ihr Konto ist derzeit mit einer Authenticator-App-basierten 2FA geschützt.",
+    "disableButton": "Zwei-Faktor-Authentifizierung Deaktivieren",
+    "disableConfirm": "Sind Sie sicher, dass Sie die Zwei-Faktor-Authentifizierung deaktivieren möchten?",
+    "disableSuccess": "Zwei-Faktor-Authentifizierung wurde deaktiviert.",
+    "disableError": "Fehler beim Deaktivieren von MFA: "
+  },
+  "MFA": {
+    "verify": {
+      "title": "Zwei-Faktor-Authentifizierung",
+      "subtitle": "Geben Sie den 6-stelligen Code aus Ihrer Authenticator-App ein",
+      "codePlaceholder": "000000",
+      "verifying": "Verifizieren...",
+      "verify": "Verifizieren",
+      "backToLogin": "Zurück zur Anmeldung",
+      "sessionExpired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+      "noFactorFound": "Kein MFA-Faktor gefunden."
+    },
+    "setup": {
+      "title": "Sichern Sie Ihr Konto",
+      "subtitle": "Die Zwei-Faktor-Authentifizierung ist für alle Benutzer erforderlich",
+      "scanInstructions": "Scannen Sie den QR-Code mit Ihrer Authenticator-App, um fortzufahren",
+      "manualEntry": "Können Sie nicht scannen? Geben Sie diesen Code manuell ein:",
+      "enterCode": "6-stelligen Code eingeben",
+      "verifyAndContinue": "Verifizieren und Fortfahren",
+      "verifying": "Verifizieren...",
+      "settingUp": "MFA einrichten...",
+      "setupError": "Einrichtungsfehler",
+      "setupErrorMessage": "Es gab ein Problem bei der Einrichtung von MFA",
+      "tryAgain": "Erneut versuchen",
+      "success": "MFA erfolgreich aktiviert!"
+    }
+  },
+  "FlowDesigner": {
+    "toolbar": {
+      "untitled": "Ohne Titel",
+      "renamePlaceholder": "Doppelklick zum Umbenennen",
+      "lastSaved": "Zuletzt gespeichert",
+      "unsavedChanges": "Ungespeicherte Änderungen"
+    },
+    "status": {
+      "draft": "Entwurf",
+      "published": "Veröffentlicht",
+      "unpublishedChanges": "Unveröffentlichte Änderungen"
+    },
+    "tooltips": {
+      "magicOrganize": "Magisches Organisieren",
+      "clearTestResults": "Testergebnisse löschen",
+      "openConsole": "Konsole öffnen",
+      "newLogsAvailable": "Neue Protokolle verfügbar",
+      "runFlow": "Flow Ausführen",
+      "stopExecution": "Ausführung Stoppen",
+      "saveDraft": "Entwurf Speichern",
+      "publishToProduction": "In Produktion Veröffentlichen",
+      "deleteFlow": "Flow Löschen"
+    },
+    "messages": {
+      "startingFlow": "Starte Flow-Ausführung...",
+      "workflowCompleted": "Workflow Abgeschlossen",
+      "workflowCanceled": "Workflow Abgebrochen",
+      "workflowCanceledByUser": "Workflow vom Benutzer abgebrochen",
+      "workflowFailed": "Workflow Fehlgeschlagen",
+      "stoppingWorkflow": "Stoppe Workflow...",
+      "workflowStopped": "Workflow gestoppt.",
+      "stopSignalSent": "Stopp-Signal erfolgreich gesendet",
+      "failedToStop": "Fehler beim Stoppen des Workflows",
+      "failedToSendStop": "Fehler beim Senden des Stopp-Signals",
+      "stepExecuted": "Schritt '{{stepName}}' ausgeführt",
+      "publishSuccess": "Flow erfolgreich in Produktion veröffentlicht!",
+      "publishError": "Fehler beim Veröffentlichen des Flows"
+    }
+  },
+  "FlowNodes": {
+    "types": {
+      "http": "HTTP-Anfrage",
+      "apiTrigger": "Eingehender Webhook",
+      "api-trigger": "Eingehender Webhook",
+      "manualTrigger": "Manueller Auslöser",
+      "manual-trigger": "Manueller Auslöser",
+      "condition": "Bedingung",
+      "filter": "Daten Filtern",
+      "loop": "Schleife",
+      "variable": "Variable Setzen",
+      "switch": "Weiche",
+      "map": "Daten Zuordnen",
+      "humanTask": "Menschliche Aufgabe",
+      "human-task": "Menschliche Aufgabe",
+      "automation": "Warte auf Ereignis",
+      "goto": "Gehe zu / Sprung",
+      "action": "Aktion"
+    },
+    "descriptions": {
+      "http": "Senden Sie eine HTTP-Anfrage an einen beliebigen API-Endpunkt oder Dienst.",
+      "apiTrigger": "Startet einen neuen Flow-Lauf, wenn Daten über die generierte URL empfangen werden.",
+      "api-trigger": "Startet einen neuen Flow-Lauf, wenn Daten über die generierte URL empfangen werden.",
+      "manualTrigger": "Starten Sie den Flow manuell vom Dashboard aus zu Testzwecken.",
+      "manual-trigger": "Starten Sie den Flow manuell vom Dashboard aus zu Testzwecken.",
+      "condition": "Verzweigen Sie den Flow basierend auf logischen Regeln (Wenn/Sonst).",
+      "filter": "Stoppen Sie die Flow-Ausführung, wenn Bedingungen nicht erfüllt sind.",
+      "loop": "Iterieren Sie über eine Liste von Elementen und führen Sie Schritte für jedes aus.",
+      "variable": "Erstellen oder aktualisieren Sie eine Variable zur Verwendung in späteren Schritten.",
+      "switch": "Leiten Sie den Flow basierend auf Werten in verschiedene Pfade.",
+      "map": "Transformieren Sie Datenstrukturen von einem Format in ein anderes.",
+      "humanTask": "Pausieren Sie den Flow und warten Sie auf menschliche Genehmigung oder Eingabe.",
+      "human-task": "Pausieren Sie den Flow und warten Sie auf menschliche Genehmigung oder Eingabe.",
+      "automation": "Pausieren Sie den Flow und warten Sie auf ein externes Ereignis.",
+      "goto": "Springen Sie zu einem anderen Schritt im Flow.",
+      "action": "Führen Sie eine generische Aktion aus."
+    },
+    "labels": {
+      "startEvent": "START-EREIGNIS",
+      "humanAction": "Menschliche Aktion",
+      "actionRequired": "Aktion Erforderlich",
+      "incomingWebhook": "Eingehender Webhook",
+      "ready": "Bereit",
+      "notConfigured": "Nicht konfiguriert",
+      "taskConfigured": "Aufgabe konfiguriert",
+      "startsNewFlowRun": "Startet einen neuen Flow-Lauf bei Datenempfang."
+    }
+  },
+  "ConfigDrawer": {
+    "general": {
+      "label": "Beschriftung",
+      "description": "Beschreibung",
+      "configuration": "Konfiguration",
+      "stepNamePlaceholder": "Schrittname",
+      "descriptionPlaceholder": "Was macht dieser Schritt?",
+      "noConfigNeeded": "Keine zusätzliche Konfiguration für diesen Schritt erforderlich."
+    },
+    "buttons": {
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "testStep": "Schritt Testen",
+      "runningStep": "Führe Schritt aus...",
+      "output": "Ausgabe"
+    },
+    "messages": {
+      "titleEmpty": "Titel darf nicht leer sein",
+      "duplicateTitle": "Ein Knoten mit diesem Titel existiert bereits",
+      "validationFailed": "Validierung Fehlgeschlagen",
+      "configSaved": "Knotenkonfiguration gespeichert",
+      "stepExecutedSuccess": "Schritt erfolgreich ausgeführt",
+      "stepExecutedFailed": "Schrittausführung fehlgeschlagen",
+      "failedToExecute": "Fehler beim Ausführen des Schritts"
+    },
+    "humanTask": {
+      "actionTitle": "Aktionstitel",
+      "actionTitlePlaceholder": "z.B. Anfrage Überprüfen",
+      "actionTitleHelp": "Der Name der Aufgabe, der dem Empfänger angezeigt wird. Unterstützt Variablen.",
+      "assignee": "Empfänger (E-Mail oder Rolle)",
+      "assigneePlaceholder": "z.B. user@example.com oder finanz-team",
+      "requiredInfo": "Erforderliche Info",
+      "newQuestion": "Neue Frage",
+      "addField": "Feld Hinzufügen",
+      "noFieldsDefined": "Keine Felder definiert. Die KI wird nur um Bestätigung bitten.",
+      "fieldLabelPlaceholder": "Feld-Beschriftung (Frage)",
+      "removeField": "Feld Entfernen",
+      "optionsSelectOne": "Optionen (Eine Auswählen)",
+      "optionsSelectMany": "Optionen (Viele Auswählen)",
+      "optionPlaceholder": "Option",
+      "addOption": "Option Hinzufügen",
+      "required": "Erforderlich",
+      "fieldTypes": {
+        "shortText": "Kurzer Text",
+        "longText": "Langer Text",
+        "number": "Nummer",
+        "multiChoice": "Auswahl",
+        "allowMultiple": "Mehrfachauswahl Erlauben (Checkliste)",
+        "checkboxes": "Kontrollkästchen",
+        "rating": "Bewertung (1-5)",
+        "yesNo": "Ja/Nein",
+        "date": "Datum",
+        "dateTime": "Datum & Zeit",
+        "fileUpload": "Datei-Upload",
+        "signature": "Unterschrift"
+      },
+      "information": "Information",
+      "informationPlaceholder": "z.B. Kurzer Kontext für den Empfänger...",
+      "informationHelp": "Kurzzusammenfassung, die auf der Karte angezeigt wird.",
+      "description": "Interne Beschreibung",
+      "descriptionPlaceholder": "z.B. Interne Notizen für Flow-Designer...",
+      "instructions": "Anweisungen",
+      "instructionsPlaceholder": "z.B. Geben Sie detaillierte Schritte, Checklisten oder Kontext an...",
+      "instructionsHelp": "Diese detaillierten Anweisungen werden auf der Aufgabenkarte angezeigt, um den Empfänger anzuleiten."
+    },
+    "apiTrigger": {
+      "name": "Name",
+      "description": "Beschreibung",
+      "stepNamePlaceholder": "Schrittname (z.B. Neuer Benutzer Auslöser)",
+      "descriptionPlaceholder": "Interne Beschreibung für Flow-Designer...",
+      "configuration": "Konfiguration",
+      "endpointUrl": "Endpunkt-URL",
+      "live": "Live",
+      "saveToGenerate": "Speichern zum Generieren",
+      "copyUrl": "URL Kopieren",
+      "sendPostRequest": "Senden Sie eine POST-Anfrage mit dem unten definierten JSON-Körper.",
+      "dynamicUrlInfo": "Diese URL ist dynamisch basierend auf Ihrer aktuellen Umgebung. Bei Bereitstellung in der Produktion (Koyeb) wird automatisch Ihre offizielle Domain angezeigt. Lokale Test-URLs (localhost) werden nicht gespeichert.",
+      "expectedPayload": "Erwartete Nutzlast (Schema)",
+      "addField": "Feld Hinzufügen",
+      "noSchemaTitle": "Kein Ausgabeschema definiert",
+      "noSchemaDescription": "Jeder an den Webhook gesendete JSON-Körper wird akzeptiert.",
+      "fieldNamePlaceholder": "feld_name",
+      "typeString": "Zeichenkette",
+      "typeNumber": "Nummer",
+      "typeBoolean": "Boolean",
+      "typeObject": "Objekt",
+      "typeArray": "Array",
+      "required": "Erf",
+      "optional": "Opt",
+      "actionFlowInfo": "ACTION FLOW INFORMATIONEN",
+      "actionFlowDescription": "Definieren Sie, wie sich dieser Auslöser in das Action Flow Dashboard integriert."
+    },
+    "automation": {
+      "stepNamePlaceholder": "Schrittname (z.B. Warte auf Zahlung)",
+      "descriptionPlaceholder": "Beschreiben Sie, auf welches Ereignis dieser Schritt wartet...",
+      "expectedPayload": "Erwartete Nutzlast (Schema)",
+      "addField": "Feld Hinzufügen",
+      "fieldNamePlaceholder": "feld_name",
+      "noSchemaTitle": "Kein Ausgabeschema definiert",
+      "noSchemaDescription": "Variablen müssen manuell referenziert werden.",
+      "typeString": "Zeichenkette",
+      "typeNumber": "Nummer",
+      "typeBoolean": "Boolean",
+      "typeObject": "Objekt",
+      "typeArray": "Array",
+      "required": "Erf",
+      "optional": "Opt"
+    }
+  },
+  "FlowStudio": {
+    "title": "Flow Studio",
+    "newFlow": "Neuer Flow",
+    "tabs": {
+      "active": "Aktiv",
+      "draft": "Entwurf",
+      "inactive": "Inaktiv"
+    },
+    "table": {
+      "name": "Name",
+      "status": "Status",
+      "lastRun": "Letzter Lauf",
+      "never": "Nie",
+      "loading": "Lade Flows...",
+      "empty": "Keine Flows gefunden. Erstellen Sie einen, um zu beginnen!",
+      "statusActive": "Aktiv",
+      "statusDraft": "Entwurf",
+      "unpublishedChanges": "Unveröffentlichte Änderungen"
+    },
+    "modals": {
+      "delete": {
+        "title": "Sind Sie absolut sicher?",
+        "description": "Diese Aktion kann nicht rückgängig gemacht werden. Dies löscht den Flow \"{name}\" und alle seine Daten dauerhaft.",
+        "confirm": "Löschen",
+        "cancel": "Abbrechen"
+      },
+      "rename": {
+        "title": "Flow Umbenennen",
+        "description": "Geben Sie einen neuen Namen für Ihren Flow ein.",
+        "label": "Name",
+        "save": "Änderungen speichern",
+        "cancel": "Abbrechen"
+      }
+    },
+    "toasts": {
+      "savingBeforePublish": "Speichere Änderungen vor Veröffentlichung...",
+      "publishing": "Veröffentliche Flow...",
+      "publishSuccess": "Flow erfolgreich veröffentlicht! Er ist jetzt live.",
+      "publishError": "Fehler beim Veröffentlichen des Flows",
+      "deleteSuccess": "Flow erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen des Flows",
+      "renameSuccess": "Flow erfolgreich umbenannt",
+      "renameError": "Fehler beim Umbenennen des Flows",
+      "commentPosted": "Kommentar gepostet",
+      "commentError": "Fehler beim Posten des Kommentars",
+      "likeError": "Fehler beim Liken des Kommentars"
+    },
+    "comments": {
+      "title": "Diskussion",
+      "globalContext": "Globaler Kontext",
+      "placeholder": "Diesen Workflow kommentieren...",
+      "post": "Posten",
+      "noComments": "Noch keine Kommentare. Starten Sie die Unterhaltung.",
+      "reply": "Antworten",
+      "like": "Gefällt mir",
+      "writeReply": "Antwort schreiben...",
+      "unknown": "Unbekannt"
+    }
+  },
+  "ActionFlows": {
+    "title": "Action Flows",
+    "summary": {
+      "total": "gesamt",
+      "active": "aktiv",
+      "completed": "abgeschlossen",
+      "failed": "fehlgeschlagen"
+    },
+    "filters": {
+      "search": "Flows suchen...",
+      "status": "Status",
+      "allStatuses": "Alle Status",
+      "assignment": "Zuweisung",
+      "allFlows": "Alle Flows",
+      "assignedToMe": "Mir zugewiesen",
+      "assignedToMyTeam": "Meinem Team zugewiesen",
+      "relatedToMe": "Bezug zu mir"
+    },
+    "statuses": {
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen",
+      "terminated": "Beendet"
+    },
+    "priorities": {
+      "critical": "Kritisch",
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    },
+    "empty": "Keine Action Flows gefunden.",
+    "emptyHint": "Führen Sie einen Action Flow aus, um ihn hier zu sehen.",
+    "deleteConfirm": "Sind Sie sicher, dass Sie diesen Action-Flow-Lauf löschen möchten?"
+  },
+  "UseCaseVisualizations": {
+    "driverOnboarding": {
+      "tenstreet": "Tenstreet Bewerbung",
+      "emails": "E-Mail-Korrespondenz",
+      "hris": "HRIS Profil",
+      "safety": "Sicherheitsaufzeichnungen",
+      "title": "Einheitliche Kandidatenansicht",
+      "candidate": "Kandidat",
+      "inProgress": "In Bearbeitung",
+      "appReview": "App-Überprüfung Abgeschlossen",
+      "mvrCheck": "MVR-Prüfung Bestanden",
+      "drugScreen": "Drogentest Geplant",
+      "orientation": "Orientierung Ausstehend"
+    },
+    "billing": {
+      "natalie": "Natalie (Assistentin)",
+      "today": "Heute",
+      "claimDiscrepancy": "Anspruchsdiskrepanz #CLM-892",
+      "driverOnboarding": "Fahrer-Onboarding - John Doe",
+      "maintenanceRequest": "Wartungsanfrage #442",
+      "claimHeader": "Anspruch #CLM-892",
+      "aiMsg1": "Ich habe Dokumente für <span>Rechnung #4021</span> analysiert. Raten stimmen mit Vertrag überein, aber ich schlage vor, die Aufenthalts-Diskrepanz zu überprüfen.",
+      "userMsg": "Woher kommt die Diskrepanz?",
+      "aiMsg2": "Der Spediteur hat 4 Stunden protokolliert, aber der Geofence der Anlage zeigt nur 2 Stunden an.",
+      "aiMsg3": "Ich habe den Anspruch als <span>Bereit zur Überprüfung</span> vorbereitet.",
+      "inputPlaceholder": "Nachricht an Natalie...",
+      "footer": "Natalie kann Fehler machen. Bitte überprüfen Sie kritische Infos."
+    },
+    "manufacturing": {
+      "status": "Produktinslinie A4 Status",
+      "outputRate": "Ausgaberate",
+      "activeShift": "Aktive Schicht",
+      "morning": "Morgen",
+      "lowInventory": "Möglicher Bestandsengpass",
+      "lowInventoryDesc": "Basierend auf aktuellem Output könnten Harzbestände in 4 Stunden niedrig sein.",
+      "automatedResolution": "Intelligente Lösungsschritte",
+      "erpSignal": "ERP-Signal Empfangen",
+      "reorderTriggered": "Nachbestellung Vorgeschlagen",
+      "supplierConfirmed": "Lieferant Bestätigt",
+      "deliveryTime": "Lieferung: Morgen, 6 Uhr"
+    },
+    "construction": {
+      "siteReport": "Baustellenbericht",
+      "online": "Online",
+      "timestamp": "Heute, 09:14 Uhr",
+      "userMsg": "Hauptbagger Hydraulikausfall. Wir stehen in Zone B still.",
+      "foreman": "Vorarbeiter Mike",
+      "aiMsg": "Empfangen. Markiere als <span>Kritische Priorität</span> für Ihre Überprüfung.",
+      "ticketCreated": "Ticket #8821 Entworfen",
+      "maintenanceNotify": "Wartungsteam Benachrichtigt",
+      "estimate": "Schätzung: Techniker kommt in 45 Min.",
+      "pmMsg": "Verlege Team B zu Fundamentarbeiten in Zone C bis zur Lösung.",
+      "typeMessage": "Nachricht schreiben..."
+    }
+  },
+  "UseCaseFlows": {
+    "onboarding": {
+      "appReceived": "Bewerbung Empfangen",
+      "tenstreetWebhook": "Tenstreet Webhook",
+      "docsReview": "Dokumentenprüfung",
+      "recruiting": "Stacy (Personalbeschaffung)",
+      "bgChecks": "Hintergrundprüfung",
+      "natalieAgent": "Natalie (Assistentin)",
+      "orientation": "Orientierung Geplant",
+      "ops": "John (Ops)",
+      "provisioning": "Systembereitstellung",
+      "systems": "TMS, HR, Gehalt",
+      "ready": "Bereit für Disposition",
+      "active": "Status: Aktiv"
+    },
+    "maintenance": {
+      "dvir": "DVIR Eingereicht",
+      "techApp": "Techniker-App",
+      "defect": "Defekt Erkannt: Bremsen",
+      "trigger": "Intelligenter Alarm",
+      "orchestration": "Arbeitsorchestrierung",
+      "assigned": "Teile & Arbeit Vorgeschlagen",
+      "update": "Flottenstatus Aktualisieren",
+      "erpTms": "ERP & TMS"
+    },
+    "manufacturing": {
+      "iot": "IoT-Sensor-Stream",
+      "vibration": "Vibration > Schwellenwert",
+      "anomaly": "Anomalie-Alarm",
+      "confidence": "Natalie Schlug Überprüfung Vor",
+      "workOrder": "Arbeitsauftrag Überprüfen",
+      "shiftLead": "Prüfer: Schichtleiter",
+      "adjust": "Zeitplan Anpassen",
+      "reroute": "Linie 4 Umleiten"
+    },
+    "construction": {
+      "request": "Materialanfrage",
+      "concrete": "Beton - Zone B",
+      "inventory": "Bestandsprüfung",
+      "plant": "Mischanlage #4",
+      "dispatch": "Fahrer Entsenden",
+      "eta": "ETA: 45 Min",
+      "gate": "Tor-Code",
+      "access": "Zugang Gewährt",
+      "pour": "Guss Abgeschlossen",
+      "quality": "Qualität Protokolliert"
+    },
+    "badges": {
+      "api": "API",
+      "human": "Mensch",
+      "automated": "Assistiert",
+      "hero": "Held",
+      "complete": "Komplett",
+      "mobile": "Mobil",
+      "alert": "Alarm",
+      "auto": "Auto",
+      "sync": "Sync",
+      "mqtt": "MQTT",
+      "aiAnalysis": "Intelligenter Alarm",
+      "cmms": "CMMS",
+      "erpSync": "ERP Sync",
+      "fieldApp": "Feld-App",
+      "erp": "ERP",
+      "logistics": "Logistik",
+      "security": "Sicherheit",
+      "record": "Eintrag"
+    }
+  },
+  "DocsSearch": {
+    "button": "Suchen...",
+    "placeholder": "Geben Sie einen Befehl oder Suche ein...",
+    "noResults": "Keine Ergebnisse gefunden."
+  }
+}

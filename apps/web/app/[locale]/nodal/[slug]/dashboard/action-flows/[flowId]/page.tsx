@@ -10,6 +10,7 @@ import { useRouter } from "@/navigation";
 import { useTranslations } from "next-intl";
 import { flowService } from "@/services/flow-service";
 import DOMPurify from "isomorphic-dompurify";
+import { formatDistanceToNow } from "date-fns";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
     ArrowLeft,
@@ -472,7 +473,7 @@ export default function ActionFlowDetailPage() {
                   <div className="col-span-5 space-y-3">
                        <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-2">
                            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Actions</h3>
-                           <Button variant="outline" size="sm" className="h-6 text-[10px] px-2 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                           <Button variant="outline" size="sm" className="h-6 text-[10px] px-2 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 opacity-50 cursor-not-allowed" disabled>
                                + Action
                            </Button>
                        </div>
@@ -589,7 +590,13 @@ export default function ActionFlowDetailPage() {
                                                     <div className={`w-1.5 h-1.5 rounded-full ${isRunning || isDone ? 'bg-zinc-50 dark:bg-zinc-950 animate-pulse' : 'bg-zinc-400'}`} />
                                                     {isDone ? 'Completed successfully' : isFailed ? 'Action failed' : isRunning ? 'Active execution' : 'Pending start'}
                                                 </div>
-                                                <span className="opacity-70 font-mono">2m ago</span>
+                                                <span className="opacity-70 font-mono">
+                                                    {act.completed_at
+                                                        ? formatDistanceToNow(new Date(act.completed_at), { addSuffix: true })
+                                                        : act.started_at
+                                                            ? formatDistanceToNow(new Date(act.started_at), { addSuffix: true })
+                                                            : '—'}
+                                               </span>
                                            </div>
                                        </div>
                                    </div>

@@ -5,6 +5,135 @@
     "description": "We design, connect, and orchestrate the processes your core systems ignore.",
     "poweredBy": "Powered by modern technologies."
   },
+  "Insights": {
+    "title": "Insights",
+    "backToInsights": "Back to Insights",
+    "author": "Author",
+    "allContent": "All Content"
+  },
+  "Admin": {
+    "overview": "Overview",
+    "overviewDesc": "Platform metrics at a glance.",
+    "totalUsers": "Total Users",
+    "organizations": "Organizations",
+    "aiRequests": "AI Requests",
+    "blocked": "Blocked",
+    "creditsUsed": "Credits Used",
+    "common": {
+        "clear": "Clear",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "select": "Select",
+        "actions": "Actions",
+        "noOrg": "No Org",
+        "platform": "Platform"
+    },
+    "filters": {
+        "organization": "Organization",
+        "role": "Role",
+        "status": "Status",
+        "plan": "Plan",
+        "aiAccess": "AI Access",
+        "allOrgs": "All Orgs",
+        "allRoles": "All Roles",
+        "allStatus": "All Status",
+        "allPlans": "All Plans",
+        "allAccess": "All Access"
+    },
+    "roles": {
+        "platformAdmin": "Platform Admin",
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member"
+    },
+    "status": {
+        "active": "Active",
+        "blocked": "Blocked"
+    },
+    "types": {
+        "unlimited": "Unlimited",
+        "creditBased": "Credit-based"
+    },
+    "Users": {
+      "title": "Users",
+      "subtitle": "Manage user access, roles, and security.",
+      "create": "Create User",
+      "searchPlaceholder": "Search by name or email...",
+      "table": {
+        "user": "User",
+        "org": "Organization",
+        "role": "Role",
+        "status": "Status",
+        "actions": "Actions",
+        "noResults": "No users found.",
+        "noMatches": "No users match your filters."
+      },
+      "actions": {
+        "edit": "Edit Details",
+        "changePassword": "Change Password",
+        "delete": "Delete"
+      }
+    },
+    "Organizations": {
+      "title": "Organizations",
+      "subtitle": "Manage customer tenants, subscriptions, and AI credits.",
+      "create": "Create Organization",
+      "searchPlaceholder": "Search by name or slug...",
+      "table": {
+        "name": "Name",
+        "plan": "Plan",
+        "aiAccess": "AI Access",
+        "tokens": "Tokens Used",
+        "requests": "Requests",
+        "actions": "Actions"
+      },
+      "actions": {
+        "manageCredits": "Manage Credits",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "unlimited": "Unlimited",
+      "credits": "credits"
+    },
+    "AI": {
+      "title": "AI Configuration",
+      "subtitle": "Manage connection, model routing, and guardrails.",
+      "save": "Save",
+      "routing": {
+        "title": "Model Routing",
+        "desc": "Natalie routes requests through the pipeline below. All models share the same provider connection."
+      },
+      "connection": {
+        "title": "Connection",
+        "desc": "Shared across all models",
+        "provider": "Provider",
+        "baseUrl": "Base URL",
+        "apiKey": "API Key",
+        "configured": "configured"
+      },
+      "models": {
+        "title": "Models",
+        "desc": "Assign a model ID for each role in the routing pipeline.",
+        "primary": "Primary",
+        "primaryDesc": "Fast streaming & final answers",
+        "reasoning": "Reasoning",
+        "reasoningDesc": "Tool calls & data analysis",
+        "guardrail": "Guardrail",
+        "guardrailDesc": "Filters off-topic requests"
+      },
+      "placeholders": {
+        "leaveEmpty": "Leave empty to use primary model"
+      },
+      "hints": {
+        "fallback": "Falls back to primary model. Set a stronger model for better tool-calling.",
+        "disabled": "Disabled — all requests go directly to the model.",
+        "cheapest": "(cheapest)"
+      }
+    }
+  },
   "ServicesPage": {
     "title": "Services",
     "subtitle": "Professional services tailored to your needs.",
@@ -13,6 +142,8 @@
       "title": "Partnering for Operational Excellence.",
       "description": "Understand how our team services your organization to deliver on our commitments. Enigmatic uses BPMN 2.0 as its standard for process documentation and workflow modeling to ensure consistency, clarity, and portability across organizations."
     },
+    "deliverables": "Deliverables",
+    "tools": "Tools",
     "steps": {
       "step1": {
         "title": " Executive Alignment",
@@ -287,6 +418,8 @@
     "docs": "Docs",
     "nodes": "Nodes",
     "variables": "Variables",
+    "seeMore": "See more",
+    "seeLess": "See less",
     "sections": {
       "workspace": "Workspace",
       "development": "Development",
@@ -294,7 +427,10 @@
       "humanInLoop": "Human in loop",
       "automation": "Automation",
       "builtInTools": "Built-in tools",
-      "connectors": "Connectors"
+      "connectors": "Connectors",
+      "platform": "Platform",
+      "intelligence": "Intelligence",
+      "admin": "Admin"
     },
     "items": {
       "overview": "Overview",
@@ -304,7 +440,11 @@
       "peopleAndTeams": "People & Teams",
       "flowStudio": "Flow Studio",
       "integration": "Integration",
-      "knowledgeBase": "Knowledge Base"
+      "knowledgeBase": "Knowledge Base",
+      "platformStats": "Platform Stats",
+      "users": "Users",
+      "organizations": "Organizations",
+      "aiConfig": "AI Configuration"
     },
     "draggable": {
       "triggerCreateFlow": "Trigger: Create Flow",
@@ -620,6 +760,45 @@
       "statusActive": "Active",
       "statusDraft": "Draft",
       "unpublishedChanges": "Unpublished Changes"
+    },
+    "modals": {
+      "delete": {
+        "title": "Are you absolutely sure?",
+        "description": "This action cannot be undone. This will permanently delete the flow \"{name}\" and remove all of its data.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "rename": {
+        "title": "Rename Flow",
+        "description": "Enter a new name for your flow.",
+        "label": "Name",
+        "save": "Save changes",
+        "cancel": "Cancel"
+      }
+    },
+    "toasts": {
+      "savingBeforePublish": "Saving changes before publishing...",
+      "publishing": "Publishing flow...",
+      "publishSuccess": "Flow published successfully! It is now live.",
+      "publishError": "Failed to publish flow",
+      "deleteSuccess": "Flow deleted successfully",
+      "deleteError": "Failed to delete flow",
+      "renameSuccess": "Flow renamed successfully",
+      "renameError": "Failed to rename flow",
+      "commentPosted": "Comment posted",
+      "commentError": "Failed to post comment",
+      "likeError": "Failed to like comment"
+    },
+    "comments": {
+      "title": "Discussion",
+      "globalContext": "Global Context",
+      "placeholder": "Comment on this workflow...",
+      "post": "Post",
+      "noComments": "No comments yet. Start the conversation.",
+      "reply": "Reply",
+      "like": "Like",
+      "writeReply": "Write a reply...",
+      "unknown": "Unknown"
     }
   },
   "ActionFlows": {

@@ -5,6 +5,7 @@ import { apiClient } from "@/lib/api-client"
 import { Users, Building2, Bot, Shield, Activity } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import { Organization } from '@/types/admin'
+import { useTranslations } from 'next-intl'
 
 interface User {
     id: string
@@ -20,6 +21,7 @@ interface AIStats {
 }
 
 export default function AdminOverviewPage() {
+    const t = useTranslations("Admin")
     const { data: orgs = [], isLoading: loadingOrgs } = useSWR<Organization[]>(
         '/api/admin/orgs',
         (url: string) => apiClient.get(url).then(res => res.json())
@@ -36,34 +38,34 @@ export default function AdminOverviewPage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
-                <p className="text-sm text-muted-foreground mt-1">Platform metrics at a glance.</p>
+                <h1 className="text-2xl font-semibold tracking-tight">{t("overview")}</h1>
+                <p className="text-sm text-muted-foreground mt-1">{t("overviewDesc")}</p>
             </div>
 
             <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
                 <StatCard
                     icon={Users}
-                    label="Total Users"
+                    label={t("totalUsers")}
                     value={loadingUsers ? null : users.length}
                 />
                 <StatCard
                     icon={Building2}
-                    label="Organizations"
+                    label={t("organizations")}
                     value={loadingOrgs ? null : orgs.length}
                 />
                 <StatCard
                     icon={Bot}
-                    label="AI Requests"
+                    label={t("aiRequests")}
                     value={loadingAI ? null : (aiStats?.total_requests ?? 0)}
                 />
                 <StatCard
                     icon={Shield}
-                    label="Blocked"
+                    label={t("blocked")}
                     value={loadingAI ? null : (aiStats?.blocked_count ?? 0)}
                 />
                 <StatCard
                     icon={Activity}
-                    label="Credits Used"
+                    label={t("creditsUsed")}
                     value={loadingAI ? null : (aiStats?.credits_used ?? 0)}
                 />
             </div>

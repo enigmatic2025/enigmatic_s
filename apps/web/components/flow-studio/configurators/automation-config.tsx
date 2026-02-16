@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Trash2, Info, Copy, Check, Braces, ChevronDown, Webhook, Globe, Code } from 'lucide-react';
+import { Plus, Trash2, Info, Copy, Check, Braces, ChevronDown, Webhook, Globe, Code, FlaskConical } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -35,6 +35,9 @@ export function AutomationConfig({ nodeId, flowId, data, onUpdate }: AutomationC
   const [copiedPayload, setCopiedPayload] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(
     (data.correlations?.length > 0) || !!data.eventName
+  );
+  const [showTestData, setShowTestData] = useState(
+    !!data.mockPayload && data.mockPayload.trim() !== ''
   );
 
   const schema: SchemaField[] = data.schema || [];
@@ -371,6 +374,54 @@ ${(data.correlations || []).filter((r: any) => r.key).map((r: any) => `    "${r.
                 </p>
               </div>
             )}
+          </div>
+        )}
+      </div>
+
+      <div className="h-px bg-border/60 w-full" />
+
+      {/* ─── Section 5: Test Mode — Mock Webhook Payload ─── */}
+      <div>
+        <button
+          onClick={() => setShowTestData(!showTestData)}
+          className="flex items-center gap-2 w-full text-left py-1 group"
+        >
+          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${showTestData ? '' : '-rotate-90'}`} />
+          <FlaskConical className="w-4 h-4 text-amber-500" />
+          <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+            Test Mode: Mock Payload
+          </span>
+        </button>
+
+        {showTestData && (
+          <div className="mt-4 space-y-4 pl-6">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Provide a JSON payload to simulate the external webhook during test runs. This data will
+              <strong> auto-resume the wait step</strong> instead of waiting for a real external event.
+            </p>
+
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
+                Mock JSON Payload
+              </label>
+              <textarea
+                value={data.mockPayload || buildExamplePayload()}
+                onChange={(e) => onUpdate({ ...data, mockPayload: e.target.value })}
+                placeholder={buildExamplePayload()}
+                className="w-full bg-background border border-border rounded-md px-3 py-2 text-xs font-mono h-32 resize-none focus:ring-1 focus:ring-primary outline-none transition-all"
+                spellCheck={false}
+              />
+              <p className="text-[10px] text-muted-foreground">
+                Must be valid JSON. Fields defined in the Expected Payload schema above are pre-populated.
+              </p>
+            </div>
+
+            <button
+              onClick={() => onUpdate({ ...data, mockPayload: buildExamplePayload() })}
+              className="text-xs flex items-center gap-1.5 text-primary hover:underline"
+            >
+              Reset to schema defaults
+            </button>
           </div>
         )}
       </div>

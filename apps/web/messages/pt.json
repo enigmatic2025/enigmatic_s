@@ -1,0 +1,966 @@
+{
+  "HomePage": {
+    "title": "Enigmatic",
+    "subtitle": "Mapear. Construir. Melhorar.",
+    "description": "Projetamos, conectamos e orquestramos os processos que seus sistemas centrais ignoram.",
+    "poweredBy": "Impulsionado por tecnologias modernas."
+  },
+  "Insights": {
+    "title": "Insights",
+    "backToInsights": "Voltar para Insights",
+    "author": "Autor",
+    "allContent": "Todo o conteúdo"
+  },
+  "Admin": {
+    "overview": "Visão Geral",
+    "overviewDesc": "Métricas da plataforma em resumo.",
+    "totalUsers": "Total de Usuários",
+    "organizations": "Organizações",
+    "aiRequests": "Solicitações de IA",
+    "blocked": "Bloqueado",
+    "creditsUsed": "Créditos Usados",
+    "common": {
+        "clear": "Limpar",
+        "save": "Salvar",
+        "cancel": "Cancelar",
+        "delete": "Excluir",
+        "edit": "Editar",
+        "create": "Criar",
+        "select": "Selecionar",
+        "actions": "Ações",
+        "noOrg": "Sem Org",
+        "platform": "Plataforma"
+    },
+    "filters": {
+        "organization": "Organização",
+        "role": "Função",
+        "status": "Status",
+        "plan": "Plano",
+        "aiAccess": "Acesso IA",
+        "allOrgs": "Todas as Orgs",
+        "allRoles": "Todas as Funções",
+        "allStatus": "Todos os Status",
+        "allPlans": "Todos os Planos",
+        "allAccess": "Todo Acesso"
+    },
+    "roles": {
+        "platformAdmin": "Admin da Plataforma",
+        "owner": "Proprietário",
+        "admin": "Admin",
+        "member": "Membro"
+    },
+    "status": {
+        "active": "Ativo",
+        "blocked": "Bloqueado"
+    },
+    "types": {
+        "unlimited": "Ilimitado",
+        "creditBased": "Baseado em créditos"
+    },
+    "Users": {
+      "title": "Usuários",
+      "subtitle": "Gerenciar acesso de usuários, funções e segurança.",
+      "create": "Criar Usuário",
+      "searchPlaceholder": "Buscar por nome ou e-mail...",
+      "table": {
+        "user": "Usuário",
+        "org": "Organização",
+        "role": "Função",
+        "status": "Status",
+        "actions": "Ações",
+        "noResults": "Nenhum usuário encontrado.",
+        "noMatches": "Nenhum usuário corresponde aos seus filtros."
+      },
+      "actions": {
+        "edit": "Editar Detalhes",
+        "changePassword": "Alterar Senha",
+        "delete": "Excluir"
+      }
+    },
+    "Organizations": {
+      "title": "Organizações",
+      "subtitle": "Gerenciar locatários de clientes, assinaturas e créditos de IA.",
+      "create": "Criar Organização",
+      "searchPlaceholder": "Buscar por nome ou slug...",
+      "table": {
+        "name": "Nome",
+        "plan": "Plano",
+        "aiAccess": "Acesso IA",
+        "tokens": "Tokens Usados",
+        "requests": "Solicitações",
+        "actions": "Ações"
+      },
+      "actions": {
+        "manageCredits": "Gerenciar Créditos",
+        "edit": "Editar",
+        "delete": "Excluir"
+      },
+      "unlimited": "Ilimitado",
+      "credits": "créditos"
+    },
+    "AI": {
+      "title": "Configuração de IA",
+      "subtitle": "Gerenciar conexão, roteamento de modelos e barreiras de segurança.",
+      "save": "Salvar",
+      "routing": {
+        "title": "Roteamento de Modelos",
+        "desc": "Natalie roteia solicitações através do pipeline abaixo. Todos os modelos compartilham a mesma conexão de provedor."
+      },
+      "connection": {
+        "title": "Conexão",
+        "desc": "Compartilhado entre todos os modelos",
+        "provider": "Provedor",
+        "baseUrl": "URL Base",
+        "apiKey": "Chave API",
+        "configured": "configurado"
+      },
+      "models": {
+        "title": "Modelos",
+        "desc": "Atribuir um ID de modelo para cada função no pipeline de roteamento.",
+        "primary": "Primário",
+        "primaryDesc": "Streaming rápido e respostas finais",
+        "reasoning": "Raciocínio",
+        "reasoningDesc": "Chamadas de ferramentas e análise de dados",
+        "guardrail": "Barreira",
+        "guardrailDesc": "Filtra solicitações fora do tópico"
+      },
+      "placeholders": {
+        "leaveEmpty": "Deixar vazio para usar o modelo primário"
+      },
+      "hints": {
+        "fallback": "Recorre ao modelo primário. Defina um modelo mais forte para melhores chamadas de ferramentas.",
+        "disabled": "Desativado — todas as solicitações vão diretamente para o modelo.",
+        "cheapest": "(mais barato)"
+      }
+    }
+  },
+  "ServicesPage": {
+    "title": "Serviços",
+    "subtitle": "Serviços profissionais adaptados às suas necessidades.",
+    "description": "Ajudamos você a projetar, construir e otimizar suas operações.",
+    "story": {
+      "title": "Parceria para Excelência Operacional.",
+      "description": "Entenda como nossa equipe atende sua organização para cumprir nossos compromissos. A Enigmatic usa BPMN 2.0 como seu padrão para documentação de processos e modelagem de fluxo de trabalho para garantir consistência, clareza e portabilidade entre organizações."
+    },
+    "deliverables": "Entregáveis",
+    "tools": "Ferramentas",
+    "steps": {
+      "step1": {
+        "title": "Alinhamento Executivo",
+        "description": "Estabelecer objetivos claros de transformação e garantir patrocínio executivo para impulsionar a adesão organizacional e atingir metas operacionais.",
+        "deliverables": [
+          "Objetivos de transformação mensuráveis",
+          "Definição de EBITDA ou meta operacional",
+          "Acordo de patrocínio executivo"
+        ],
+        "tools": [
+            "Atlassian Confluence"
+        ]
+      },
+      "step2": {
+        "title": "Diagnóstico e Modelagem Financeira",
+        "description": "Mapear sistemas e fluxos de trabalho atuais para identificar gargalos, construindo uma linha de base financeira e uma tese de transformação com impacto quantificado.",
+        "deliverables": [
+          "Mapas de processos do estado atual", 
+          "Diagrama de arquitetura do sistema",
+          "Modelo de linha de base financeira",
+          "Análise de gargalos",
+          "Tese de transformação"
+        ],
+        "tools": [
+            "Lucid Chart",
+            "Excel",
+            "SQL",
+            "BPMN 2.0",
+            "Atlassian Confluence"
+        ]
+      },
+      "step3": {
+        "title": "Arquitetura do Estado Futuro",
+        "description": "Projetar o modelo operacional alvo, incluindo plantas tecnológicas, reprojetos de fluxo de trabalho e estruturas de governança para operações escaláveis.",
+        "deliverables": [
+            "Modelo operacional do estado futuro",
+            "Reprojetos de fluxo de trabalho",
+            "Planta tecnológica",
+            "Modelo de governança",
+            "Plano de implantação de mudanças"
+        ],
+        "tools": [
+            "BPMN 2.0",
+            "Lucid Chart",
+            "Atlassian Confluence"
+        ]
+      },
+      "step4": {
+        "title": "Implantação Piloto Controlada",
+        "description": "Validar a solução através de um piloto de escopo limitado, rastreando KPIs e métricas de adoção enquanto engenharia a construção dentro do Nodal.",
+        "deliverables": [
+            "Configuração do ambiente Nodal",
+            "Solução piloto funcional",
+            "Painel de rastreamento de KPIs",
+            "Relatório de medição de adoção"
+        ],
+        "tools": [
+            "Nodal",
+            "Atlassian Jira",
+            "Atlassian Confluence"
+        ]
+      },
+      "step5": {
+        "title": "Implantação Escalada",
+        "description": "Expandir fluxos de trabalho bem-sucedidos através de departamentos e locais, institucionalizando a governança para garantir a adoção completa da solução.",
+        "deliverables": [
+            "Expansão de fluxo de trabalho multi-departamento",
+            "Manual de governança institucionalizado",
+            "Adoção completa da solução"
+        ],
+        "tools": [
+            "Nodal"
+        ]
+      },
+      "step6": {
+        "title": "Otimização Contínua",
+        "description": "Fornecer suporte contínuo e revisões trimestrais para refinar a solução e impulsionar a melhoria contínua.",
+        "deliverables": [
+            "Revisões trimestrais da solução",
+            "Roteiro de otimização",
+            "Relatório de melhoria de desempenho"
+        ],
+        "tools": [
+            "Nodal",
+            "PowerBI",
+            "Atlassian Confluence"
+        ]
+      }
+    }
+  },
+  "Navigation": {
+    "dashboard": "Painel",
+    "collaborate": "Colaborar",
+    "product": "Produtos",
+    "services": "Serviços",
+    "company": "Empresa",
+    "insights": "Insights",
+    "signIn": "Entrar",
+    "loading": "Carregando...",
+    "items": {
+      "nodal": "Nodal",
+      "nodalDesc": "O sistema operacional central para operações industriais modernas",
+      "docs": "Documentação",
+      "docsDesc": "Guias completos e referências de API",
+      "useCases": "Casos de Uso",
+      "useCasesDesc": "Veja como a Enigmatic resolve problemas do mundo real",
+      "about": "Sobre Nós",
+      "aboutDesc": "Conheça nossa missão e equipe",
+      "privacy": "Política de Privacidade",
+      "terms": "Termos de Serviço"
+    }
+  },
+  "Mission": {
+    "label": "A Missão.",
+    "description": "Como seu parceiro de melhoria de processos, usamos tecnologia para ajudar suas operações a serem mais integradas, inteligentes e intuitivas.",
+    "industries": {
+      "transportation": "Transporte",
+      "transportationDesc": "Unifique redes de transportadoras em um único centro de comando para execução perfeita.",
+      "supplyChain": "Cadeia de Suprimentos",
+      "supplyChainDesc": "Substitua o rastreamento manual por orquestração inteligente para prever interrupções.",
+      "manufacturing": "Manufatura",
+      "manufacturingDesc": "Sincronize fluxos de materiais com cronogramas de produção para operações sem atrasos.",
+      "construction": "Construção",
+      "constructionDesc": "Otimize a coordenação entre locais e fornecedores para entrega precisa.",
+      "storage": "Armazenamento",
+      "storageDesc": "Acelere o cumprimento através de fluxos de trabalho inteligentes que otimizam o estoque.",
+      "energy": "Energia",
+      "energyDesc": "Modernize o rastreamento de conformidade para garantir uma logística de infraestrutura segura e eficiente."
+    },
+    "stats": {
+      "stat1": "80%+",
+      "desc1": "das empresas industriais lutam com dados fragmentados através de sistemas legados desconectados.",
+      "stat2": "Até 50%",
+      "desc2": "da largura de banda operacional é consumida pela coordenação manual entre campo e escritório.",
+      "stat3": "30–40%",
+      "desc3": "da margem potencial é erodida pela resolução reativa de problemas em vez de planejamento estratégico."
+    },
+    "aboutUs": "Sobre Nós"
+  },
+  "Problem": {
+    "title": "O Problema da Fragmentação Operacional.",
+    "description": "As operações industriais modernas estão quebrando sob o peso de ferramentas desatualizadas e sistemas desconectados.",
+    "cards": {
+      "manual": "Coordenação Manual",
+      "manualDesc": "As equipes ainda estão presas a planilhas, e-mails e chamadas telefônicas para coordenar operações complexas. Atualizações críticas são perdidas, cronogramas deslizam e todos trabalham com manuais diferentes.",
+      "disconnected": "Dados Desconectados",
+      "disconnectedDesc": "Silos entre ERPs, software especializado e ferramentas de campo criam pontos cegos. Os dados são inseridos duas vezes, imprecisos e presos em sistemas que não conversam entre si.",
+      "reactive": "Combate a Incêndios Reativo",
+      "reactiveDesc": "Toda essa fragmentação força suas melhores pessoas a passar o dia perseguindo informações e corrigindo erros em vez de otimizar o desempenho e impulsionar o crescimento."
+    }
+  },
+  "Services": {
+    "title": "Orquestre Suas Operações.",
+    "description": "Passe do caos à clareza. A Enigmatic unifica suas ferramentas e fluxos de trabalho fragmentados em um único ecossistema digital inteligente.",
+    "learnMore": "Saiba Mais",
+    "panels": {
+      "consulting": "Transformação Digital Estratégica",
+      "consultingDesc": "Não apenas tapamos buracos. Reprojetamos seus fluxos de trabalho operacionais principais, substituindo gargalos manuais por soluções escaláveis e automatizadas adaptadas à sua infraestrutura única.",
+      "nodal": "O Sistema Operacional Nodal",
+      "nodalDesc": "O sistema nervoso central para o seu negócio. O Nodal conecta suas equipes, ferramentas e dados em uma única interface inteligente—executando ações para que você não precise."
+    },
+    "grid": {
+      "triggers": "Gatilhos Inteligentes",
+      "triggersDesc": "Inicie fluxos de trabalho complexos automaticamente com base em e-mails, atualizações de status ou eventos de API.",
+      "human": "Controle Humano",
+      "humanDesc": "Encaminhe exceções críticas para especialistas; automatize o resto.",
+      "connectivity": "Conectividade Total",
+      "connectivityDesc": "Unifique dados de ERPs, dispositivos e parceiros em uma única fonte."
+    }
+  },
+  "Process": {
+    "title": "Do Caos à Clareza.",
+    "description": "Nossa abordagem de três etapas para modernizar suas operações.",
+    "learnMore": "Saiba Mais",
+    "steps": {
+      "step1": "Mapear Estado Atual",
+      "step1Desc": "Trabalhamos com sua equipe para visualizar suas operações atuais, identificando gargalos, ineficiências e oportunidades ocultas de melhoria.",
+      "step2": "Projetar Estado Futuro",
+      "step2Desc": "Projetamos um fluxo de trabalho otimizado projetado para maximizar o valor financeiro e a fluidez operacional.",
+      "step3": "Construir e Implementar",
+      "step3Desc": "Construímos a solução usando tecnologias modernas, com o Nodal como o sistema operacional central para orquestrar seu novo ecossistema."
+    }
+  },
+  "NodalPlatform": {
+    "title": "Unifique Seus Sistemas.",
+    "description": "O Nodal adiciona uma camada de orquestração poderosa sobre seus sistemas e ferramentas principais existentes, oferecendo consistência e visibilidade perfeitas sem substituir uma única ferramenta.",
+    "cards": {
+      "flow": "Orquestre com Fluxos de Ação.",
+      "flowDesc": "Projete pipelines que guiem os usuários através de suas tarefas diárias. Seja um gatilho de evento do seu TMS ou um início manual, o Nodal garante que todos sigam o mesmo processo padronizado.",
+      "connect": "Conecte e Automatize.",
+      "connectDesc": "Facilite processos de negócios conectando sistemas díspares. Acione ações automaticamente e monitore a execução em toda a sua pilha.",
+      "extend": "Estenda suas capacidades.",
+      "extendDesc": "Adicione cálculos personalizados e alertas automatizados. Obtenha visibilidade total de seus dados sem alterar sua pilha de tecnologia existente.",
+      "human": "Controle humano no loop.",
+      "humanDesc": "Encaminhe exceções para operadores perfeitamente. Garanta que decisões críticas recebam atenção humana enquanto mantém o restante do seu processo funcionando no piloto automático."
+    },
+    "seeUseCases": "Ver Casos de Uso"
+  },
+  "Principles": {
+    "title": "Software genérico ignora a realidade operacional.",
+    "description": "Para construir uma empresa resiliente, você precisa de mais do que apenas ferramentas. Você precisa de uma filosofia de engenharia.",
+    "cards": {
+      "intelligence": "Inteligência, Amplificada",
+      "intelligenceDesc": "A automação não deve substituir sua equipe—deve elevá-la. Lidamos com a execução repetitiva para que seus especialistas possam se concentrar em decisões de alto valor.",
+      "precision": "Precisão de Missão Crítica",
+      "precisionDesc": "Quando erros custam milhões, 'bom o suficiente' não é uma opção. Projetamos fluxos de trabalho tolerantes a falhas projetados para suportar a pressão de operações do mundo real.",
+      "visibility": "Visibilidade Total",
+      "visibilityDesc": "Chega de caixas pretas ou silos de dados. Unificamos seu contexto operacional em uma única fonte de verdade, dando a você a clareza para agir antes que os problemas aumentem."
+    }
+  },
+  "CTA": {
+    "label": "Entre em Contato",
+    "title": "Modernize o que move o mundo.",
+    "description": "Ajude-nos a desembaraçar os sistemas mais complexos do mundo. Se você é movido por problemas reais e impacto real, a Enigmatic é onde seu trabalho importa.",
+    "button": "Colaborar"
+  },
+  "Visualizations": {
+    "rateCalculation": "Cálculo de Taxas",
+    "contractLogic": "Lógica de Contrato",
+    "checkCapacity": "Verificar Capacidade",
+    "carrierApi": "API da Transportadora",
+    "full": "Cheio",
+    "available": "Disponível",
+    "dispatchDriver": "Despachar Motorista",
+    "samsara": "Samsara",
+    "nextStep": "Próximo passo",
+    "isShipmentDelayed": "Remessa Atrasada?",
+    "isTrue": "É verdadeiro",
+    "notifyCustomer": "Notificar Cliente",
+    "email": "E-mail",
+    "isFalse": "É falso",
+    "selectBlock": "Selecionar bloco",
+    "calculateEta": "Calcular ETA",
+    "consolidateLoads": "Consolidar Cargas",
+    "updateTms": "Atualizar TMS",
+    "exceptionReview": "Revisão de Exceção",
+    "humanAction": "Ação Humana",
+    "rateVariance": "Variação de taxa detectada:",
+    "carrierInvoice": "Fatura da Transportadora #INV-2024-001",
+    "approve": "Aprovar",
+    "reject": "Rejeitar"
+  },
+  "Footer": {
+      "tagline": "Digitalizando fluxos de trabalho complexos e construindo soluções automatizadas que impulsionam o futuro das operações industriais.",
+      "copyright": "© {year} Enigmatic Technologies. Todos os direitos reservados.",
+      "legal": "Legal"
+  },
+  "UseCasesPage": {
+      "title": "Casos de Uso.",
+      "description": "Veja como a Enigmatic e o Nodal digitalizam fluxos de trabalho manuais e orquestram operações complexas em escala.",
+      "ctaTitle": "Tem um desafio único?",
+      "ctaDescription": "Nossa equipe de engenheiros pode construir fluxos de trabalho personalizados adaptados às suas necessidades operacionais específicas.",
+      "cards": {
+          "onboarding": "Contratação e Integração de Motoristas",
+          "onboardingDesc": "Cada transportadora lida com fluxos de integração caóticos espalhados por Tenstreet, HRIS, e-mail, planilhas e verificações de segurança. O Nodal comprime esse fluxo confuso em uma visão unificada, automatizando etapas de conformidade e coleta de documentos.",
+          "maintenance": "Manutenção e Inspeções de Ativos",
+          "maintenanceDesc": "A manutenção é frequentemente reativa e fragmentada. Com o Nodal, um técnico enviando um DVIR aciona pedidos de peças, atribuições de trabalho e aprovações automaticamente, orquestrando o trabalho entre equipes além do TMS.",
+          "billing": "Faturamento e Processamento de Reivindicações",
+          "billingDesc": "Acelere o fluxo de caixa reduzindo vazamentos. O Nodal fornece uma visão única de fluxo de trabalho para faturamento e reivindicações, lidando com tarefas, anexos e validações antes de enviar dados limpos para seu TMS ou sistema de contabilidade.",
+          "predictive": "Operações de Manufatura Preditiva",
+          "predictiveDesc": "Conecte o chão de fábrica à gerência. Ingira dados de sensores ao vivo para detectar anomalias, acionar ordens de serviço automaticamente em seu CMMS e reagendar turnos de produção em seu ERP sem intervenção manual.",
+          "production": "Visibilidade da Linha de Produção",
+          "productionDesc": "Monitoramento em tempo real de entradas e saídas de materiais. Quando o estoque cai abaixo dos limites, os agentes de IA do Nodal negociam o reabastecimento com fornecedores instantaneamente.",
+          "field": "Integração de Comunicação de Campo",
+          "fieldDesc": "Feche a lacuna entre o local de trabalho e o back office. Os capatazes do local podem relatar problemas via SMS ou Chat, que o Nodal traduz em documentos RFI formais e solicitações de tickets.",
+          "construction": "Logística de Materiais de Construção",
+          "constructionDesc": "Entrega just-in-time para locais complexos. Coordene derramamentos de concreto e entregas de material sincronizando solicitações do local diretamente com usinas de dosagem e despachantes de logística."
+      }
+  },
+  "Sidebar": {
+    "searchPlaceholder": "Buscar...",
+    "docs": "Docs",
+    "nodes": "Nós",
+    "variables": "Variáveis",
+    "seeMore": "Ver mais",
+    "seeLess": "Ver menos",
+    "sections": {
+      "workspace": "Espaço de trabalho",
+      "development": "Desenvolvimento",
+      "triggers": "Gatilhos",
+      "humanInLoop": "Humano no loop",
+      "automation": "Automação",
+      "builtInTools": "Ferramentas integradas",
+      "connectors": "Conectores",
+      "platform": "Plataforma",
+      "intelligence": "Inteligência",
+      "admin": "Admin"
+    },
+    "items": {
+      "overview": "Visão Geral",
+      "natalie": "Natalie",
+      "actionFlows": "Fluxos de Ação",
+      "organization": "Organização",
+      "peopleAndTeams": "Pessoas e Equipes",
+      "flowStudio": "Estúdio de Fluxo",
+      "integration": "Integração",
+      "knowledgeBase": "Base de Conhecimento",
+      "platformStats": "Estatísticas da Plataforma",
+      "users": "Usuários",
+      "organizations": "Organizações",
+      "aiConfig": "Configuração de IA"
+    },
+    "draggable": {
+      "triggerCreateFlow": "Gatilho: Criar Fluxo",
+      "humanTask": "Tarefa Humana",
+      "automation": "Aguardar Evento",
+      "filterData": "Filtrar Dados",
+      "setVariable": "Definir Variável",
+      "mapData": "Mapear Dados",
+      "ifElse": "Se / Senão",
+      "loop": "Loop",
+      "switch": "Switch",
+      "goto": "Ir para / Salto",
+      "httpRequest": "Requisição HTTP"
+    },
+    "groups": {
+      "dataOperation": "Operação de Dados",
+      "logic": "Lógica",
+      "network": "Rede"
+    },
+    "messages": {
+      "noConnectors": "Nenhum conector configurado.",
+      "dragVariables": "Arraste variáveis para as entradas do nó para usar dados de etapas anteriores."
+    }
+  },
+  "AboutUs": {
+    "hero": {
+      "title": "Sobre Nós.",
+      "subtitle": "Construindo o futuro da indústria com inteligência e precisão."
+    },
+    "team": {
+      "title": "Nossa Equipe",
+      "samRole": "Visão",
+      "samDescription": "Sam molda a visão estratégica para a identidade, produtos e serviços da Enigmatic, unindo talentos de primeira linha para reimaginar fundamentalmente os sistemas de software industrial.",
+      "chrisRole": "Vendas",
+      "chrisDescription": "Chris lidera operações e parcerias estratégicas, focando na escala da presença de mercado da Enigmatic e na entrega de valor para as principais partes interessadas do setor.",
+      "phiRole": "Tecnologia",
+      "phiDescription": "Phi arquiteta a fundação técnica da Enigmatic, liderando pesquisa e desenvolvimento para entregar soluções robustas de ponta que expandem os limites da tecnologia industrial."
+    },
+    "story": {
+      "title": "Fundado por Entusiastas Industriais.",
+      "description": "Somos uma equipe de profissionais de operações industriais com décadas de experiência prática otimizando fluxos de trabalho. Combinamos essa profundidade operacional com séria experiência em engenharia para entregar consultoria estratégica e o Nodal, nossa plataforma para padronizar e orquestrar processos de negócios."
+    },
+    "cta": {
+      "title": "Junte-se à nossa jornada",
+      "description": "Interessado em trabalhar conosco ou saber mais sobre nossa plataforma?"
+    }
+  },
+  "Login": {
+    "title": "Entrar no Nodal",
+    "subtitle": "Insira suas credenciais para acessar a plataforma",
+    "email": "E-mail",
+    "emailPlaceholder": "nome@exemplo.com",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "signIn": "Entrar",
+    "resetEmailSent": "E-mail de redefinição de senha enviado! Verifique sua caixa de entrada.",
+    "enterEmailFirst": "Por favor, insira seu endereço de e-mail primeiro.",
+    "loading": "Carregando..."
+  },
+  "Security": {
+    "title": "Segurança da Conta",
+    "subtitle": "Gerencie suas configurações de segurança e autenticação de dois fatores",
+    "mfaTitle": "Autenticação de Dois Fatores",
+    "mfaEnabled": "Sua conta está protegida com 2FA",
+    "mfaDisabled": "Obrigatório para todos os usuários - por favor, ative para continuar usando a plataforma",
+    "enabledBadge": "✓ Ativado",
+    "disabledBadge": "Desativado",
+    "requiredWarning": "⚠️ A autenticação de dois fatores é obrigatória para todas as contas. Por favor, ative-a para continuar.",
+    "enableButton": "Ativar Autenticação de Dois Fatores",
+    "appBased": "Sua conta está atualmente protegida com 2FA baseada em aplicativo autenticador.",
+    "disableButton": "Desativar Autenticação de Dois Fatores",
+    "disableConfirm": "Tem certeza de que deseja desativar a autenticação de dois fatores?",
+    "disableSuccess": "A autenticação de dois fatores foi desativada.",
+    "disableError": "Erro ao desativar MFA: "
+  },
+  "MFA": {
+    "verify": {
+      "title": "Autenticação de Dois Fatores",
+      "subtitle": "Insira o código de 6 dígitos do seu aplicativo autenticador",
+      "codePlaceholder": "000000",
+      "verifying": "Verificando...",
+      "verify": "Verificar",
+      "backToLogin": "Voltar para o login",
+      "sessionExpired": "Sessão expirada. Por favor, faça login novamente.",
+      "noFactorFound": "Nenhum fator MFA encontrado."
+    },
+    "setup": {
+      "title": "Proteja Sua Conta",
+      "subtitle": "A autenticação de dois fatores é obrigatória para todos os usuários",
+      "scanInstructions": "Digitalize o código QR com seu aplicativo autenticador para continuar",
+      "manualEntry": "Não consegue digitalizar? Insira este código manualmente:",
+      "enterCode": "Insira o código de 6 dígitos",
+      "verifyAndContinue": "Verificar e Continuar",
+      "verifying": "Verificando...",
+      "settingUp": "Configurando MFA...",
+      "setupError": "Erro de Configuração",
+      "setupErrorMessage": "Houve um problema ao configurar o MFA",
+      "tryAgain": "Tentar Novamente",
+      "success": "MFA ativado com sucesso!"
+    }
+  },
+  "FlowDesigner": {
+    "toolbar": {
+      "untitled": "Sem Título",
+      "renamePlaceholder": "Clique duas vezes para renomear",
+      "lastSaved": "Último salvo",
+      "unsavedChanges": "Alterações não salvas"
+    },
+    "status": {
+      "draft": "Rascunho",
+      "published": "Publicado",
+      "unpublishedChanges": "Alterações Não Publicadas"
+    },
+    "tooltips": {
+      "magicOrganize": "Organização Mágica",
+      "clearTestResults": "Limpar Resultados de Teste",
+      "openConsole": "Abrir Console",
+      "newLogsAvailable": "Novos logs disponíveis",
+      "runFlow": "Executar Fluxo",
+      "stopExecution": "Parar Execução",
+      "saveDraft": "Salvar Rascunho",
+      "publishToProduction": "Publicar para Produção",
+      "deleteFlow": "Excluir Fluxo"
+    },
+    "messages": {
+      "startingFlow": "Iniciando execução do fluxo...",
+      "workflowCompleted": "Fluxo de Trabalho Concluído",
+      "workflowCanceled": "Fluxo de Trabalho Cancelado",
+      "workflowCanceledByUser": "Fluxo de Trabalho Cancelado pelo usuário",
+      "workflowFailed": "Fluxo de Trabalho Falhou",
+      "stoppingWorkflow": "Parando fluxo de trabalho...",
+      "workflowStopped": "Fluxo de trabalho parado.",
+      "stopSignalSent": "Sinal de parada enviado com sucesso",
+      "failedToStop": "Falha ao parar fluxo de trabalho",
+      "failedToSendStop": "Falha ao enviar sinal de parada",
+      "stepExecuted": "Etapa '{{stepName}}' executada",
+      "publishSuccess": "Fluxo publicado para produção!",
+      "publishError": "Falha ao publicar fluxo"
+    }
+  },
+  "FlowNodes": {
+    "types": {
+      "http": "Requisição HTTP",
+      "apiTrigger": "Webhook de Entrada",
+      "api-trigger": "Webhook de Entrada",
+      "manualTrigger": "Gatilho Manual",
+      "manual-trigger": "Gatilho Manual",
+      "condition": "Condição",
+      "filter": "Filtrar Dados",
+      "loop": "Loop",
+      "variable": "Definir Variável",
+      "switch": "Switch",
+      "map": "Mapear Dados",
+      "humanTask": "Tarefa Humana",
+      "human-task": "Tarefa Humana",
+      "automation": "Aguardar Evento",
+      "goto": "Ir para / Salto",
+      "action": "Ação"
+    },
+    "descriptions": {
+      "http": "Envie uma requisição HTTP para qualquer endpoint de API ou serviço.",
+      "apiTrigger": "Inicia uma nova execução de fluxo quando dados são recebidos via URL gerada.",
+      "api-trigger": "Inicia uma nova execução de fluxo quando dados são recebidos via URL gerada.",
+      "manualTrigger": "Inicie o fluxo manualmente do painel para testes.",
+      "manual-trigger": "Inicie o fluxo manualmente do painel para testes.",
+      "condition": "Ramifique o fluxo com base em regras lógicas (Se/Senão).",
+      "filter": "Pare a execução do fluxo se as condições não forem atendidas.",
+      "loop": "Itere sobre uma lista de itens e execute etapas para cada um.",
+      "variable": "Crie ou atualize uma variável para uso em etapas posteriores.",
+      "switch": "Roteie o fluxo em diferentes caminhos com base em valores.",
+      "map": "Transforme estruturas de dados de um formato para outro.",
+      "humanTask": "Pause o fluxo e aguarde aprovação ou entrada humana.",
+      "human-task": "Pause o fluxo e aguarde aprovação ou entrada humana.",
+      "automation": "Pause o fluxo e aguarde um evento externo.",
+      "goto": "Pule para outra etapa no fluxo.",
+      "action": "Execute uma ação genérica."
+    },
+    "labels": {
+      "startEvent": "EVENTO DE INÍCIO",
+      "humanAction": "Ação Humana",
+      "actionRequired": "Ação Necessária",
+      "incomingWebhook": "Webhook de Entrada",
+      "ready": "Pronto",
+      "notConfigured": "Não configurado",
+      "taskConfigured": "Tarefa configurada",
+      "startsNewFlowRun": "Inicia uma nova execução de fluxo quando dados são recebidos."
+    }
+  },
+  "ConfigDrawer": {
+    "general": {
+      "label": "Rótulo",
+      "description": "Descrição",
+      "configuration": "Configuração",
+      "stepNamePlaceholder": "Nome da Etapa",
+      "descriptionPlaceholder": "O que esta etapa faz?",
+      "noConfigNeeded": "Nenhuma configuração adicional necessária para esta etapa."
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "testStep": "Testar Etapa",
+      "runningStep": "Executando Etapa...",
+      "output": "Saída"
+    },
+    "messages": {
+      "titleEmpty": "O título não pode estar vazio",
+      "duplicateTitle": "Um nó com este título já existe",
+      "validationFailed": "Validação Falhou",
+      "configSaved": "Configuração do nó salva",
+      "stepExecutedSuccess": "Etapa executada com sucesso",
+      "stepExecutedFailed": "Execução da etapa falhou",
+      "failedToExecute": "Falha ao executar etapa"
+    },
+    "humanTask": {
+      "actionTitle": "Título da Ação",
+      "actionTitlePlaceholder": "e.g. Revisar Solicitação",
+      "actionTitleHelp": "O nome da tarefa mostrado ao responsável. Suporta variáveis.",
+      "assignee": "Responsável (E-mail ou Função)",
+      "assigneePlaceholder": "e.g. usuario@exemplo.com ou equipe-financas",
+      "requiredInfo": "Informação Necessária",
+      "newQuestion": "Nova Pergunta",
+      "addField": "Adicionar Campo",
+      "noFieldsDefined": "Nenhum campo definido. A IA apenas pedirá confirmação.",
+      "fieldLabelPlaceholder": "Rótulo do Campo (Pergunta)",
+      "removeField": "Remover Campo",
+      "optionsSelectOne": "Opções (Selecionar Uma)",
+      "optionsSelectMany": "Opções (Selecionar Muitas)",
+      "optionPlaceholder": "Opção",
+      "addOption": "Adicionar Opção",
+      "required": "Obrigatório",
+      "fieldTypes": {
+        "shortText": "Texto Curto",
+        "longText": "Texto Longo",
+        "number": "Número",
+        "multiChoice": "Seleção",
+        "allowMultiple": "Permitir Múltiplos (Lista de verificação)",
+        "checkboxes": "Caixas de seleção",
+        "rating": "Avaliação (1-5)",
+        "yesNo": "Sim/Não",
+        "date": "Data",
+        "dateTime": "Data e Hora",
+        "fileUpload": "Upload de Arquivo",
+        "signature": "Assinatura"
+      },
+      "information": "Informação",
+      "informationPlaceholder": "e.g. Breve contexto para o responsável...",
+      "informationHelp": "Resumo curto exibido no cartão.",
+      "description": "Descrição Interna",
+      "descriptionPlaceholder": "e.g. Notas internas para designers de fluxo...",
+      "instructions": "Instruções",
+      "instructionsPlaceholder": "e.g. Forneça etapas detalhadas, listas de verificação ou contexto...",
+      "instructionsHelp": "Estas instruções detalhadas serão exibidas no cartão da tarefa para guiar o responsável."
+    },
+    "apiTrigger": {
+      "name": "Nome",
+      "description": "Descrição",
+      "stepNamePlaceholder": "Nome da Etapa (e.g. Gatilho Novo Usuário)",
+      "descriptionPlaceholder": "Descrição interna para designers de fluxo...",
+      "configuration": "Configuração",
+      "endpointUrl": "URL do Endpoint",
+      "live": "Ao Vivo",
+      "saveToGenerate": "Salvar para Gerar",
+      "copyUrl": "Copiar URL",
+      "sendPostRequest": "Envie uma solicitação POST com o corpo JSON definido abaixo.",
+      "dynamicUrlInfo": "Esta URL é dinâmica com base no seu ambiente atual. Quando implantado em produção (Koyeb), ele mostrará automaticamente seu domínio oficial. URLs de teste local (localhost) não são salvas.",
+      "expectedPayload": "Payload Esperado (Esquema)",
+      "addField": "Adicionar Campo",
+      "noSchemaTitle": "Nenhum esquema de saída definido",
+      "noSchemaDescription": "Qualquer corpo JSON enviado para o webhook será aceito.",
+      "fieldNamePlaceholder": "nome_do_campo",
+      "typeString": "String",
+      "typeNumber": "Número",
+      "typeBoolean": "Booleano",
+      "typeObject": "Objeto",
+      "typeArray": "Array",
+      "required": "Req",
+      "optional": "Opt",
+      "actionFlowInfo": "INFORMAÇÕES DO FLUXO DE AÇÃO",
+      "actionFlowDescription": "Defina como este gatilho se integra ao Painel de Fluxo de Ação."
+    },
+    "automation": {
+      "stepNamePlaceholder": "Nome da Etapa (e.g. Aguardar Pagamento)",
+      "descriptionPlaceholder": "Descreva qual evento esta etapa está aguardando...",
+      "expectedPayload": "Payload Esperado (Esquema)",
+      "addField": "Adicionar Campo",
+      "fieldNamePlaceholder": "nome_do_campo",
+      "noSchemaTitle": "Nenhum esquema de saída definido",
+      "noSchemaDescription": "Variáveis precisarão ser referenciadas manualmente.",
+      "typeString": "String",
+      "typeNumber": "Número",
+      "typeBoolean": "Booleano",
+      "typeObject": "Objeto",
+      "typeArray": "Array",
+      "required": "Req",
+      "optional": "Opt"
+    }
+  },
+  "FlowStudio": {
+    "title": "Estúdio de Fluxo",
+    "newFlow": "Novo Fluxo",
+    "tabs": {
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "inactive": "Inativo"
+    },
+    "table": {
+      "name": "Nome",
+      "status": "Status",
+      "lastRun": "Última Execução",
+      "never": "Nunca",
+      "loading": "Carregando fluxos...",
+      "empty": "Nenhum fluxo encontrado. Crie um para começar!",
+      "statusActive": "Ativo",
+      "statusDraft": "Rascunho",
+      "unpublishedChanges": "Alterações Não Publicadas"
+    },
+    "modals": {
+      "delete": {
+        "title": "Você tem certeza absoluta?",
+        "description": "Esta ação não pode ser desfeita. Isso excluirá permanentemente o fluxo \"{name}\" e removerá todos os seus dados.",
+        "confirm": "Excluir",
+        "cancel": "Cancelar"
+      },
+      "rename": {
+        "title": "Renomear Fluxo",
+        "description": "Insira um novo nome para o seu fluxo.",
+        "label": "Nome",
+        "save": "Salvar alterações",
+        "cancel": "Cancelar"
+      }
+    },
+    "toasts": {
+      "savingBeforePublish": "Salvando alterações antes de publicar...",
+      "publishing": "Publicando fluxo...",
+      "publishSuccess": "Fluxo publicado com sucesso! Agora está ao vivo.",
+      "publishError": "Falha ao publicar fluxo",
+      "deleteSuccess": "Fluxo excluído com sucesso",
+      "deleteError": "Falha ao excluir fluxo",
+      "renameSuccess": "Fluxo renomeado com sucesso",
+      "renameError": "Falha ao renomear fluxo",
+      "commentPosted": "Comentário postado",
+      "commentError": "Falha ao postar comentário",
+      "likeError": "Falha ao curtir comentário"
+    },
+    "comments": {
+      "title": "Discussão",
+      "globalContext": "Contexto Global",
+      "placeholder": "Comente neste fluxo de trabalho...",
+      "post": "Postar",
+      "noComments": "Nenhum comentário ainda. Comece a conversa.",
+      "reply": "Responder",
+      "like": "Curtir",
+      "writeReply": "Escreva uma resposta...",
+      "unknown": "Desconhecido"
+    }
+  },
+  "ActionFlows": {
+    "title": "Fluxos de Ação",
+    "summary": {
+      "total": "total",
+      "active": "ativo",
+      "completed": "concluído",
+      "failed": "falhou"
+    },
+    "filters": {
+      "search": "Buscar fluxos...",
+      "status": "Status",
+      "allStatuses": "Todos os Status",
+      "assignment": "Atribuição",
+      "allFlows": "Todos os Fluxos",
+      "assignedToMe": "Atribuído a Mim",
+      "assignedToMyTeam": "Atribuído à Minha Equipe",
+      "relatedToMe": "Relacionado a mim"
+    },
+    "statuses": {
+      "inProgress": "Em Progresso",
+      "completed": "Concluído",
+      "failed": "Falhou",
+      "terminated": "Encerrado"
+    },
+    "priorities": {
+      "critical": "Crítico",
+      "high": "Alto",
+      "medium": "Médio",
+      "low": "Baixo"
+    },
+    "empty": "Nenhum fluxo de ação encontrado.",
+    "emptyHint": "Execute um fluxo de ação para vê-lo aqui.",
+    "deleteConfirm": "Tem certeza de que deseja excluir esta execução de fluxo de ação?"
+  },
+  "UseCaseVisualizations": {
+    "driverOnboarding": {
+      "tenstreet": "Aplicativo Tenstreet",
+      "emails": "Correspondência de E-mail",
+      "hris": "Perfil HRIS",
+      "safety": "Registros de Segurança",
+      "title": "Visão Unificada do Candidato",
+      "candidate": "Candidato",
+      "inProgress": "Em Progresso",
+      "appReview": "Revisão de App Completa",
+      "mvrCheck": "Verificação MVR Aprovada",
+      "drugScreen": "Exame Toxicológico Agendado",
+      "orientation": "Orientação Pendente"
+    },
+    "billing": {
+      "natalie": "Natalie (Assistente)",
+      "today": "Hoje",
+      "claimDiscrepancy": "Discrepância de Reivindicação #CLM-892",
+      "driverOnboarding": "Integração de Motorista - John Doe",
+      "maintenanceRequest": "Solicitação de Manutenção #442",
+      "claimHeader": "Reivindicação #CLM-892",
+      "aiMsg1": "Analisei documentos para a <span>Fatura #4021</span>. As taxas correspondem ao contrato, mas sugiro revisar a discrepância de detenção.",
+      "userMsg": "De onde vem a discrepância?",
+      "aiMsg2": "A transportadora registrou 4 horas, mas a cerca geográfica da instalação mostra apenas 2 horas.",
+      "aiMsg3": "Preparei a reivindicação como <span>Pronta para Revisão</span>.",
+      "inputPlaceholder": "Mensagem para Natalie...",
+      "footer": "Natalie pode cometer erros. Por favor, revise informações críticas."
+    },
+    "manufacturing": {
+      "status": "Status da Linha de Produção A4",
+      "outputRate": "Taxa de Saída",
+      "activeShift": "Turno Ativo",
+      "morning": "Manhã",
+      "lowInventory": "Possível Escassez de Estoque",
+      "lowInventoryDesc": "Com base na saída atual, os níveis de resina podem estar baixos em 4 horas.",
+      "automatedResolution": "Etapas de Resolução Inteligente",
+      "erpSignal": "Sinal ERP Recebido",
+      "reorderTriggered": "Reabastecimento Sugerido",
+      "supplierConfirmed": "Fornecedor Confirmado",
+      "deliveryTime": "Entrega: Amanhã, 6h"
+    },
+    "construction": {
+      "siteReport": "Relatório do Local",
+      "online": "Online",
+      "timestamp": "Hoje, 09:14h",
+      "userMsg": "Falha hidráulica na escavadeira principal. Estamos parados na Zona B.",
+      "foreman": "Capataz Mike",
+      "aiMsg": "Recebido. Destacando como <span>Prioridade Crítica</span> para sua revisão.",
+      "ticketCreated": "Ticket #8821 Redigido",
+      "maintenanceNotify": "Equipe de Manutenção Notificada",
+      "estimate": "Estimativa: Técnico chegando em 45m.",
+      "pmMsg": "Movendo Equipe B para fundação da Zona C até resolver.",
+      "typeMessage": "Digite uma mensagem..."
+    }
+  },
+  "UseCaseFlows": {
+    "onboarding": {
+      "appReceived": "Aplicativo Recebido",
+      "tenstreetWebhook": "Webhook Tenstreet",
+      "docsReview": "Revisão de Documentos",
+      "recruiting": "Stacy (Recrutamento)",
+      "bgChecks": "Verificação de Antecedentes",
+      "natalieAgent": "Natalie (Assistente)",
+      "orientation": "Orientação Agendada",
+      "ops": "John (Ops)",
+      "provisioning": "Provisionamento de Sistemas",
+      "systems": "TMS, RH, Folha de Pagamento",
+      "ready": "Pronto para Despacho",
+      "active": "Status: Ativo"
+    },
+    "maintenance": {
+      "dvir": "DVIR Enviado",
+      "techApp": "App do Técnico",
+      "defect": "Defeito Detectado: Freios",
+      "trigger": "Alerta Inteligente",
+      "orchestration": "Orquestração de Trabalho",
+      "assigned": "Peças e Mão de Obra Sugeridas",
+      "update": "Atualizar Status da Frota",
+      "erpTms": "ERP & TMS"
+    },
+    "manufacturing": {
+      "iot": "Fluxo de Sensor IoT",
+      "vibration": "Vibração > Limite",
+      "anomaly": "Alerta de Anomalia",
+      "confidence": "Natalie Sugeriu Revisão",
+      "workOrder": "Revisar Ordem de Serviço",
+      "shiftLead": "Revisor: Líder de Turno",
+      "adjust": "Ajustar Cronograma",
+      "reroute": "Redirecionar Linha 4"
+    },
+    "construction": {
+      "request": "Solicitação de Material",
+      "concrete": "Concreto - Zona B",
+      "inventory": "Verificação de Estoque",
+      "plant": "Usina de Dosagem #4",
+      "dispatch": "Despachar Motorista",
+      "eta": "ETA: 45 min",
+      "gate": "Código do Portão",
+      "access": "Acesso Concedido",
+      "pour": "Derramamento Completo",
+      "quality": "Qualidade Registrada"
+    },
+    "badges": {
+      "api": "API",
+      "human": "Humano",
+      "automated": "Assistido",
+      "hero": "Herói",
+      "complete": "Completo",
+      "mobile": "Móvel",
+      "alert": "Alerta",
+      "auto": "Auto",
+      "sync": "Sync",
+      "mqtt": "MQTT",
+      "aiAnalysis": "Alerta Inteligente",
+      "cmms": "CMMS",
+      "erpSync": "Sincronização ERP",
+      "fieldApp": "App de Campo",
+      "erp": "ERP",
+      "logistics": "Logística",
+      "security": "Segurança",
+      "record": "Registro"
+    }
+  },
+  "DocsSearch": {
+    "button": "Buscar...",
+    "placeholder": "Digite um comando ou busca...",
+    "noResults": "Nenhum resultado encontrado."
+  }
+}

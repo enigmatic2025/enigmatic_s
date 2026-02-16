@@ -1,0 +1,966 @@
+{
+  "HomePage": {
+    "title": "Enigmatic",
+    "subtitle": "マッピング。構築。改善。",
+    "description": "中核システムが見落としているプロセスを設計、接続、調整します。",
+    "poweredBy": "最新のテクノロジーを活用。"
+  },
+  "Insights": {
+    "title": "インサイト",
+    "backToInsights": "インサイトに戻る",
+    "author": "著者",
+    "allContent": "すべてのコンテンツ"
+  },
+  "Admin": {
+    "overview": "概要",
+    "overviewDesc": "プラットフォーム指標の概要。",
+    "totalUsers": "総ユーザー数",
+    "organizations": "組織",
+    "aiRequests": "AIリクエスト",
+    "blocked": "ブロック済み",
+    "creditsUsed": "使用クレジット",
+    "common": {
+        "clear": "クリア",
+        "save": "保存",
+        "cancel": "キャンセル",
+        "delete": "削除",
+        "edit": "編集",
+        "create": "作成",
+        "select": "選択",
+        "actions": "アクション",
+        "noOrg": "組織なし",
+        "platform": "プラットフォーム"
+    },
+    "filters": {
+        "organization": "組織",
+        "role": "役割",
+        "status": "ステータス",
+        "plan": "プラン",
+        "aiAccess": "AIアクセス",
+        "allOrgs": "全組織",
+        "allRoles": "全役割",
+        "allStatus": "全ステータス",
+        "allPlans": "全プラン",
+        "allAccess": "全アクセス"
+    },
+    "roles": {
+        "platformAdmin": "プラットフォーム管理者",
+        "owner": "所有者",
+        "admin": "管理者",
+        "member": "メンバー"
+    },
+    "status": {
+        "active": "アクティブ",
+        "blocked": "ブロック済み"
+    },
+    "types": {
+        "unlimited": "無制限",
+        "creditBased": "クレジットベース"
+    },
+    "Users": {
+      "title": "ユーザー",
+      "subtitle": "ユーザーアクセス、役割、セキュリティを管理します。",
+      "create": "ユーザー作成",
+      "searchPlaceholder": "名前またはメールで検索...",
+      "table": {
+        "user": "ユーザー",
+        "org": "組織",
+        "role": "役割",
+        "status": "ステータス",
+        "actions": "アクション",
+        "noResults": "ユーザーが見つかりません。",
+        "noMatches": "フィルタに一致するユーザーがいません。"
+      },
+      "actions": {
+        "edit": "詳細を編集",
+        "changePassword": "パスワード変更",
+        "delete": "削除"
+      }
+    },
+    "Organizations": {
+      "title": "組織",
+      "subtitle": "顧客テナント、サブスクリプション、AIクレジットを管理します。",
+      "create": "組織作成",
+      "searchPlaceholder": "名前またはスラッグで検索...",
+      "table": {
+        "name": "名前",
+        "plan": "プラン",
+        "aiAccess": "AIアクセス",
+        "tokens": "使用トークン",
+        "requests": "リクエスト",
+        "actions": "アクション"
+      },
+      "actions": {
+        "manageCredits": "クレジット管理",
+        "edit": "編集",
+        "delete": "削除"
+      },
+      "unlimited": "無制限",
+      "credits": "クレジット"
+    },
+    "AI": {
+      "title": "AI構成",
+      "subtitle": "接続、モデルルーティング、ガードレールを管理します。",
+      "save": "保存",
+      "routing": {
+        "title": "モデルルーティング",
+        "desc": "Natalieは以下のパイプラインを通じてリクエストをルーティングします。すべてのモデルは同じプロバイダー接続を共有します。"
+      },
+      "connection": {
+        "title": "接続",
+        "desc": "全モデルで共有",
+        "provider": "プロバイダー",
+        "baseUrl": "ベースURL",
+        "apiKey": "APIキー",
+        "configured": "設定済み"
+      },
+      "models": {
+        "title": "モデル",
+        "desc": "ルーティングパイプラインの各役割にモデルIDを割り当てます。",
+        "primary": "プライマリ",
+        "primaryDesc": "高速ストリーミングと最終回答",
+        "reasoning": "推論",
+        "reasoningDesc": "ツール呼び出しとデータ分析",
+        "guardrail": "ガードレール",
+        "guardrailDesc": "トピック外のリクエストをフィルタリング"
+      },
+      "placeholders": {
+        "leaveEmpty": "プライマリモデルを使用するには空のままにします"
+      },
+      "hints": {
+        "fallback": "プライマリモデルにフォールバックします。より良いツール呼び出しのために強力なモデルを設定してください。",
+        "disabled": "無効 — すべてのリクエストは直接モデルに送信されます。",
+        "cheapest": "(最安値)"
+      }
+    }
+  },
+  "ServicesPage": {
+    "title": "サービス",
+    "subtitle": "ニーズに合わせたプロフェッショナルサービス。",
+    "description": "運用の設計、構築、最適化を支援します。",
+    "story": {
+      "title": "卓越した運用のためのパートナーシップ。",
+      "description": "当社のチームが貴社の組織にどのようにサービスを提供し、約束を果たすかをご理解ください。Enigmaticは、プロセス文書化とワークフローモデリングの標準としてBPMN 2.0を使用し、組織間の一貫性、明確さ、移植性を確保します。"
+    },
+    "deliverables": "成果物",
+    "tools": "ツール",
+    "steps": {
+      "step1": {
+        "title": "経営陣の整合性",
+        "description": "明確な変革目標を設定し、経営陣のスポンサーシップを確保して、組織的な賛同を促進し、運用目標をターゲットにします。",
+        "deliverables": [
+          "測定可能な変革目標",
+          "EBITDAまたは運用目標の定義",
+          "経営支援合意書"
+        ],
+        "tools": [
+            "Atlassian Confluence"
+        ]
+      },
+      "step2": {
+        "title": "診断と財務モデリング",
+        "description": "現在のシステムとワークフローをマッピングしてボトルネックを特定し、定量化された影響を伴う財務ベースラインと変革の仮説を構築します。",
+        "deliverables": [
+          "現状プロセスマップ", 
+          "システムアーキテクチャ図",
+          "財務ベースラインモデル",
+          "ボトルネック分析",
+          "変革の仮説"
+        ],
+        "tools": [
+            "Lucid Chart",
+            "Excel",
+            "SQL",
+            "BPMN 2.0",
+            "Atlassian Confluence"
+        ]
+      },
+      "step3": {
+        "title": "将来状態のアーキテクチャ",
+        "description": "スケーラブルな運用のために、技術設計図、ワークフローの再設計、ガバナンス構造を含むターゲット運用モデルを設計します。",
+        "deliverables": [
+            "将来状態の運用モデル",
+            "ワークフロー再設計",
+            "技術設計図",
+            "ガバナンスモデル",
+            "変更展開計画"
+        ],
+        "tools": [
+            "BPMN 2.0",
+            "Lucid Chart",
+            "Atlassian Confluence"
+        ]
+      },
+      "step4": {
+        "title": "制御されたパイロット展開",
+        "description": "範囲を限定したパイロットを通じてソリューションを検証し、Nodal内での構築をエンジニアリングしながらKPIと採用指標を追跡します。",
+        "deliverables": [
+            "Nodal環境構成",
+            "機能するパイロットソリューション",
+            "KPI追跡ダッシュボード",
+            "採用測定レポート"
+        ],
+        "tools": [
+            "Nodal",
+            "Atlassian Jira",
+            "Atlassian Confluence"
+        ]
+      },
+      "step5": {
+        "title": "大規模展開",
+        "description": "成功したワークフロー全部門および拠点に拡大し、ガバナンスを制度化してソリューションの完全な採用を確実にします。",
+        "deliverables": [
+            "部門横断ワークフロー拡大",
+            "制度化されたガバナンスプレイブック",
+            "ソリューションの完全な採用"
+        ],
+        "tools": [
+            "Nodal"
+        ]
+      },
+      "step6": {
+        "title": "継続的な最適化",
+        "description": "継続的なホワイトグローブサポートと四半期ごとのレビューを提供し、ソリューションを改善し、継続的な改善を推進します。",
+        "deliverables": [
+            "四半期ごとのソリューションレビュー",
+            "最適化ロードマップ",
+            "パフォーマンス改善レポート"
+        ],
+        "tools": [
+            "Nodal",
+            "PowerBI",
+            "Atlassian Confluence"
+        ]
+      }
+    }
+  },
+  "Navigation": {
+    "dashboard": "ダッシュボード",
+    "collaborate": "コラボレーション",
+    "product": "製品",
+    "services": "サービス",
+    "company": "会社情報",
+    "insights": "インサイト",
+    "signIn": "サインイン",
+    "loading": "読み込み中...",
+    "items": {
+      "nodal": "Nodal",
+      "nodalDesc": "現代の産業運用のための中心的なオペレーティングシステム",
+      "docs": "ドキュメント",
+      "docsDesc": "包括的なガイドとAPIリファレンス",
+      "useCases": "ユースケース",
+      "useCasesDesc": "Enigmaticが現実世界の問題をどう解決するかを見る",
+      "about": "私たちについて",
+      "aboutDesc": "私たちのミッションとチームについて知る",
+      "privacy": "プライバシーポリシー",
+      "terms": "利用規約"
+    }
+  },
+  "Mission": {
+    "label": "ミッション。",
+    "description": "プロセス改善パートナーとして、テクノロジーを活用して、貴社の運用をより統合的、インテリジェント、かつ直感的にします。",
+    "industries": {
+      "transportation": "輸送",
+      "transportationDesc": "キャリアネットワークを単一のコマンドセンターに統合し、シームレスな実行を実現します。",
+      "supplyChain": "サプライチェーン",
+      "supplyChainDesc": "手動追跡をインテリジェントなオーケストレーションに置き換え、混乱を予測します。",
+      "manufacturing": "製造",
+      "manufacturingDesc": "資材フローを生産スケジュールと同期させ、遅延のない運用を実現します。",
+      "construction": "建設",
+      "constructionDesc": "現場と供給業者間の調整を合理化し、正確な納品を実現します。",
+      "storage": "保管",
+      "storageDesc": "在庫を最適化するインテリジェントなワークフローを通じて履行を加速します。",
+      "energy": "エネルギー",
+      "energyDesc": "コンプライアンス追跡を近代化し、安全で効率的なインフラ物流を確保します。"
+    },
+    "stats": {
+      "stat1": "80%以上",
+      "desc1": "の産業企業が、接続されていないレガシーシステム間で断片化されたデータに苦労しています。",
+      "stat2": "最大50%",
+      "desc2": "の運用帯域幅が、現場とオフィス間の手動調整によって消費されています。",
+      "stat3": "30–40%",
+      "desc3": "の潜在的利益が、戦略的計画ではなく反応的な問題解決によって侵食されています。"
+    },
+    "aboutUs": "私たちについて"
+  },
+  "Problem": {
+    "title": "運用断片化の問題。",
+    "description": "現代の産業運用は、時代遅れのツールと接続されていないシステムの重みで崩壊しつつあります。",
+    "cards": {
+      "manual": "手動調整",
+      "manualDesc": "チームは依然としてスプレッドシート、メール、電話に縛られ、複雑な運用を調整しています。重要な更新が見落とされ、スケジュールが遅れ、全員が異なるプレイブックで作業しています。",
+      "disconnected": "切断されたデータ",
+      "disconnectedDesc": "ERP、専門ソフトウェア、現場ツールの間のサイロが盲点を作り出しています。データは二重入力され、不正確で、互いに通信しないシステムに閉じ込められています。",
+      "reactive": "反応的な消火活動",
+      "reactiveDesc": "このすべての断片化により、優秀な人材はパフォーマンスの最適化や成長の推進ではなく、情報の追跡やエラーの修正に一日を費やすことを余儀なくされています。"
+    }
+  },
+  "Services": {
+    "title": "運用をオーケストレーション。",
+    "description": "カオスから明快さへ。Enigmaticは、断片化されたツールとワークフローを単一のインテリジェントなデジタルエコシステムに統合します。",
+    "learnMore": "詳細を見る",
+    "panels": {
+      "consulting": "戦略的デジタルトランスフォーメーション",
+      "consultingDesc": "穴をふぐだけではありません。中核的な運用ワークフローを再設計し、手動のボトルネックを、独自のインフラストラクチャに合わせたスケーラブルで自動化されたソリューションに置き換えます。",
+      "nodal": "Nodalオペレーティングシステム",
+      "nodalDesc": "ビジネスの中枢神経系。Nodalは、チーム、ツール、データを単一のインテリジェントなインターフェースに接続し、アクションを実行します—あなたがそれを行う必要はありません。"
+    },
+    "grid": {
+      "triggers": "インテリジェントトリガー",
+      "triggersDesc": "メール、ステータス更新、またはAPIイベントに基づいて、複雑なワークフローを自動的に開始します。",
+      "human": "人間の制御",
+      "humanDesc": "重要な例外を専門家にルーティングし、残りを自動化します。",
+      "connectivity": "完全な接続性",
+      "connectivityDesc": "ERP、デバイス、パートナーからのデータを単一のソースに統合します。"
+    }
+  },
+  "Process": {
+    "title": "カオスから明快さへ。",
+    "description": "運用を近代化するための3ステップのアプローチ。",
+    "learnMore": "詳細を見る",
+    "steps": {
+      "step1": "現状のマッピング",
+      "step1Desc": "チームと協力して現在の運用を可視化し、ボトルネック、非効率性、隠れた改善の機会を特定します。",
+      "step2": "将来状態の設計",
+      "step2Desc": "財務価値と運用流動性を最大化するように設計された最適化されたワークフローを設計します。",
+      "step3": "構築と実装",
+      "step3Desc": "Nodalを中心的なオペレーティングシステムとして新しいエコシステムをオーケストレーションし、最新のテクノロジーを使用してソリューションを構築します。"
+    }
+  },
+  "NodalPlatform": {
+    "title": "システムを統合。",
+    "description": "Nodalは、既存の中核システムとツールの上に強力なオーケストレーション層を追加し、単一のツールを置き換えることなく、完璧な一貫性と可視性を提供します。",
+    "cards": {
+      "flow": "アクションフローでオーケストレーション。",
+      "flowDesc": "日々のタスクを通じてユーザーをガイドするパイプラインを設計します。TMSからのイベントトリガーであろうと手動開始であろうと、Nodalは全員が同じ標準化されたプロセスに従うことを保証します。",
+      "connect": "接続と自動化。",
+      "connectDesc": "異なるシステムを接続してビジネスプロセスを促進します。アクションを自動的にトリガーし、スタック全体での実行を監視します。",
+      "extend": "機能を拡張。",
+      "extendDesc": "カスタム計算と自動アラートを追加します。既存の技術スタックを変更することなく、データの完全な可視性を得ることができます。",
+      "human": "人間参加型の制御。",
+      "humanDesc": "例外をオペレーターにシームレスにルーティングします。プロセスの残りを自動操縦で実行しながら、重要な決定に人間の注意が向けられるようにします。"
+    },
+    "seeUseCases": "ユースケースを見る"
+  },
+  "Principles": {
+    "title": "汎用ソフトウェアは運用の現実を無視します。",
+    "description": "回復力のある企業を構築するには、単なるツール以上のものが必要です。エンジニアリングの哲学が必要です。",
+    "cards": {
+      "intelligence": "知性、増幅",
+      "intelligenceDesc": "自動化はチームを置き換えるべきではなく、向上させるべきです。私たちが反復的な実行を処理することで、専門家は価値の高い決定に集中できます。",
+      "precision": "ミッションクリティカルな精度",
+      "precisionDesc": "ミスが数百万ドルの損失につながる場合、「そこそこ」は選択肢にありません。現実世界の運用の圧力に耐えるように設計された、耐障害性のあるワークフローを設計します。",
+      "visibility": "完全な可視性",
+      "visibilityDesc": "ブラックボックスやデータサイロはもうありません。運用コンテキストを単一の真実のソースに統合し、問題がエスカレートする前に行動するための明確さを提供します。"
+    }
+  },
+  "CTA": {
+    "label": "お問い合わせ",
+    "title": "世界を動かすものを近代化する。",
+    "description": "世界で最も複雑なシステムを解きほぐす手助けをしてください。実際の問題と実際の影響に突き動かされているなら、Enigmaticこそがあなたの仕事が重要となる場所です。",
+    "button": "コラボレーション"
+  },
+  "Visualizations": {
+    "rateCalculation": "レート計算",
+    "contractLogic": "契約ロジック",
+    "checkCapacity": "容量確認",
+    "carrierApi": "キャリアAPI",
+    "full": "満杯",
+    "available": "利用可能",
+    "dispatchDriver": "ドライバー派遣",
+    "samsara": "Samsara",
+    "nextStep": "次のステップ",
+    "isShipmentDelayed": "出荷遅延？",
+    "isTrue": "真",
+    "notifyCustomer": "顧客に通知",
+    "email": "メール",
+    "isFalse": "偽",
+    "selectBlock": "ブロック選択",
+    "calculateEta": "ETA計算",
+    "consolidateLoads": "荷物統合",
+    "updateTms": "TMS更新",
+    "exceptionReview": "例外レビュー",
+    "humanAction": "人間のアクション",
+    "rateVariance": "レート差異検出:",
+    "carrierInvoice": "キャリア請求書 #INV-2024-001",
+    "approve": "承認",
+    "reject": "拒否"
+  },
+  "Footer": {
+      "tagline": "複雑なワークフローをデジタル化し、産業運用の未来を支える自動化ソリューションを構築します。",
+      "copyright": "© {year} Enigmatic Technologies. その他の権利は留保されています。",
+      "legal": "法的事項"
+  },
+  "UseCasesPage": {
+      "title": "ユースケース。",
+      "description": "EnigmaticとNodalが手動ワークフローをデジタル化し、複雑な運用を大規模にオーケストレーションする方法をご覧ください。",
+      "ctaTitle": "独自の課題がありますか？",
+      "ctaDescription": "当社のエンジニアチームは、貴社の特定の運用ニーズに合わせたカスタムワークフローを構築できます。",
+      "cards": {
+          "onboarding": "ドライバー採用とオンボーディング",
+          "onboardingDesc": "すべてのキャリアは、Tenstreet、HRIS、メール、スプレッドシート、安全確認に分散した混沌としたオンボーディングワークフローに対処しています。Nodalはこの面倒なフローを統一されたビューに圧縮し、コンプライアンス手順とドキュメント収集を自動化します。",
+          "maintenance": "資産の保守と検査",
+          "maintenanceDesc": "保守はしばしば反応的で断片化されています。Nodalを使用すると、技術者がDVIRを提出すると、部品注文、作業割り当て、承認が自動的にトリガーされ、TMSを超えてチーム間の作業が調整されます。",
+          "billing": "請求とおよび請求処理",
+          "billingDesc": "漏洩を減らしてキャッシュフローを加速します。Nodalは請求と請求のための単一のワークフロービューを提供し、タスク、添付ファイル、検証を処理してから、クリーンなデータをTMSまたは会計システムに送信します。",
+          "predictive": "予知製造運用",
+          "predictiveDesc": "現場と経営層を接続します。ライブセンサーデータを取り込んで異常を検出し、CMMSで自動的に作業指示をトリガーし、手動介入なしにERPで生産シフトを再スケジュールします。",
+          "production": "生産ラインの可視性",
+          "productionDesc": "材料の入出力のリアルタイム監視。在庫がしきい値を下回ると、NodalのAIエージェントが即座にサプライヤーと補充を交渉します。",
+          "field": "現場通信統合",
+          "fieldDesc": "現場とバックオフィスの間のギャップを埋めます。現場監督はSMSまたはチャットで問題を報告でき、Nodalはそれを正式なRFIドキュメントとチケットリクエストに変換します。",
+          "construction": "建設資材ロジスティクス",
+          "constructionDesc": "複雑な現場のためのジャストインタイム配送。現場のリクエストをバッチプラントやロジスティクスディスパッチャーと直接同期させることで、コンクリート注入と資材配送を調整します。"
+      }
+  },
+  "Sidebar": {
+    "searchPlaceholder": "検索...",
+    "docs": "ドキュメント",
+    "nodes": "ノード",
+    "variables": "変数",
+    "seeMore": "もっと見る",
+    "seeLess": "少なく見る",
+    "sections": {
+      "workspace": "ワークスペース",
+      "development": "開発",
+      "triggers": "トリガー",
+      "humanInLoop": "ヒューマン・イン・ザ・ループ",
+      "automation": "自動化",
+      "builtInTools": "組み込みツール",
+      "connectors": "コネクタ",
+      "platform": "プラットフォーム",
+      "intelligence": "インテリジェンス",
+      "admin": "管理"
+    },
+    "items": {
+      "overview": "概要",
+      "natalie": "Natalie",
+      "actionFlows": "アクションフロー",
+      "organization": "組織",
+      "peopleAndTeams": "人とチーム",
+      "flowStudio": "フロースタジオ",
+      "integration": "統合",
+      "knowledgeBase": "ナレッジベース",
+      "platformStats": "プラットフォーム統計",
+      "users": "ユーザー",
+      "organizations": "組織",
+      "aiConfig": "AI構成"
+    },
+    "draggable": {
+      "triggerCreateFlow": "トリガー: フロー作成",
+      "humanTask": "人間タスク",
+      "automation": "イベント待機",
+      "filterData": "データフィルタ",
+      "setVariable": "変数設定",
+      "mapData": "データマップ",
+      "ifElse": "If / Else",
+      "loop": "ループ",
+      "switch": "スイッチ",
+      "goto": "Goto / ジャンプ",
+      "httpRequest": "HTTPリクエスト"
+    },
+    "groups": {
+      "dataOperation": "データ操作",
+      "logic": "ロジック",
+      "network": "ネットワーク"
+    },
+    "messages": {
+      "noConnectors": "コネクタが設定されていません。",
+      "dragVariables": "変数をノード入力にドラッグして、前のステップのデータを使用します。"
+    }
+  },
+  "AboutUs": {
+    "hero": {
+      "title": "私たちについて。",
+      "subtitle": "インテリジェンスと精度で産業の未来を構築します。"
+    },
+    "team": {
+      "title": "私たちのチーム",
+      "samRole": "ビジョン",
+      "samDescription": "SamはEnigmaticのアイデンティティ、製品、サービスの戦略的ビジョンを形成し、トップクラスの人材を結集して産業用ソフトウェアシステムを根本的に再考します。",
+      "chrisRole": "セールス",
+      "chrisDescription": "Chrisは運用と戦略的パートナーシップを主導し、Enigmaticの市場プレゼンスの拡大と主要な業界関係者への価値提供に注力しています。",
+      "phiRole": "テクノロジー",
+      "phiDescription": "PhiはEnigmaticの技術基盤を設計し、研究開発を主導して、産業技術の限界を押し広げる最先端の堅牢なソリューションを提供します。"
+    },
+    "story": {
+      "title": "産業愛好家によって設立されました。",
+      "description": "私たちは、ワークフローの最適化に数十年の実務経験を持つ産業運用の専門家チームです。この運用の深みと本格的なエンジニアリングの専門知識を組み合わせて、戦略的コンサルティングと、ビジネスプロセスの標準化とオーケストレーションのためのプラットフォームであるNodalを提供します。"
+    },
+    "cta": {
+      "title": "私たちの旅に参加する",
+      "description": "私たちとの協力やプラットフォームの詳細について興味がありますか？"
+    }
+  },
+  "Login": {
+    "title": "Nodalにサインイン",
+    "subtitle": "プラットフォームにアクセスするには資格情報を入力してください",
+    "email": "メール",
+    "emailPlaceholder": "name@example.com",
+    "password": "パスワード",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "signIn": "サインイン",
+    "resetEmailSent": "パスワードリセットメールを送信しました！受信トレイを確認してください。",
+    "enterEmailFirst": "最初にメールアドレスを入力してください。",
+    "loading": "読み込み中..."
+  },
+  "Security": {
+    "title": "アカウントセキュリティ",
+    "subtitle": "セキュリティ設定と二要素認証を管理します",
+    "mfaTitle": "二要素認証",
+    "mfaEnabled": "アカウントは2FAで保護されています",
+    "mfaDisabled": "全ユーザーに必須です - プラットフォームの使用を続けるには有効にしてください",
+    "enabledBadge": "✓ 有効",
+    "disabledBadge": "無効",
+    "requiredWarning": "⚠️ 二要素認証はすべてのアカウントで必須です。続行するには有効にしてください。",
+    "enableButton": "二要素認証を有効にする",
+    "appBased": "アカウントは現在、認証アプリベースの2FAで保護されています。",
+    "disableButton": "二要素認証を無効にする",
+    "disableConfirm": "本当に二要素認証を無効にしますか？",
+    "disableSuccess": "二要素認証が無効になりました。",
+    "disableError": "MFA無効化エラー: "
+  },
+  "MFA": {
+    "verify": {
+      "title": "二要素認証",
+      "subtitle": "認証アプリから6桁のコードを入力してください",
+      "codePlaceholder": "000000",
+      "verifying": "確認中...",
+      "verify": "確認",
+      "backToLogin": "ログインに戻る",
+      "sessionExpired": "セッションが期限切れです。再度ログインしてください。",
+      "noFactorFound": "MFA要素が見つかりませんでした。"
+    },
+    "setup": {
+      "title": "アカウントを保護",
+      "subtitle": "二要素認証は全ユーザーに必須です",
+      "scanInstructions": "続行するには認証アプリでQRコードをスキャンしてください",
+      "manualEntry": "スキャンできませんか？このコードを手動で入力してください:",
+      "enterCode": "6桁のコードを入力",
+      "verifyAndContinue": "確認して続行",
+      "verifying": "確認中...",
+      "settingUp": "MFA設定中...",
+      "setupError": "設定エラー",
+      "setupErrorMessage": "MFAの設定中に問題が発生しました",
+      "tryAgain": "再試行",
+      "success": "MFAが正常に有効化されました！"
+    }
+  },
+  "FlowDesigner": {
+    "toolbar": {
+      "untitled": "無題",
+      "renamePlaceholder": "ダブルクリックして名前変更",
+      "lastSaved": "最終保存",
+      "unsavedChanges": "未保存の変更"
+    },
+    "status": {
+      "draft": "ドラフト",
+      "published": "公開済み",
+      "unpublishedChanges": "未公開の変更"
+    },
+    "tooltips": {
+      "magicOrganize": "マジック整理",
+      "clearTestResults": "テスト結果をクリア",
+      "openConsole": "コンソールを開く",
+      "newLogsAvailable": "新しいログが利用可能です",
+      "runFlow": "フロー実行",
+      "stopExecution": "実行停止",
+      "saveDraft": "ドラフト保存",
+      "publishToProduction": "本番環境に公開",
+      "deleteFlow": "フロー削除"
+    },
+    "messages": {
+      "startingFlow": "フロー実行を開始中...",
+      "workflowCompleted": "ワークフロー完了",
+      "workflowCanceled": "ワークフローキャンセル",
+      "workflowCanceledByUser": "ユーザーによりワークフローがキャンセルされました",
+      "workflowFailed": "ワークフロー失敗",
+      "stoppingWorkflow": "ワークフローを停止中...",
+      "workflowStopped": "ワークフローが停止しました。",
+      "stopSignalSent": "停止信号が正常に送信されました",
+      "failedToStop": "ワークフローの停止に失敗しました",
+      "failedToSendStop": "停止信号の送信に失敗しました",
+      "stepExecuted": "ステップ '{{stepName}}' が実行されました",
+      "publishSuccess": "フローが本番環境に公開されました！",
+      "publishError": "フローの公開に失敗しました"
+    }
+  },
+  "FlowNodes": {
+    "types": {
+      "http": "HTTPリクエスト",
+      "apiTrigger": "受信Webhook",
+      "api-trigger": "受信Webhook",
+      "manualTrigger": "手動トリガー",
+      "manual-trigger": "手動トリガー",
+      "condition": "条件",
+      "filter": "データフィルタ",
+      "loop": "ループ",
+      "variable": "変数設定",
+      "switch": "スイッチ",
+      "map": "データマップ",
+      "humanTask": "人間タスク",
+      "human-task": "人間タスク",
+      "automation": "イベント待機",
+      "goto": "Goto / ジャンプ",
+      "action": "アクション"
+    },
+    "descriptions": {
+      "http": "任意のAPIエンドポイントまたはサービスにHTTPリクエストを送信します。",
+      "apiTrigger": "生成されたURLを介してデータを受信すると、新しいフロー実行を開始します。",
+      "api-trigger": "生成されたURLを介してデータを受信すると、新しいフロー実行を開始します。",
+      "manualTrigger": "テスト用にダッシュボードから手動でフローを開始します。",
+      "manual-trigger": "テスト用にダッシュボードから手動でフローを開始します。",
+      "condition": "論理ルール（If/Else）に基づいてフローを分岐します。",
+      "filter": "条件が満たされない場合、フローの実行を停止します。",
+      "loop": "アイテムのリストを反復処理し、それぞれに対してステップを実行します。",
+      "variable": "後のステップで使用するための変数を作成または更新します。",
+      "switch": "値に基づいてフローを異なるパスにルーティングします。",
+      "map": "データ構造をある形式から別の形式に変換します。",
+      "humanTask": "フローを一時停止し、人間の承認または入力を待ちます。",
+      "human-task": "フローを一時停止し、人間の承認または入力を待ちます。",
+      "automation": "フローを一時停止し、外部イベントを待ちます。",
+      "goto": "フロー内の別のステップにジャンプします。",
+      "action": "汎用アクションを実行します。"
+    },
+    "labels": {
+      "startEvent": "開始イベント",
+      "humanAction": "人間のアクション",
+      "actionRequired": "アクションが必要",
+      "incomingWebhook": "受信Webhook",
+      "ready": "準備完了",
+      "notConfigured": "未設定",
+      "taskConfigured": "タスク設定済み",
+      "startsNewFlowRun": "データ受信時に新しいフロー実行を開始します。"
+    }
+  },
+  "ConfigDrawer": {
+    "general": {
+      "label": "ラベル",
+      "description": "説明",
+      "configuration": "構成",
+      "stepNamePlaceholder": "ステップ名",
+      "descriptionPlaceholder": "このステップは何をしますか？",
+      "noConfigNeeded": "このステップに追加の構成は必要ありません。"
+    },
+    "buttons": {
+      "cancel": "キャンセル",
+      "save": "保存",
+      "testStep": "ステップをテスト",
+      "runningStep": "ステップを実行中...",
+      "output": "出力"
+    },
+    "messages": {
+      "titleEmpty": "タイトルは空にできません",
+      "duplicateTitle": "このタイトルのノードは既に存在します",
+      "validationFailed": "検証失敗",
+      "configSaved": "ノード構成が保存されました",
+      "stepExecutedSuccess": "ステップが正常に実行されました",
+      "stepExecutedFailed": "ステップ実行失敗",
+      "failedToExecute": "ステップの実行に失敗しました"
+    },
+    "humanTask": {
+      "actionTitle": "アクションタイトル",
+      "actionTitlePlaceholder": "例: リクエスト確認",
+      "actionTitleHelp": "担当者に表示されるタスクの名前。変数をサポート。",
+      "assignee": "担当者（メールまたは役割）",
+      "assigneePlaceholder": "例: user@example.com または finance-team",
+      "requiredInfo": "必須情報",
+      "newQuestion": "新しい質問",
+      "addField": "フィールド追加",
+      "noFieldsDefined": "フィールドが定義されていません。AIは確認のみを求めます。",
+      "fieldLabelPlaceholder": "フィールドラベル（質問）",
+      "removeField": "フィールド削除",
+      "optionsSelectOne": "オプション（1つ選択）",
+      "optionsSelectMany": "オプション（複数選択）",
+      "optionPlaceholder": "オプション",
+      "addOption": "オプション追加",
+      "required": "必須",
+      "fieldTypes": {
+        "shortText": "短いテキスト",
+        "longText": "長いテキスト",
+        "number": "数値",
+        "multiChoice": "選択",
+        "allowMultiple": "複数許可（チェックリスト）",
+        "checkboxes": "チェックボックス",
+        "rating": "評価（1-5）",
+        "yesNo": "はい/いいえ",
+        "date": "日付",
+        "dateTime": "日時",
+        "fileUpload": "ファイルアップロード",
+        "signature": "署名"
+      },
+      "information": "情報",
+      "informationPlaceholder": "例: 担当者向けの簡単なコンテキスト...",
+      "informationHelp": "カードに表示される短い要約。",
+      "description": "内部説明",
+      "descriptionPlaceholder": "例: フローデザイナー向けの内部メモ...",
+      "instructions": "手順",
+      "instructionsPlaceholder": "例: 詳細な手順、チェックリスト、またはコンテキストを提供...",
+      "instructionsHelp": "これらの詳細な手順は、担当者を案内するためにタスクカードに表示されます。"
+    },
+    "apiTrigger": {
+      "name": "名前",
+      "description": "説明",
+      "stepNamePlaceholder": "ステップ名（例: 新規ユーザートリガー）",
+      "descriptionPlaceholder": "フローデザイナー向けの内部説明...",
+      "configuration": "構成",
+      "endpointUrl": "エンドポイントURL",
+      "live": "ライブ",
+      "saveToGenerate": "保存して生成",
+      "copyUrl": "URLをコピー",
+      "sendPostRequest": "以下に定義されたJSONボディを含むPOSTリクエストを送信してください。",
+      "dynamicUrlInfo": "このURLは現在の環境に基づいて動的です。本番環境（Koyeb）にデプロイされると、自動的に公式ドメインが表示されます。ローカルテストURL（localhost）は保存されません。",
+      "expectedPayload": "期待されるペイロード（スキーマ）",
+      "addField": "フィールド追加",
+      "noSchemaTitle": "出力スキーマが定義されていません",
+      "noSchemaDescription": "Webhookに送信される任意のJSONボディが受け入れられます。",
+      "fieldNamePlaceholder": "フィールド名",
+      "typeString": "文字列",
+      "typeNumber": "数値",
+      "typeBoolean": "ブール値",
+      "typeObject": "オブジェクト",
+      "typeArray": "配列",
+      "required": "必須",
+      "optional": "任意",
+      "actionFlowInfo": "アクションフロー情報",
+      "actionFlowDescription": "このトリガーがアクションフローダッシュボードにどのように統合されるかを定義します。"
+    },
+    "automation": {
+      "stepNamePlaceholder": "ステップ名（例: 支払い待ち）",
+      "descriptionPlaceholder": "このステップが待機しているイベントを説明してください...",
+      "expectedPayload": "期待されるペイロード（スキーマ）",
+      "addField": "フィールド追加",
+      "fieldNamePlaceholder": "フィールド名",
+      "noSchemaTitle": "出力スキーマが定義されていません",
+      "noSchemaDescription": "変数は手動で参照する必要があります。",
+      "typeString": "文字列",
+      "typeNumber": "数値",
+      "typeBoolean": "ブール値",
+      "typeObject": "オブジェクト",
+      "typeArray": "配列",
+      "required": "必須",
+      "optional": "任意"
+    }
+  },
+  "FlowStudio": {
+    "title": "フロースタジオ",
+    "newFlow": "新規フロー",
+    "tabs": {
+      "active": "アクティブ",
+      "draft": "ドラフト",
+      "inactive": "非アクティブ"
+    },
+    "table": {
+      "name": "名前",
+      "status": "ステータス",
+      "lastRun": "最終実行",
+      "never": "なし",
+      "loading": "フロー読み込み中...",
+      "empty": "フローが見つかりません。作成して始めましょう！",
+      "statusActive": "アクティブ",
+      "statusDraft": "ドラフト",
+      "unpublishedChanges": "未公開の変更"
+    },
+    "modals": {
+      "delete": {
+        "title": "本当によろしいですか？",
+        "description": "この操作は取り消せません。これにより、フロー「{name}」とすべてのデータが完全に削除されます。",
+        "confirm": "削除",
+        "cancel": "キャンセル"
+      },
+      "rename": {
+        "title": "フロー名変更",
+        "description": "フローの新しい名前を入力してください。",
+        "label": "名前",
+        "save": "変更を保存",
+        "cancel": "キャンセル"
+      }
+    },
+    "toasts": {
+      "savingBeforePublish": "公開する前に変更を保存しています...",
+      "publishing": "フローを公開中...",
+      "publishSuccess": "フローが正常に公開されました！現在ライブです。",
+      "publishError": "フローの公開に失敗しました",
+      "deleteSuccess": "フローが正常に削除されました",
+      "deleteError": "フローの削除に失敗しました",
+      "renameSuccess": "フロー名が正常に変更されました",
+      "renameError": "フロー名の変更に失敗しました",
+      "commentPosted": "コメントが投稿されました",
+      "commentError": "コメントの投稿に失敗しました",
+      "likeError": "コメントへの「いいね」に失敗しました"
+    },
+    "comments": {
+      "title": "ディスカッション",
+      "globalContext": "グローバルコンテキスト",
+      "placeholder": "このワークフローにコメント...",
+      "post": "投稿",
+      "noComments": "コメントはまだありません。会話を始めましょう。",
+      "reply": "返信",
+      "like": "いいね",
+      "writeReply": "返信を書く...",
+      "unknown": "不明"
+    }
+  },
+  "ActionFlows": {
+    "title": "アクションフロー",
+    "summary": {
+      "total": "合計",
+      "active": "アクティブ",
+      "completed": "完了",
+      "failed": "失敗"
+    },
+    "filters": {
+      "search": "フロー検索...",
+      "status": "ステータス",
+      "allStatuses": "全ステータス",
+      "assignment": "割り当て",
+      "allFlows": "全フロー",
+      "assignedToMe": "私に割り当て済み",
+      "assignedToMyTeam": "私のチームに割り当て済み",
+      "relatedToMe": "私に関連"
+    },
+    "statuses": {
+      "inProgress": "進行中",
+      "completed": "完了",
+      "failed": "失敗",
+      "terminated": "終了"
+    },
+    "priorities": {
+      "critical": "クリティカル",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "empty": "アクションフローが見つかりません。",
+    "emptyHint": "アクションフローを実行するとここに表示されます。",
+    "deleteConfirm": "このアクションフロー実行を削除してもよろしいですか？"
+  },
+  "UseCaseVisualizations": {
+    "driverOnboarding": {
+      "tenstreet": "Tenstreet アプリケーション",
+      "emails": "電子メール通信",
+      "hris": "HRIS プロフィール",
+      "safety": "安全記録",
+      "title": "統一候補者ビュー",
+      "candidate": "候補者",
+      "inProgress": "進行中",
+      "appReview": "アプリ審査完了",
+      "mvrCheck": "MVR チェック合格",
+      "drugScreen": "薬物スクリーニング予定",
+      "orientation": "オリエンテーション保留中"
+    },
+    "billing": {
+      "natalie": "Natalie (アシスタント)",
+      "today": "今日",
+      "claimDiscrepancy": "請求不一致 #CLM-892",
+      "driverOnboarding": "ドライバーオンボーディング - John Doe",
+      "maintenanceRequest": "メンテナンスリクエスト #442",
+      "claimHeader": "請求 #CLM-892",
+      "aiMsg1": "<span>請求書 #4021</span> の文書を分析しました。レートは契約と一致していますが、滞在期間の不一致を確認することをお勧めします。",
+      "userMsg": "不一致はどこから来ていますか？",
+      "aiMsg2": "キャリアは4時間を記録しましたが、施設のジオフェンスは2時間しか示していません。",
+      "aiMsg3": "請求を <span>レビュー準備完了</span> として準備しました。",
+      "inputPlaceholder": "Natalieにメッセージ...",
+      "footer": "Natalieは間違うことがあります。重要な情報を確認してください。"
+    },
+    "manufacturing": {
+      "status": "生産ライン A4 ステータス",
+      "outputRate": "出力レート",
+      "activeShift": "アクティブシフト",
+      "morning": "朝",
+      "lowInventory": "潜在的な在庫不足",
+      "lowInventoryDesc": "現在の出力に基づくと、樹脂レベルは4時間後に低下する可能性があります。",
+      "automatedResolution": "スマート解決ステップ",
+      "erpSignal": "ERP信号受信",
+      "reorderTriggered": "再注文提案",
+      "supplierConfirmed": "サプライヤー確認済み",
+      "deliveryTime": "配達: 明日, 午前6時"
+    },
+    "construction": {
+      "siteReport": "現場レポート",
+      "online": "オンライン",
+      "timestamp": "今日, 午前09:14",
+      "userMsg": "メインショベルの油圧故障。ゾーンBで停止しています。",
+      "foreman": "現場監督 Mike",
+      "aiMsg": "受信しました。レビューのために <span>クリティカル優先度</span> として強調表示します。",
+      "ticketCreated": "チケット #8821 起草",
+      "maintenanceNotify": "メンテナンスチーム通知済み",
+      "estimate": "見積もり: 技術者到着まで45分。",
+      "pmMsg": "解決するまでチームBをゾーンCの基礎工事に移動させます。",
+      "typeMessage": "メッセージを入力..."
+    }
+  },
+  "UseCaseFlows": {
+    "onboarding": {
+      "appReceived": "アプリケーション受信",
+      "tenstreetWebhook": "Tenstreet Webhook",
+      "docsReview": "ドキュメントレビュー",
+      "recruiting": "Stacy (採用)",
+      "bgChecks": "バックグラウンドチェック",
+      "natalieAgent": "Natalie (アシスタント)",
+      "orientation": "オリエンテーション予定",
+      "ops": "John (運用)",
+      "provisioning": "システムプロビジョニング",
+      "systems": "TMS, 人事, 給与",
+      "ready": "派遣準備完了",
+      "active": "ステータス: アクティブ"
+    },
+    "maintenance": {
+      "dvir": "DVIR 提出済み",
+      "techApp": "技術者アプリ",
+      "defect": "欠陥検出: ブレーキ",
+      "trigger": "スマートアラート",
+      "orchestration": "作業オーケストレーション",
+      "assigned": "部品と労働の提案",
+      "update": "フリートステータス更新",
+      "erpTms": "ERP & TMS"
+    },
+    "manufacturing": {
+      "iot": "IoTセンサーストリーム",
+      "vibration": "振動 > しきい値",
+      "anomaly": "異常アラート",
+      "confidence": "Natalie レビュー提案",
+      "workOrder": "作業指示レビュー",
+      "shiftLead": "レビュー担当: シフトリーダー",
+      "adjust": "スケジュール調整",
+      "reroute": "ライン4 再ルーティング"
+    },
+    "construction": {
+      "request": "資材リクエスト",
+      "concrete": "コンクリート - ゾーンB",
+      "inventory": "在庫チェック",
+      "plant": "バッチプラント #4",
+      "dispatch": "ドライバー派遣",
+      "eta": "ETA: 45分",
+      "gate": "ゲートコード",
+      "access": "アクセス許可",
+      "pour": "注入完了",
+      "quality": "品質記録"
+    },
+    "badges": {
+      "api": "API",
+      "human": "人間",
+      "automated": "支援",
+      "hero": "ヒーロー",
+      "complete": "完了",
+      "mobile": "モバイル",
+      "alert": "アラート",
+      "auto": "自動",
+      "sync": "同期",
+      "mqtt": "MQTT",
+      "aiAnalysis": "スマートアラート",
+      "cmms": "CMMS",
+      "erpSync": "ERP同期",
+      "fieldApp": "フィールドアプリ",
+      "erp": "ERP",
+      "logistics": "ロジスティクス",
+      "security": "セキュリティ",
+      "record": "記録"
+    }
+  },
+  "DocsSearch": {
+    "button": "検索...",
+    "placeholder": "コマンドまたは検索を入力...",
+    "noResults": "結果が見つかりません。"
+  }
+}

@@ -12,6 +12,19 @@ import (
 type HumanTaskNode struct{}
 
 func (n *HumanTaskNode) Execute(ctx context.Context, input NodeContext) (*NodeResult, error) {
+	// 0. Check for mock data (test mode) — skip real task creation
+	if mockDataMap, ok := input.InputData["__mock_data"].(map[string]interface{}); ok {
+		if nodeMock, ok := mockDataMap[input.StepID].(map[string]interface{}); ok {
+			if response, ok := nodeMock["response"].(map[string]interface{}); ok {
+				fmt.Printf("[TEST MODE] Human task '%s' auto-completed with mock data\n", input.StepID)
+				return &NodeResult{
+					Status: StatusSuccess,
+					Output: response,
+				}, nil
+			}
+		}
+	}
+
 	// 1. Initialize Expression Engine
 	expressionEngine := NewExpressionEngine()
 

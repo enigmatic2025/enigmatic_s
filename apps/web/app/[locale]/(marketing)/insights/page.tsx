@@ -6,10 +6,11 @@ import Image from "next/image";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { CTASection } from "@/components/layout/cta-section";
 import { getInsightPosts } from "@/lib/insights-data";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function InsightsPage() {
   const locale = useLocale();
+  const t = useTranslations("Insights");
   const insightPosts = getInsightPosts(locale);
 
   return (
@@ -114,7 +115,7 @@ export default function InsightsPage() {
           transition={{ duration: 0.5 }}
           className="text-2xl md:text-4xl font-normal tracking-tight mb-8 md:mb-12"
         >
-          All Content
+          {t('allContent')}
         </motion.h2>
         <div className="flex flex-col">
           {insightPosts.map((post, index) => (

@@ -19,6 +19,7 @@ import { useRouter } from "@/navigation";
 import { useParams } from "next/navigation";
 import { flowService } from '@/services/flow-service';
 import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-modal";
+import { PublishConfirmModal } from "@/components/flow-studio/modals/publish-confirm-modal";
 import { NodeConfigurationSheet } from "@/components/flow-studio/node-configuration-sheet";
 import { ConsoleModal } from "@/components/flow-studio/modals/console-modal";
 import { TestPayloadModal } from "@/components/flow-studio/modals/test-payload-modal";
@@ -50,12 +51,15 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   
   // State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [flowName, setFlowName] = useState("Untitled");
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isDirty, setIsDirty] = useState(false); // Track unsaved changes
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [publishStatus, setPublishStatus] = useState<'draft' | 'published' | 'changed'>('draft');
 
   // Console/Logs State
@@ -183,6 +187,29 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       }
   }, [flowError]);
 
+  // Ctrl+S keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleSaveRef.current?.();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
   // Cleanup on Mount/Unmount
   useEffect(() => {
     const { clearLogs, clearExecutionTrace, clearVariables } = useFlowStore.getState();
@@ -253,28 +280,44 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   });
 
   const handleSave = async () => {
-      await baseHandleSave();
-      setIsDirty(false);
-      if (publishStatus === 'published') {
-          setPublishStatus('changed');
+      setIsSaving(true);
+      try {
+          await baseHandleSave();
+          setIsDirty(false);
+          setLastSavedAt(new Date());
+          if (publishStatus === 'published') {
+              setPublishStatus('changed');
+          }
+      } finally {
+          setIsSaving(false);
       }
   };
 
-  const handlePublish = async () => {
+  // Ref so Ctrl+S always calls the latest save
+  const handleSaveRef = useRef<() => void>(handleSave);
+  handleSaveRef.current = handleSave;
+
+  const handlePublishClick = () => {
       if (!flowId) return;
+      setIsPublishModalOpen(true);
+  };
+
+  const handlePublishConfirm = async () => {
+      if (!flowId) return;
+      setIsPublishModalOpen(false);
       try {
           if (isDirty) {
-             toast.info("Saving changes before publishing...");
+             toast.info(t("toasts.savingBeforePublish"));
              await handleSave();
           }
-          
-          toast.info("Publishing flow...");
+
+          toast.info(t("toasts.publishing"));
           await flowService.publishFlow(flowId);
-          toast.success("Flow published successfully! It is now live.");
+          toast.success(t("toasts.publishSuccess"));
           setPublishStatus('published');
       } catch (error) {
           console.error("Publish error:", error);
-          toast.error("Failed to publish flow");
+          toast.error(t("toasts.publishError"));
       }
   };
   
@@ -294,38 +337,62 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     setIsPolling(true);
     clearLogs(); // Clear logs before starting
     addLog({ message: t("messages.startingFlow"), type: "info" });
-    
+
     try {
       clearExecutionTrace(); // Clear previous results
-      
+
+      // Collect mock data from human-task and automation nodes for test mode
+      const mockData: Record<string, any> = {};
+      nodes.forEach(node => {
+        if (node.type === 'human-task' && node.data?.mockResponse && Object.keys(node.data.mockResponse).length > 0) {
+          mockData[node.id] = { type: 'human-task', response: node.data.mockResponse };
+        }
+        if (node.type === 'automation' && node.data?.mockPayload) {
+          try {
+            const parsed = JSON.parse(node.data.mockPayload);
+            mockData[node.id] = { type: 'automation', payload: parsed };
+          } catch {
+            // Invalid JSON, skip — user will see the real wait
+          }
+        }
+      });
+
+      const hasMocks = Object.keys(mockData).length > 0;
+      if (hasMocks) {
+        addLog({ message: `Using mock data for ${Object.keys(mockData).length} blocking step(s)`, type: "info" });
+      }
+
       const flowDefinition = {
         nodes: nodes.map(node => {
             let type = node.type;
-            
+
             // Map frontend types to backend types
             if (node.type === 'action') {
                 type = node.data?.subtype || 'http';
             } else if (node.type === 'variable') {
                 type = 'set';
             } else if (node.type === 'manual-trigger') {
-                // Backend treats manual triggers as just entry points, 
+                // Backend treats manual triggers as just entry points,
                 // but if we need a specific type:
-                type = 'trigger'; 
+                type = 'trigger';
             }
             // Loop, Switch, Condition likely map 1:1 if casing matches (backend handles casing)
-            
+
             return {
                 ...node,
                 type
             };
         }),
         edges,
-        viewport: { x: 0, y: 0, zoom: 1 } 
+        viewport: { x: 0, y: 0, zoom: 1 }
       };
-      
-      // Log removed("Transformed Flow Definition:", flowDefinition); // Debug log to verify type transformation
-      
-      const result = await flowService.testFlow(flowDefinition, flowId, inputPayload);
+
+      const testInput = {
+        ...inputPayload,
+        ...(hasMocks ? { __mock_data: mockData } : {}),
+      };
+
+      const result = await flowService.testFlow(flowDefinition, flowId, testInput);
       
       // Removed success toast as requested
       addLog({ message: `Flow execution started with Workflow ID: ${result.workflow_id}`, type: "success", details: result });
@@ -508,13 +575,15 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onPlayClick={onPlayClick}
         handleStop={handleStop}
         handleSave={handleSave}
-        handlePublish={handlePublish}
+        handlePublish={handlePublishClick}
         setIsDeleteModalOpen={setIsDeleteModalOpen}
         onLayout={onLayout}
         onClearTestResults={() => {
             clearExecutionTrace();
             clearLogs();
         }}
+        isSaving={isSaving}
+        lastSavedAt={lastSavedAt}
       />
 
       <FlowCanvas
@@ -534,6 +603,14 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDelete}
         flowName={flowName}
+      />
+
+      <PublishConfirmModal
+        isOpen={isPublishModalOpen}
+        onClose={() => setIsPublishModalOpen(false)}
+        onConfirm={handlePublishConfirm}
+        flowName={flowName}
+        hasUnsavedChanges={isDirty}
       />
       
       <NodeConfigurationSheet

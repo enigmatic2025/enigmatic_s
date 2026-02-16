@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslations } from "next-intl";
 
 interface RenameFlowModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function RenameFlowModal({
   onConfirm,
   currentName,
 }: RenameFlowModalProps) {
+  const t = useTranslations("FlowStudio.modals.rename");
   const [name, setName] = useState(currentName);
 
   useEffect(() => {
@@ -43,16 +45,16 @@ export function RenameFlowModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Rename Flow</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>
-            Enter a new name for your flow.
+            {t("description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                {t("label")}
               </Label>
               <Input
                 id="name"
@@ -65,9 +67,9 @@ export function RenameFlowModal({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {t("cancel")}
             </Button>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit">{t("save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

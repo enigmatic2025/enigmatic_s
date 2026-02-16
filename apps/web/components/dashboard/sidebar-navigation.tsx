@@ -202,7 +202,7 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
         >
           {sidebarOpen && (
             <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-              Admin
+              {t("sections.admin")}
             </h4>
           )}
           <nav
@@ -213,28 +213,28 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
             <NavItem
               href={`/nodal/${currentOrg?.slug}/dashboard/admin`}
               icon={LayoutDashboard}
-              label="Platform Stats"
+              label={t("items.platformStats")}
               sidebarOpen={sidebarOpen}
               active={pathname === `/nodal/${currentOrg?.slug}/dashboard/admin`}
             />
             <NavItem
               href={`/nodal/${currentOrg?.slug}/dashboard/admin/users`}
               icon={Users}
-              label="Users"
+              label={t("items.users")}
               sidebarOpen={sidebarOpen}
               active={pathname.includes('/dashboard/admin/users')}
             />
             <NavItem
               href={`/nodal/${currentOrg?.slug}/dashboard/admin/organizations`}
               icon={Building2}
-              label="Organizations"
+              label={t("items.organizations")}
               sidebarOpen={sidebarOpen}
               active={pathname.includes('/dashboard/admin/organizations')}
             />
             <NavItem
               href={`/nodal/${currentOrg?.slug}/dashboard/admin/ai`}
               icon={Bot}
-              label="AI Config"
+              label={t("items.aiConfig")}
               sidebarOpen={sidebarOpen}
               active={pathname.includes('/dashboard/admin/ai')}
             />

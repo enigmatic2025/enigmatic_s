@@ -36,6 +36,7 @@ interface FlowTableProps {
 
 export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
   const t = useTranslations("FlowStudio.table");
+  const tToasts = useTranslations("FlowStudio.toasts");
   const router = useRouter();
   const [flows, setFlows] = useState<any[]>(initialFlows);
   const [selectedFlow, setSelectedFlow] = useState<any>(null);
@@ -59,10 +60,12 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
       await flowService.deleteFlow(selectedFlow.id);
       setFlows(flows.filter((f) => f.id !== selectedFlow.id));
       toast.dismiss();
-      toast.success("Flow deleted successfully");
+      setFlows(flows.filter((f) => f.id !== selectedFlow.id));
+      toast.dismiss();
+      toast.success(tToasts("deleteSuccess"));
       setIsDeleteModalOpen(false);
     } catch (error) {
-      toast.error("Failed to delete flow");
+      toast.error(tToasts("deleteError"));
     } finally {
       setIsDeleting(false);
     }
@@ -77,10 +80,10 @@ export function FlowTable({ initialFlows, slug, isLoading }: FlowTableProps) {
           f.id === selectedFlow.id ? { ...f, name: newName } : f
         )
       );
-      toast.success("Flow renamed successfully");
+      toast.success(tToasts("renameSuccess"));
       setIsRenameModalOpen(false);
     } catch (error) {
-      toast.error("Failed to rename flow");
+      toast.error(tToasts("renameError"));
     }
   };
 

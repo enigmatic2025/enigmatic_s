@@ -5,91 +5,236 @@
     "description": "我們設計、連結並協調您的核心系統所忽略的流程。",
     "poweredBy": "由現代技術驅動。"
   },
+  "Insights": {
+    "title": "洞察",
+    "backToInsights": "返回洞察",
+    "author": "作者",
+    "allContent": "所有內容"
+  },
+  "Admin": {
+    "overview": "概覽",
+    "overviewDesc": "平台指標一覽。",
+    "totalUsers": "總用戶",
+    "organizations": "組織",
+    "aiRequests": "AI 請求",
+    "blocked": "已封鎖",
+    "creditsUsed": "已使用點數",
+    "common": {
+        "clear": "清除",
+        "save": "儲存",
+        "cancel": "取消",
+        "delete": "刪除",
+        "edit": "編輯",
+        "create": "建立",
+        "select": "選擇",
+        "actions": "動作",
+        "noOrg": "無組織",
+        "platform": "平台"
+    },
+    "filters": {
+        "organization": "組織",
+        "role": "角色",
+        "status": "狀態",
+        "plan": "方案",
+        "aiAccess": "AI 存取",
+        "allOrgs": "所有組織",
+        "allRoles": "所有角色",
+        "allStatus": "所有狀態",
+        "allPlans": "所有方案",
+        "allAccess": "所有存取權限"
+    },
+    "roles": {
+        "platformAdmin": "平台管理員",
+        "owner": "擁有者",
+        "admin": "管理員",
+        "member": "成員"
+    },
+    "status": {
+        "active": "啟用",
+        "blocked": "已封鎖"
+    },
+    "types": {
+        "unlimited": "無限制",
+        "creditBased": "點數制"
+    },
+    "Users": {
+      "title": "用戶",
+      "subtitle": "管理用戶存取、角色和安全性。",
+      "create": "建立用戶",
+      "searchPlaceholder": "搜尋姓名或電子郵件...",
+      "table": {
+        "user": "用戶",
+        "org": "組織",
+        "role": "角色",
+        "status": "狀態",
+        "actions": "操作",
+        "noResults": "未找到用戶。",
+        "noMatches": "沒有符合篩選條件的用戶。"
+      },
+      "actions": {
+        "edit": "編輯詳情",
+        "changePassword": "變更密碼",
+        "delete": "刪除"
+      }
+    },
+    "Organizations": {
+      "title": "組織",
+      "subtitle": "管理客戶租戶、訂閱和 AI 額度。",
+      "create": "建立組織",
+      "searchPlaceholder": "搜尋名稱或代號...",
+      "table": {
+        "name": "名稱",
+        "plan": "方案",
+        "aiAccess": "AI 存取",
+        "tokens": "已用 Token",
+        "requests": "請求數",
+        "actions": "操作"
+      },
+      "actions": {
+        "manageCredits": "管理額度",
+        "edit": "編輯",
+        "delete": "刪除"
+      },
+      "unlimited": "吃到飽",
+      "credits": "額度"
+    },
+    "AI": {
+      "title": "AI 配置",
+      "subtitle": "管理連接、模型路由和護欄。",
+      "save": "儲存",
+      "routing": {
+        "title": "模型路由",
+        "desc": "Natalie 透過下方的管道路由請求。所有模型共用同一個供應商連接。"
+      },
+      "connection": {
+        "title": "連接",
+        "desc": "所有模型共用",
+        "provider": "供應商",
+        "baseUrl": "基礎 URL",
+        "apiKey": "API 金鑰",
+        "configured": "已配置"
+      },
+      "models": {
+        "title": "模型",
+        "desc": "為路由管道中的每個角色分配模型 ID。",
+        "primary": "主要",
+        "primaryDesc": "快速串流 & 最終答案",
+        "reasoning": "推理",
+        "reasoningDesc": "工具調用 & 數據分析",
+        "guardrail": "護欄",
+        "guardrailDesc": "過濾離題請求"
+      },
+      "placeholders": {
+        "leaveEmpty": "此處留空以使用主要模型"
+      },
+      "hints": {
+        "fallback": "回退至主要模型。設定更強的模型以獲得更好的工具調用。",
+        "disabled": "已停用 — 所有請求直接發送至模型。",
+        "cheapest": "(最便宜)"
+      }
+    }
+  },
   "ServicesPage": {
     "title": "服務",
     "subtitle": "為您量身打造的專業服務。",
     "description": "我們協助您設計、建構並優化您的營運流程。",
+    "story": {
+      "title": "合作以實現卓越運營。",
+      "description": "了解我們的團隊如何為您的組織服務以履行我們的承諾。Enigmatic 使用 BPMN 2.0 作為流程文檔和工作流建模的標準，以確保跨組織的一致性、清晰度和可移植性。"
+    },
+    "deliverables": "交付成果",
+    "tools": "工具",
     "steps": {
-      "step0": {
-        "title": "0. 高管層對齊",
-        "lists": {
-          "left": [
-            "定義可衡量的轉型目標",
-            "定義 EBITDA 或運營目標",
-            "確定執行主辦人"
-          ],
-          "right": [
-            "確保執行主辦人和備選主辦人"
-          ]
-        }
-      },
       "step1": {
-        "title": "1. 診斷與財務建模",
-        "lists": {
-          "left": [
-            "當前狀態映射",
-            "系統映射",
-            "財務基準建模",
-            "瓶頸識別"
-          ],
-          "right": [
-            "具有量化影響的轉型論點"
-          ]
-        }
+        "title": "高管層對齊",
+        "description": "建立明確的轉型目標並獲得高層贊助，以推動組織認同並鎖定運營目標。",
+        "deliverables": [
+          "定義可衡量的轉型目標",
+          "定義 EBITDA 或運營目標",
+          "確定執行主辦人",
+          "確保執行主辦人和備選主辦人"
+        ],
+        "tools": [
+            "Atlassian Confluence"
+        ]
       },
       "step2": {
-        "title": "2. 未來狀態架構",
-        "lists": {
-          "left": [
-            "工作流程重新設計",
-            "技術藍圖",
-            "SLA 定義",
-            "治理模型",
-            "變革推廣計劃"
-          ],
-          "right": [
-            "未來狀態的運營模型規範。"
-          ]
-        }
+        "title": "診斷與財務建模",
+        "description": "繪製當前系統和工作流程以識別瓶頸，建立財務基準和具有量化影響的轉型論點。",
+        "deliverables": [
+          "當前狀態映射",
+          "系統映射",
+          "財務基準建模",
+          "瓶頸識別",
+          "具有量化影響的轉型論點"
+        ],
+        "tools": [
+            "Lucid Chart",
+            "Excel",
+            "SQL",
+            "BPMN 2.0",
+            "Atlassian Confluence"
+        ]
       },
       "step3": {
-        "title": "3. 受控試點部署",
-        "lists": {
-          "left": [
-            "Nodal 內部工程構建",
-            "有限範圍推廣",
-            "KPI 追蹤",
-            "採用度測量"
-          ],
-          "right": [
-            "初始解決方案",
-            "影響案例研究"
-          ]
-        }
+        "title": "未來狀態架構",
+        "description": "設計目標運營模型，包括技術藍圖、工作流程重新設計和可擴展運營的治理結構。",
+        "deliverables": [
+          "工作流程重新設計",
+          "技術藍圖",
+          "SLA 定義",
+          "治理模型",
+          "變革推廣計劃",
+          "未來狀態的運營模型規範"
+        ],
+        "tools": [
+            "BPMN 2.0",
+            "Lucid Chart",
+            "Atlassian Confluence"
+        ]
       },
       "step4": {
-        "title": "4. 規模化推廣",
-        "lists": {
-          "left": [
-            "擴展工作流程",
-            "擴展部門",
-            "制度化治理"
-          ],
-          "right": [
-            "全面解決方案推廣與採用"
-          ]
-        }
+        "title": "受控試點部署",
+        "description": "通過有限範圍的試點驗證解決方案，跟踪 KPI 和採用指標，同時在 Nodal 內部進行工程構建。",
+        "deliverables": [
+          "Nodal 內部工程構建",
+          "有限範圍推廣",
+          "KPI 追蹤",
+          "採用度測量",
+          "初始解決方案",
+          "影響案例研究"
+        ],
+        "tools": [
+            "Nodal",
+            "Atlassian Jira",
+            "Atlassian Confluence"
+        ]
       },
       "step5": {
-        "title": "5. 持續優化/尊享服務",
-        "lists": {
-          "left": [
-            "季度解決方案審查（為期1年）"
-          ],
-          "right": [
-            "解決方案審查與改進。"
-          ]
-        }
+        "title": "規模化推廣",
+        "description": "跨部門和地點擴展成功的工作流程，制度化治理以確保解決方案的全面採用。",
+        "deliverables": [
+          "擴展工作流程",
+          "擴展部門",
+          "制度化治理",
+          "全面解決方案推廣與採用"
+        ],
+        "tools": [
+            "Nodal"
+        ]
+      },
+      "step6": {
+        "title": "持續優化/尊享服務",
+        "description": "提供持續的尊享支援和季度審查，以此完善解決方案並推動持續改進。",
+        "deliverables": [
+          "季度解決方案審查（為期1年）",
+          "解決方案審查與改進"
+        ],
+        "tools": [
+            "Nodal",
+            "PowerBI",
+            "Atlassian Confluence"
+        ]
       }
     }
   },
@@ -277,13 +422,19 @@
     "docs": "文檔",
     "nodes": "節點",
     "variables": "變量",
+    "seeMore": "查看更多",
+    "seeLess": "收起",
     "sections": {
       "workspace": "工作區",
       "development": "開發",
       "triggers": "觸發器",
       "humanInLoop": "人工介入",
       "builtInTools": "內置工具",
-      "connectors": "連接器"
+      "connectors": "連接器",
+      "platform": "平台",
+      "intelligence": "智能",
+      "admin": "管理",
+      "automation": "自動化"
     },
     "items": {
       "overview": "概覽",
@@ -293,7 +444,11 @@
       "peopleAndTeams": "人員與團隊",
       "flowStudio": "流程工作室",
       "integration": "集成",
-      "knowledgeBase": "知識庫"
+      "knowledgeBase": "知識庫",
+      "platformStats": "平台統計",
+      "users": "用戶",
+      "organizations": "組織",
+      "aiConfig": "AI 配置"
     },
     "draggable": {
       "triggerCreateFlow": "觸發：創建流程",
@@ -305,7 +460,8 @@
       "loop": "循環",
       "switch": "切換",
       "goto": "跳轉 / 跳至",
-      "httpRequest": "HTTP 請求"
+      "httpRequest": "HTTP 請求",
+      "automation": "等待事件"
     },
     "groups": {
       "dataOperation": "數據操作",
@@ -449,6 +605,7 @@
       "humanTask": "人工任務",
       "human-task": "人工任務",
       "goto": "跳轉 / 跳至",
+      "automation": "等待事件",
       "action": "動作"
     },
     "descriptions": {
@@ -466,6 +623,7 @@
       "humanTask": "暫停流程並等待人工批准或輸入。",
       "human-task": "暫停流程並等待人工批准或輸入。",
       "goto": "跳轉至流程中的另一個步驟。",
+      "automation": "暫停流程並等待外部事件。",
       "action": "執行通用動作。"
     },
     "labels": {
@@ -526,6 +684,7 @@
         "longText": "長文字",
         "number": "數字",
         "multiChoice": "多選題",
+        "allowMultiple": "允許多選（核取清單）",
         "checkboxes": "核取方塊",
         "rating": "評分（1-5）",
         "yesNo": "是/否",
@@ -533,7 +692,31 @@
         "dateTime": "日期與時間",
         "fileUpload": "檔案上傳",
         "signature": "簽名"
-      }
+      },
+      "information": "資訊",
+      "informationPlaceholder": "例如：為受讓人提供的簡要背景...",
+      "informationHelp": "卡片上顯示的簡短摘要。",
+      "description": "內部描述",
+      "descriptionPlaceholder": "例如：流程設計師的內部備註...",
+      "instructions": "指示",
+      "instructionsPlaceholder": "例如：提供詳細步驟、核取清單或背景資訊...",
+      "instructionsHelp": "這些詳細指示將顯示在任務卡片上，以引導受讓人。"
+    },
+    "automation": {
+      "stepNamePlaceholder": "步驟名稱（例如：等待付款）",
+      "descriptionPlaceholder": "描述此步驟正在等待的事件...",
+      "expectedPayload": "預期載荷（架構）",
+      "addField": "新增欄位",
+      "fieldNamePlaceholder": "欄位名稱",
+      "noSchemaTitle": "未定義輸出架構",
+      "noSchemaDescription": "變數需要手動引用。",
+      "typeString": "字串",
+      "typeNumber": "數字",
+      "typeBoolean": "布林值",
+      "typeObject": "物件",
+      "typeArray": "陣列",
+      "required": "必填",
+      "optional": "選填"
     },
     "apiTrigger": {
       "name": "名稱",
@@ -581,6 +764,45 @@
       "statusActive": "活躍",
       "statusDraft": "草稿",
       "unpublishedChanges": "未發布的變更"
+    },
+    "modals": {
+      "delete": {
+        "title": "您確定嗎？",
+        "description": "此操作無法撤銷。這將永久刪除流程 \"{name}\" 並移除其所有數據。",
+        "confirm": "刪除",
+        "cancel": "取消"
+      },
+      "rename": {
+        "title": "重新命名流程",
+        "description": "為您的流程輸入新名稱。",
+        "label": "名稱",
+        "save": "儲存變更",
+        "cancel": "取消"
+      }
+    },
+    "toasts": {
+      "savingBeforePublish": "發布前正在儲存變更...",
+      "publishing": "正在發布流程...",
+      "publishSuccess": "流程發布成功！現已上線。",
+      "publishError": "發布流程失敗",
+      "deleteSuccess": "流程刪除成功",
+      "deleteError": "刪除流程失敗",
+      "renameSuccess": "流程重新命名成功",
+      "renameError": "重新命名流程失敗",
+      "commentPosted": "評論已發布",
+      "commentError": "發布評論失敗",
+      "likeError": "按讚評論失敗"
+    },
+    "comments": {
+      "title": "討論",
+      "globalContext": "全域語境",
+      "placeholder": "評論此工作流程...",
+      "post": "發布",
+      "noComments": "尚無評論。開始對話。",
+      "reply": "回覆",
+      "like": "讚",
+      "writeReply": "撰寫回覆...",
+      "unknown": "未知"
     }
   },
   "ActionFlows": {

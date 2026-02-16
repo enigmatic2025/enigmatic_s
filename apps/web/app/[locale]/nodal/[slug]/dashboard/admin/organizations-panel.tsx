@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import useSWR from 'swr'
+import { useTranslations } from 'next-intl'
 import { Plus, Pencil, Trash, MoreHorizontal, Search, X } from 'lucide-react'
 import { apiClient } from "@/lib/api-client"
 import { toast } from 'sonner'
@@ -39,6 +40,7 @@ function isUnlimited(org: Organization): boolean {
 }
 
 export function OrganizationsPanel() {
+  const t = useTranslations("Admin");
   const { data: orgs = [], mutate, isLoading: loading } = useSWR<Organization[]>('/api/admin/orgs', (url: string) => apiClient.get(url).then(async res => {
       if (!res.ok) throw new Error('Failed to fetch orgs');
       return res.json();
@@ -111,7 +113,7 @@ export function OrganizationsPanel() {
   }
 
   const handleDelete = async (org: Organization) => {
-    if (!confirm(`Are you sure you want to delete ${org.name}? This cannot be undone.`)) return
+    if (!confirm(t("common.delete") + ` ${org.name}? `)) return
     try {
       const res = await apiClient.delete(`/api/admin/orgs/${org.id}`)
       if (!res.ok) {
@@ -146,11 +148,11 @@ export function OrganizationsPanel() {
     <div className="space-y-6">
       <div className="flex justify-between items-center pb-4 border-b border-zinc-200 dark:border-zinc-800">
         <div>
-          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Organizations</h3>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Manage customer tenants, subscriptions, and AI credits.</p>
+          <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">{t("Organizations.title")}</h3>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("Organizations.subtitle")}</p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)} className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900">
-          <Plus className="mr-2 h-4 w-4" /> Create Organization
+          <Plus className="mr-2 h-4 w-4" /> {t("Organizations.create")}
         </Button>
       </div>
 
@@ -158,18 +160,19 @@ export function OrganizationsPanel() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
           <Input
-            placeholder="Search by name or slug..."
+            placeholder={t("Organizations.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
+        
         <Select value={filterPlan} onValueChange={setFilterPlan}>
           <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Plan" />
+            <SelectValue placeholder={t("filters.plan")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Plans</SelectItem>
+            <SelectItem value="all">{t("filters.allPlans")}</SelectItem>
             {plans.map(plan => (
               <SelectItem key={plan} value={plan} className="capitalize">{plan}</SelectItem>
             ))}
@@ -177,12 +180,12 @@ export function OrganizationsPanel() {
         </Select>
         <Select value={filterAccess} onValueChange={setFilterAccess}>
           <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="AI Access" />
+            <SelectValue placeholder={t("filters.aiAccess")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Access</SelectItem>
-            <SelectItem value="unlimited">Unlimited</SelectItem>
-            <SelectItem value="limited">Credit-based</SelectItem>
+            <SelectItem value="all">{t("filters.allAccess")}</SelectItem>
+            <SelectItem value="unlimited">{t("types.unlimited")}</SelectItem>
+            <SelectItem value="limited">{t("types.creditBased")}</SelectItem>
           </SelectContent>
         </Select>
         {hasActiveFilters && (
@@ -192,7 +195,7 @@ export function OrganizationsPanel() {
             onClick={() => { setSearch(''); setFilterPlan('all'); setFilterAccess('all') }}
             className="text-zinc-500 hover:text-zinc-700"
           >
-            <X className="mr-1 h-3 w-3" /> Clear
+            <X className="mr-1 h-3 w-3" /> {t("common.clear")}
           </Button>
         )}
       </div>
@@ -201,12 +204,12 @@ export function OrganizationsPanel() {
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/50">
             <TableRow>
-              <TableHead className="font-semibold text-zinc-500">Name</TableHead>
-              <TableHead className="font-semibold text-zinc-500">Plan</TableHead>
-              <TableHead className="font-semibold text-zinc-500">AI Access</TableHead>
-              <TableHead className="font-semibold text-zinc-500 text-right">Tokens Used</TableHead>
-              <TableHead className="font-semibold text-zinc-500 text-right">Requests</TableHead>
-              <TableHead className="text-right font-semibold text-zinc-500">Actions</TableHead>
+              <TableHead className="font-semibold text-zinc-500">{t("Organizations.table.name")}</TableHead>
+              <TableHead className="font-semibold text-zinc-500">{t("Organizations.table.plan")}</TableHead>
+              <TableHead className="font-semibold text-zinc-500">{t("Organizations.table.aiAccess")}</TableHead>
+              <TableHead className="font-semibold text-zinc-500 text-right">{t("Organizations.table.tokens")}</TableHead>
+              <TableHead className="font-semibold text-zinc-500 text-right">{t("Organizations.table.requests")}</TableHead>
+              <TableHead className="text-right font-semibold text-zinc-500">{t("Organizations.table.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -229,10 +232,10 @@ export function OrganizationsPanel() {
                     className="hover:bg-zinc-100 dark:hover:bg-zinc-800 px-2 py-1 rounded-md transition-colors"
                   >
                     {isUnlimited(org) ? (
-                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">&infin; Unlimited</span>
+                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">&infin; {t("Organizations.unlimited")}</span>
                     ) : (
                       <span className="font-mono text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                        {(org.ai_credits_balance || 0).toLocaleString()} credits
+                        {(org.ai_credits_balance || 0).toLocaleString()} {t("Organizations.credits")}
                       </span>
                     )}
                   </button>
@@ -256,15 +259,15 @@ export function OrganizationsPanel() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[180px]">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t("Organizations.table.actions")}</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => openCredits(org)}>
-                        Manage Credits
+                        {t("Organizations.actions.manageCredits")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => openUpdate(org)}>
-                        <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> Edit
+                        <Pencil className="mr-2 h-4 w-4 text-zinc-500" /> {t("Organizations.actions.edit")}
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20" onClick={() => handleDelete(org)}>
-                        <Trash className="mr-2 h-4 w-4" /> Delete
+                        <Trash className="mr-2 h-4 w-4" /> {t("Organizations.actions.delete")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -274,7 +277,7 @@ export function OrganizationsPanel() {
             {filteredOrgs.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="h-32 text-center text-zinc-500">
-                  {hasActiveFilters ? 'No organizations match your filters.' : 'No organizations found.'}
+                  {hasActiveFilters ? t("Organizations.table.noMatches") : t("Organizations.table.noResults")}
                 </TableCell>
               </TableRow>
             )}

@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronRight, LucideIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ReactNode } from "react";
 
 interface SidebarDraggableItemProps {
@@ -48,6 +49,8 @@ export function SidebarSection({
   children,
   subtitle,
 }: SidebarSectionProps) {
+  const t = useTranslations("Sidebar");
+
   return (
     <div className="border-b">
       <button
@@ -63,7 +66,7 @@ export function SidebarSection({
           {title}
         </div>
         <span className="text-xs text-muted-foreground">
-          {isOpen ? "See less" : "See more"}
+          {isOpen ? t("seeLess") : t("seeMore")}
         </span>
       </button>
 

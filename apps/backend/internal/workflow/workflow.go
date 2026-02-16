@@ -31,6 +31,15 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	executionState := make(map[string]map[string]interface{})
 	variables := make(map[string]interface{})
 
+	// Extract mock data for test mode (keyed by node ID)
+	var mockData map[string]interface{}
+	if md, ok := inputData["__mock_data"]; ok {
+		if mdMap, ok := md.(map[string]interface{}); ok {
+			mockData = mdMap
+		}
+		delete(inputData, "__mock_data") // Remove from input so it doesn't pollute trigger body
+	}
+
 	// Initialize 'trigger' scope
 	executionState["trigger"] = map[string]interface{}{
 		"body": inputData,
@@ -248,17 +257,22 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			result = nodes.NodeResult{Status: nodes.StatusSuccess, Output: executionState[nodeID]}
 		} else {
 			// Prepare Context
+			nodeInputData := map[string]interface{}{
+				"steps":     executionState,
+				"variables": variables,
+			}
+			if mockData != nil {
+				nodeInputData["__mock_data"] = mockData
+			}
+
 			nodeCtx := nodes.NodeContext{
 				FlowID:     flowDefinition.ID,
 				OrgID:      flowDefinition.OrgID, // Populate OrgID
 				WorkflowID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 				RunID:      workflow.GetInfo(ctx).WorkflowExecution.RunID,
 				StepID:     node.ID,
-				InputData: map[string]interface{}{
-					"steps":     executionState,
-					"variables": variables,
-				},
-				Config: node.Data,
+				InputData:  nodeInputData,
+				Config:     node.Data,
 			}
 
 			logger.Info("Executing Node", "ID", node.ID, "Type", node.Type)

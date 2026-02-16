@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { AssigneeSelector } from '@/components/assignee-selector';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type, Clock, PenTool } from 'lucide-react';
+import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type, Clock, PenTool, FlaskConical, ChevronDown } from 'lucide-react';
 
 import { useTranslations } from 'next-intl';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
@@ -32,6 +32,9 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
   const schema = (currentConfig.schema || []) as SchemaField[];
   const t = useTranslations("ConfigDrawer.humanTask");
   const params = useParams();
+  const [showTestData, setShowTestData] = useState(
+    Object.keys(currentConfig.mockResponse || {}).length > 0
+  );
 
   const addField = () => {
     const newField: SchemaField = {
@@ -294,13 +297,115 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
           ))}
         </div>
         
-        <Button 
-          variant="outline" 
-          onClick={addField} 
+        <Button
+          variant="outline"
+          onClick={addField}
           className="w-full border-dashed text-muted-foreground hover:text-primary hover:border-primary/50"
         >
           <Plus className="w-4 h-4 mr-2" /> {t("addField")}
         </Button>
+      </div>
+
+      <hr className="my-6 border-muted" />
+
+      {/* Test Mode: Mock Response Data */}
+      <div>
+        <button
+          onClick={() => setShowTestData(!showTestData)}
+          className="flex items-center gap-2 w-full text-left py-1 group"
+        >
+          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${showTestData ? '' : '-rotate-90'}`} />
+          <FlaskConical className="w-4 h-4 text-amber-500" />
+          <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+            Test Mode: Mock Response
+          </span>
+        </button>
+
+        {showTestData && (
+          <div className="mt-4 space-y-4 pl-6">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Provide mock data for each field below. During test runs, this data will be used to
+              <strong> auto-complete the human task</strong> instead of waiting for real user input.
+            </p>
+
+            {schema.length === 0 ? (
+              <div className="text-center py-4 border border-dashed border-border rounded-lg bg-muted/10">
+                <p className="text-xs text-muted-foreground">Add form fields above first, then configure mock responses here.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {schema.map((field, index) => {
+                  const mockValue = currentConfig.mockResponse?.[field.key] ?? '';
+                  const updateMock = (value: any) => {
+                    const newMock = { ...(currentConfig.mockResponse || {}), [field.key]: value };
+                    onUpdate({ ...currentConfig, mockResponse: newMock });
+                  };
+
+                  return (
+                    <div key={field.key || index} className="space-y-1">
+                      <Label className="text-xs font-medium">
+                        {field.label || field.key}
+                        <span className="text-muted-foreground font-normal ml-1">({field.type})</span>
+                      </Label>
+                      {field.type === 'long-text' ? (
+                        <Textarea
+                          value={mockValue}
+                          onChange={(e) => updateMock(e.target.value)}
+                          placeholder={`Mock value for ${field.key}`}
+                          className="resize-none h-16 text-xs font-mono"
+                        />
+                      ) : field.type === 'boolean' ? (
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={mockValue === true || mockValue === 'true'}
+                            onCheckedChange={(checked) => updateMock(checked)}
+                            className="scale-75 origin-left"
+                          />
+                          <span className="text-xs text-muted-foreground">{mockValue ? 'Yes' : 'No'}</span>
+                        </div>
+                      ) : field.type === 'number' || field.type === 'rating' ? (
+                        <Input
+                          type="number"
+                          value={mockValue}
+                          onChange={(e) => updateMock(e.target.value ? Number(e.target.value) : '')}
+                          placeholder={field.type === 'rating' ? '1-5' : `Mock ${field.key}`}
+                          className="h-8 text-xs font-mono"
+                        />
+                      ) : field.type === 'multi-choice' ? (
+                        <Select value={String(mockValue)} onValueChange={(val) => updateMock(val)}>
+                          <SelectTrigger className="h-8 text-xs">
+                            <SelectValue placeholder="Select mock option" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(field.options || []).map((opt, i) => (
+                              <SelectItem key={i} value={opt}>{opt}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Input
+                          value={mockValue}
+                          onChange={(e) => updateMock(e.target.value)}
+                          placeholder={`Mock value for ${field.key}`}
+                          className="h-8 text-xs font-mono"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {schema.length > 0 && Object.keys(currentConfig.mockResponse || {}).length > 0 && (
+              <div className="p-3 bg-muted/30 rounded-md border border-border space-y-2">
+                <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Preview: Mock Payload</span>
+                <pre className="text-[11px] font-mono bg-background border border-border rounded px-2.5 py-2 text-muted-foreground overflow-x-auto">
+                  {JSON.stringify(currentConfig.mockResponse, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

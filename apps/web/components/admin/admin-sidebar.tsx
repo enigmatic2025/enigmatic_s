@@ -20,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useTranslations } from "next-intl"
 
 interface AdminSidebarProps {
     sidebarOpen: boolean
@@ -87,6 +88,7 @@ export function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSidebarProps) 
     const params = useParams()
     const locale = (params?.locale as string) || 'en'
     const base = `/${locale}/nodal/admin`
+    const t = useTranslations("Sidebar")
 
     const isActive = (href: string) => {
         return href === base
@@ -143,7 +145,7 @@ export function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSidebarProps) 
                     <div className="relative">
                         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
-                            placeholder="Search..."
+                            placeholder={t("searchPlaceholder")}
                             className="pl-8 h-8 bg-muted/50 border-transparent shadow-none focus:bg-background text-sm"
                         />
                     </div>
@@ -165,28 +167,28 @@ export function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSidebarProps) 
                 <div className={!sidebarOpen ? "w-full flex flex-col items-center" : ""}>
                     {sidebarOpen && (
                         <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-                            Platform
+                            {t("sections.platform")}
                         </h4>
                     )}
                     <nav className={`space-y-1 ${!sidebarOpen ? "w-full flex flex-col items-center" : ""}`}>
                         <NavItem 
                             href={base} 
                             icon={LayoutGrid} 
-                            label="Overview" 
+                            label={t("items.overview")} 
                             sidebarOpen={sidebarOpen} 
                             active={isActive(base) && !pathname?.includes('/organizations') && !pathname?.includes('/users') && !pathname?.includes('/ai')} 
                         />
                         <NavItem 
                             href={`${base}/organizations`} 
                             icon={Building2} 
-                            label="Organizations" 
+                            label={t("items.organizations")} 
                             sidebarOpen={sidebarOpen} 
                             active={isActive(`${base}/organizations`)} 
                         />
                         <NavItem 
                             href={`${base}/users`} 
                             icon={Users} 
-                            label="Users" 
+                            label={t("items.users")} 
                             sidebarOpen={sidebarOpen} 
                             active={isActive(`${base}/users`)} 
                         />
@@ -197,14 +199,14 @@ export function AdminSidebar({ sidebarOpen, toggleSidebar }: AdminSidebarProps) 
                 <div className={!sidebarOpen ? "w-full flex flex-col items-center" : ""}>
                     {sidebarOpen && (
                         <h4 className="px-2 text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
-                            Intelligence
+                            {t("sections.intelligence")}
                         </h4>
                     )}
                     <nav className={`space-y-1 ${!sidebarOpen ? "w-full flex flex-col items-center" : ""}`}>
                         <NavItem 
                             href={`${base}/ai`} 
                             icon={Bot} 
-                            label="AI Configuration" 
+                            label={t("items.aiConfig")} 
                             sidebarOpen={sidebarOpen} 
                             active={isActive(`${base}/ai`)} 
                         />

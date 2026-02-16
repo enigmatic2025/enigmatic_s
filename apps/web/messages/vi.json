@@ -5,91 +5,236 @@
     "description": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua.",
     "poweredBy": "Được vận hành bởi các công nghệ hiện đại."
   },
+  "Insights": {
+    "title": "Thông tin chi tiết",
+    "backToInsights": "Quay lại Thông tin chi tiết",
+    "author": "Tác giả",
+    "allContent": "Tất cả nội dung"
+  },
+  "Admin": {
+    "overview": "Tổng quan",
+    "overviewDesc": "Sơ lược về các chỉ số nền tảng.",
+    "totalUsers": "Tổng người dùng",
+    "organizations": "Tổ chức",
+    "aiRequests": "Yêu cầu AI",
+    "blocked": "Đã chặn",
+    "creditsUsed": "Tín dụng đã dùng",
+    "common": {
+        "clear": "Xóa",
+        "save": "Lưu",
+        "cancel": "Hủy",
+        "delete": "Xóa",
+        "edit": "Chỉnh sửa",
+        "create": "Tạo",
+        "select": "Chọn",
+        "actions": "Hành động",
+        "noOrg": "Không có tổ chức",
+        "platform": "Nền tảng"
+    },
+    "filters": {
+        "organization": "Tổ chức",
+        "role": "Vai trò",
+        "status": "Trạng thái",
+        "plan": "Gói",
+        "aiAccess": "Truy cập AI",
+        "allOrgs": "Tất cả tổ chức",
+        "allRoles": "Tất cả vai trò",
+        "allStatus": "Tất cả trạng thái",
+        "allPlans": "Tất cả gói",
+        "allAccess": "Tất cả quyền truy cập"
+    },
+    "roles": {
+        "platformAdmin": "Quản trị viên nền tảng",
+        "owner": "Chủ sở hữu",
+        "admin": "Quản trị viên",
+        "member": "Thành viên"
+    },
+    "status": {
+        "active": "Hoạt động",
+        "blocked": "Đã chặn"
+    },
+    "types": {
+        "unlimited": "Không giới hạn",
+        "creditBased": "Dựa trên tín dụng"
+    },
+    "Users": {
+      "title": "Người dùng",
+      "subtitle": "Quản lý quyền truy cập người dùng, vai trò và bảo mật.",
+      "create": "Tạo người dùng",
+      "searchPlaceholder": "Tìm kiếm theo tên hoặc email...",
+      "table": {
+        "user": "Người dùng",
+        "org": "Tổ chức",
+        "role": "Vai trò",
+        "status": "Trạng thái",
+        "actions": "Hành động",
+        "noResults": "Không tìm thấy người dùng.",
+        "noMatches": "Không có người dùng nào phù hợp."
+      },
+      "actions": {
+        "edit": "Chỉnh sửa chi tiết",
+        "changePassword": "Đổi mật khẩu",
+        "delete": "Xóa"
+      }
+    },
+    "Organizations": {
+      "title": "Tổ chức",
+      "subtitle": "Quản lý khách thuê, đăng ký và tín dụng AI.",
+      "create": "Tạo tổ chức",
+      "searchPlaceholder": "Tìm kiếm theo tên hoặc slug...",
+      "table": {
+        "name": "Tên",
+        "plan": "Gói",
+        "aiAccess": "Truy cập AI",
+        "tokens": "Token đã dùng",
+        "requests": "Yêu cầu",
+        "actions": "Hành động"
+      },
+      "actions": {
+        "manageCredits": "Quản lý tín dụng",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa"
+      },
+      "unlimited": "Không giới hạn",
+      "credits": "tín dụng"
+    },
+    "AI": {
+      "title": "Cấu hình AI",
+      "subtitle": "Quản lý kết nối, định tuyến mô hình và rào chắn.",
+      "save": "Lưu",
+      "routing": {
+        "title": "Định tuyến mô hình",
+        "desc": "Natalie định tuyến yêu cầu qua đường ống bên dưới. Tất cả các mô hình chia sẻ cùng một kết nối nhà cung cấp."
+      },
+      "connection": {
+        "title": "Kết nối",
+        "desc": "Chia sẻ giữa tất cả các mô hình",
+        "provider": "Nhà cung cấp",
+        "baseUrl": "URL cơ sở",
+        "apiKey": "Khóa API",
+        "configured": "đã cấu hình"
+      },
+      "models": {
+        "title": "Mô hình",
+        "desc": "Gán ID mô hình cho từng vai trò trong đường ống định tuyến.",
+        "primary": "Chính",
+        "primaryDesc": "Phát trực tuyến nhanh & câu trả lời cuối cùng",
+        "reasoning": "Lý luận",
+        "reasoningDesc": "Gọi công cụ & phân tích dữ liệu",
+        "guardrail": "Tường lửa",
+        "guardrailDesc": "Lọc các yêu cầu không liên quan"
+      },
+      "placeholders": {
+        "leaveEmpty": "Để trống để sử dụng mô hình chính"
+      },
+      "hints": {
+        "fallback": "Chuyển về mô hình chính. Đặt mô hình mạnh hơn để gọi công cụ tốt hơn.",
+        "disabled": "Đã tắt — tất cả yêu cầu đi trực tiếp đến mô hình.",
+        "cheapest": "(rẻ nhất)"
+      }
+    }
+  },
   "ServicesPage": {
     "title": "Dịch vụ",
     "subtitle": "Các dịch vụ chuyên nghiệp phù hợp với nhu cầu của bạn.",
     "description": "Chúng tôi giúp bạn thiết kế, xây dựng và tối ưu hóa quy trình hoạt động.",
+    "story": {
+      "title": "Hợp tác để đạt được sự Xuất sắc trong Vận hành.",
+      "description": "Hiểu cách đội ngũ của chúng tôi phục vụ tổ chức của bạn để thực hiện các cam kết. Enigmatic sử dụng BPMN 2.0 làm tiêu chuẩn cho tài liệu quy trình và mô hình hóa luồng công việc để đảm bảo tính nhất quán, rõ ràng và khả năng chuyển đổi giữa các tổ chức."
+    },
+    "deliverables": "Sản phẩm bàn giao",
+    "tools": "Công cụ",
     "steps": {
-      "step0": {
-        "title": "0. Căn chỉnh Điều hành",
-        "lists": {
-          "left": [
-            "Xác định mục tiêu chuyển đổi có thể đo lường",
-            "Xác định EBITDA hoặc mục tiêu hoạt động",
-            "Xác định nhà tài trợ điều hành"
-          ],
-          "right": [
-            "Đảm bảo nhà tài trợ điều hành và nhà tài trợ dự phòng"
-          ]
-        }
-      },
       "step1": {
-        "title": "1. Chẩn đoán & Lập mô hình tài chính",
-        "lists": {
-          "left": [
-            "Lập bản đồ hiện trạng",
-            "Lập bản đồ hệ thống",
-            "Lập mô hình cơ sở tài chính",
-            "Xác định nút thắt"
-          ],
-          "right": [
-            "Luận án chuyển đổi với tác động định lượng"
-          ]
-        }
+        "title": "Căn chỉnh Điều hành",
+        "description": "Thiết lập các mục tiêu chuyển đổi rõ ràng và đảm bảo sự bảo trợ của ban điều hành để thúc đẩy sự đồng thuận của tổ chức và nhắm mục tiêu vào các mục tiêu hoạt động.",
+        "deliverables": [
+          "Xác định mục tiêu chuyển đổi có thể đo lường",
+          "Xác định EBITDA hoặc mục tiêu hoạt động",
+          "Xác định nhà tài trợ điều hành",
+          "Đảm bảo nhà tài trợ điều hành và nhà tài trợ dự phòng"
+        ],
+        "tools": [
+            "Atlassian Confluence"
+        ]
       },
       "step2": {
-        "title": "2. Kiến trúc Trạng thái Tương lai",
-        "lists": {
-          "left": [
-            "Thiết kế lại quy trình làm việc",
-            "Bản thiết kế công nghệ",
-            "Định nghĩa SLA",
-            "Mô hình quản trị",
-            "Kế hoạch triển khai thay đổi"
-          ],
-          "right": [
-            "Đặc tả mô hình hoạt động cho trạng thái tương lai."
-          ]
-        }
+        "title": "Chẩn đoán & Lập mô hình tài chính",
+        "description": "Lập bản đồ các hệ thống và quy trình làm việc hiện tại để xác định các nút thắt, xây dựng cơ sở tài chính và luận án chuyển đổi với tác động định lượng.",
+        "deliverables": [
+          "Lập bản đồ hiện trạng",
+          "Lập bản đồ hệ thống",
+          "Lập mô hình cơ sở tài chính",
+          "Xác định nút thắt",
+          "Luận án chuyển đổi với tác động định lượng"
+        ],
+        "tools": [
+            "Lucid Chart",
+            "Excel",
+            "SQL",
+            "BPMN 2.0",
+            "Atlassian Confluence"
+        ]
       },
       "step3": {
-        "title": "3. Triển khai Thí điểm có Kiểm soát",
-        "lists": {
-          "left": [
-            "Xây dựng kỹ thuật bên trong Nodal",
-            "Triển khai phạm vi giới hạn",
-            "Theo dõi KPI",
-            "Đo lường mức độ chấp nhận"
-          ],
-          "right": [
-            "Giải pháp ban đầu",
-            "nghiên cứu trường hợp tác động"
-          ]
-        }
+        "title": "Kiến trúc Trạng thái Tương lai",
+        "description": "Thiết kế mô hình hoạt động mục tiêu, bao gồm bản thiết kế công nghệ, thiết kế lại quy trình làm việc và cấu trúc quản trị cho các hoạt động có thể mở rộng.",
+        "deliverables": [
+          "Thiết kế lại quy trình làm việc",
+          "Bản thiết kế công nghệ",
+          "Định nghĩa SLA",
+          "Mô hình quản trị",
+          "Kế hoạch triển khai thay đổi",
+          "Đặc tả mô hình hoạt động cho trạng thái tương lai"
+        ],
+        "tools": [
+            "BPMN 2.0",
+            "Lucid Chart",
+            "Atlassian Confluence"
+        ]
       },
       "step4": {
-        "title": "4. Triển khai Mở rộng",
-        "lists": {
-          "left": [
-            "Mở rộng quy trình làm việc",
-            "Mở rộng các phòng ban",
-            "Quản trị thể chế hóa"
-          ],
-          "right": [
-            "Triển khai và áp dụng giải pháp đầy đủ"
-          ]
-        }
+        "title": "Triển khai Thí điểm có Kiểm soát",
+        "description": "Xác thực giải pháp thông qua thí điểm phạm vi hạn chế, theo dõi KPI và số liệu chấp nhận trong khi xây dựng kỹ thuật bên trong Nodal.",
+        "deliverables": [
+          "Xây dựng kỹ thuật bên trong Nodal",
+          "Triển khai phạm vi giới hạn",
+          "Theo dõi KPI",
+          "Đo lường mức độ chấp nhận",
+          "Giải pháp ban đầu",
+          "Nghiên cứu trường hợp tác động"
+        ],
+        "tools": [
+            "Nodal",
+            "Atlassian Jira",
+            "Atlassian Confluence"
+        ]
       },
       "step5": {
-        "title": "5. Tối ưu hóa Liên tục",
-        "lists": {
-          "left": [
-            "Đánh giá giải pháp hàng quý (trong 1 năm)"
-          ],
-          "right": [
-            "Đánh giá và cải tiến giải pháp."
-          ]
-        }
+        "title": "Triển khai Mở rộng",
+        "description": "Mở rộng các quy trình làm việc thành công trên các phòng ban và địa điểm, thể chế hóa quản trị để đảm bảo áp dụng giải pháp đầy đủ.",
+        "deliverables": [
+          "Mở rộng quy trình làm việc",
+          "Mở rộng các phòng ban",
+          "Quản trị thể chế hóa",
+          "Triển khai và áp dụng giải pháp đầy đủ"
+        ],
+        "tools": [
+            "Nodal"
+        ]
+      },
+      "step6": {
+        "title": "Tối ưu hóa Liên tục",
+        "description": "Cung cấp hỗ trợ cao cấp liên tục và đánh giá hàng quý để tinh chỉnh giải pháp và thúc đẩy cải tiến liên tục.",
+        "deliverables": [
+          "Đánh giá giải pháp hàng quý (trong 1 năm)",
+          "Đánh giá và cải tiến giải pháp"
+        ],
+        "tools": [
+            "Nodal",
+            "PowerBI",
+            "Atlassian Confluence"
+        ]
       }
     }
   },
@@ -277,13 +422,19 @@
     "docs": "Tài liệu",
     "nodes": "Nút",
     "variables": "Biến",
+    "seeMore": "Xem thêm",
+    "seeLess": "Thu gọn",
     "sections": {
       "workspace": "Không gian làm việc",
       "development": "Phát triển",
       "triggers": "Trình kích hoạt",
       "humanInLoop": "Con người trong vòng lặp",
       "builtInTools": "Công cụ tích hợp",
-      "connectors": "Trình kết nối"
+      "connectors": "Trình kết nối",
+      "platform": "Nền tảng",
+      "intelligence": "Thông minh",
+      "admin": "Quản trị",
+      "automation": "Tự động hóa"
     },
     "items": {
       "overview": "Tổng quan",
@@ -293,7 +444,11 @@
       "peopleAndTeams": "Nhân sự & Nhóm",
       "flowStudio": "Phòng Thiết Kế Luồng",
       "integration": "Tích hợp",
-      "knowledgeBase": "Cơ sở tri thức"
+      "knowledgeBase": "Cơ sở tri thức",
+      "platformStats": "Thống kê nền tảng",
+      "users": "Người dùng",
+      "organizations": "Tổ chức",
+      "aiConfig": "Cấu hình AI"
     },
     "draggable": {
       "triggerCreateFlow": "Kích hoạt: Tạo luồng",
@@ -305,7 +460,8 @@
       "loop": "Vòng lặp",
       "switch": "Chuyển mạch",
       "goto": "Đi tới / Nhảy",
-      "httpRequest": "Yêu cầu HTTP"
+      "httpRequest": "Yêu cầu HTTP",
+      "automation": "Chờ sự kiện"
     },
     "groups": {
       "dataOperation": "Thao tác dữ liệu",
@@ -449,6 +605,7 @@
       "humanTask": "Tác vụ con người",
       "human-task": "Tác vụ con người",
       "goto": "Đi tới / Nhảy",
+      "automation": "Chờ sự kiện",
       "action": "Hành động"
     },
     "descriptions": {
@@ -466,6 +623,7 @@
       "humanTask": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
       "human-task": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
       "goto": "Nhảy đến một bước khác trong quy trình.",
+      "automation": "Tạm dừng luồng và chờ một sự kiện bên ngoài.",
       "action": "Thực hiện một hành động chung."
     },
     "labels": {
@@ -570,6 +728,22 @@
       "optional": "Tùy chọn",
       "actionFlowInfo": "THÔNG TIN LUỒNG HÀNH ĐỘNG",
       "actionFlowDescription": "Xác định cách kích hoạt này tích hợp vào Bảng điều khiển Luồng Hành động."
+    },
+    "automation": {
+      "stepNamePlaceholder": "Tên bước (ví dụ: Chờ thanh toán)",
+      "descriptionPlaceholder": "Mô tả sự kiện mà bước này đang chờ...",
+      "expectedPayload": "Tải trọng mong đợi (Lược đồ)",
+      "addField": "Thêm trường",
+      "fieldNamePlaceholder": "tên_trường",
+      "noSchemaTitle": "Chưa định nghĩa lược đồ đầu ra",
+      "noSchemaDescription": "Biến sẽ cần được tham chiếu thủ công.",
+      "typeString": "Chuỗi",
+      "typeNumber": "Số",
+      "typeBoolean": "Boolean",
+      "typeObject": "Đối tượng",
+      "typeArray": "Mảng",
+      "required": "Bắt buộc",
+      "optional": "Tùy chọn"
     }
   },
   "FlowStudio": {
@@ -590,6 +764,45 @@
       "statusActive": "Đang hoạt động",
       "statusDraft": "Bản nháp",
       "unpublishedChanges": "Thay đổi chưa xuất bản"
+    },
+    "modals": {
+      "delete": {
+        "title": "Bạn có chắc chắn không?",
+        "description": "Hành động này không thể hoàn tác. Luồng \"{name}\" sẽ bị xóa vĩnh viễn cùng với tất cả dữ liệu.",
+        "confirm": "Xóa",
+        "cancel": "Hủy"
+      },
+      "rename": {
+        "title": "Đổi tên luồng",
+        "description": "Nhập tên mới cho luồng của bạn.",
+        "label": "Tên",
+        "save": "Lưu thay đổi",
+        "cancel": "Hủy"
+      }
+    },
+    "toasts": {
+      "savingBeforePublish": "Đang lưu thay đổi trước khi xuất bản...",
+      "publishing": "Đang xuất bản luồng...",
+      "publishSuccess": "Luồng đã được xuất bản thành công! Nó đã hoạt động.",
+      "publishError": "Không thể xuất bản luồng",
+      "deleteSuccess": "Đã xóa luồng thành công",
+      "deleteError": "Xóa luồng thất bại",
+      "renameSuccess": "Đổi tên luồng thành công",
+      "renameError": "Đổi tên luồng thất bại",
+      "commentPosted": "Đã đăng bình luận",
+      "commentError": "Đăng bình luận thất bại",
+      "likeError": "Thích bình luận thất bại"
+    },
+    "comments": {
+      "title": "Thảo luận",
+      "globalContext": "Ngữ cảnh toàn cầu",
+      "placeholder": "Bình luận về quy trình này...",
+      "post": "Đăng",
+      "noComments": "Chưa có bình luận nào. Hãy bắt đầu cuộc trò chuyện.",
+      "reply": "Trả lời",
+      "like": "Thích",
+      "writeReply": "Viết câu trả lời...",
+      "unknown": "Không xác định"
     }
   },
   "ActionFlows": {
