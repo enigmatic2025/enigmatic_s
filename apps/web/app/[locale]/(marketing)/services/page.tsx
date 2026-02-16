@@ -1,23 +1,42 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, easeOut } from "framer-motion";
+import { useRef } from "react";
+import { cn } from "@/lib/utils";
+
+
+const timelineVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOut } }
+};
 
 export default function ServicesPage() {
   const t = useTranslations("ServicesPage");
+  const steps = [1, 2, 3, 4, 5, 6];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 50%", "end 50%"]
+  });
 
-  // Define steps array directly to map over
-  const steps = [0, 1, 2, 3, 4, 5];
+  const scrollYProgressSpring = useSpring(scrollYProgress, {
+    stiffness: 500,
+    damping: 90,
+  });
+
+  const lineHeight = useTransform(scrollYProgressSpring, [0, 1], ["0%", "100%"]);
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <section className="relative flex w-full flex-col justify-center overflow-hidden px-4 md:px-6 pt-28 pb-12 md:pt-40 md:pb-20">
+    <main className="flex min-h-screen flex-col bg-background">
+      {/* Hero Section */}
+      <section className="relative flex w-full flex-col justify-center overflow-hidden px-4 md:px-6 pt-32 pb-12 md:pt-40 md:pb-20">
         <div className="container mx-auto relative z-10 flex flex-col items-center text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
+            className="text-2xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
           >
             <span className="text-foreground">{t("title")}. </span>
             <span className="text-muted-foreground">
@@ -27,50 +46,156 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Steps Section */}
+      {/* Story Section */}
       <section className="w-full flex items-center justify-center py-20 px-4 md:px-6">
-        <div className="w-full max-w-[95%] text-foreground">
-          <div className="max-w-7xl mx-auto px-6 w-full flex flex-col gap-8 md:gap-12">
-            {steps.map((index) => (
-              <motion.div
-                key={index}
+        <div className="w-full max-w-[95%] text-foreground rounded-3xl overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <div className="mb-8 md:mb-10">
+              <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="w-full border border-border bg-background p-8 md:p-12 rounded-3xl"
+                transition={{ duration: 0.5 }}
+                className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-6"
               >
-                <h3 className="text-xl md:text-2xl font-normal mb-8 text-foreground">
-                  {t(`steps.step${index}.title`)}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
-                  {/* Left Column */}
-                  <div className="flex flex-col gap-3">
-                    {/* @ts-ignore */}
-                    {(t.raw(`steps.step${index}.lists.left`) as string[]).map((item: string, i: number) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-foreground shrink-0" />
-                        <span className="text-muted-foreground leading-relaxed text-lg">{item}</span>
-                      </div>
-                    ))}
-                  </div>
+                {t("story.title")}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
+              >
+                {t("story.description")}
+              </motion.p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                  {/* Right Column */}
-                  <div className="flex flex-col gap-3">
-                    {/* @ts-ignore */}
-                    {(t.raw(`steps.step${index}.lists.right`) as string[]).map((item: string, i: number) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-foreground shrink-0" />
-                        <span className="text-muted-foreground leading-relaxed text-lg">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
+      {/* Timeline Section */}
+      <section className="w-full py-20 px-4 md:px-6 relative" ref={containerRef}>
+        <div className="max-w-5xl mx-auto relative">
+          
+          {/* Timeline Line Container */}
+          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-0.5 h-full bg-border -translate-x-1/2">
+            {/* The Beam */}
+            <motion.div 
+              style={{ height: lineHeight }}
+              className="absolute top-0 left-0 w-full bg-linear-to-b from-violet-500 via-purple-500 to-transparent origin-top"
+            />
+          </div>
+
+          <div className="flex flex-col gap-24 relative z-10">
+            {steps.map((index) => (
+              <TimelineItem 
+                key={index}
+                index={index}
+                title={t(`steps.step${index}.title`)}
+                description={t(`steps.step${index}.description`)}
+                deliverables={t.raw(`steps.step${index}.deliverables`)}
+                tools={t.raw(`steps.step${index}.tools`)}
+              />
             ))}
           </div>
         </div>
       </section>
     </main>
+  );
+}
+
+function TimelineItem({ 
+  index, 
+  title, 
+  description,
+  deliverables,
+  tools
+}: { 
+  index: number, 
+  title: string, 
+  description: string,
+  deliverables: string[],
+  tools: string[]
+}) {
+  const isEven = index % 2 === 0;
+
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={timelineVariants}
+      className={cn(
+        "flex flex-col md:flex-row items-start md:items-start w-full gap-8 md:gap-0",
+        isEven ? "md:flex-row-reverse" : ""
+      )}
+    >
+      {/* Content Side */}
+      <div className={cn(
+        "w-full md:w-[calc(50%-40px)] pl-12 md:pl-0",
+        isEven ? "md:text-left" : "md:text-right"
+      )}>
+        <div className={cn(
+          "flex flex-col gap-4",
+          isEven ? "items-start" : "items-start md:items-end"
+        )}>
+          <span className="text-4xl text-center border aspect-square text-foreground px-3 py-1 rounded-sm">
+            {index}
+          </span>
+          <div className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
+            <h3 className="text-2xl md:text-3xl font-medium text-foreground">
+              {title}
+            </h3>
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
+              {description}
+            </p>
+          </div>
+
+          <div className={cn("flex flex-col gap-6 mt-2 w-full", isEven ? "items-start" : "items-start md:items-end")}>
+            {/* Deliverables */}
+            <div className={cn("flex flex-col gap-3", isEven ? "items-start" : "items-start md:items-end")}>
+              <h4 className="text-sm font-semibold text-foreground">Deliverables</h4>
+              <ul className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
+                {deliverables.map((item, i) => (
+                  <li key={i} className={cn(
+                    "flex items-center gap-2 text-sm md:text-base text-muted-foreground",
+                    !isEven && "md:flex-row-reverse text-right"
+                  )}>
+                     <div className="w-1.5 h-1.5 bg-foreground shrink-0" />
+                     <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Tools */}
+            <div className={cn("flex flex-col gap-3", isEven ? "items-start" : "items-start md:items-end")}>
+              <h4 className="text-sm font-semibold text-foreground">Tools</h4>
+              <div className={cn("flex flex-wrap items-center gap-4", isEven ? "justify-start" : "justify-start md:justify-end")}>
+                {tools.map((item, i) => (
+                  <span 
+                    key={i} 
+                    className="text-xs md:text-sm px-2.5 py-1 rounded-md bg-muted text-muted-foreground border border-border font-medium"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Center Point */}
+      <div className="absolute left-5 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
+        <div className="w-4 h-4 rounded-full bg-background border-2 border-violet-500 z-10 relative">
+          <div className="absolute inset-0 rounded-full bg-violet-500/20 animate-ping" />
+        </div>
+      </div>
+
+      {/* Empty Side (Spacer for Desktop) */}
+      <div className="hidden md:block w-[calc(50%-40px)]" />
+    </motion.div>
   );
 }

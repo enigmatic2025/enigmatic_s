@@ -9,87 +9,97 @@
     "title": "Services",
     "subtitle": "Professional services tailored to your needs.",
     "description": "We help you design, build, and optimize your operations.",
+    "story": {
+      "title": "Partnering for Operational Excellence.",
+      "description": "Understand how our team services your organization to deliver on our commitments. Enigmatic uses BPMN 2.0 as its standard for process documentation and workflow modeling to ensure consistency, clarity, and portability across organizations."
+    },
     "steps": {
-      "step0": {
-        "title": "0. Executive Alignment",
-        "lists": {
-          "left": [
-            "Define measurable transformation objectives",
-            "Define EBITDA or operational target",
-            "Define executive sponsor"
-          ],
-          "right": [
-            "Secure executive sponsor and backup sponsor"
-          ]
-        }
-      },
       "step1": {
-        "title": "1. Diagnostic & Financial Modeling",
-        "lists": {
-          "left": [
-            "Current-state mapping",
-            "System mapping",
-            "Financial baseline modeling",
-            "Bottleneck identification"
-          ],
-          "right": [
-            "Transformation thesis with quantified impact"
-          ]
-        }
+        "title": " Executive Alignment",
+        "description": "Establish clear transformation objectives and secure executive sponsorship to drive organizational buy-in and target operational goals.",
+        "deliverables": [
+          "Measurable transformation objectives",
+          "EBITDA or operational target definition",
+          "Executive sponsorship agreement"
+        ],
+        "tools": [
+            "Atlassian Confluence"
+        ]
       },
       "step2": {
-        "title": "2. Future State Architecture",
-        "lists": {
-          "left": [
-            "Workflow redesign",
-            "Technology blueprint",
-            "SLA definitions",
-            "Governance model",
-            "Change rollout plan"
-          ],
-          "right": [
-            "An operating model specification for the future state."
-          ]
-        }
+        "title": " Diagnostic & Financial Modeling",
+        "description": "Map current systems and workflows to identify bottlenecks, building a financial baseline and transformation thesis with quantified impact.",
+        "deliverables": [
+          "Current-state process maps", 
+          "System architecture diagram",
+          "Financial baseline model",
+          "Bottleneck analysis",
+          "Transformation thesis"
+        ],
+        "tools": [
+            "Lucid Chart",
+            "Excel",
+            "SQL",
+            "BPMN 2.0",
+            "Atlassian Confluence"
+        ]
       },
       "step3": {
-        "title": "3. Controlled Pilot Deployment",
-        "lists": {
-          "left": [
-            "Engineer build inside Nodal",
-            "Limited-scope rollout",
-            "KPI tracking",
-            "Adoption measurement"
-          ],
-          "right": [
-            "Initial solution",
-            "Impact case study"
-          ]
-        }
+        "title": " Future State Architecture",
+        "description": "Design the target operating model, including technology blueprints, workflow redesigns, and governance structures for scalable operations.",
+        "deliverables": [
+            "Future-state operating model",
+            "Workflow redesigns",
+            "Technology blueprint",
+            "Governance model",
+            "Change rollout plan"
+        ],
+        "tools": [
+            "BPMN 2.0",
+            "Lucid Chart",
+            "Atlassian Confluence"
+        ]
       },
       "step4": {
-        "title": "4. Scaled Rollout",
-        "lists": {
-          "left": [
-            "Expand workflows",
-            "Expand departments",
-            "Institutionalized governance"
-          ],
-          "right": [
-            "Full solution rollout & adoption"
-          ]
-        }
+        "title": " Controlled Pilot Deployment",
+        "description": "Validate the solution through a limited-scope pilot, tracking KPIs and adoption metrics while engineering the build inside Nodal.",
+        "deliverables": [
+            "Nodal environment configuration",
+            "Working pilot solution",
+            "KPI tracking dashboard",
+            "Adoption measurement report"
+        ],
+        "tools": [
+            "Nodal",
+            "Atlassian Jira",
+            "Atlassian Confluence"
+        ]
       },
       "step5": {
-        "title": "5. Continuous Optimization/White Glove",
-        "lists": {
-          "left": [
-            "Quarterly solution review (for 1 year)"
-          ],
-          "right": [
-            "Solution review & improvement."
-          ]
-        }
+        "title": " Scaled Rollout",
+        "description": "Expand successful workflows across departments and locations, institutionalizing governance to ensure full solution adoption.",
+        "deliverables": [
+            "Multi-department workflow expansion",
+            "Institutionalized governance playbook",
+            "Full solution adoption"
+        ],
+        "tools": [
+            "Nodal"
+        ]
+      },
+      "step6": {
+        "title": " Continuous Optimization",
+        "description": "Provide ongoing white-glove support and quarterly reviews to refined the solution and drive continuous improvement.",
+        "deliverables": [
+            "Quarterly solution reviews",
+            "Optimization roadmap",
+            "Performance improvement report"
+        ],
+        "tools": [
+            "Nodal",
+            "PowerBI",
+            "Atlassian Confluence"
+        ]
       }
     }
   },
