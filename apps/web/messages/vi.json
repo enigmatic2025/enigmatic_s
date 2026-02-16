@@ -144,6 +144,11 @@
     },
     "deliverables": "Sản phẩm bàn giao",
     "tools": "Công cụ",
+    "phases": {
+        "consulting": "Giai đoạn Tư vấn",
+        "engineering": "Giai đoạn Kỹ thuật Hệ thống",
+        "engineeringNote": "Lý tưởng nhất là chúng tôi xây dựng những gì chúng tôi thiết kế. Nhưng khách hàng có thể chọn kết thúc sự hợp tác tại đây, được trang bị một lộ trình hoàn chỉnh để thực hiện nội bộ."
+    },
     "steps": {
       "step1": {
         "title": "Căn chỉnh Điều hành",
@@ -194,8 +199,8 @@
         ]
       },
       "step4": {
-        "title": "Triển khai Thí điểm có Kiểm soát",
-        "description": "Xác thực giải pháp thông qua thí điểm phạm vi hạn chế, theo dõi KPI và số liệu chấp nhận trong khi xây dựng kỹ thuật bên trong Nodal.",
+        "title": "Kỹ sư Giải pháp & Thí điểm",
+        "description": "Xác thực giải pháp thông qua thí điểm phạm vi hạn chế. Chúng tôi thiết kế các giải pháp độc lập nhưng đặc biệt khuyến nghị áp dụng Nodal để tổ chức và mở rộng quy trình làm việc hiệu quả.",
         "deliverables": [
           "Xây dựng kỹ thuật bên trong Nodal",
           "Triển khai phạm vi giới hạn",
@@ -206,6 +211,7 @@
         ],
         "tools": [
             "Nodal",
+            "n8n",
             "Atlassian Jira",
             "Atlassian Confluence"
         ]
@@ -220,7 +226,8 @@
           "Triển khai và áp dụng giải pháp đầy đủ"
         ],
         "tools": [
-            "Nodal"
+            "Nodal",
+            "n8n"
         ]
       },
       "step6": {
@@ -236,6 +243,39 @@
             "Atlassian Confluence"
         ]
       }
+    },
+    "faq": {
+      "title": "Câu hỏi Thường gặp",
+      "items": [
+        {
+          "question": "Quy trình hợp tác diễn ra như thế nào?",
+          "answer": "Chúng tôi chỉ định một tư vấn viên chuyên trách làm đối tác chiến lược và đầu mối liên hệ chính của bạn. Họ điều phối toàn bộ quá trình chẩn đoán và thiết kế, làm việc trực tiếp với đội ngũ kỹ thuật của Enigmatic để xây dựng, thử nghiệm và triển khai giải pháp tùy chỉnh của bạn."
+        },
+        {
+          "question": "Tôi có cần sử dụng nền tảng Nodal không?",
+          "answer": "Không. Chúng tôi có thể thiết kế các giải pháp độc lập tích hợp trực tiếp với cơ sở hạ tầng hiện có của bạn. Tuy nhiên, chúng tôi đặc biệt khuyến nghị Nodal như một lớp điều phối để tập trung quản trị, giám sát và triển khai khi bạn mở rộng quy trình làm việc."
+        },
+        {
+          "question": "Một dự án thông thường kéo dài bao lâu?",
+          "answer": "Thời gian khác nhau tùy thuộc vào phạm vi, nhưng chúng tôi làm việc nhanh chóng. Giai đoạn chẩn đoán thường hoàn thành trong 2-3 tuần, và chúng tôi đặt mục tiêu có giải pháp thí điểm hoạt động trong vòng 6-8 tuần. Mục tiêu của chúng tôi là mang lại giá trị có thể đo lường trong một quý."
+        },
+        {
+          "question": "Điều này có yêu cầu thay thế phần mềm hiện tại của chúng tôi không?",
+          "answer": "Hiếm khi. Triết lý của chúng tôi là kết nối và điều phối, không phải thay thế hoàn toàn. Chúng tôi xây dựng \"mảnh ghép còn thiếu\" để kết nối ERP, CRM và các hệ thống cũ của bạn để lấp đầy khoảng trống trong hoạt động."
+        },
+        {
+          "question": "Điều gì xảy ra sau khi thí điểm?",
+          "answer": "Khi thí điểm xác thực được ROI, chúng tôi chuyển sang triển khai mở rộng. Chúng tôi giúp bạn thể chế hóa giải pháp trên các bộ phận và cung cấp hỗ trợ liên tục. Bạn có thể chọn quản lý nội bộ hoặc giữ lại đội ngũ của chúng tôi để tối ưu hóa liên tục."
+        },
+        {
+          "question": "Bạn xử lý bảo mật dữ liệu như thế nào?",
+          "answer": "Bảo mật là tối quan trọng. Chúng tôi thiết kế kiến trúc tôn trọng chủ quyền dữ liệu của bạn. Cho dù sử dụng Nodal hay xây dựng độc lập, chúng tôi tuân thủ các tiêu chuẩn bảo mật doanh nghiệp nghiêm ngặt và có thể triển khai giải pháp trong môi trường đám mây riêng của bạn nếu cần."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Sẵn sàng tối ưu hóa hoạt động của bạn?",
+      "description": "Lên lịch tư vấn để khám phá nơi bạn có thể mở khóa hiệu quả."
     }
   },
   "Navigation": {

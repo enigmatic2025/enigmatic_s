@@ -116,7 +116,52 @@ export default function ServicesPage() {
           </div>
 
           <div className="flex flex-col gap-24 relative z-10">
-            {steps.map((index) => (
+            
+            {/* Consulting Section Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex justify-center -mb-12"
+            >
+              <div className="bg-background px-6 py-2 border rounded-full z-20">
+                <h3 className="text-xl md:text-2xl font-normal text-foreground">
+                  {t("phases.consulting")}
+                </h3>
+              </div>
+            </motion.div>
+
+            {steps.slice(0, 3).map((index) => (
+              <TimelineItem 
+                key={index}
+                index={index}
+                title={t(`steps.step${index}.title`)}
+                description={t(`steps.step${index}.description`)}
+                deliverables={t.raw(`steps.step${index}.deliverables`)}
+                tools={t.raw(`steps.step${index}.tools`)}
+                deliverablesLabel={t('deliverables')}
+                toolsLabel={t('tools')}
+              />
+            ))}
+
+            {/* Engineering Section Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center gap-6 py-12 backdrop-blur-sm z-20 -my-12"
+            >
+              <div className="bg-background px-6 py-2 border rounded-full">
+                <h3 className="text-xl md:text-2xl font-normal text-foreground">
+                  {t("phases.engineering")}
+                </h3>
+              </div>
+              <p className="text-center text-muted-foreground max-w-lg px-4">
+                {t("phases.engineeringNote")}
+              </p>
+            </motion.div>
+
+            {steps.slice(3).map((index) => (
               <TimelineItem 
                 key={index}
                 index={index}

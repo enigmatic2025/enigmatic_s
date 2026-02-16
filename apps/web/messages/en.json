@@ -144,6 +144,11 @@
     },
     "deliverables": "Deliverables",
     "tools": "Tools",
+    "phases": {
+        "consulting": "Consulting Phase",
+        "engineering": "System Engineering Phase",
+        "engineeringNote": "Ideally, we build what we design. But clients may choose to conclude the engagement here, armed with a complete roadmap for internal execution."
+    },
     "steps": {
       "step1": {
         "title": " Executive Alignment",
