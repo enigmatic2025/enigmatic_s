@@ -176,10 +176,10 @@ export function UsersPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center pb-4 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="flex justify-between items-center">
         <div>
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">{t("Users.title")}</h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("Users.subtitle")}</p>
+            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">{t("Users.title")}</h1>
+            <p className="text-sm text-zinc-500 mt-1">{t("Users.subtitle")}</p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)} className="bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900">
           <Plus className="mr-2 h-4 w-4" /> {t("Users.create")}
