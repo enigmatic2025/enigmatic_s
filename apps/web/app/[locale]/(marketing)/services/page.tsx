@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { motion, useScroll, useTransform, useSpring, easeOut } from "framer-motion";
 import { useRef } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 
@@ -19,6 +20,13 @@ export default function ServicesPage() {
     target: containerRef,
     offset: ["start 50%", "end 50%"]
   });
+
+  const parallaxRef = useRef(null);
+  const { scrollYProgress: parallaxProgress } = useScroll({
+    target: parallaxRef,
+    offset: ["start end", "end start"]
+  });
+  const parallaxY = useTransform(parallaxProgress, [0, 1], ["-15%", "15%"]);
 
   const scrollYProgressSpring = useSpring(scrollYProgress, {
     stiffness: 500,
@@ -74,6 +82,23 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* Parallax Image Section */}
+      <section ref={parallaxRef} className="w-full h-[50vh] md:h-[70vh] relative overflow-hidden my-12 md:my-20">
+        <motion.div 
+          style={{ y: parallaxY }}
+          className="absolute inset-0 w-full h-[130%] -top-[15%]"
+        >
+            <Image 
+              src="/images/home/blackwhite.jpg" 
+              alt="Operational Excellence" 
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority
+            />
+        </motion.div>
+      </section>
+
       {/* Timeline Section */}
       <section className="w-full py-20 px-4 md:px-6 relative" ref={containerRef}>
         <div className="max-w-5xl mx-auto relative">
@@ -83,7 +108,7 @@ export default function ServicesPage() {
             {/* The Beam */}
             <motion.div 
               style={{ height: lineHeight }}
-              className="absolute top-0 left-0 w-full bg-linear-to-b from-violet-500 via-purple-500 to-transparent origin-top"
+              className="absolute top-0 left-0 w-full bg-linear-to-b from-violet-400 via-violet-400 to-transparent origin-top"
             />
           </div>
 
@@ -127,20 +152,20 @@ function TimelineItem({
       viewport={{ once: true, margin: "-100px" }}
       variants={timelineVariants}
       className={cn(
-        "flex flex-col md:flex-row items-start md:items-start w-full gap-8 md:gap-0",
+        "flex flex-col md:flex-row items-center w-full gap-8 md:gap-0",
         isEven ? "md:flex-row-reverse" : ""
       )}
     >
       {/* Content Side */}
       <div className={cn(
-        "w-full md:w-[calc(50%-40px)] pl-12 md:pl-0",
+        "w-full md:w-[calc(50%-40px)] pl-12 md:pl-0 flex flex-col justify-center",
         isEven ? "md:text-left" : "md:text-right"
       )}>
         <div className={cn(
           "flex flex-col gap-4",
           isEven ? "items-start" : "items-start md:items-end"
         )}>
-          <span className="text-4xl text-center border aspect-square text-foreground px-3 py-1 rounded-sm">
+          <span className="text-4xl text-center aspect-square text-foreground px-3 py-1">
             {index}
           </span>
           <div className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
