@@ -208,7 +208,7 @@ function TimelineItem({
                 {tools.map((item, i) => (
                   <span 
                     key={i} 
-                    className="text-xs md:text-sm px-2.5 py-1 rounded-sm text-violet-500 border border-violet-500"
+                    className="text-xs md:text-sm px-2.5 py-1 rounded-sm text-violet-500 dark:text-violet-400 border border-violet-500 dark:border-violet-400"
                   >
                     {item}
                   </span>
