@@ -13,9 +13,9 @@ export async function generateStaticParams() {
 
 export async function GET(
     request: Request,
-    { params }: { params: { lang: string } }
+    { params }: { params: Promise<{ lang: string }> }
 ) {
-    const lang = params.lang;
+    const { lang } = await params;
 
     let docs;
     switch (lang) {

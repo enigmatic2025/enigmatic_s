@@ -47,6 +47,7 @@
     "dagre": "^0.8.5",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.23.24",
+    "fuse.js": "^7.1.0",
     "isomorphic-dompurify": "^2.36.0",
     "lucide-react": "^0.554.0",
     "marked": "^17.0.2",

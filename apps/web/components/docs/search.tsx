@@ -1,20 +1,45 @@
 "use client";
 
 import * as React from "react";
-import { Search } from "lucide-react";
+import { Search, FileText, Hash } from "lucide-react";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import Fuse from "fuse.js";
+import { DocSection } from "@/data/docs/types";
+import { flattenDocs, SearchRecord } from "@/lib/search";
 
 interface DocsSearchProps {
   onNavigate: (id: string) => void;
-  items: { title: string; items: { id: string; label: string }[] }[];
+  docs: DocSection[];
 }
 
-export function DocsSearch({ onNavigate, items }: DocsSearchProps) {
+export function DocsSearch({ onNavigate, docs }: DocsSearchProps) {
   const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
   const t = useTranslations("DocsSearch");
+
+  // Create Fuse index
+  const fuse = React.useMemo(() => {
+    const records = flattenDocs(docs);
+    return new Fuse(records, {
+      keys: [
+        { name: "title", weight: 2 },
+        { name: "content", weight: 1 },
+        { name: "sectionTitle", weight: 0.5 },
+      ],
+      threshold: 0.4, // 0.0 = perfect match, 1.0 = match anything
+      ignoreLocation: true,
+      includeMatches: true,
+    });
+  }, [docs]);
+
+  // Derive results
+  const results = React.useMemo(() => {
+    if (!query) return [];
+    return fuse.search(query).slice(0, 10).map((result) => result.item);
+  }, [fuse, query]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -48,26 +73,58 @@ export function DocsSearch({ onNavigate, items }: DocsSearchProps) {
           <span className="text-xs">⌘</span>K
         </kbd>
       </button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={t("placeholder")} />
+      <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
+        <CommandInput 
+            placeholder={t("placeholder")} 
+            value={query}
+            onValueChange={setQuery}
+        />
         <CommandList>
           <CommandEmpty>{t("noResults")}</CommandEmpty>
-          {items.map((group) => (
-            <CommandGroup key={group.title} heading={group.title}>
-              {group.items.map((item) => (
-                <CommandItem
-                  key={item.id}
-                  value={item.label}
-                  onSelect={() => {
-                    runCommand(() => onNavigate(item.id));
-                  }}
-                >
-                  <Search className="mr-2 h-4 w-4" />
-                  {item.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          ))}
+          
+          {results.length > 0 && (
+             <CommandGroup heading="Matches">
+               {results.map((item) => (
+                 <CommandItem
+                   key={item.id}
+                   value={item.id} // Unique value for cmdk
+                   onSelect={() => runCommand(() => onNavigate(item.url))}
+                   className="flex flex-col items-start gap-1 py-3"
+                 >
+                   <div className="flex items-center gap-2 w-full">
+                     {item.type === 'section' ? (
+                       <FileText className="h-4 w-4 text-primary shrink-0" />
+                     ) : (
+                       <Hash className="h-3 w-3 text-muted-foreground shrink-0" />
+                     )}
+                     <div className="flex flex-col overflow-hidden">
+                        <span className="font-medium truncate text-foreground">
+                            {item.title}
+                        </span>
+                        {item.type === 'block' && (
+                             <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                In: {item.sectionTitle}
+                             </span>
+                        )}
+                     </div>
+                   </div>
+                   
+                   {item.content && (
+                     <p className="text-xs text-muted-foreground line-clamp-2 pl-6">
+                        {item.content}
+                     </p>
+                   )}
+                 </CommandItem>
+               ))}
+             </CommandGroup>
+          )}
+
+          {!query && (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Type to search documentation...
+              </div>
+          )}
+
         </CommandList>
       </CommandDialog>
     </>

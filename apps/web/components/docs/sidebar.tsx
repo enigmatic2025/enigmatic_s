@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { DocsSearch } from "@/components/docs/search";
 
 import { useLocale } from "next-intl";
-import { enSidebar } from "@/data/docs/en";
-import { viSidebar } from "@/data/docs/vi";
-import { zhTwSidebar } from "@/data/docs/zh-TW";
-import { SidebarGroup } from "@/data/docs/types";
+import { enSidebar, enDocs } from "@/data/docs/en";
+import { viSidebar, viDocs } from "@/data/docs/vi";
+import { zhTwSidebar, zhTwDocs } from "@/data/docs/zh-TW";
+import { SidebarGroup, DocSection } from "@/data/docs/types";
 
 // Sidebar data mapping
 const sidebarDataMap: Record<string, SidebarGroup[]> = {
@@ -16,6 +16,14 @@ const sidebarDataMap: Record<string, SidebarGroup[]> = {
   vi: viSidebar,
   "zh-TW": zhTwSidebar,
 };
+
+// Full docs data mapping for search
+const docsDataMap: Record<string, DocSection[]> = {
+  en: enDocs,
+  vi: viDocs,
+  "zh-TW": zhTwDocs,
+};
+
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   activeSection: string;
@@ -25,6 +33,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 export function DocsSidebar({ activeSection, onNavigate, className, ...props }: SidebarProps) {
   const locale = useLocale();
   const sidebarData = sidebarDataMap[locale] || enSidebar;
+  const docsData = docsDataMap[locale] || enDocs;
   
   // Default to all groups open
   const [openGroups, setOpenGroups] = useState<string[]>(sidebarData.map(g => g.title));
@@ -49,7 +58,8 @@ export function DocsSidebar({ activeSection, onNavigate, className, ...props }: 
     <div className={cn("pb-12", className)} {...props}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
-          <DocsSearch onNavigate={onNavigate} items={sidebarData} />
+          {/* Pass full docs data to search */}
+          <DocsSearch onNavigate={onNavigate} docs={docsData} />
           
           <div className="flex items-center justify-between mb-2 px-2">
              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
