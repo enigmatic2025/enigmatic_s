@@ -192,8 +192,8 @@
         ]
       },
       "step4": {
-        "title": " Controlled Pilot Deployment",
-        "description": "Validate the solution through a limited-scope pilot, tracking KPIs and adoption metrics while engineering the build inside Nodal.",
+        "title": " Solution Engineering & Pilot",
+        "description": "Validate the solution through a limited-scope pilot. We engineer standalone solutions but highly recommend adopting Nodal to organize and scale your workflows efficiently.",
         "deliverables": [
             "Nodal environment configuration",
             "Working pilot solution",
@@ -202,6 +202,7 @@
         ],
         "tools": [
             "Nodal",
+            "n8n",
             "Atlassian Jira",
             "Atlassian Confluence"
         ]
@@ -215,7 +216,8 @@
             "Full solution adoption"
         ],
         "tools": [
-            "Nodal"
+            "Nodal",
+            "n8n"
         ]
       },
       "step6": {
