@@ -12,15 +12,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"; // Assuming you have these UI components, otherwise I'll need to check or create them.
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sidebar } from "./sidebar";
+import { DocsSidebar } from "./sidebar";
 
 interface MobileNavProps {
-  items: any[];
   activeSection: string;
   onNavigate: (id: string) => void;
 }
 
-export function MobileNav({ items, activeSection, onNavigate }: MobileNavProps) {
+export function MobileNav({ activeSection, onNavigate }: MobileNavProps) {
   const [open, setOpen] = React.useState(false);
 
   const handleNavigate = (id: string) => {
@@ -41,7 +40,7 @@ export function MobileNav({ items, activeSection, onNavigate }: MobileNavProps) 
             <SheetTitle className="text-left px-2">Documentation</SheetTitle>
         </SheetHeader>
         <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-          <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
+          <DocsSidebar activeSection={activeSection} onNavigate={handleNavigate} />
         </ScrollArea>
       </SheetContent>
     </Sheet>

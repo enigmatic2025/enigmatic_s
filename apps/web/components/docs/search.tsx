@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 interface DocsSearchProps {
   onNavigate: (id: string) => void;
@@ -13,6 +14,7 @@ interface DocsSearchProps {
 
 export function DocsSearch({ onNavigate, items }: DocsSearchProps) {
   const [open, setOpen] = React.useState(false);
+  const t = useTranslations("DocsSearch");
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -40,16 +42,16 @@ export function DocsSearch({ onNavigate, items }: DocsSearchProps) {
       >
         <span className="flex items-center gap-2">
           <Search className="h-4 w-4 text-muted-foreground/70 group-hover:text-foreground transition-colors" />
-          <span className="text-muted-foreground/70 group-hover:text-foreground transition-colors">Search...</span>
+          <span className="text-muted-foreground/70 group-hover:text-foreground transition-colors">{t("button")}</span>
         </span>
         <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex text-muted-foreground">
           <span className="text-xs">⌘</span>K
         </kbd>
       </button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder={t("placeholder")} />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>{t("noResults")}</CommandEmpty>
           {items.map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
               {group.items.map((item) => (

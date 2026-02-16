@@ -778,5 +778,10 @@
       "security": "Security",
       "record": "Record"
     }
+  },
+  "DocsSearch": {
+    "button": "Search...",
+    "placeholder": "Type a command or search...",
+    "noResults": "No results found."
   }
 }

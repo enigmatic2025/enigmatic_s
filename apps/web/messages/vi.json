@@ -748,5 +748,10 @@
       "security": "An ninh",
       "record": "Ghi nhận"
     }
+  },
+  "DocsSearch": {
+    "button": "Tìm kiếm...",
+    "placeholder": "Nhập lệnh hoặc tìm kiếm...",
+    "noResults": "Không tìm thấy kết quả."
   }
 }

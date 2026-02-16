@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { Sidebar, sidebarData } from "./sidebar";
+import { DocsSidebar } from "./sidebar";
 import { MobileNav } from "@/components/docs/mobile-nav";
 
 interface DocsLayoutProps {
@@ -19,13 +19,13 @@ export function DocsLayout({ children, activeSection, onNavigate }: DocsLayoutPr
         {/* Mobile Header / Nav */}
         <div className="lg:hidden flex items-center justify-between p-4 border-b w-full sticky top-14 bg-background z-20">
            <span className="font-bold">Documentation</span>
-           <MobileNav activeSection={activeSection} onNavigate={onNavigate} items={sidebarData} />
+           <MobileNav activeSection={activeSection} onNavigate={onNavigate} />
         </div>
 
         {/* Desktop Sidebar - Fixed */}
         <aside className="hidden fixed top-14 left-0 z-50 h-[calc(100vh-3.5rem)] w-[320px] border-r border-border shrink-0 lg:block bg-background">
           <div className="h-full overflow-y-auto py-6 pr-6 pl-8">
-            <Sidebar activeSection={activeSection} onNavigate={onNavigate} />
+            <DocsSidebar activeSection={activeSection} onNavigate={onNavigate} />
           </div>
         </aside>
 

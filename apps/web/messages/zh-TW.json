@@ -739,5 +739,10 @@
       "security": "安全",
       "record": "記錄"
     }
+  },
+  "DocsSearch": {
+    "button": "搜尋...",
+    "placeholder": "輸入指令或搜尋...",
+    "noResults": "找不到結果."
   }
 }

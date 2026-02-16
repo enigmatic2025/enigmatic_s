@@ -4,66 +4,29 @@ import { ChevronDown, ChevronRight, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DocsSearch } from "@/components/docs/search";
 
-interface SidebarGroup {
-  title: string;
-  items: { id: string; label: string }[];
-}
+import { useLocale } from "next-intl";
+import { enSidebar } from "@/data/docs/en";
+import { viSidebar } from "@/data/docs/vi";
+import { zhTwSidebar } from "@/data/docs/zh-TW";
+import { SidebarGroup } from "@/data/docs/types";
 
-export const sidebarData: SidebarGroup[] = [
-  {
-    title: "Getting Started",
-    items: [
-      { id: "overview", label: "Overview" },
-      { id: "concepts", label: "Core Concepts" },
-    ],
-  },
-  {
-    title: "Triggers",
-    items: [
-      { id: "trigger-api", label: "API Trigger" },
-    ],
-  },
-  {
-    title: "Human Interaction",
-    items: [
-      { id: "human-task", label: "Human Task" },
-    ],
-  },
-  {
-    title: "External Systems",
-    items: [
-      { id: "wait-for-event", label: "Wait for Event" },
-      { id: "http-request", label: "HTTP Request" },
-      { id: "correlation", label: "Correlation Signals" },
-    ],
-  },
-  {
-    title: "Data Operations",
-    items: [
-      { id: "set-variable", label: "Set Variable" },
-      { id: "condition", label: "Condition (If/Else)" },
-      { id: "switch", label: "Switch" },
-      { id: "loop", label: "Loop" },
-      { id: "filter", label: "Filter" },
-      { id: "map", label: "Map (Transform)" },
-    ],
-  },
-  {
-    title: "Expressions",
-    items: [
-      { id: "expressions", label: "Expression Syntax" },
-    ],
-  },
-];
+// Sidebar data mapping
+const sidebarDataMap: Record<string, SidebarGroup[]> = {
+  en: enSidebar,
+  vi: viSidebar,
+  "zh-TW": zhTwSidebar,
+};
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   activeSection: string;
   onNavigate: (id: string) => void;
 }
 
-export function Sidebar({ activeSection, onNavigate, className, ...props }: SidebarProps) {
+export function DocsSidebar({ activeSection, onNavigate, className, ...props }: SidebarProps) {
+  const locale = useLocale();
+  const sidebarData = sidebarDataMap[locale] || enSidebar;
   
-  // Default all open
+  // Default to all groups open
   const [openGroups, setOpenGroups] = useState<string[]>(sidebarData.map(g => g.title));
 
   const toggleGroup = (title: string) => {

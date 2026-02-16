@@ -1,0 +1,30 @@
+# Enigmatic S Documentation
+
+## Site Structure
+- /: Home Page - Overview of Nodal platform
+- /docs: Documentation Hub
+  - /docs#overview: Introduction to Flow Studio and Action Flows
+  - /docs#concepts: Core concepts (Nodes, Edges, Expressions)
+  - /docs#trigger-api: API Trigger documentation
+  - /docs#human-task: Human Task node documentation
+  - /docs#wait-for-event: Wait for Event node documentation
+  - /docs#http-request: HTTP Request node documentation
+  - /docs#correlation: Correlation Signals documentation
+  - /docs#set-variable: Set Variable node documentation
+  - /docs#condition: Condition logic documentation
+  - /docs#switch: Switch logic documentation
+  - /docs#loop: Loop logic documentation
+  - /docs#filter: Filter logic documentation
+  - /docs#map: Map logic documentation
+  - /docs#expressions: Expression syntax guide
+
+## Content Summary
+Nodal is an operational orchestration platform. Key features include:
+- Visual Flow Studio for building processes
+- Action Flows for tracking running instances
+- Human-in-the-loop tasks integration
+- External API triggers and webhooks
+
+## API Endpoints
+- POST https://enigmatic.works/api/flows/{flowId}/execute
+- POST https://enigmatic.works/api/webhooks/{token}
