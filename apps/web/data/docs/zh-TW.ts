@@ -96,14 +96,7 @@ export const zhTwDocs: DocSection[] = [
                     },
                 ]
             },
-            {
-                type: "navLinks",
-                links: [
-                    { label: "了解觸發器 (Triggers)", url: "trigger-api" },
-                    { label: "人工任務 (Human Tasks)", url: "human-task" },
-                    { label: "表達式語法 (Expressions)", url: "expressions" },
-                ]
-            }
+
         ]
     },
     {
@@ -123,12 +116,7 @@ export const zhTwDocs: DocSection[] = [
                     { iconName: "Webhook", color: "text-red-500", title: "Webhooks", desc: "外部系統可以透過向唯一的 Webhook URL 發送資料來恢復暫停的流程。無需 API 金鑰或複雜的 ID。" },
                 ]
             },
-            {
-                type: "navLinks",
-                links: [
-                    { label: "表達式語法", url: "expressions" }
-                ]
-            }
+
         ]
     },
     {

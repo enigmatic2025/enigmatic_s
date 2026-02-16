@@ -129,7 +129,7 @@ function SectionRenderer({ section, copy, copiedSnippet, onNavigate }: { section
                   {block.concepts.map((c, i) => {
                     const CIcon = iconMap[c.iconName] || BookOpen;
                     return (
-                      <div key={i} className="flex gap-4 p-5 border border-border rounded-xl bg-card hover:bg-muted/20 transition-colors">
+                      <div key={i} className="flex gap-4 p-5 border border-border rounded-xl bg-card">
                         <span className={cn("mt-1", c.color || "text-foreground")}>
                           <CIcon className="w-5 h-5" />
                         </span>
@@ -228,7 +228,7 @@ function ParamTable({ rows }: { rows: { name: string; type: string; desc: string
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/10 transition-colors">
+            <tr key={i} className="border-b border-border last:border-0">
               <td className="px-4 py-3 font-mono text-xs font-medium text-primary">{r.name}</td>
               <td className="px-4 py-3 text-xs text-muted-foreground font-mono">{r.type}</td>
               <td className="px-4 py-3 text-xs text-muted-foreground">{r.desc}</td>

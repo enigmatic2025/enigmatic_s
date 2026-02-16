@@ -96,14 +96,7 @@ export const viDocs: DocSection[] = [
                     },
                 ]
             },
-            {
-                type: "navLinks",
-                links: [
-                    { label: "Tìm hiểu về triggers", url: "trigger-api" },
-                    { label: "Human Tasks (Tác vụ con người)", url: "human-task" },
-                    { label: "Cú pháp biểu thức (Expressions)", url: "expressions" },
-                ]
-            }
+
         ]
     },
     {
@@ -123,12 +116,7 @@ export const viDocs: DocSection[] = [
                     { iconName: "Webhook", color: "text-red-500", title: "Webhooks", desc: "Hệ thống bên ngoài có thể tiếp tục luồng đang tạm dừng bằng cách gửi dữ liệu tới một URL webhook duy nhất. Không cần API key hay ID phức tạp." },
                 ]
             },
-            {
-                type: "navLinks",
-                links: [
-                    { label: "Cú pháp biểu thức", url: "expressions" }
-                ]
-            }
+
         ]
     },
     {

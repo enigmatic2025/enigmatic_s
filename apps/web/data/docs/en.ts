@@ -96,14 +96,7 @@ export const enDocs: DocSection[] = [
                     },
                 ]
             },
-            {
-                type: "navLinks",
-                links: [
-                    { label: "Learn about triggers", url: "trigger-api" },
-                    { label: "Human Tasks", url: "human-task" },
-                    { label: "Expression syntax", url: "expressions" },
-                ]
-            }
+
         ]
     },
     {
@@ -123,12 +116,7 @@ export const enDocs: DocSection[] = [
                     { iconName: "Webhook", color: "text-red-500", title: "Webhooks", desc: "External systems can resume paused flows by sending data to a unique webhook URL. No API keys or IDs required." },
                 ]
             },
-            {
-                type: "navLinks",
-                links: [
-                    { label: "Expression syntax", url: "expressions" }
-                ]
-            }
+
         ]
     },
     {
