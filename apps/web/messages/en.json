@@ -426,6 +426,7 @@
       "triggers": "Triggers",
       "humanInLoop": "Human in loop",
       "automation": "Automation",
+      "flowControl": "Flow Control",
       "builtInTools": "Built-in tools",
       "connectors": "Connectors",
       "platform": "Platform",
@@ -456,7 +457,7 @@
       "ifElse": "If / Else",
       "loop": "Loop",
       "switch": "Switch",
-      "goto": "Goto / Jump",
+      "goto": "Retry / Revisit",
       "httpRequest": "HTTP Request"
     },
     "groups": {
@@ -601,7 +602,7 @@
       "humanTask": "Human Task",
       "human-task": "Human Task",
       "automation": "Wait for Event",
-      "goto": "Goto / Jump",
+      "goto": "Retry / Revisit",
       "action": "Action"
     },
     "descriptions": {
@@ -619,7 +620,7 @@
       "humanTask": "Pause the flow and wait for human approval or input.",
       "human-task": "Pause the flow and wait for human approval or input.",
       "automation": "Pause the flow and wait for an external event.",
-      "goto": "Jump to another step in the flow.",
+      "goto": "Jump back to a human task or event step to retry or revisit it.",
       "action": "Perform a generic action."
     },
     "labels": {

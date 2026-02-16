@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Handle, Position, NodeProps, useReactFlow } from 'reactflow';
 import { NodeCard } from './node-card';
-import { CornerUpLeft, Trash2 } from 'lucide-react';
+import { RotateCcw, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,14 +40,14 @@ const GotoNode = memo(({ id, data, selected, isConnectable }: NodeProps) => {
       <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className={cn("p-2 rounded-md", "bg-fuchsia-500/10")}>
-            <CornerUpLeft className={cn("h-4 w-4", "text-fuchsia-500")} />
+            <RotateCcw className={cn("h-4 w-4", "text-fuchsia-500")} />
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
               Flow Control
             </span>
             <CardTitle className="text-sm font-medium leading-none truncate">
-               Jump / Goto
+               Retry / Revisit
             </CardTitle>
           </div>
         </div>

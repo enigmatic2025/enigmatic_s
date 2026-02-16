@@ -94,8 +94,8 @@ export const NODE_METADATA: Record<string, { title: string; description: string 
         description: "Pause the flow and wait for human approval or input."
     },
     'goto': {
-        title: "Goto / Jump",
-        description: "Jump to another step in the flow."
+        title: "Retry / Revisit",
+        description: "Jump back to a human task or event step to retry or revisit it."
     },
     'automation': {
         title: "Wait for Event",

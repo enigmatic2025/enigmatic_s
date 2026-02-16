@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/nodes"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
 	"go.temporal.io/sdk/client"
@@ -65,6 +66,7 @@ func TestNodeHandler(w http.ResponseWriter, r *http.Request) {
 // TestFlowRequest is the payload for testing a flow.
 type TestFlowRequest struct {
 	FlowDefinition interface{}            `json:"flow_definition"`
+	FlowID         string                 `json:"flow_id"`
 	Input          map[string]interface{} `json:"input"`
 }
 
@@ -101,6 +103,20 @@ func (h *TestHandler) TestFlow(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Failed to parse flow definition: %v\n", err)
 		http.Error(w, "Invalid flow definition structure", http.StatusBadRequest)
 		return
+	}
+
+	// Inject Flow ID and Org ID from DB (like execute_flow.go does)
+	if req.FlowID != "" {
+		flowDef.ID = req.FlowID
+
+		dbClient := database.GetClient()
+		var dbResult []struct {
+			OrgID string `json:"org_id"`
+		}
+		err := dbClient.DB.From("flows").Select("org_id").Eq("id", req.FlowID).Execute(&dbResult)
+		if err == nil && len(dbResult) > 0 {
+			flowDef.OrgID = dbResult[0].OrgID
+		}
 	}
 
 	// 1. Prepare Input Data

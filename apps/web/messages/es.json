@@ -426,6 +426,7 @@
       "triggers": "Desencadenadores",
       "humanInLoop": "Humano en el bucle",
       "automation": "Automatización",
+      "flowControl": "Control de Flujo",
       "builtInTools": "Herramientas integradas",
       "connectors": "Conectores",
       "platform": "Plataforma",
@@ -456,7 +457,7 @@
       "ifElse": "Si / Sino",
       "loop": "Bucle",
       "switch": "Interruptor",
-      "goto": "Ir a / Salto",
+      "goto": "Reintentar / Revisitar",
       "httpRequest": "Petición HTTP"
     },
     "groups": {
@@ -601,7 +602,7 @@
       "humanTask": "Tarea Humana",
       "human-task": "Tarea Humana",
       "automation": "Esperar Evento",
-      "goto": "Ir a / Salto",
+      "goto": "Reintentar / Revisitar",
       "action": "Acción"
     },
     "descriptions": {
@@ -619,7 +620,7 @@
       "humanTask": "Pausar el flujo y esperar aprobación o entrada humana.",
       "human-task": "Pausar el flujo y esperar aprobación o entrada humana.",
       "automation": "Pausar el flujo y esperar un evento externo.",
-      "goto": "Saltar a otro paso en el flujo.",
+      "goto": "Volver a una tarea humana o paso de evento para reintentarlo.",
       "action": "Realizar una acción genérica."
     },
     "labels": {

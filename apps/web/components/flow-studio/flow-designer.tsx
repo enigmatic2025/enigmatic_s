@@ -343,19 +343,37 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
       // Collect mock data from human-task and automation nodes for test mode
       const mockData: Record<string, any> = {};
+      const missingMockNodes: string[] = [];
+
       nodes.forEach(node => {
-        if (node.type === 'human-task' && node.data?.mockResponse && Object.keys(node.data.mockResponse).length > 0) {
-          mockData[node.id] = { type: 'human-task', response: node.data.mockResponse };
+        if (node.type === 'human-task') {
+          if (node.data?.mockResponse && Object.keys(node.data.mockResponse).length > 0) {
+            mockData[node.id] = { type: 'human-task', response: node.data.mockResponse };
+          } else {
+            missingMockNodes.push(node.data?.label || node.data?.title || `Human Task (${node.id.slice(0, 6)})`);
+          }
         }
-        if (node.type === 'automation' && node.data?.mockPayload) {
-          try {
-            const parsed = JSON.parse(node.data.mockPayload);
-            mockData[node.id] = { type: 'automation', payload: parsed };
-          } catch {
-            // Invalid JSON, skip — user will see the real wait
+        if (node.type === 'automation') {
+          if (node.data?.mockPayload) {
+            try {
+              const parsed = JSON.parse(node.data.mockPayload);
+              mockData[node.id] = { type: 'automation', payload: parsed };
+            } catch {
+              missingMockNodes.push(node.data?.label || node.data?.eventName || `Wait for Event (${node.id.slice(0, 6)})`);
+            }
+          } else {
+            missingMockNodes.push(node.data?.label || node.data?.eventName || `Wait for Event (${node.id.slice(0, 6)})`);
           }
         }
       });
+
+      // Block test execution if blocking nodes are missing mock data
+      if (missingMockNodes.length > 0) {
+        setIsPolling(false);
+        toast.error(`Configure mock data for blocking steps before testing: ${missingMockNodes.join(', ')}`, { id: TEST_TOAST_ID, duration: 6000 });
+        addLog({ message: `Missing mock data for: ${missingMockNodes.join(', ')}`, type: "error" });
+        return;
+      }
 
       const hasMocks = Object.keys(mockData).length > 0;
       if (hasMocks) {

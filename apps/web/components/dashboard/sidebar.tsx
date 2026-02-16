@@ -16,7 +16,7 @@ import {
   ClipboardList,
   Workflow,
   Globe,
-  CornerUpLeft,
+  RotateCcw,
   RadioTower,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,7 @@ export function Sidebar({
   const [connectorsOpen, setConnectorsOpen] = useState(false);
   const [humanInLoopOpen, setHumanInLoopOpen] = useState(true);
   const [automationOpen, setAutomationOpen] = useState(true);
+  const [flowControlOpen, setFlowControlOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const t = useTranslations("Sidebar");
   
@@ -339,6 +340,25 @@ export function Sidebar({
                     )}
                   </SidebarSection>
 
+                  {/* Flow Control */}
+                  <SidebarSection
+                    title={t("sections.flowControl")}
+                    isOpen={flowControlOpen}
+                    onToggle={() => setFlowControlOpen(!flowControlOpen)}
+                  >
+                    {(!searchQuery || "retry revisit flow control".includes(searchQuery.toLowerCase())) && (
+                      <div className="grid grid-cols-1 gap-2">
+                        <SidebarDraggableItem
+                          label={t("draggable.goto")}
+                          icon={RotateCcw}
+                          iconColorClass="text-fuchsia-500"
+                          bgColorClass="bg-fuchsia-500/10"
+                          dataTransferType="goto"
+                        />
+                      </div>
+                    )}
+                  </SidebarSection>
+
                   {/* Built-in tools */}
                   <SidebarSection
                     title={t("sections.builtInTools")}
@@ -404,13 +424,6 @@ export function Sidebar({
                             iconColorClass="text-amber-500"
                             bgColorClass="bg-amber-500/10"
                             dataTransferType="switch"
-                          />
-                          <SidebarDraggableItem
-                            label={t("draggable.goto")}
-                            icon={CornerUpLeft} // Using Repeat or CornerUpLeft if imported
-                            iconColorClass="text-fuchsia-500"
-                            bgColorClass="bg-fuchsia-500/10"
-                            dataTransferType="goto"
                           />
                         </div>
                       </div>

@@ -171,9 +171,13 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		Assignments: assignments,
 		InfoFields:  infoFields,
 	}
-	if err := workflow.ExecuteActivity(ctx, RecordActionFlowActivity, recordParams).Get(ctx, nil); err != nil {
-		logger.Error("Failed to record action flow", "Error", err)
-		return nil, err
+	// Only record action flow if we have a valid OrgID (skip for unsaved test flows)
+	hasActionFlowRecord := flowDefinition.OrgID != ""
+	if hasActionFlowRecord {
+		if err := workflow.ExecuteActivity(ctx, RecordActionFlowActivity, recordParams).Get(ctx, nil); err != nil {
+			logger.Error("Failed to record action flow", "Error", err)
+			return nil, err
+		}
 	}
 
 	// 3. Parallel Execution Engine
@@ -184,6 +188,10 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 	// executionError handles failing the whole workflow if one node fails
 	var executionError error
+
+	// GOTO loop protection: limit maximum jump iterations
+	gotoCounter := 0
+	const maxGotoHops = 50
 
 	// Helper: Reset Downstream Nodes (Recursive)
 	// Used for Loop/Goto to signal that nodes can run again
@@ -346,7 +354,13 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 		// Handle GOTO / LOOP
 		if gotoTarget, ok := result.Output["_goto_target"].(string); ok && gotoTarget != "" {
-			logger.Info("GOTO signal received", "From", nodeID, "To", gotoTarget)
+			gotoCounter++
+			if gotoCounter > maxGotoHops {
+				executionError = fmt.Errorf("maximum GOTO iterations (%d) exceeded — possible infinite loop detected", maxGotoHops)
+				logger.Error("GOTO loop limit reached", "From", nodeID, "To", gotoTarget, "Count", gotoCounter)
+				return
+			}
+			logger.Info("GOTO signal received", "From", nodeID, "To", gotoTarget, "Hop", gotoCounter)
 			// 1. Reset status of target and its children so they can run again
 			visitedReset = make(map[string]bool) // Clear visited map for this run
 			resetDownstreamNodes(gotoTarget)
@@ -423,15 +437,15 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		return nil, executionError
 	}
 
-	// 5. Mark Flow as COMPLETED
-	completeParams := UpdateActionFlowStatusParams{
-		RunID:  info.WorkflowExecution.RunID,
-		Status: "COMPLETED",
-	}
-	// We execute this synchronously to ensure DB is updated before Workflow closes
-	if err := workflow.ExecuteActivity(ctx, UpdateActionFlowStatusActivity, completeParams).Get(ctx, nil); err != nil {
-		logger.Error("Failed to mark action flow as COMPLETED", "Error", err)
-		// We log but don't fail the workflow result, as the work was technically done.
+	// 5. Mark Flow as COMPLETED (only if we recorded the action flow)
+	if hasActionFlowRecord {
+		completeParams := UpdateActionFlowStatusParams{
+			RunID:  info.WorkflowExecution.RunID,
+			Status: "COMPLETED",
+		}
+		if err := workflow.ExecuteActivity(ctx, UpdateActionFlowStatusActivity, completeParams).Get(ctx, nil); err != nil {
+			logger.Error("Failed to mark action flow as COMPLETED", "Error", err)
+		}
 	}
 
 	logger.Info("Nodal workflow completed successfully")

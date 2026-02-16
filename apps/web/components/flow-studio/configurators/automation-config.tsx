@@ -383,7 +383,14 @@ ${(data.correlations || []).filter((r: any) => r.key).map((r: any) => `    "${r.
       {/* ─── Section 5: Test Mode — Mock Webhook Payload ─── */}
       <div>
         <button
-          onClick={() => setShowTestData(!showTestData)}
+          onClick={() => {
+            const opening = !showTestData;
+            setShowTestData(opening);
+            // Auto-populate mock payload with schema defaults when first expanded
+            if (opening && !data.mockPayload) {
+              onUpdate({ ...data, mockPayload: buildExamplePayload() });
+            }
+          }}
           className="flex items-center gap-2 w-full text-left py-1 group"
         >
           <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${showTestData ? '' : '-rotate-90'}`} />
@@ -396,13 +403,14 @@ ${(data.correlations || []).filter((r: any) => r.key).map((r: any) => `    "${r.
         {showTestData && (
           <div className="mt-4 space-y-4 pl-6">
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Provide a JSON payload to simulate the external webhook during test runs. This data will
-              <strong> auto-resume the wait step</strong> instead of waiting for a real external event.
+              Simulate the data an external system would send to the webhook. During test runs, this
+              <strong> auto-resumes the wait step</strong> instead of waiting for a real event.
+              This should match the <strong>Expected Payload</strong> fields defined above.
             </p>
 
             <div className="space-y-2">
               <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
-                Mock JSON Payload
+                Mock Webhook Body
               </label>
               <textarea
                 value={data.mockPayload || buildExamplePayload()}
@@ -412,7 +420,7 @@ ${(data.correlations || []).filter((r: any) => r.key).map((r: any) => `    "${r.
                 spellCheck={false}
               />
               <p className="text-[10px] text-muted-foreground">
-                Must be valid JSON. Fields defined in the Expected Payload schema above are pre-populated.
+                Must be valid JSON. This is the body that would be sent to <code className="font-mono bg-muted px-1 rounded">POST /api/webhooks/&#123;token&#125;</code>.
               </p>
             </div>
 

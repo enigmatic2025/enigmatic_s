@@ -434,7 +434,8 @@
       "platform": "Nền tảng",
       "intelligence": "Thông minh",
       "admin": "Quản trị",
-      "automation": "Tự động hóa"
+      "automation": "Tự động hóa",
+      "flowControl": "Điều khiển luồng"
     },
     "items": {
       "overview": "Tổng quan",
@@ -459,7 +460,7 @@
       "ifElse": "Nếu / Thì",
       "loop": "Vòng lặp",
       "switch": "Chuyển mạch",
-      "goto": "Đi tới / Nhảy",
+      "goto": "Thử lại / Xem lại",
       "httpRequest": "Yêu cầu HTTP",
       "automation": "Chờ sự kiện"
     },
@@ -604,7 +605,7 @@
       "map": "Ánh xạ dữ liệu",
       "humanTask": "Tác vụ con người",
       "human-task": "Tác vụ con người",
-      "goto": "Đi tới / Nhảy",
+      "goto": "Thử lại / Xem lại",
       "automation": "Chờ sự kiện",
       "action": "Hành động"
     },
@@ -622,7 +623,7 @@
       "map": "Chuyển đổi cấu trúc dữ liệu từ định dạng này sang định dạng khác.",
       "humanTask": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
       "human-task": "Tạm dừng luồng và chờ sự phê duyệt hoặc đầu vào từ con người.",
-      "goto": "Nhảy đến một bước khác trong quy trình.",
+      "goto": "Quay lại tác vụ con người hoặc bước sự kiện để thử lại.",
       "automation": "Tạm dừng luồng và chờ một sự kiện bên ngoài.",
       "action": "Thực hiện một hành động chung."
     },

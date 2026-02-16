@@ -7,10 +7,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar, Type, Clock, PenTool, FlaskConical, ChevronDown } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Plus, Trash2, GripVertical, FileText, CheckSquare, Calendar as CalendarIcon, Type, Clock, PenTool, FlaskConical, ChevronDown, Star, CheckCircle2, X } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
 
 import { useTranslations } from 'next-intl';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { cn } from '@/lib/utils';
 
 interface SchemaField {
   key: string;
@@ -333,7 +338,7 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                 <p className="text-xs text-muted-foreground">Add form fields above first, then configure mock responses here.</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {schema.map((field, index) => {
                   const mockValue = currentConfig.mockResponse?.[field.key] ?? '';
                   const updateMock = (value: any) => {
@@ -342,54 +347,198 @@ export function HumanTaskConfig({ data, onUpdate }: HumanTaskConfigProps) {
                   };
 
                   return (
-                    <div key={field.key || index} className="space-y-1">
+                    <div key={field.key || index} className="space-y-1.5">
                       <Label className="text-xs font-medium">
                         {field.label || field.key}
                         <span className="text-muted-foreground font-normal ml-1">({field.type})</span>
                       </Label>
-                      {field.type === 'long-text' ? (
-                        <Textarea
-                          value={mockValue}
-                          onChange={(e) => updateMock(e.target.value)}
-                          placeholder={`Mock value for ${field.key}`}
-                          className="resize-none h-16 text-xs font-mono"
-                        />
-                      ) : field.type === 'boolean' ? (
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={mockValue === true || mockValue === 'true'}
-                            onCheckedChange={(checked) => updateMock(checked)}
-                            className="scale-75 origin-left"
-                          />
-                          <span className="text-xs text-muted-foreground">{mockValue ? 'Yes' : 'No'}</span>
-                        </div>
-                      ) : field.type === 'number' || field.type === 'rating' ? (
-                        <Input
-                          type="number"
-                          value={mockValue}
-                          onChange={(e) => updateMock(e.target.value ? Number(e.target.value) : '')}
-                          placeholder={field.type === 'rating' ? '1-5' : `Mock ${field.key}`}
-                          className="h-8 text-xs font-mono"
-                        />
-                      ) : field.type === 'multi-choice' ? (
-                        <Select value={String(mockValue)} onValueChange={(val) => updateMock(val)}>
-                          <SelectTrigger className="h-8 text-xs">
-                            <SelectValue placeholder="Select mock option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(field.options || []).map((opt, i) => (
-                              <SelectItem key={i} value={opt}>{opt}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <Input
-                          value={mockValue}
-                          onChange={(e) => updateMock(e.target.value)}
-                          placeholder={`Mock value for ${field.key}`}
-                          className="h-8 text-xs font-mono"
-                        />
-                      )}
+                      {(() => {
+                        switch (field.type) {
+                          case 'long-text':
+                            return (
+                              <Textarea
+                                value={mockValue}
+                                onChange={(e) => updateMock(e.target.value)}
+                                placeholder={`Mock value for ${field.key}`}
+                                className="resize-none h-16 text-xs"
+                              />
+                            );
+                          case 'boolean':
+                            return (
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateMock(true)}
+                                  className={cn(
+                                    "flex-1 py-2 px-3 rounded-md border text-xs font-medium transition-all flex items-center justify-center gap-1.5",
+                                    mockValue === true
+                                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-500"
+                                      : "border-input bg-background hover:bg-muted/50 text-muted-foreground"
+                                  )}
+                                >
+                                  <CheckCircle2 className="w-3.5 h-3.5" /> Yes
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => updateMock(false)}
+                                  className={cn(
+                                    "flex-1 py-2 px-3 rounded-md border text-xs font-medium transition-all flex items-center justify-center gap-1.5",
+                                    mockValue === false
+                                      ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 ring-1 ring-red-500"
+                                      : "border-input bg-background hover:bg-muted/50 text-muted-foreground"
+                                  )}
+                                >
+                                  <X className="w-3.5 h-3.5" /> No
+                                </button>
+                              </div>
+                            );
+                          case 'number':
+                            return (
+                              <Input
+                                type="number"
+                                value={mockValue}
+                                onChange={(e) => updateMock(e.target.value ? Number(e.target.value) : '')}
+                                placeholder={`Mock ${field.key}`}
+                                className="h-8 text-xs"
+                              />
+                            );
+                          case 'rating':
+                            return (
+                              <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => updateMock(star)}
+                                    className="p-0.5 rounded-full transition-all hover:bg-muted"
+                                  >
+                                    <Star className={cn(
+                                      "w-5 h-5 transition-all",
+                                      (mockValue || 0) >= star
+                                        ? "fill-yellow-400 text-yellow-400"
+                                        : "text-muted-foreground/40"
+                                    )} />
+                                  </button>
+                                ))}
+                                <span className="ml-1.5 text-xs text-muted-foreground tabular-nums">
+                                  {mockValue ? `${mockValue}/5` : ''}
+                                </span>
+                              </div>
+                            );
+                          case 'date':
+                          case 'datetime':
+                            return (
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className={cn(
+                                      "w-full flex items-center gap-2 h-8 px-3 rounded-md border border-input bg-background text-xs hover:bg-muted/50 transition-colors text-left",
+                                      !mockValue && "text-muted-foreground"
+                                    )}
+                                  >
+                                    <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground" />
+                                    {mockValue ? format(new Date(mockValue), field.type === 'datetime' ? 'PPP p' : 'PPP') : `Pick a ${field.type === 'datetime' ? 'date & time' : 'date'}...`}
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <Calendar
+                                    mode="single"
+                                    selected={mockValue ? new Date(mockValue) : undefined}
+                                    onSelect={(date) => updateMock(date ? date.toISOString() : '')}
+                                  />
+                                  {field.type === 'datetime' && (
+                                    <div className="p-3 pt-0 border-t">
+                                      <Label className="text-[10px] text-muted-foreground">Time</Label>
+                                      <Input
+                                        type="time"
+                                        value={mockValue ? format(new Date(mockValue), 'HH:mm') : ''}
+                                        onChange={(e) => {
+                                          const base = mockValue ? new Date(mockValue) : new Date();
+                                          const [h, m] = e.target.value.split(':');
+                                          base.setHours(parseInt(h), parseInt(m));
+                                          updateMock(base.toISOString());
+                                        }}
+                                        className="h-7 text-xs mt-1"
+                                      />
+                                    </div>
+                                  )}
+                                </PopoverContent>
+                              </Popover>
+                            );
+                          case 'time':
+                            return (
+                              <Input
+                                type="time"
+                                value={mockValue || ''}
+                                onChange={(e) => updateMock(e.target.value)}
+                                className="h-8 text-xs"
+                              />
+                            );
+                          case 'multi-choice':
+                            if (field.allowMultiple) {
+                              return (
+                                <div className="space-y-1.5 p-2 border rounded-md">
+                                  {(field.options || []).map((opt, i) => {
+                                    const currentVals = (mockValue as string[]) || [];
+                                    const isChecked = Array.isArray(currentVals) && currentVals.includes(opt);
+                                    return (
+                                      <div key={i} className="flex items-center space-x-2">
+                                        <Checkbox
+                                          id={`mock-${field.key}-${i}`}
+                                          checked={isChecked}
+                                          onCheckedChange={(checked) => {
+                                            let newVals = [...(Array.isArray(currentVals) ? currentVals : [])];
+                                            if (checked) newVals.push(opt);
+                                            else newVals = newVals.filter(v => v !== opt);
+                                            updateMock(newVals);
+                                          }}
+                                        />
+                                        <Label htmlFor={`mock-${field.key}-${i}`} className="text-xs font-normal cursor-pointer">{opt}</Label>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              );
+                            }
+                            return (
+                              <Select value={String(mockValue)} onValueChange={(val) => updateMock(val)}>
+                                <SelectTrigger className="h-8 text-xs">
+                                  <SelectValue placeholder="Select mock option" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {(field.options || []).map((opt, i) => (
+                                    <SelectItem key={i} value={opt}>{opt}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            );
+                          case 'signature':
+                            return (
+                              <div className="text-center py-3 border border-dashed border-border rounded-lg bg-muted/10">
+                                <PenTool className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+                                <p className="text-[10px] text-muted-foreground">Signature will be auto-filled with a placeholder during test.</p>
+                                <input type="hidden" value="mock-signature" onChange={() => updateMock('mock-signature')} />
+                              </div>
+                            );
+                          case 'file':
+                            return (
+                              <div className="text-center py-3 border border-dashed border-border rounded-lg bg-muted/10">
+                                <FileText className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+                                <p className="text-[10px] text-muted-foreground">File upload will be skipped during test runs.</p>
+                              </div>
+                            );
+                          default:
+                            return (
+                              <Input
+                                value={mockValue}
+                                onChange={(e) => updateMock(e.target.value)}
+                                placeholder={`Mock value for ${field.key}`}
+                                className="h-8 text-xs"
+                              />
+                            );
+                        }
+                      })()}
                     </div>
                   );
                 })}

@@ -434,7 +434,8 @@
       "platform": "平台",
       "intelligence": "智能",
       "admin": "管理",
-      "automation": "自動化"
+      "automation": "自動化",
+      "flowControl": "流程控制"
     },
     "items": {
       "overview": "概覽",
@@ -459,7 +460,7 @@
       "ifElse": "若 / 則",
       "loop": "循環",
       "switch": "切換",
-      "goto": "跳轉 / 跳至",
+      "goto": "重試 / 重訪",
       "httpRequest": "HTTP 請求",
       "automation": "等待事件"
     },
@@ -604,7 +605,7 @@
       "map": "映射資料",
       "humanTask": "人工任務",
       "human-task": "人工任務",
-      "goto": "跳轉 / 跳至",
+      "goto": "重試 / 重訪",
       "automation": "等待事件",
       "action": "動作"
     },
@@ -622,7 +623,7 @@
       "map": "將資料結構從一種格式轉換為另一種格式。",
       "humanTask": "暫停流程並等待人工批准或輸入。",
       "human-task": "暫停流程並等待人工批准或輸入。",
-      "goto": "跳轉至流程中的另一個步驟。",
+      "goto": "返回人工任務或事件步驟以重試。",
       "automation": "暫停流程並等待外部事件。",
       "action": "執行通用動作。"
     },
