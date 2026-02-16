@@ -24,7 +24,7 @@ export function DocsLayout({ children, activeSection, onNavigate }: DocsLayoutPr
 
         {/* Desktop Sidebar - Fixed */}
         <aside className="hidden fixed top-14 left-0 z-50 h-[calc(100vh-3.5rem)] w-[320px] border-r border-border shrink-0 lg:block bg-background">
-          <div className="h-full overflow-y-auto py-6 pr-6 pl-8">
+          <div className="h-full overflow-y-auto py-4 pr-4 pl-4">
             <DocsSidebar activeSection={activeSection} onNavigate={onNavigate} />
           </div>
         </aside>

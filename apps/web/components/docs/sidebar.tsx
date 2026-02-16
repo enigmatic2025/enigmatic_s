@@ -56,8 +56,8 @@ export function DocsSidebar({ activeSection, onNavigate, className, ...props }: 
 
   return (
     <div className={cn("pb-12", className)} {...props}>
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
+      <div className="space-y-4 py-2">
+        <div className="px-2 py-1">
           {/* Pass full docs data to search */}
           <DocsSearch onNavigate={onNavigate} docs={docsData} />
           
