@@ -1,22 +1,32 @@
-# Nodal Documentation
+# Nodal by Enigmatic
 
-Nodal is an operational orchestration platform that connects people, systems, and processes into automated flows.
+> Operational orchestration platform that connects people, systems, and processes into automated flows.
 
-## Documentation for Agents (MCP Friendly)
+## Links
 
-We provide full documentation in machine-readable JSON format. These endpoints are statically generated and optimized for agent consumption.
+- Website: https://enigmatic.works
+- Docs (human): https://enigmatic.works/en/docs
+- Full docs (plain text): https://enigmatic.works/llms-full.txt
 
-- **English (Default):** https://enigmatic.works/api/docs/en
-- **Vietnamese:** https://enigmatic.works/api/docs/vi
-- **Traditional Chinese:** https://enigmatic.works/api/docs/zh-TW
+## Documentation (Machine-Readable)
+
+Static JSON — cached on CDN, zero latency:
+
+- English: https://enigmatic.works/docs/en.json
+- Vietnamese: https://enigmatic.works/docs/vi.json
+- Traditional Chinese: https://enigmatic.works/docs/zh-TW.json
+
+## API Endpoints
+
+- Trigger a flow: POST https://enigmatic.works/api/flows/{flowId}/execute
+- Webhook (resume flow): POST https://enigmatic.works/api/webhooks/{token}
+- Correlation signal: POST https://enigmatic.works/api/automation/signal
 
 ## Key Concepts
 
-- **Flows**: Automated processes built with nodes and edges.
-- **Nodes**: Improve actions like API calls, data transformation, or human tasks.
-- **Action Flows**: Running instances of a flow.
-- **Human Tasks**: Steps that pause execution and wait for human input.
-
-## API Usage
-
-Refer to the JSON documentation for detailed schemas on Triggers, HTTP Requests, and Expression Syntax.
+- Flows: Automated processes built with nodes and edges
+- Nodes: Individual actions — API calls, data transforms, human tasks, decisions
+- Action Flows: Running instances of a flow
+- Human Tasks: Steps that pause execution and wait for human input
+- Expressions: Dynamic references written as {{ steps.NodeId.output.field }}
+- Webhooks: External systems resume paused flows via unique single-use URLs

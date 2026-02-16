@@ -14,19 +14,32 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://enigmatic.works"),
+  title: {
+    default: "Enigmatic | We design, connect, and orchestrate the processes your core systems ignore.",
+    template: "%s | Enigmatic",
+  },
+  description:
+    "Modern supply chains are breaking under the weight of outdated tools and disconnected systems. Manual workflows, disconnected TMS modules, and fragmented processes quietly eat margins and create bottlenecks. Discover how Enigmatic helps solve logistics fragmentation.",
   openGraph: {
+    type: "website",
+    siteName: "Enigmatic",
+    locale: "en_US",
     images: [
       {
         url: "/images/brand/brand-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Enigmatic Logistics Fragmentation",
+        alt: "Enigmatic — Operational Orchestration Platform",
       },
     ],
   },
-  title: "Enigmatic | We design, connect, and orchestrate the processes your core systems ignore.",
-  description:
-    "Modern supply chains are breaking under the weight of outdated tools and disconnected systems. Manual workflows, disconnected TMS modules, and fragmented processes quietly eat margins and create bottlenecks. Discover how Enigmatic helps solve logistics fragmentation.",
+  twitter: {
+    card: "summary_large_image",
+    title: "Enigmatic | Operational Orchestration Platform",
+    description:
+      "We design, connect, and orchestrate the processes your core systems ignore. Solve logistics fragmentation with automated flows.",
+    images: ["/images/brand/brand-image.jpg"],
+  },
   icons: {
     icon: [
       {
@@ -43,6 +56,13 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "Enigmatic",
   },
+  alternates: {
+    languages: {
+      en: "/en",
+      vi: "/vi",
+      "zh-TW": "/zh-TW",
+    },
+  },
 };
 
 export default async function RootLayout({
@@ -55,8 +75,34 @@ export default async function RootLayout({
   const { locale } = await params;
   const messages = await getMessages();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        name: "Enigmatic",
+        url: "https://enigmatic.works",
+        logo: "https://enigmatic.works/images/brand/enigmatic-logo.png",
+        description:
+          "We design, connect, and orchestrate the processes your core systems ignore. Operational orchestration for modern supply chains.",
+      },
+      {
+        "@type": "WebSite",
+        name: "Enigmatic",
+        url: "https://enigmatic.works",
+        inLanguage: ["en", "vi", "zh-TW"],
+      },
+    ],
+  };
+
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${geistMono.variable} antialiased font-sans`}
         suppressHydrationWarning

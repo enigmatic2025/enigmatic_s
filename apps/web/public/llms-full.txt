@@ -1,0 +1,386 @@
+# Nodal — Full Documentation
+
+Nodal is an operational orchestration platform by Enigmatic. It connects people, systems, and processes into automated flows that run your business.
+
+Website: https://enigmatic.works
+Docs: https://enigmatic.works/en/docs
+API (JSON): https://enigmatic.works/api/docs/en
+
+---
+
+## Overview
+
+Nodal is an operational orchestration platform. It connects your people, systems, and processes into automated flows that run your business.
+
+### What is Flow Studio?
+
+Flow Studio is the visual designer where you build business process flows. Each flow is a sequence of steps — triggers that start the process, tasks assigned to people, data transformations, API calls to external systems, and decision logic that routes work based on conditions.
+
+### What are Action Flows?
+
+Action Flows are running instances of a flow. When a flow is triggered — by an API call, a schedule, or a manual start — it creates an Action Flow that tracks the execution through each step. Team members see their assigned tasks in the Action Flows dashboard and complete them to advance the process.
+
+### How a flow runs
+
+1. Trigger fires — A flow starts when its trigger activates — an API call, a schedule, or a manual start.
+2. Steps execute in sequence — Each node runs in order. Data flows from one step to the next. Conditions and switches route the path.
+3. Pauses when needed — Human Tasks wait for a person to respond. Wait for Event nodes wait for an external webhook. The flow resumes automatically when the input arrives.
+4. Completes or fails — The flow reaches the end and completes, or an error occurs and it fails. All execution data is logged.
+
+---
+
+## Core Concepts
+
+Key ideas to understand before building flows.
+
+- Nodes: The building blocks of a flow. Each node performs one action — triggering, transforming data, calling an API, assigning a task, or making a decision.
+- Edges: Connections between nodes that define the execution order. Data flows along edges from one node to the next.
+- Expressions: Dynamic references to data from previous steps. Written as {{ steps.NodeId.output.field }} to pass data between nodes.
+- Action Flows: A running instance of a flow. Each trigger creates a new Action Flow that progresses through the steps until completion.
+- Human-in-the-Loop: Flows can pause and wait for human input. Human Task nodes assign work to team members who complete it through the Action Flows dashboard.
+- Webhooks: External systems can resume paused flows by sending data to a unique webhook URL. No API keys or IDs required.
+
+---
+
+## AI Agents (MCP)
+
+Connect AI agents to Nodal documentation. Built for the Model Context Protocol (MCP) and LLM discovery.
+
+### Discovery (llms.txt)
+
+Nodal implements the /llms.txt standard. This file acts as a manifest, guiding AI agents to the most relevant documentation without needing to crawl HTML.
+
+Discovery URL: https://enigmatic.works/llms.txt
+
+### Static JSON API
+
+Documentation is available as raw structured JSON. These endpoints are statically generated and cached on the edge for zero-latency access.
+
+- English: https://enigmatic.works/api/docs/en
+- Vietnamese: https://enigmatic.works/api/docs/vi
+- Traditional Chinese: https://enigmatic.works/api/docs/zh-TW
+
+---
+
+## API Trigger
+
+Start a flow via HTTP POST. Use this to integrate external systems, build automation pipelines, or create event-driven workflows.
+
+### Endpoint
+
+POST https://enigmatic.works/api/flows/{flowId}/execute
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+
+The flowId is the unique identifier of the published flow. You can find it in the Flow Studio URL or the flow settings.
+
+### Request body
+
+Send any JSON payload. The fields you send become available to all downstream steps via expressions.
+
+Example:
+{
+  "order_id": "ORD-12345",
+  "customer_name": "Acme Corp",
+  "total": 2499.00,
+  "priority": "high"
+}
+
+### Configuration options
+
+- schema (SchemaField[]): Define expected payload fields with types and required flags.
+- instanceNameTemplate (string): Dynamic title for the Action Flow instance. Supports expressions.
+- defaultPriority (enum): Priority level: low, medium, high, or critical.
+- instanceDescriptionTemplate (string): Instructions displayed to users in the Action Flow dashboard.
+
+### Accessing trigger data
+
+{{ steps.trigger.data.order_id }}     // "ORD-12345"
+{{ steps.trigger.data.customer_name }} // "Acme Corp"
+{{ steps.trigger.data.total }}         // 2499.00
+
+### Example: cURL
+
+curl -X POST https://enigmatic.works/api/flows/YOUR_FLOW_ID/execute \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "order_id": "ORD-12345",
+    "customer_name": "Acme Corp"
+  }'
+
+---
+
+## Human Task
+
+Pause the flow and assign work to a person. The flow resumes when the assignee completes the task through the Action Flows dashboard.
+
+### How it works
+
+1. Flow reaches the Human Task node — The flow pauses and creates a task record. The task appears in the assignee's Action Flows dashboard.
+2. Assignee reviews and responds — The assignee sees the task title, instructions, and a form to fill out. They can review context from previous steps.
+3. Flow resumes with the response — When the assignee submits their response, the flow continues. The form data is available to downstream steps.
+
+### Configuration
+
+- title (string): Task title shown to the assignee. Supports expressions for dynamic titles.
+- instructions (rich text): Detailed instructions in HTML. Explain what the assignee needs to do.
+- assignments (User[]): One or more team members who will see and can complete the task.
+- schema (FormField[]): Form fields the assignee must fill out (text, number, date, rating, signature, etc.).
+
+### Form field types
+
+Supported: Text, Long Text, Number, Rating, Boolean, Date, Time, DateTime, File, Multiple Choice, Checkboxes, Signature.
+
+### Dynamic titles with expressions
+
+Use expressions to create context-aware task titles:
+
+Review order {{ steps.trigger.data.order_id }} for {{ steps.trigger.data.customer_name }}
+
+This produces titles like "Review order ORD-12345 for Acme Corp".
+
+### Accessing task responses
+
+{{ steps.ReviewTask.output.approval }}    // "approved"
+{{ steps.ReviewTask.output.comments }}    // "Looks good"
+{{ steps.ReviewTask.output.rating }}      // 5
+
+---
+
+## Wait for Event
+
+Pause the flow and wait for an external system to send data via a unique webhook URL. No authentication, IDs, or complex payloads required.
+
+### How it works
+
+1. Flow reaches the Wait for Event node — The flow pauses and generates a unique, single-use webhook URL.
+2. Webhook URL is sent to the external system — Use an upstream HTTP Request or Email node to pass the webhook URL to the external system.
+3. External system POSTs data — The external system sends a POST request with JSON data to the webhook URL.
+4. Flow resumes — The flow continues with the received data available to all downstream steps.
+
+### Endpoint
+
+POST https://enigmatic.works/api/webhooks/{token}
+
+The {token} is a unique UUID generated for each flow execution. No authentication headers are required — the token itself authenticates the request. Each URL is single-use.
+
+### Request format
+
+Send any JSON body. The entire payload becomes available to downstream steps.
+
+Example:
+{
+  "payment_status": "confirmed",
+  "amount": 149.99,
+  "transaction_id": "txn_abc123"
+}
+
+### Response
+
+200 OK:
+{
+  "status": "ok",
+  "message": "Workflow resumed successfully"
+}
+
+### Accessing the webhook URL in your flow
+
+{{ steps.WaitForPayment.output.webhook_url }}
+
+---
+
+## HTTP Request
+
+Make HTTP requests to external APIs. Call third-party services, fetch data, or send notifications as part of your flow.
+
+### Configuration
+
+- method (enum): HTTP method: GET, POST, PUT, DELETE, or PATCH.
+- url (string): The endpoint URL. Supports expressions for dynamic URLs.
+- headers (KeyValue[]): Custom HTTP headers (e.g., Authorization, API keys).
+- params (KeyValue[]): URL query parameters.
+- body (JSON): Request body for POST/PUT/PATCH. Supports expressions.
+
+### Output
+
+{{ steps.CallAPI.output.status }}       // 200
+{{ steps.CallAPI.output.data }}         // Parsed JSON response body
+{{ steps.CallAPI.output.data.result }}  // Nested field access
+
+---
+
+## Correlation Signals
+
+For advanced use cases where multiple flow instances listen for the same event type. Use correlation matching to target the correct instance.
+
+### When to use
+
+- Multiple flow instances waiting for the same event type (e.g., 'OrderPaid')
+- The external system broadcasts events without knowing which flow to target
+- You need to match on business keys (e.g., order_id, customer_id)
+
+### Endpoint
+
+POST https://enigmatic.works/api/automation/signal
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+
+### Request format
+
+{
+  "event": "OrderPaid",
+  "data": {
+    "order_id": "ORD-12345",
+    "customer_id": "CUST-789"
+  }
+}
+
+- event (string): The event name configured in the Wait for Event node. Defaults to "default".
+- data (object): Key-value pairs matched against the flow's correlation criteria. All criteria must match (AND logic).
+
+### Matching logic
+
+1. Find active subscriptions — The system finds all active subscriptions matching the event name.
+2. Check criteria — For each subscription, every configured criteria key must exist in the signal data with the same value.
+3. Resume matches — All matching flows are resumed. One signal can resume multiple flow instances.
+
+### Response
+
+200 OK:
+{
+  "status": "ok",
+  "resumed": 1
+}
+
+---
+
+## Set Variable
+
+Create or update variables within the flow. Store computed values, rename fields, or prepare data for downstream steps.
+
+### Single variable
+
+Variable Name:  total_with_tax
+Value:          {{ steps.trigger.data.total * 1.13 }}
+
+### Multiple variables
+
+customer_name  →  {{ steps.trigger.data.name }}
+order_total    →  {{ steps.trigger.data.total }}
+status         →  "pending_review"
+
+### Output
+
+{{ steps.SetVars.output.total_with_tax }}  // 2823.87
+{{ steps.SetVars.output.customer_name }}   // "Acme Corp"
+
+---
+
+## Condition (If/Else)
+
+Branch the flow based on a logical condition. Route work down the True path or the False path.
+
+### Configuration
+
+The Condition node uses a visual builder to define logic. It compares two values using an operator.
+
+- Value A (expression): The left side of the comparison.
+- Operator (select): The logic to apply (e.g., Is Equal To, Is Greater Than).
+- Value B (expression): The right side to compare against.
+
+### Available Operators
+
+- == (equals): Check if values are identical.
+- != (not equals): Check if values are different.
+- > (greater than): True if Value A is strictly greater than Value B.
+- < (less than): True if Value A is strictly less than Value B.
+- contains (includes): True if Value A (string/array) contains Value B.
+- matches (regex): True if Value A matches the Regular Expression in Value B.
+
+### Branching
+
+The flow splits into two paths: True and False. You can connect different actions to each path.
+
+---
+
+## Switch
+
+Route the flow to different paths based on a variable's value. Like a multi-way if/else — cleaner when you have more than two branches.
+
+### Configuration
+
+Variable:  {{ steps.trigger.data.department }}
+
+Case "engineering"  →  Engineering Review path
+Case "finance"      →  Finance Approval path
+Case "legal"        →  Legal Review path
+Default             →  General Processing path
+
+### Behavior
+
+1. Variable comparison — The variable is compared against each case value in order.
+2. First match — The first matching case path is followed.
+3. Default path — If no cases match, the Default path is followed.
+4. Output edge — Each case creates a separate output edge in the flow designer.
+
+---
+
+## Loop
+
+Iterate over an array of items and run a set of steps for each one. Process lists of orders, users, records, or any collection.
+
+### Configuration
+
+Items:  {{ steps.FetchOrders.output.data }}
+
+### Inside the loop
+
+{{ steps.MyLoop.item }}           // The current item object
+{{ steps.MyLoop.item.order_id }}  // A field on the current item
+{{ steps.MyLoop.item.total }}     // Another field
+
+---
+
+## Filter
+
+Filter an array based on conditions, creating a new array with only matching items.
+
+### Configuration
+
+- Array Variable (expression): The list to filter (e.g. {{ steps.GetUsers.data }}).
+- Match Type (enum): ALL (AND) requires every condition to be true. ANY (OR) requires at least one.
+
+### Condition Builder
+
+Add one or more conditions to define which items to keep:
+
+1. Item Field — The property on the item to check (e.g. 'status' or 'price').
+2. Operator — The logic (Equals, Contains, Greater Than, etc.).
+3. Value — The value to compare against.
+
+---
+
+## Map (Transform)
+
+Transform each item in an array to a new structure.
+
+### Configuration
+
+1. Input Array (Optional) — If provided, the Map operation runs for every item in this list. If left empty, it runs once for a single object.
+2. Mapping Fields — Add fields to define the output object. The 'Key' is your new property name, and the 'Value' is the data source.
+
+### Example
+
+Key (Target): full_name
+Value (Source): {{ item.first_name }} {{ item.last_name }}
+
+---
+
+## Expression Syntax
+
+Expressions are wrapped in double curly braces {{ }}. They support JavaScript-like syntax for accessing object properties and array elements.
+
+{{ steps.trigger.data.id }}
+{{ steps.MyStep.output.result }}
+{{ steps.MyStep.output.items[0] }}

@@ -153,18 +153,32 @@ export const enDocs: DocSection[] = [
             },
             {
                 type: "h3",
+                content: "Full Documentation (Plain Text)"
+            },
+            {
+                type: "prose",
+                content: "For LLMs that prefer a single plain-text file with all documentation flattened, use the <code class='text-sm font-mono bg-muted px-1.5 py-0.5 rounded text-foreground'>llms-full.txt</code> endpoint. One fetch, all docs, zero parsing required."
+            },
+            {
+                type: "code",
+                id: "agent-llms-full",
+                label: "Full Docs URL",
+                code: `https://enigmatic.works/llms-full.txt`
+            },
+            {
+                type: "h3",
                 content: "Static JSON API"
             },
             {
                 type: "prose",
-                content: "To save context window space and reduce parsing errors, usage documentation is available as raw structured JSON. These endpoints are statically generated and cached on the edge for zero-latency access."
+                content: "For structured consumption, documentation is available as static JSON files cached on the CDN for zero-latency access. No API keys or authentication required."
             },
             {
                 type: "paramTable",
                 rows: [
-                    { name: "English", type: "JSON", desc: "https://enigmatic.works/api/docs/en" },
-                    { name: "Vietnamese", type: "JSON", desc: "https://enigmatic.works/api/docs/vi" },
-                    { name: "Traditional Chinese", type: "JSON", desc: "https://enigmatic.works/api/docs/zh-TW" },
+                    { name: "English", type: "JSON", desc: "https://enigmatic.works/docs/en.json" },
+                    { name: "Vietnamese", type: "JSON", desc: "https://enigmatic.works/docs/vi.json" },
+                    { name: "Traditional Chinese", type: "JSON", desc: "https://enigmatic.works/docs/zh-TW.json" },
                 ]
             },
 
