@@ -23,7 +23,7 @@ export interface Flow {
 
 // --- Node Data & Configuration ---
 
-export type NodeType = 'schedule' | 'action' | 'ai' | 'human' | 'logic';
+export type NodeType = 'action' | 'ai' | 'human' | 'logic';
 
 export interface NodeData {
     label: string;
@@ -34,17 +34,11 @@ export interface NodeData {
 }
 
 export type NodeConfig =
-    | ScheduleConfig
     | HTTPRequestConfig
     | AIReasoningConfig
     | HumanTaskConfig;
 
 // --- Specific Node Configs ---
-
-export interface ScheduleConfig {
-    interval?: string; // e.g., "0 9 * * *" (Cron)
-    timezone?: string;
-}
 
 export interface HTTPRequestConfig {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

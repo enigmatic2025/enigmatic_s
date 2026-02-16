@@ -4,13 +4,12 @@ import { toast } from "sonner";
 /**
  * Validates the flow structure before saving.
  * Rules:
- * 1. Exactly one Trigger (Schedule) node.
+ * 1. Exactly one Trigger node.
  * 2. At least one Action node.
  * 3. All nodes must be reachable from the Trigger (no orphans).
  */
 export const validateFlow = (nodes: Node[], edges: Edge[]): boolean => {
     const triggerNodes = nodes.filter(n =>
-        n.type === 'schedule' ||
         n.type === 'manual-trigger' ||
         n.type === 'api-trigger'
     );
@@ -18,7 +17,7 @@ export const validateFlow = (nodes: Node[], edges: Edge[]): boolean => {
 
     // 1. Check Trigger Count
     if (triggerNodes.length !== 1) {
-        toast.error("Flow must have exactly one Trigger (e.g. Schedule, Webhook).");
+        toast.error("Flow must have exactly one Trigger (e.g. Incoming Webhook).");
         return false;
     }
 

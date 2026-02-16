@@ -194,17 +194,6 @@ function JsonRow({ label, value, path, isPrimitive, contextLoopSource }: { label
 
 // Default schemas for known triggers
 const DEFAULT_SCHEMAS: Record<string, any> = {
-    'schedule': {
-        timestamp: Date.now(),
-        iso: new Date().toISOString(),
-        hour: new Date().getHours(),
-        minute: new Date().getMinutes(),
-        dayOfWeek: new Date().getDay(),
-        dayOfMonth: new Date().getDate(),
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-        cron: "0 9 * * 1-5" 
-    },
     'manual-trigger': {
         timestamp: Date.now(),
         user_id: "usr_mock123",

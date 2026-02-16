@@ -1,13 +1,11 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
-	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
 	temporalClient "go.temporal.io/sdk/client"
 )
 
@@ -171,23 +169,6 @@ func (h *FlowHandler) UpdateFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Handle Temporal Schedule Pause/Unpause if IsActive changed
-	if req.IsActive != nil {
-		// We fire and forget the schedule update to avoid blocking UI or failing if Temporal is down
-		// Ideally this should be cleaner, but for now:
-		go func() {
-			sc := h.TemporalClient.ScheduleClient()
-			scheduleID := "schedule-" + flowID
-			ctx := context.Background()
-			handle := sc.GetHandle(ctx, scheduleID)
-			if *req.IsActive {
-				_ = handle.Unpause(ctx, temporalClient.ScheduleUnpauseOptions{Note: "User activated flow"})
-			} else {
-				_ = handle.Pause(ctx, temporalClient.SchedulePauseOptions{Note: "User deactivated flow"})
-			}
-		}()
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(results[0])
 }
@@ -340,71 +321,6 @@ func (h *FlowHandler) PublishFlow(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Failed to publish flow: "+err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	// 3. Update Temporal Schedule
-	// We need to parse the draft definition to check for schedule nodes
-	// Since current[0].DraftDefinition is map[string]interface{}, allow loose marshalling or re-marshal
-	defBytes, _ := json.Marshal(current[0].DraftDefinition)
-	var flowDef workflow.FlowDefinition
-	if err := json.Unmarshal(defBytes, &flowDef); err == nil {
-		flowDef.ID = flowID // ensure ID is set
-		// Look for schedule node
-		var scheduleNode *workflow.Node
-		for _, n := range flowDef.Nodes {
-			if n.Type == "schedule" {
-				scheduleNode = &n
-				break
-			}
-		}
-
-		// Initialize Schedule Client
-		sc := h.TemporalClient.ScheduleClient()
-		if sc != nil {
-			scheduleID := "schedule-" + flowID
-			ctx := context.Background()
-
-			if scheduleNode != nil {
-				// Extract Cron
-				// Assuming data structure: { "cron": "* * * * *" }
-				cronExpr, _ := scheduleNode.Data["cron"].(string)
-				if cronExpr != "" {
-
-					// Try Create
-					_, err := sc.Create(ctx, temporalClient.ScheduleOptions{
-						ID: scheduleID,
-						Action: &temporalClient.ScheduleWorkflowAction{
-							ID:        "flow-run-" + flowID + "-${activeScheduleId}-${scheduleTime}",
-							Workflow:  workflow.NodalWorkflow,
-							Args:      []interface{}{flowDef, map[string]interface{}{}},
-							TaskQueue: "nodal-task-queue",
-						},
-						Spec: temporalClient.ScheduleSpec{
-							CronExpressions: []string{cronExpr},
-						},
-					})
-					if err != nil {
-						// If exists, Delete and Recreate
-						_ = sc.GetHandle(ctx, scheduleID).Delete(ctx)
-						_, _ = sc.Create(ctx, temporalClient.ScheduleOptions{
-							ID: scheduleID,
-							Action: &temporalClient.ScheduleWorkflowAction{
-								ID:        "flow-run-" + flowID + "-${activeScheduleId}-${scheduleTime}",
-								Workflow:  workflow.NodalWorkflow,
-								Args:      []interface{}{flowDef, map[string]interface{}{}},
-								TaskQueue: "nodal-task-queue",
-							},
-							Spec: temporalClient.ScheduleSpec{
-								CronExpressions: []string{cronExpr},
-							},
-						})
-					}
-				}
-			} else {
-				// No schedule node? Delete any existing schedule
-				_ = sc.GetHandle(ctx, scheduleID).Delete(ctx)
-			}
-		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

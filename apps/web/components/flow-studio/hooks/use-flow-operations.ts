@@ -65,15 +65,15 @@ export function useFlowOperations({
             const [nodeType, subtype] = type.split(':');
 
             // Validation: Must start with a Trigger
-            const isTrigger = nodeType === 'schedule' || nodeType === 'manual-trigger' || nodeType === 'api-trigger';
+            const isTrigger = nodeType === 'manual-trigger' || nodeType === 'api-trigger';
 
             if (nodes.length === 0 && !isTrigger) {
-                toast.error("The first node must be a Trigger (e.g. Schedule, Incoming Webhook).");
+                toast.error("The first node must be a Trigger (e.g. Incoming Webhook).");
                 return;
             }
 
             // Validation: Only one Trigger allowed
-            const hasTrigger = nodes.some(n => n.type === 'schedule' || n.type === 'manual-trigger' || n.type === 'api-trigger');
+            const hasTrigger = nodes.some(n => n.type === 'manual-trigger' || n.type === 'api-trigger');
             if (isTrigger && hasTrigger) {
                 toast.error("Only one Trigger (Start Event) is allowed per flow.");
                 return;

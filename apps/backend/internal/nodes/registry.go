@@ -46,7 +46,6 @@ var Registry = map[string]NodeExecutor{
 	"HTTP":        &HttpNode{},
 	"PARSE":       &ParseNode{},
 	"APPROVAL":    &ApprovalNode{},
-	"SCHEDULE":    &ScheduleNode{},
 	"LOOP":        &LoopNode{},
 	"SWITCH":      &SwitchNode{},
 	"FILTER":      &FilterNode{},

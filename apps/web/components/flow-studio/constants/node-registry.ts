@@ -2,7 +2,6 @@ import { ActionNode } from '../nodes/action-node';
 import { ManualTriggerNode } from '../nodes/manual-trigger-node';
 import { HttpRequestConfig } from '../configurators/http-request-config';
 import { ManualTriggerConfig } from '../configurators/manual-trigger-config';
-// import { ScheduleTriggerConfig } from '../configurators/schedule-trigger-config';
 import { ConditionNode } from '../nodes/condition-node';
 import { ConditionConfig } from '../configurators/condition-config';
 import { FilterConfig } from '../configurators/filter-config';
@@ -23,7 +22,6 @@ import { AutomationNode } from '../nodes/automation-node';
 import { AutomationConfig } from '../configurators/automation-config';
 
 export const NODE_TYPES = {
-    // schedule: ScheduleNode,
     action: ActionNode,
     'manual-trigger': ManualTriggerNode,
     'api-trigger': ApiTriggerNode,
@@ -39,7 +37,6 @@ export const NODE_TYPES = {
 export const CONFIG_COMPONENTS: Record<string, any> = {
     'http': HttpRequestConfig,
     'manual-trigger': ManualTriggerConfig,
-    // 'schedule': ScheduleTriggerConfig,
     'api-trigger': ApiTriggerConfig,
     'condition': ConditionConfig,
     'filter': FilterConfig,

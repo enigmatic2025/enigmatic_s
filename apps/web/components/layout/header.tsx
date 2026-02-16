@@ -85,7 +85,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
     },
     {
       titleKey: "items.docs",
-      href: "#",
+      href: "/docs",
       descriptionKey: "items.docsDesc",
       icon: FileText,
     },
@@ -139,12 +139,13 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   return (
     <header
       className={cn(
-        "fixed top-0 z-50 w-full border-b transition-all duration-300",
+        "fixed top-0 z-50 w-full transition-all duration-300",
         {
-          "translate-y-0": scrollDirection === "up",
-          "-translate-y-full": scrollDirection === "down",
-          "border-border bg-background": scrolled || !transparent,
-          "bg-transparent border-transparent": !scrolled && transparent,
+          "translate-y-0": scrollDirection === "up" || pathname?.startsWith("/docs"),
+          "-translate-y-full": scrollDirection === "down" && !pathname?.startsWith("/docs"),
+          "border-b border-border bg-background": (scrolled || !transparent) && !pathname?.startsWith("/docs"),
+          "bg-background": pathname?.startsWith("/docs"),
+          "bg-transparent border-transparent": !scrolled && transparent && !pathname?.startsWith("/docs"),
         }
       )}
     >
