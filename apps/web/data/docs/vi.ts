@@ -6,6 +6,7 @@ export const viSidebar: SidebarGroup[] = [
         items: [
             { id: "overview", label: "Tổng Quan" },
             { id: "concepts", label: "Khái Niệm Cốt Lõi" },
+            { id: "ai-agents", label: "AI Agents (MCP)" },
         ],
     },
     {
@@ -127,6 +128,48 @@ export const viDocs: DocSection[] = [
                 links: [
                     { label: "Cú pháp biểu thức", url: "expressions" }
                 ]
+            }
+        ]
+    },
+    {
+        id: "ai-agents",
+        title: "AI Agents (MCP)",
+        iconName: "Bot",
+        description: "Kết nối các AI bot với tài liệu Nodal. Được xây dựng theo chuẩn Model Context Protocol (MCP) và hỗ trợ khám phá LLM.",
+        blocks: [
+            {
+                type: "h3",
+                content: "Discovery (llms.txt)"
+            },
+            {
+                type: "prose",
+                content: "Nodal triển khai tiêu chuẩn <code class='text-sm font-mono bg-muted px-1.5 py-0.5 rounded text-foreground'>/llms.txt</code>. Tệp này đóng vai trò như một bản kê khai (manifest), hướng dẫn các AI agent tìm đến tài liệu phù hợp nhất mà không cần phải thu thập dữ liệu HTML (crawl)."
+            },
+            {
+                type: "code",
+                id: "agent-llms",
+                label: "Discovery URL",
+                code: `https://enigmatic.works/llms.txt`
+            },
+            {
+                type: "h3",
+                content: "Static JSON API"
+            },
+            {
+                type: "prose",
+                content: "Để tiết kiệm dung lượng ngữ cảnh (context window) và giảm lỗi phân tích cú pháp, tài liệu sử dụng có sẵn dưới dạng JSON thô có cấu trúc. Các endpoint này được tạo tĩnh (statically generated) và cache tại edge để truy cập với độ trễ bằng không."
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "Tiếng Anh", type: "JSON", desc: "https://enigmatic.works/api/docs/en" },
+                    { name: "Tiếng Việt", type: "JSON", desc: "https://enigmatic.works/api/docs/vi" },
+                    { name: "Phồn thể", type: "JSON", desc: "https://enigmatic.works/api/docs/zh-TW" },
+                ]
+            },
+            {
+                type: "callout",
+                content: "Các endpoint này được tối ưu hóa cho máy đọc. Chúng chứa nội dung giống hệt tài liệu trực quan nhưng đã loại bỏ các thẻ UI."
             }
         ]
     },

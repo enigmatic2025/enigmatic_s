@@ -6,6 +6,7 @@ export const zhTwSidebar: SidebarGroup[] = [
         items: [
             { id: "overview", label: "總覽" },
             { id: "concepts", label: "核心概念" },
+            { id: "ai-agents", label: "AI Agents (MCP)" },
         ],
     },
     {
@@ -127,6 +128,48 @@ export const zhTwDocs: DocSection[] = [
                 links: [
                     { label: "表達式語法", url: "expressions" }
                 ]
+            }
+        ]
+    },
+    {
+        id: "ai-agents",
+        title: "AI Agents (MCP)",
+        iconName: "Bot",
+        description: "將 AI 代理連接到 Nodal 文件。專為 Model Context Protocol (MCP) 和 LLM 探索標準而構建。",
+        blocks: [
+            {
+                type: "h3",
+                content: "Discovery (llms.txt)"
+            },
+            {
+                type: "prose",
+                content: "Nodal 實作了 <code class='text-sm font-mono bg-muted px-1.5 py-0.5 rounded text-foreground'>/llms.txt</code> 標準。此檔案充當清單，引導 AI 代理找到最相關的文件，而無需爬取 HTML 頁面。"
+            },
+            {
+                type: "code",
+                id: "agent-llms",
+                label: "Discovery URL",
+                code: `https://enigmatic.works/llms.txt`
+            },
+            {
+                type: "h3",
+                content: "靜態 JSON API"
+            },
+            {
+                type: "prose",
+                content: "為了節省 Context Window 空間並減少解析錯誤，使用文件以原始結構化 JSON 格式提供。這些 Endpoint 是靜態生成 (Statically Generated) 並在 Edge 進行快取，以實現零延遲存取。"
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "英語", type: "JSON", desc: "https://enigmatic.works/api/docs/en" },
+                    { name: "越南語", type: "JSON", desc: "https://enigmatic.works/api/docs/vi" },
+                    { name: "繁體中文", type: "JSON", desc: "https://enigmatic.works/api/docs/zh-TW" },
+                ]
+            },
+            {
+                type: "callout",
+                content: "這些 Endpoint 針對機器讀取進行了最佳化。它們包含與視覺化文件相同的內容，但剔除了 UI 標記。"
             }
         ]
     },

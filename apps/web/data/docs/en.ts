@@ -6,6 +6,7 @@ export const enSidebar: SidebarGroup[] = [
         items: [
             { id: "overview", label: "Overview" },
             { id: "concepts", label: "Core Concepts" },
+            { id: "ai-agents", label: "AI Agents (MCP)" },
         ],
     },
     {
@@ -127,6 +128,48 @@ export const enDocs: DocSection[] = [
                 links: [
                     { label: "Expression syntax", url: "expressions" }
                 ]
+            }
+        ]
+    },
+    {
+        id: "ai-agents",
+        title: "AI Agents (MCP)",
+        iconName: "Bot",
+        description: "Connect AI agents to Nodal documentation. Built for the Model Context Protocol (MCP) and LLM discovery.",
+        blocks: [
+            {
+                type: "h3",
+                content: "Discovery (llms.txt)"
+            },
+            {
+                type: "prose",
+                content: "Nodal implements the <code class='text-sm font-mono bg-muted px-1.5 py-0.5 rounded text-foreground'>/llms.txt</code> standard. This file acts as a manifest, guiding AI agents to the most relevant documentation without needing to crawl HTML."
+            },
+            {
+                type: "code",
+                id: "agent-llms",
+                label: "Discovery URL",
+                code: `https://enigmatic.works/llms.txt`
+            },
+            {
+                type: "h3",
+                content: "Static JSON API"
+            },
+            {
+                type: "prose",
+                content: "To save context window space and reduce parsing errors, usage documentation is available as raw structured JSON. These endpoints are statically generated and cached on the edge for zero-latency access."
+            },
+            {
+                type: "paramTable",
+                rows: [
+                    { name: "English", type: "JSON", desc: "https://enigmatic.works/api/docs/en" },
+                    { name: "Vietnamese", type: "JSON", desc: "https://enigmatic.works/api/docs/vi" },
+                    { name: "Traditional Chinese", type: "JSON", desc: "https://enigmatic.works/api/docs/zh-TW" },
+                ]
+            },
+            {
+                type: "callout",
+                content: "These endpoints are optimized for machine consumption. They contain the same content as the visual documentation but stripped of UI markup."
             }
         ]
     },

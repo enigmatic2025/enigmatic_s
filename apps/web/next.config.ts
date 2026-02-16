@@ -17,12 +17,16 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   async rewrites() {
     const backendUrl = process.env.BACKEND_URL?.replace(/\/$/, "") || "";
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${backendUrl}/api/:path*`,
-      },
-    ];
+    return {
+      beforeFiles: [],
+      afterFiles: [],
+      fallback: [
+        {
+          source: "/api/:path*",
+          destination: `${backendUrl}/api/:path*`,
+        },
+      ],
+    };
   },
 };
 
