@@ -11,9 +11,9 @@ import {
   Loader2,
   Copy,
   KeyRound,
-  AlertTriangle,
   Eye,
   EyeOff,
+  ShieldAlert,
 } from "lucide-react";
 
 import { apiClient } from "@/lib/api-client";
@@ -34,7 +34,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -53,7 +52,6 @@ function formatDate(dateStr: string | null) {
 }
 
 function maskKey(key: string) {
-  // Show prefix + last 4 chars: enig_****...****a1b2
   if (key.length <= 12) return key;
   return key.slice(0, 5) + "••••••••" + key.slice(-4);
 }
@@ -143,50 +141,56 @@ export default function ApiKeysPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="h-full w-full space-y-6">
       {/* Header */}
       <div className="flex items-baseline justify-between">
         <div className="flex items-baseline gap-4">
-          <h1 className="text-xl font-medium tracking-tight">API Keys</h1>
+          <h1 className="text-xl font-medium tracking-tight text-foreground">API Keys</h1>
           <span className="text-secondary-foreground/60 text-sm font-medium">
             Manage keys for external integrations
           </span>
         </div>
-        <Button size="sm" className="h-8 gap-1.5" onClick={() => setIsCreateOpen(true)}>
+        <Button
+          size="sm"
+          className="h-8 gap-1.5 shadow-none"
+          onClick={() => setIsCreateOpen(true)}
+        >
           <Plus className="h-3.5 w-3.5" />
           Create Key
         </Button>
       </div>
 
-      {/* Security Warning */}
-      <div className="flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/50">
-        <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-        <div className="text-sm text-amber-800 dark:text-amber-200">
-          <p className="font-medium">Keep your API keys secure</p>
-          <p className="text-xs mt-0.5 text-amber-700 dark:text-amber-300">
-            API keys grant full access to trigger flows in your organization. Never share them publicly, commit them to
-            source control, or expose them in client-side code. If a key is compromised, revoke it immediately.
+      {/* Security Notice */}
+      <div className="flex items-start gap-3 rounded-lg border p-3">
+        <ShieldAlert className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+        <div className="text-xs text-muted-foreground leading-relaxed">
+          <p className="font-medium text-foreground">Keep your API keys secure</p>
+          <p className="mt-0.5">
+            API keys grant access to trigger flows in your organization. Do not share them publicly,
+            commit them to source control, or expose them in client-side code. Revoke compromised keys immediately.
           </p>
         </div>
       </div>
 
       {/* Keys Table */}
       {keys.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="rounded-full bg-muted p-3 mb-3">
-            <KeyRound className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <p className="text-sm font-medium">No API keys yet</p>
+        <div className="border rounded-lg p-12 text-center bg-card/40">
+          <KeyRound className="h-8 w-8 mx-auto text-muted-foreground/50 mb-3" />
+          <p className="text-sm font-medium text-foreground">No API keys yet</p>
           <p className="text-xs text-muted-foreground mt-1">
             Create an API key to allow external systems to trigger your flows.
           </p>
-          <Button size="sm" className="mt-4 gap-1.5" onClick={() => setIsCreateOpen(true)}>
+          <Button
+            size="sm"
+            className="mt-4 gap-1.5 shadow-none"
+            onClick={() => setIsCreateOpen(true)}
+          >
             <Plus className="h-3.5 w-3.5" />
             Create Your First Key
           </Button>
         </div>
       ) : (
-        <div className="rounded-md border">
+        <div className="border rounded-lg bg-card/40 overflow-hidden">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
@@ -205,41 +209,46 @@ export default function ApiKeysPage() {
             <tbody className="divide-y">
               {keys.map((key) => (
                 <tr key={key.id} className="group hover:bg-muted/30 transition-colors">
-                  <td className="h-14 px-4">
+                  <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted/50 border">
                         <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
                       </div>
-                      <div>
-                        <p className="font-medium text-sm">{key.label || "Unnamed Key"}</p>
-                        <p className="text-xs text-muted-foreground font-mono">enig_••••••••</p>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-medium text-foreground text-sm">
+                          {key.label || "Unnamed Key"}
+                        </span>
+                        <span className="text-xs text-muted-foreground font-mono">enig_••••••••</span>
                       </div>
                     </div>
                   </td>
-                  <td className="h-14 px-4 text-xs text-muted-foreground">
+                  <td className="p-4 text-xs text-muted-foreground">
                     {formatDate(key.created_at)}
                   </td>
-                  <td className="h-14 px-4">
+                  <td className="p-4">
                     {key.last_used_at ? (
                       <span className="text-xs text-muted-foreground">{formatDate(key.last_used_at)}</span>
                     ) : (
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-normal text-muted-foreground border-dashed">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0 font-normal text-muted-foreground border-dashed"
+                      >
                         Never used
                       </Badge>
                     )}
                   </td>
-                  <td className="h-14 px-4">
+                  <td className="p-4 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="h-7 w-7 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent align="end" className="w-40">
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
                           onClick={() => {
@@ -262,13 +271,15 @@ export default function ApiKeysPage() {
 
       {/* Usage hint */}
       {keys.length > 0 && (
-        <div className="rounded-md border border-dashed p-4">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Usage</p>
-          <div className="bg-muted/50 rounded-md p-3 font-mono text-xs text-muted-foreground">
-            <span className="text-emerald-600 dark:text-emerald-400">curl</span> -X POST \<br />
-            &nbsp;&nbsp;-H <span className="text-amber-600 dark:text-amber-400">&quot;X-API-Key: enig_your_key_here&quot;</span> \<br />
-            &nbsp;&nbsp;-H <span className="text-amber-600 dark:text-amber-400">&quot;Content-Type: application/json&quot;</span> \<br />
-            &nbsp;&nbsp;-d <span className="text-amber-600 dark:text-amber-400">{`'{"truck_number": "TX-9920"}'`}</span> \<br />
+        <div className="rounded-lg border border-dashed p-4">
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
+            Usage
+          </p>
+          <div className="bg-muted/50 rounded-md p-3 font-mono text-xs text-muted-foreground leading-relaxed">
+            curl -X POST \<br />
+            &nbsp;&nbsp;-H &quot;X-API-Key: enig_your_key_here&quot; \<br />
+            &nbsp;&nbsp;-H &quot;Content-Type: application/json&quot; \<br />
+            &nbsp;&nbsp;-d {`'{"payload": "data"}'`} \<br />
             &nbsp;&nbsp;{typeof window !== "undefined" ? window.location.origin : "https://your-domain.com"}/api/flows/YOUR_FLOW_ID/execute
           </div>
         </div>
@@ -298,10 +309,10 @@ export default function ApiKeysPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setIsCreateOpen(false)}>
+            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
               Cancel
             </Button>
-            <Button size="sm" onClick={handleCreate} disabled={submitting || !newKeyLabel.trim()}>
+            <Button onClick={handleCreate} disabled={submitting || !newKeyLabel.trim()}>
               {submitting && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />}
               Generate Key
             </Button>
@@ -310,13 +321,16 @@ export default function ApiKeysPage() {
       </Dialog>
 
       {/* ── Reveal Key Dialog ─────────────────────── */}
-      <Dialog open={isRevealOpen} onOpenChange={(open) => {
-        if (!open) {
-          setIsRevealOpen(false);
-          setCreatedKey(null);
-          setShowKey(false);
-        }
-      }}>
+      <Dialog
+        open={isRevealOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsRevealOpen(false);
+            setCreatedKey(null);
+            setShowKey(false);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Your new API key</DialogTitle>
@@ -325,11 +339,11 @@ export default function ApiKeysPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/50">
-              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-              <p className="text-xs text-amber-800 dark:text-amber-200">
-                This is the only time this key will be displayed. Store it securely — we only store a hash
-                and cannot recover it.
+            <div className="flex items-start gap-3 rounded-lg border p-3">
+              <ShieldAlert className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                This is the only time this key will be displayed. Store it securely — we only store a
+                hash and cannot recover it.
               </p>
             </div>
             {createdKey && (
@@ -342,7 +356,7 @@ export default function ApiKeysPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-9 w-9 shrink-0"
+                    className="h-9 w-9 shrink-0 shadow-none"
                     onClick={() => setShowKey(!showKey)}
                   >
                     {showKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
@@ -350,7 +364,7 @@ export default function ApiKeysPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-9 w-9 shrink-0"
+                    className="h-9 w-9 shrink-0 shadow-none"
                     onClick={handleCopy}
                   >
                     <Copy className="h-3.5 w-3.5" />
@@ -361,7 +375,6 @@ export default function ApiKeysPage() {
           </div>
           <DialogFooter>
             <Button
-              size="sm"
               onClick={() => {
                 setIsRevealOpen(false);
                 setCreatedKey(null);
@@ -385,10 +398,10 @@ export default function ApiKeysPage() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setIsDeleteOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={submitting}>
+            <Button variant="destructive" onClick={handleDelete} disabled={submitting}>
               {submitting && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />}
               Revoke Key
             </Button>
