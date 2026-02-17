@@ -74,6 +74,10 @@
       "actions": {
         "edit": "編輯詳情",
         "changePassword": "變更密碼",
+        "changeRole": "變更角色",
+        "resetMFA": "重置 MFA",
+        "block": "封鎖用戶",
+        "unblock": "解除封鎖",
         "delete": "刪除"
       }
     },
@@ -489,7 +493,8 @@
       "platformStats": "平台統計",
       "users": "用戶",
       "organizations": "組織",
-      "aiConfig": "AI 配置"
+      "aiConfig": "AI 配置",
+      "apiKeys": "API 金鑰"
     },
     "draggable": {
       "triggerCreateFlow": "觸發：創建流程",

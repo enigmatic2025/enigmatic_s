@@ -127,4 +127,15 @@ export const organizationService = {
         const res = await apiClient.patch(`/api/orgs/${orgId}/teams/${teamId}/members/${userId}`, { role });
         if (!res.ok) throw new Error("Failed to update team member role");
     },
+
+    // ─── Member Security ────────────────────────────────
+    resetMemberPassword: async (orgId: string, userId: string, password: string): Promise<void> => {
+        const res = await apiClient.post(`/api/orgs/${orgId}/members/${userId}/reset-password`, { password });
+        if (!res.ok) throw new Error("Failed to reset password");
+    },
+
+    resetMemberMFA: async (orgId: string, userId: string): Promise<void> => {
+        const res = await apiClient.post(`/api/orgs/${orgId}/members/${userId}/reset-mfa`, {});
+        if (!res.ok) throw new Error("Failed to reset MFA");
+    },
 };

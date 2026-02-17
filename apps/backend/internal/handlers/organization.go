@@ -599,6 +599,178 @@ func (h *OrganizationHandler) UpdateTeamMemberRole(w http.ResponseWriter, r *htt
 	json.NewEncoder(w).Encode(map[string]string{"status": "success"})
 }
 
+// ResetMemberPassword resets a member's password (org admin/owner only)
+func (h *OrganizationHandler) ResetMemberPassword(w http.ResponseWriter, r *http.Request) {
+	orgID := r.PathValue("orgId")
+	userID := r.PathValue("userId")
+
+	if orgID == "" || userID == "" {
+		http.Error(w, "Org ID and User ID required", http.StatusBadRequest)
+		return
+	}
+
+	// Verify caller is admin/owner of this org
+	callerID, ok := r.Context().Value(middleware.UserIDKey).(string)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	client := database.GetClient()
+	var callerMembership []struct {
+		Role string `json:"role"`
+	}
+	client.DB.From("memberships").Select("role").Eq("user_id", callerID).Eq("org_id", orgID).Execute(&callerMembership)
+	if len(callerMembership) == 0 || (callerMembership[0].Role != "admin" && callerMembership[0].Role != "owner") {
+		http.Error(w, "Forbidden: requires admin or owner role", http.StatusForbidden)
+		return
+	}
+
+	// Verify target user is a member of this org
+	var targetMembership []struct {
+		UserID string `json:"user_id"`
+	}
+	client.DB.From("memberships").Select("user_id").Eq("user_id", userID).Eq("org_id", orgID).Execute(&targetMembership)
+	if len(targetMembership) == 0 {
+		http.Error(w, "User is not a member of this organization", http.StatusNotFound)
+		return
+	}
+
+	var req struct {
+		Password string `json:"password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Password == "" {
+		http.Error(w, "Password is required", http.StatusBadRequest)
+		return
+	}
+
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
+
+	jsonBody, _ := json.Marshal(map[string]interface{}{
+		"password": req.Password,
+	})
+
+	request, _ := http.NewRequest("PUT", supabaseUrl+"/auth/v1/admin/users/"+userID, bytes.NewBuffer(jsonBody))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer "+supabaseKey)
+	request.Header.Set("apikey", supabaseKey)
+
+	httpClient := &http.Client{}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		http.Error(w, "Failed to reset password: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(response.Body)
+		http.Error(w, "Auth error: "+string(bodyBytes), response.StatusCode)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "success", "message": "Password reset successfully"})
+}
+
+// ResetMemberMFA resets a member's MFA factors and logs them out (org admin/owner only)
+func (h *OrganizationHandler) ResetMemberMFA(w http.ResponseWriter, r *http.Request) {
+	orgID := r.PathValue("orgId")
+	userID := r.PathValue("userId")
+
+	if orgID == "" || userID == "" {
+		http.Error(w, "Org ID and User ID required", http.StatusBadRequest)
+		return
+	}
+
+	// Verify caller is admin/owner of this org
+	callerID, ok := r.Context().Value(middleware.UserIDKey).(string)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	client := database.GetClient()
+	var callerMembership []struct {
+		Role string `json:"role"`
+	}
+	client.DB.From("memberships").Select("role").Eq("user_id", callerID).Eq("org_id", orgID).Execute(&callerMembership)
+	if len(callerMembership) == 0 || (callerMembership[0].Role != "admin" && callerMembership[0].Role != "owner") {
+		http.Error(w, "Forbidden: requires admin or owner role", http.StatusForbidden)
+		return
+	}
+
+	// Verify target user is a member of this org
+	var targetMembership []struct {
+		UserID string `json:"user_id"`
+	}
+	client.DB.From("memberships").Select("user_id").Eq("user_id", userID).Eq("org_id", orgID).Execute(&targetMembership)
+	if len(targetMembership) == 0 {
+		http.Error(w, "User is not a member of this organization", http.StatusNotFound)
+		return
+	}
+
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
+	httpClient := &http.Client{}
+
+	// 1. List MFA factors
+	request, _ := http.NewRequest("GET", supabaseUrl+"/auth/v1/admin/users/"+userID+"/factors", nil)
+	request.Header.Set("Authorization", "Bearer "+supabaseKey)
+	request.Header.Set("apikey", supabaseKey)
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		http.Error(w, "Failed to list MFA factors: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(response.Body)
+		http.Error(w, "Auth error: "+string(bodyBytes), response.StatusCode)
+		return
+	}
+
+	var factors []struct {
+		ID string `json:"id"`
+	}
+	if err := json.NewDecoder(response.Body).Decode(&factors); err != nil {
+		http.Error(w, "Failed to parse factors", http.StatusInternalServerError)
+		return
+	}
+
+	// 2. Delete each factor
+	for _, factor := range factors {
+		delReq, _ := http.NewRequest("DELETE", supabaseUrl+"/auth/v1/admin/users/"+userID+"/factors/"+factor.ID, nil)
+		delReq.Header.Set("Authorization", "Bearer "+supabaseKey)
+		delReq.Header.Set("apikey", supabaseKey)
+		delResp, err := httpClient.Do(delReq)
+		if err != nil || delResp.StatusCode != 200 {
+			log.Printf("Failed to delete factor %s for user %s", factor.ID, userID)
+		}
+		if delResp != nil {
+			delResp.Body.Close()
+		}
+	}
+
+	// 3. Logout user
+	logoutReq, _ := http.NewRequest("POST", supabaseUrl+"/auth/v1/admin/users/"+userID+"/logout", nil)
+	logoutReq.Header.Set("Authorization", "Bearer "+supabaseKey)
+	logoutReq.Header.Set("apikey", supabaseKey)
+	logoutResp, err := httpClient.Do(logoutReq)
+	if err != nil {
+		log.Printf("Failed to logout user %s: %v", userID, err)
+	}
+	if logoutResp != nil {
+		logoutResp.Body.Close()
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "success", "message": "MFA reset and user logged out"})
+}
+
 // GetOrgBySlug looks up org ID by slug
 func (h *OrganizationHandler) GetOrgBySlug(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.Query().Get("slug")

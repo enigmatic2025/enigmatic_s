@@ -312,12 +312,30 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			if actionID, ok := result.Output["action_id"].(string); ok {
 				signalName = "AutomationSignal-" + actionID
 			}
+
+			// Configurable timeout: default 7 days, override via node config "timeout" (in minutes)
+			timeoutDuration := 7 * 24 * time.Hour
+			if t, ok := node.Data["timeout"].(float64); ok && t > 0 {
+				timeoutDuration = time.Duration(t) * time.Minute
+			}
+
 			var signalData interface{}
+			timedOut := false
 			selector := workflow.NewSelector(ctx)
 			selector.AddReceive(workflow.GetSignalChannel(ctx, signalName), func(c workflow.ReceiveChannel, more bool) {
 				c.Receive(ctx, &signalData)
 			})
-			selector.Select(ctx) // Blocking wait for signal
+			selector.AddFuture(workflow.NewTimer(ctx, timeoutDuration), func(f workflow.Future) {
+				timedOut = true
+			})
+			selector.Select(ctx)
+
+			if timedOut {
+				logger.Error("Node timed out waiting for signal", "ID", node.ID, "Timeout", timeoutDuration)
+				executionError = fmt.Errorf("node %s timed out waiting for signal after %v", node.ID, timeoutDuration)
+				nodeStatus[nodeID] = "FAILED"
+				return
+			}
 
 			// Update result
 			if signalMap, ok := signalData.(map[string]interface{}); ok {

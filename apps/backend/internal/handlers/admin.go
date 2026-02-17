@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
@@ -75,7 +74,7 @@ func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	// Fetch users with their memberships and organization details
 	// Assuming foreign keys are set up: profiles -> memberships -> organizations
 	// Note: Column is org_id, not organization_id
-	err := client.DB.From("profiles").Select("*, memberships(org_id, role, organizations(name))").Execute(&users)
+	err := client.DB.From("profiles").Select("*, memberships!memberships_user_id_fkey(org_id, role, status, organizations(name))").Execute(&users)
 
 	if err != nil {
 		log.Printf("DEBUG: Failed to fetch users: %v", err)
@@ -188,7 +187,7 @@ func (h *AdminHandler) CreateOrganization(w http.ResponseWriter, r *http.Request
 
 // UpdateOrganization updates an organization
 func (h *AdminHandler) UpdateOrganization(w http.ResponseWriter, r *http.Request) {
-	orgID := strings.TrimPrefix(r.URL.Path, "/admin/orgs/")
+	orgID := r.PathValue("id")
 	if orgID == "" {
 		http.Error(w, "Organization ID required", http.StatusBadRequest)
 		return
@@ -236,7 +235,7 @@ func (h *AdminHandler) UpdateOrganization(w http.ResponseWriter, r *http.Request
 
 // DeleteOrganization deletes an organization (with protection for "Enigmatic")
 func (h *AdminHandler) DeleteOrganization(w http.ResponseWriter, r *http.Request) {
-	orgID := strings.TrimPrefix(r.URL.Path, "/admin/orgs/")
+	orgID := r.PathValue("id")
 	if orgID == "" {
 		http.Error(w, "Organization ID required", http.StatusBadRequest)
 		return

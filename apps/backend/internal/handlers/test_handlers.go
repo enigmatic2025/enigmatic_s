@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/nodes"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
 	"go.temporal.io/sdk/client"
@@ -108,15 +107,8 @@ func (h *TestHandler) TestFlow(w http.ResponseWriter, r *http.Request) {
 	// Inject Flow ID and Org ID from DB (like execute_flow.go does)
 	if req.FlowID != "" {
 		flowDef.ID = req.FlowID
-
-		dbClient := database.GetClient()
-		var dbResult []struct {
-			OrgID string `json:"org_id"`
-		}
-		err := dbClient.DB.From("flows").Select("org_id").Eq("id", req.FlowID).Execute(&dbResult)
-		if err == nil && len(dbResult) > 0 {
-			flowDef.OrgID = dbResult[0].OrgID
-		}
+		// Intentionally skip setting OrgID so test runs don't get recorded
+		// in the action_flows table (workflow.go checks OrgID != "" before recording)
 	}
 
 	// 1. Prepare Input Data

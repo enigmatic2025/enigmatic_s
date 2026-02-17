@@ -74,6 +74,10 @@
       "actions": {
         "edit": "Editar Detalles",
         "changePassword": "Cambiar Contraseña",
+        "changeRole": "Cambiar Rol",
+        "resetMFA": "Restablecer MFA",
+        "block": "Bloquear Usuario",
+        "unblock": "Desbloquear Usuario",
         "delete": "Eliminar"
       }
     },
@@ -485,7 +489,8 @@
       "platformStats": "Estadísticas de Plataforma",
       "users": "Usuarios",
       "organizations": "Organizaciones",
-      "aiConfig": "Configuración de IA"
+      "aiConfig": "Configuración de IA",
+      "apiKeys": "Claves API"
     },
     "draggable": {
       "triggerCreateFlow": "Disparador: Crear Flujo",

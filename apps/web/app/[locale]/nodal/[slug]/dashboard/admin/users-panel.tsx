@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import useSWR from 'swr'
 import {  useTranslations } from 'next-intl'
-import { Plus, MoreHorizontal, Pencil, Trash, Search, X, Lock } from 'lucide-react'
+import { Plus, MoreHorizontal, Pencil, Trash, Search, X, Lock, Ban, ShieldCheck, KeyRound } from 'lucide-react'
 import { apiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
 import { User, Organization } from '@/types/admin'
@@ -69,7 +69,7 @@ export function UsersPanel() {
       // Search by name or email
       if (search) {
         const q = search.toLowerCase()
-        if (!user.full_name.toLowerCase().includes(q) && !user.email.toLowerCase().includes(q)) return false
+        if (!(user.full_name || '').toLowerCase().includes(q) && !(user.email || '').toLowerCase().includes(q)) return false
       }
       // Filter by organization
       if (filterOrg !== 'all') {
@@ -167,6 +167,31 @@ export function UsersPanel() {
     }
   }
 
+  const handleToggleBlock = async (user: User) => {
+    const action = user.blocked ? 'unblock' : 'block'
+    if (!confirm(`Are you sure you want to ${action} ${user.email}?`)) return
+
+    try {
+      const res = await apiClient.post(`/api/admin/users/${user.id}/block`, { blocked: !user.blocked })
+      if (!res.ok) throw new Error(`Failed to ${action} user`)
+      mutateUsers()
+      toast.success(`User ${action}ed successfully`)
+    } catch (error) {
+      toast.error(`Error ${action}ing user`)
+    }
+  }
+
+  const handleResetMFA = async (user: User) => {
+    if (!confirm(`Reset all MFA factors for ${user.email}? They will be logged out of all sessions.`)) return
+
+    try {
+      const res = await apiClient.post(`/api/admin/users/${user.id}/reset-mfa`, {})
+      if (!res.ok) throw new Error('Failed to reset MFA')
+      toast.success('MFA reset and user logged out successfully')
+    } catch (error) {
+      toast.error('Error resetting MFA')
+    }
+  }
 
   if (loading) {
     return (
@@ -259,12 +284,12 @@ export function UsersPanel() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9 border border-zinc-200 dark:border-zinc-700">
                         <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium">
-                            {user.full_name.substring(0, 2).toUpperCase()}
+                            {(user.full_name || '??').substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{user.full_name}</span>
-                      <span className="text-xs text-zinc-500">{user.email}</span>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{user.full_name || 'Unnamed'}</span>
+                      <span className="text-xs text-zinc-500">{user.email || 'No email'}</span>
                     </div>
                   </div>
                 </TableCell>
@@ -343,7 +368,25 @@ export function UsersPanel() {
                       }}>
                         <Lock className="mr-2 h-4 w-4 text-zinc-500" /> {t("Users.actions.changePassword")}
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
+                          setSelectedUser(user)
+                          setIsChangeRoleOpen(true)
+                      }}>
+                        <KeyRound className="mr-2 h-4 w-4 text-zinc-500" /> {t("Users.actions.changeRole")}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleResetMFA(user)}>
+                        <ShieldCheck className="mr-2 h-4 w-4 text-zinc-500" /> {t("Users.actions.resetMFA")}
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className={user.blocked
+                          ? "text-emerald-600 focus:text-emerald-600 focus:bg-emerald-50 dark:focus:bg-emerald-900/20"
+                          : "text-amber-600 focus:text-amber-600 focus:bg-amber-50 dark:focus:bg-amber-900/20"
+                        }
+                        onClick={() => handleToggleBlock(user)}
+                      >
+                        <Ban className="mr-2 h-4 w-4" /> {user.blocked ? t("Users.actions.unblock") : t("Users.actions.block")}
+                      </DropdownMenuItem>
                       <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20" onClick={() => handleDelete(user)}>
                         <Trash className="mr-2 h-4 w-4" /> {t("Users.actions.delete")}
                       </DropdownMenuItem>

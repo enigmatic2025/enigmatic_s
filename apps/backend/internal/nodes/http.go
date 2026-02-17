@@ -93,6 +93,20 @@ func (n *HttpNode) Execute(ctx context.Context, input NodeContext) (*NodeResult,
 		responseData = string(respBody)
 	}
 
+	// 8. Fail on server errors (5xx) so Temporal retries via activity retry policy
+	if resp.StatusCode >= 500 {
+		return &NodeResult{
+			Status: StatusFailed,
+			Output: map[string]interface{}{
+				"status":  resp.StatusCode,
+				"headers": resp.Header,
+				"data":    responseData,
+				"error":   fmt.Sprintf("server error: HTTP %d", resp.StatusCode),
+			},
+			Error: fmt.Sprintf("server error: HTTP %d", resp.StatusCode),
+		}, nil
+	}
+
 	return &NodeResult{
 		Status: "SUCCESS",
 		Output: map[string]interface{}{

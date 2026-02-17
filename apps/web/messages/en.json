@@ -74,6 +74,10 @@
       "actions": {
         "edit": "Edit Details",
         "changePassword": "Change Password",
+        "changeRole": "Change Role",
+        "resetMFA": "Reset MFA",
+        "block": "Block User",
+        "unblock": "Unblock User",
         "delete": "Delete"
       }
     },
@@ -485,7 +489,8 @@
       "platformStats": "Platform Stats",
       "users": "Users",
       "organizations": "Organizations",
-      "aiConfig": "AI Configuration"
+      "aiConfig": "AI Configuration",
+      "apiKeys": "API Keys"
     },
     "draggable": {
       "triggerCreateFlow": "Trigger: Create Flow",

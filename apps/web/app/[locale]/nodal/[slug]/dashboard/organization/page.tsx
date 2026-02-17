@@ -16,6 +16,8 @@ import {
   ChevronRight,
   Crown,
   X,
+  Lock,
+  ShieldCheck,
 } from "lucide-react";
 import LoadingPage from "@/components/loading-page";
 import { Button } from "@/components/ui/button";
@@ -102,6 +104,9 @@ export default function OrganizationPage() {
   const [isTeamDetailOpen, setIsTeamDetailOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [isAddTeamMemberOpen, setIsAddTeamMemberOpen] = useState(false);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  const [resetPasswordMember, setResetPasswordMember] = useState<OrganizationMember | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   // Form state
   const [newMember, setNewMember] = useState({ email: "", password: "", full_name: "", role: "member", supervisor_id: "", job_title: "" });
@@ -291,6 +296,30 @@ export default function OrganizationPage() {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!orgId || !resetPasswordMember || !newPassword) return;
+    try {
+      await organizationService.resetMemberPassword(orgId, resetPasswordMember.user_id, newPassword);
+      toast.success("Password reset successfully");
+      setIsResetPasswordOpen(false);
+      setNewPassword("");
+      setResetPasswordMember(null);
+    } catch {
+      toast.error("Failed to reset password");
+    }
+  };
+
+  const handleResetMFA = async (member: OrganizationMember) => {
+    if (!orgId) return;
+    if (!confirm(`Reset all MFA factors for ${member.profiles?.full_name}? They will be logged out of all sessions.`)) return;
+    try {
+      await organizationService.resetMemberMFA(orgId, member.user_id);
+      toast.success("MFA reset and user logged out");
+    } catch {
+      toast.error("Failed to reset MFA");
+    }
+  };
+
   if (loading) return <LoadingPage />;
 
   return (
@@ -437,7 +466,7 @@ export default function OrganizationPage() {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-44">
+                        <DropdownMenuContent align="end" className="w-48">
                           <DropdownMenuLabel>Manage</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => {
@@ -446,6 +475,20 @@ export default function OrganizationPage() {
                             }}
                           >
                             Edit Member
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setResetPasswordMember(member);
+                              setNewPassword("");
+                              setIsResetPasswordOpen(true);
+                            }}
+                          >
+                            <Lock className="h-3.5 w-3.5 mr-2" />
+                            Reset Password
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleResetMFA(member)}>
+                            <ShieldCheck className="h-3.5 w-3.5 mr-2" />
+                            Reset MFA
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -812,6 +855,38 @@ export default function OrganizationPage() {
               <p className="text-sm text-muted-foreground text-center py-4">All organization members are already in this team.</p>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={isResetPasswordOpen} onOpenChange={setIsResetPasswordOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Set a new password for {resetPasswordMember?.profiles?.full_name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs">New Password</Label>
+              <Input
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Min. 6 characters"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsResetPasswordOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleResetPassword} disabled={!newPassword}>
+              Reset Password
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

@@ -78,33 +78,33 @@ func (s *Server) RegisterRoutes() http.Handler {
 	dbClient := database.GetClient()
 	adminOnly := middleware.AdminOnly(dbClient)
 
-	// Protected Admin Routes (Require Auth Middleware)
+	// Protected Admin Routes (Require Auth + Admin Role)
 	// User promotion
-	mux.Handle("POST /api/admin/promote", middleware.Auth(http.HandlerFunc(adminHandler.PromoteToAdmin)))
+	mux.Handle("POST /api/admin/promote", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.PromoteToAdmin))))
 
 	// List endpoints
-	mux.Handle("GET /api/admin/users", middleware.Auth(http.HandlerFunc(adminHandler.ListUsers)))
-	mux.Handle("GET /api/admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.ListOrgs)))
+	mux.Handle("GET /api/admin/users", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.ListUsers))))
+	mux.Handle("GET /api/admin/orgs", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.ListOrgs))))
 
 	// Organization CRUD
-	mux.Handle("POST /api/admin/orgs", middleware.Auth(http.HandlerFunc(adminHandler.CreateOrganization)))
-	mux.Handle("PUT /api/admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.UpdateOrganization)))
-	mux.Handle("DELETE /api/admin/orgs/{id}", middleware.Auth(http.HandlerFunc(adminHandler.DeleteOrganization)))
+	mux.Handle("POST /api/admin/orgs", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.CreateOrganization))))
+	mux.Handle("PUT /api/admin/orgs/{id}", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.UpdateOrganization))))
+	mux.Handle("DELETE /api/admin/orgs/{id}", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.DeleteOrganization))))
 
-	// Organization AI Credits Management (Admin only)
+	// Organization AI Credits Management
 	mux.Handle("PUT /api/admin/orgs/{id}/credits", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.SetOrgCredits))))
 	mux.Handle("POST /api/admin/orgs/{id}/credits/add", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.AddOrgCredits))))
 	mux.Handle("PUT /api/admin/orgs/{id}/unlimited", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.SetUnlimitedAccess))))
 	mux.Handle("GET /api/admin/orgs/{id}/credits/stats", middleware.Auth(adminOnly(http.HandlerFunc(orgCreditsHandler.GetOrgCreditsStats))))
 
 	// User Management
-	mux.Handle("POST /api/admin/users", middleware.Auth(http.HandlerFunc(adminHandler.CreateUser)))
-	mux.Handle("PUT /api/admin/users/{id}", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUser)))
-	mux.Handle("DELETE /api/admin/users/{id}", middleware.Auth(http.HandlerFunc(adminHandler.DeleteUser)))
-	mux.Handle("POST /api/admin/users/{id}/block", middleware.Auth(http.HandlerFunc(adminHandler.BlockUser)))
-	mux.Handle("POST /api/admin/users/{id}/reset-mfa", middleware.Auth(http.HandlerFunc(adminHandler.ResetUserMFA)))
-	mux.Handle("POST /api/admin/users/{id}/password", middleware.Auth(http.HandlerFunc(adminHandler.ChangeUserPassword)))
-	mux.Handle("POST /api/admin/users/{id}/role", middleware.Auth(http.HandlerFunc(adminHandler.UpdateUserRole)))
+	mux.Handle("POST /api/admin/users", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.CreateUser))))
+	mux.Handle("PUT /api/admin/users/{id}", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.UpdateUser))))
+	mux.Handle("DELETE /api/admin/users/{id}", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.DeleteUser))))
+	mux.Handle("POST /api/admin/users/{id}/block", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.BlockUser))))
+	mux.Handle("POST /api/admin/users/{id}/reset-mfa", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.ResetUserMFA))))
+	mux.Handle("POST /api/admin/users/{id}/password", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.ChangeUserPassword))))
+	mux.Handle("POST /api/admin/users/{id}/role", middleware.Auth(adminOnly(http.HandlerFunc(adminHandler.UpdateUserRole))))
 
 	// Flow Routes
 	flowHandler := handlers.NewFlowHandler(s.temporalClient)
@@ -121,10 +121,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("PATCH /api/action-flows/{id}", middleware.Auth(http.HandlerFunc(actionFlowHandler.UpdateActionFlow))) // Added
 	mux.Handle("DELETE /api/action-flows/{id}", middleware.Auth(http.HandlerFunc(actionFlowHandler.DeleteActionFlow)))
 
-	// Execution Routes
+	// Execution Routes (requires per-org API key via X-API-Key header)
 	if s.temporalClient != nil {
 		executeHandler := handlers.NewExecuteFlowHandler(s.temporalClient)
-		mux.Handle("POST /api/flows/{id}/execute", http.HandlerFunc(executeHandler.ExecuteFlow))
+		mux.Handle("POST /api/flows/{id}/execute", middleware.ApiKeyAuth(http.HandlerFunc(executeHandler.ExecuteFlow)))
 	}
 
 	// Public routes (no auth)
@@ -178,6 +178,14 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("DELETE /api/orgs/{orgId}/teams/{teamId}/members/{userId}", middleware.Auth(http.HandlerFunc(orgHandler.RemoveTeamMember)))
 	mux.Handle("PATCH /api/orgs/{orgId}/teams/{teamId}/members/{userId}", middleware.Auth(http.HandlerFunc(orgHandler.UpdateTeamMemberRole)))
 	mux.Handle("GET /api/orgs/{orgId}/assignees", middleware.Auth(http.HandlerFunc(orgHandler.GetAssignees)))
+	mux.Handle("POST /api/orgs/{orgId}/members/{userId}/reset-password", middleware.Auth(http.HandlerFunc(orgHandler.ResetMemberPassword)))
+	mux.Handle("POST /api/orgs/{orgId}/members/{userId}/reset-mfa", middleware.Auth(http.HandlerFunc(orgHandler.ResetMemberMFA)))
+
+	// API Key Management Routes (JWT auth — org admins manage keys via the dashboard)
+	apiKeyHandler := handlers.NewApiKeyHandler()
+	mux.Handle("POST /api/orgs/{orgId}/api-keys", middleware.Auth(http.HandlerFunc(apiKeyHandler.CreateApiKey)))
+	mux.Handle("GET /api/orgs/{orgId}/api-keys", middleware.Auth(http.HandlerFunc(apiKeyHandler.ListApiKeys)))
+	mux.Handle("DELETE /api/orgs/{orgId}/api-keys/{id}", middleware.Auth(http.HandlerFunc(apiKeyHandler.DeleteApiKey)))
 
 	// Activity Feed Routes
 	activityHandler := handlers.NewActivityHandler()

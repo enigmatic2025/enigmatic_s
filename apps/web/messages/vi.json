@@ -74,6 +74,10 @@
       "actions": {
         "edit": "Chỉnh sửa chi tiết",
         "changePassword": "Đổi mật khẩu",
+        "changeRole": "Đổi vai trò",
+        "resetMFA": "Đặt lại MFA",
+        "block": "Chặn người dùng",
+        "unblock": "Bỏ chặn người dùng",
         "delete": "Xóa"
       }
     },
@@ -489,7 +493,8 @@
       "platformStats": "Thống kê nền tảng",
       "users": "Người dùng",
       "organizations": "Tổ chức",
-      "aiConfig": "Cấu hình AI"
+      "aiConfig": "Cấu hình AI",
+      "apiKeys": "Khóa API"
     },
     "draggable": {
       "triggerCreateFlow": "Kích hoạt: Tạo luồng",

@@ -3,12 +3,15 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/workflow"
+	"go.temporal.io/api/serviceerror"
 	"go.temporal.io/sdk/client"
 )
 
@@ -127,17 +130,50 @@ func (h *ExecuteFlowHandler) ExecuteFlow(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
+	// 3.6 Validate org ownership via API key context
+	if orgID, ok := middleware.GetOrgID(r.Context()); ok {
+		if dbResult[0].OrgID != orgID {
+			http.Error(w, "Forbidden: API key does not belong to this flow's organization", http.StatusForbidden)
+			return
+		}
+	}
+
 	// 4. Setup Temporal Options
+	// Support optional idempotency key (header or query param) to prevent duplicate executions on retries
+	workflowID := "flow-" + flowID + "-" + fmt.Sprintf("%d", time.Now().UnixNano())
+	idempotencyKey := r.Header.Get("X-Idempotency-Key")
+	if idempotencyKey == "" {
+		idempotencyKey = r.URL.Query().Get("idempotency_key")
+	}
+	if idempotencyKey != "" {
+		workflowID = "flow-" + flowID + "-" + idempotencyKey
+	}
+
 	workflowOptions := client.StartWorkflowOptions{
-		ID:        "flow-" + flowID + "-" + fmt.Sprintf("%d", time.Now().UnixNano()),
+		ID:        workflowID,
 		TaskQueue: "nodal-task-queue",
 	}
 
 	// 5. Execute Workflow
-	// Use the function reference to ensure type safety and correct name matching
-	// This also implicitly enforces the 2-argument signature (FlowDefinition, InputData)
 	we, err := h.TemporalClient.ExecuteWorkflow(context.Background(), workflowOptions, workflow.NodalWorkflow, flowDef, inputData)
 	if err != nil {
+		// If idempotency key was used and workflow already exists, return the existing run
+		if idempotencyKey != "" {
+			var alreadyStarted *serviceerror.WorkflowExecutionAlreadyStarted
+			if errors.As(err, &alreadyStarted) {
+				desc, descErr := h.TemporalClient.DescribeWorkflowExecution(context.Background(), workflowID, "")
+				if descErr == nil {
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(http.StatusOK)
+					json.NewEncoder(w).Encode(map[string]string{
+						"message":     "Flow execution already started (idempotent)",
+						"workflow_id": workflowID,
+						"run_id":      desc.WorkflowExecutionInfo.Execution.RunId,
+					})
+					return
+				}
+			}
+		}
 		http.Error(w, "Failed to start workflow: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

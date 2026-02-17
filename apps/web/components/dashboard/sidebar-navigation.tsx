@@ -3,6 +3,7 @@
 import { Link, usePathname } from "@/navigation";
 import {
   Code2,
+  KeyRound,
   LayoutDashboard,
   MessageSquare,
   Blocks,
@@ -189,6 +190,13 @@ export function SidebarNavigation({ sidebarOpen, currentOrg }: SidebarNavigation
             label={t("items.knowledgeBase")}
             sidebarOpen={sidebarOpen}
             active={isActive(`/nodal/${currentOrg?.slug}/dashboard/knowledge-base`)}
+          />
+          <NavItem
+            href={`/nodal/${currentOrg?.slug}/dashboard/api-keys`}
+            icon={KeyRound}
+            label={t("items.apiKeys")}
+            sidebarOpen={sidebarOpen}
+            active={isActive(`/nodal/${currentOrg?.slug}/dashboard/api-keys`)}
           />
         </nav>
       </div>
