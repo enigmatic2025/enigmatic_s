@@ -26,6 +26,7 @@ interface FlowToolbarProps {
   isPolling: boolean;
   currentRun: any;
   onPlayClick: () => void;
+  onWizardClick: () => void;
   handleStop: () => void;
   handleSave: () => void;
   handlePublish: () => void;
@@ -47,6 +48,7 @@ export function FlowToolbar({
   isPolling,
   currentRun,
   onPlayClick,
+  onWizardClick,
   handleStop,
   handleSave,
   handlePublish,
@@ -196,9 +198,9 @@ export function FlowToolbar({
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className={`h-8 w-8 transition-colors ${isPolling ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : 'text-muted-foreground hover:text-foreground'}`}
                 onClick={isPolling ? handleStop : onPlayClick}
                 disabled={isPolling && !currentRun}
@@ -214,6 +216,24 @@ export function FlowToolbar({
               <p>{isPolling ? t("tooltips.stopExecution") : t("tooltips.runFlow")}</p>
             </TooltipContent>
           </Tooltip>
+
+          {!isPolling && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  onClick={onWizardClick}
+                >
+                  <Wand2 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Configure Test Data</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
 
           <Tooltip>
             <TooltipTrigger asChild>

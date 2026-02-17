@@ -292,32 +292,46 @@ export function TestWizardModal({
 
   // ─── Save all test data ───
 
-  const saveAllTestData = useCallback(() => {
+  const buildTestData = useCallback(() => {
+    const mocks: Record<string, any> = {};
+    let hasMockData = false;
+    for (const step of steps) {
+      if (step.type === 'human-task' && step.node) {
+        const mock = step.node.data?.mockResponse || null;
+        mocks[step.node.id] = mock;
+        if (mock && Object.keys(mock).length > 0) hasMockData = true;
+      }
+      if (step.type === 'automation' && step.node) {
+        const mock = step.node.data?.mockPayload || null;
+        mocks[step.node.id] = mock;
+        if (mock) hasMockData = true;
+      }
+    }
+    const hasTriggerData = Object.keys(triggerPayload).length > 0 &&
+      Object.values(triggerPayload).some(v => v !== '' && v !== 0 && v !== false && v !== null && v !== undefined);
+    return { data: { trigger: triggerPayload, mocks }, hasData: hasTriggerData || hasMockData };
+  }, [steps, triggerPayload]);
+
+  const saveAllTestData = useCallback((silent = false) => {
     const storageKey = getStorageKey(flowId);
     if (!storageKey) {
-      toast.error("Cannot save: no flow ID");
+      if (!silent) toast.error("Cannot save: no flow ID");
       return;
     }
 
-    const mocks: Record<string, any> = {};
-    for (const step of steps) {
-      if (step.type === 'human-task' && step.node) {
-        mocks[step.node.id] = step.node.data?.mockResponse || null;
-      }
-      if (step.type === 'automation' && step.node) {
-        mocks[step.node.id] = step.node.data?.mockPayload || null;
-      }
+    const { data, hasData } = buildTestData();
+    if (!hasData) {
+      if (!silent) toast.info("No test data to save");
+      return;
     }
-
-    const data = { trigger: triggerPayload, mocks };
 
     try {
       sessionStorage.setItem(storageKey, JSON.stringify(data));
-      toast.success("Test data saved");
+      if (!silent) toast.success("Test data saved");
     } catch {
-      toast.error("Failed to save test data");
+      if (!silent) toast.error("Failed to save test data");
     }
-  }, [flowId, steps, triggerPayload]);
+  }, [flowId, buildTestData]);
 
   // ─── Trigger Handlers ───
 
@@ -394,8 +408,8 @@ export function TestWizardModal({
       }
     }
 
-    // Auto-save before running
-    saveAllTestData();
+    // Auto-save silently before running
+    saveAllTestData(true);
 
     onRun(payload);
     onClose();
@@ -1009,7 +1023,7 @@ export function TestWizardModal({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={saveAllTestData}
+                  onClick={() => saveAllTestData(false)}
                   className="gap-1.5 h-8 text-muted-foreground"
                 >
                   <Save className="w-3.5 h-3.5" />

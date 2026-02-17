@@ -221,14 +221,23 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	tryExecuteNode = func(ctx workflow.Context, nodeID string) {
 		defer wg.Done()
 
+		node, exists := nodesLookup[nodeID]
+		nodeType := ""
+		if exists {
+			nodeType = node.Type
+		}
+		logger.Info("tryExecuteNode called", "ID", nodeID, "Type", nodeType, "Status", nodeStatus[nodeID])
+
 		// Safety check
 		if executionError != nil {
+			logger.Info("Skipping node (executionError set)", "ID", nodeID)
 			return
 		}
 
 		// A. Check Status
 		// In Temporal's single-threaded event loop, this is safe without locks
 		if nodeStatus[nodeID] == "COMPLETED" || nodeStatus[nodeID] == "RUNNING" {
+			logger.Info("Skipping node (already done/running)", "ID", nodeID, "Status", nodeStatus[nodeID])
 			return
 		}
 
@@ -240,6 +249,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			if parentStatus != "COMPLETED" {
 				// Dependency not met yet. Wait.
 				// When the missing parent finishes, it will trigger this node again.
+				logger.Info("Dependency not met, deferring", "ID", nodeID, "WaitingOn", edge.Source, "ParentStatus", parentStatus)
 				return
 			}
 		}
@@ -386,6 +396,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 		// E. Trigger Children (Parallel Split)
 		childrenEdges := outgoingEdges[nodeID]
+		logger.Info("Triggering children", "ParentID", nodeID, "ParentType", node.Type, "ChildEdges", len(childrenEdges))
 		for _, edge := range childrenEdges {
 			// Branching Logic (Condition / Switch)
 			// If node is a conditional, we only trigger specific children
@@ -420,11 +431,15 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 			}
 
 			if shouldTrigger {
+				logger.Info("Triggering child node", "Parent", nodeID, "Child", edge.Target)
 				wg.Add(1)
 				// Launch child in new routine
+				targetID := edge.Target // Capture for closure
 				workflow.Go(ctx, func(ctx workflow.Context) {
-					tryExecuteNode(ctx, edge.Target)
+					tryExecuteNode(ctx, targetID)
 				})
+			} else {
+				logger.Info("Skipping child (branching)", "Parent", nodeID, "Child", edge.Target)
 			}
 		}
 	}
@@ -457,6 +472,11 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		}
 	}
 
-	logger.Info("Nodal workflow completed successfully")
+	// Log all node statuses and executionState keys for debugging
+	stateKeys := make([]string, 0, len(executionState))
+	for k := range executionState {
+		stateKeys = append(stateKeys, k)
+	}
+	logger.Info("Nodal workflow completed successfully", "ExecutionStateKeys", stateKeys, "NodeStatuses", nodeStatus)
 	return executionState, nil
 }

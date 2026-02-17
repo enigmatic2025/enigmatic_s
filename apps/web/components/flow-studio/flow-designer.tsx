@@ -76,8 +76,50 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     setFlowId(flowId || null);
   }, [flowId, setFlowId]);
 
-  // Intercept Play Click — always opens wizard
+  // Check if saved test data exists for quick run
+  const hasSavedTestData = useCallback(() => {
+      if (!flowId) return false;
+      try {
+          const stored = sessionStorage.getItem(`test_data_${flowId}`);
+          return !!stored;
+      } catch { return false; }
+  }, [flowId]);
+
+  // Intercept Play Click — if saved data exists, run immediately; otherwise open wizard
   const onPlayClick = () => {
+      if (hasSavedTestData()) {
+          // Run with saved data immediately
+          try {
+              const stored = sessionStorage.getItem(`test_data_${flowId}`);
+              if (stored) {
+                  const parsed = JSON.parse(stored);
+                  const payload = parsed.trigger || {};
+
+                  // Restore mock data to nodes before running
+                  if (parsed.mocks) {
+                      for (const [nodeId, mockData] of Object.entries(parsed.mocks)) {
+                          const node = nodes.find(n => n.id === nodeId);
+                          if (node) {
+                              if (node.type === 'human-task' && mockData) {
+                                  handleUpdateNodeData(nodeId, { ...node.data, mockResponse: mockData });
+                              } else if (node.type === 'automation' && mockData) {
+                                  handleUpdateNodeData(nodeId, { ...node.data, mockPayload: mockData });
+                              }
+                          }
+                      }
+                  }
+
+                  // Small delay to let node data updates propagate
+                  setTimeout(() => handleTestRun(payload), 50);
+                  return;
+              }
+          } catch { /* fall through to wizard */ }
+      }
+      setIsTestWizardOpen(true);
+  };
+
+  // Force open wizard (for editing test data)
+  const onWizardClick = () => {
       setIsTestWizardOpen(true);
   };
 
@@ -436,6 +478,10 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                       
                       const rawOutput = data.output || {};
                       const traceData: Record<string, any> = {};
+
+                      // Debug: Log raw output keys to identify missing nodes
+                      console.log('[Flow Debug] Raw output keys:', Object.keys(rawOutput));
+                      console.log('[Flow Debug] Frontend node IDs:', nodes.map(n => `${n.id} (${n.type})`));
                        
                       // 1. Process Trace Data first to get timestamps/ordering if possible (or just map keys)
                       Object.entries(rawOutput).forEach(([nodeId, nodeOut]) => {
@@ -725,6 +771,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         isPolling={isPolling}
         currentRun={currentRun}
         onPlayClick={onPlayClick}
+        onWizardClick={onWizardClick}
         handleStop={handleStop}
         handleSave={handleSave}
         handlePublish={handlePublishClick}
