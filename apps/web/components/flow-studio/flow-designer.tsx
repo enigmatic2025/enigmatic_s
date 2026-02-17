@@ -334,6 +334,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   const handleTestRun = async (inputPayload: any = {}) => {
     // Start generic loading state (isPolling=true but currentRun=null implies "Starting")
     setIsPolling(true);
+    testStartTimeRef.current = Date.now();
     clearLogs(); // Clear logs before starting
     addLog({ message: t("messages.startingFlow"), type: "info" });
 
@@ -382,7 +383,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
             return {
                 ...node,
-                type
+                type,
+                data: { ...node.data, type },
             };
         }),
         edges,
@@ -419,6 +421,7 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   // POLLING EFFECT
   const [isPolling, setIsPolling] = useState(false);
   const [currentRun, setCurrentRun] = useState<{workflowId: string, runId: string} | null>(null);
+  const testStartTimeRef = useRef<number>(0);
 
   useEffect(() => {
       let intervalId: NodeJS.Timeout;
@@ -485,22 +488,123 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
                       const sortedNodeIds = getSortedOrder();
 
-                      addLog({ message: "Workflow Completed Successfully", type: "success" });
+                      const duration = testStartTimeRef.current ? Date.now() - testStartTimeRef.current : 0;
+                      const durationStr = duration > 0
+                          ? duration >= 1000
+                              ? `${(duration / 1000).toFixed(1)}s`
+                              : `${duration}ms`
+                          : '';
+                      addLog({ message: `Workflow Completed Successfully${durationStr ? ` in ${durationStr}` : ''}`, type: "success" });
 
                       sortedNodeIds.forEach(nodeId => {
                           const result = traceData[nodeId];
-                          if (!result) return; // Skip if node has no trace data
+                          if (!result) return;
 
                           const node = nodesMap.get(nodeId);
-                          const nodeName = node?.data?.label || node?.type || nodeId;
-                          
-                          addLog({ 
-                              message: `Step '${nodeName}' executed`, 
-                              type: "info", 
-                              details: result.output 
-                          });
+                          const nodeType = node?.type || 'unknown';
+
+                          // Skip trigger nodes and synthetic backend entries
+                          if (
+                              nodeType === 'api-trigger' ||
+                              nodeType === 'manual-trigger' ||
+                              nodeType === 'trigger' ||
+                              nodeId === 'trigger' ||
+                              !node
+                          ) {
+                              return;
+                          }
+
+                          const nodeName = node.data?.label || node.data?.title || node.data?.eventName || nodeType;
+                          const output = result.output;
+                          let logType: 'info' | 'success' | 'error' | 'warning' = 'info';
+                          let message = `Step '${nodeName}' executed`;
+                          let details = output;
+
+                          // ── Per-node-type log enrichment ──
+
+                          if (nodeType === 'action' || nodeType === 'http') {
+                              const statusCode = output?.status;
+                              const method = (node.data?.method || 'GET').toUpperCase();
+                              const url = node.data?.url || '';
+                              const urlShort = url.length > 60 ? url.slice(0, 57) + '...' : url;
+
+                              if (typeof statusCode === 'number') {
+                                  if (statusCode >= 400) {
+                                      logType = 'error';
+                                      message = `Step '${nodeName}' — ${method} ${urlShort} → ${statusCode}`;
+                                  } else if (statusCode >= 300) {
+                                      logType = 'warning';
+                                      message = `Step '${nodeName}' — ${method} ${urlShort} → ${statusCode}`;
+                                  } else {
+                                      logType = 'success';
+                                      message = `Step '${nodeName}' — ${method} ${urlShort} → ${statusCode}`;
+                                  }
+                              }
+                              // Only show data payload, not raw headers
+                              if (output?.data !== undefined) {
+                                  details = output.data;
+                              }
+
+                          } else if (nodeType === 'condition') {
+                              const condResult = output?.result;
+                              message = `Step '${nodeName}' evaluated → ${condResult ? 'TRUE' : 'FALSE'}`;
+                              logType = 'info';
+                              details = null; // Condition output is just { result: bool }, not useful to show
+
+                          } else if (nodeType === 'variable' || nodeType === 'set') {
+                              const keys = output ? Object.keys(output).filter(k => k !== '_debug_message') : [];
+                              message = `Step '${nodeName}' set ${keys.length} variable${keys.length !== 1 ? 's' : ''}: ${keys.join(', ')}`;
+                              logType = 'info';
+
+                          } else if (nodeType === 'filter') {
+                              const count = output?.count;
+                              message = `Step '${nodeName}' filtered → ${count ?? '?'} item${count !== 1 ? 's' : ''}`;
+
+                          } else if (nodeType === 'map') {
+                              const count = output?.count;
+                              if (count !== undefined) {
+                                  message = `Step '${nodeName}' mapped ${count} item${count !== 1 ? 's' : ''}`;
+                              }
+
+                          } else if (nodeType === 'loop') {
+                              message = `Step '${nodeName}' loop completed`;
+
+                          } else if (nodeType === 'switch') {
+                              const selected = output?.selected_case;
+                              message = `Step '${nodeName}' matched case '${selected || 'default'}'`;
+                              details = null;
+
+                          } else if (nodeType === 'human-task') {
+                              logType = 'success';
+                              message = `Step '${nodeName}' completed`;
+
+                          } else if (nodeType === 'automation') {
+                              logType = 'success';
+                              message = `Step '${nodeName}' received event`;
+                              // Strip internal fields from display
+                              if (output) {
+                                  const { webhook_url, status, message: _msg, ...payload } = output;
+                                  details = Object.keys(payload).length > 0 ? payload : output;
+                              }
+
+                          } else if (nodeType === 'email') {
+                              logType = 'success';
+                              const to = output?.to || '';
+                              message = `Step '${nodeName}' sent${to ? ` to ${to}` : ''}`;
+                              details = null;
+
+                          } else if (nodeType === 'parse') {
+                              if (output?.error) {
+                                  logType = 'error';
+                                  message = `Step '${nodeName}' parse failed: ${output.error}`;
+                              } else {
+                                  message = `Step '${nodeName}' parsed successfully`;
+                              }
+                          }
+
+                          addLog({ message, type: logType, details, nodeType, nodeId });
                       });
-                      
+
                       setExecutionTrace(traceData);
                   } else if (data && (data.status === "FAILED" || data.status === "CANCELED")) {
                        setIsPolling(false);
@@ -508,9 +612,39 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                            toast.info(t("messages.workflowCanceled"), { id: TEST_TOAST_ID });
                            addLog({ message: t("messages.workflowCanceledByUser"), type: "warning" });
                        } else {
-                           const errorMsg = data.output?.error || t("messages.workflowFailed");
-                           toast.error(errorMsg, { id: TEST_TOAST_ID });
-                           addLog({ message: `Workflow Failed: ${errorMsg}`, type: "error", details: data.output });
+                           const rawError = data.output?.error || t("messages.workflowFailed");
+                           toast.error("Workflow execution failed", { id: TEST_TOAST_ID });
+
+                           // Try to extract the failing node ID/name from the error string
+                           // Backend format: "node <nodeId> failed: <reason>"
+                           const nodeMatch = rawError.match?.(/node\s+(\S+)\s+failed:\s*(.*)/i);
+                           const nodesMap = new Map(nodes.map(n => [n.id, n]));
+
+                           if (nodeMatch) {
+                               const failedNodeId = nodeMatch[1];
+                               const reason = nodeMatch[2] || 'Unknown error';
+                               const failedNode = nodesMap.get(failedNodeId);
+                               const failedName = failedNode?.data?.label || failedNode?.data?.title || failedNodeId;
+                               const failedType = failedNode?.type || 'unknown';
+
+                               addLog({
+                                   message: `Workflow Failed`,
+                                   type: "error",
+                               });
+                               addLog({
+                                   message: `Step '${failedName}' failed: ${reason}`,
+                                   type: "error",
+                                   details: data.output,
+                                   nodeType: failedType,
+                                   nodeId: failedNodeId,
+                               });
+                           } else {
+                               addLog({
+                                   message: `Workflow Failed: ${rawError}`,
+                                   type: "error",
+                                   details: data.output,
+                               });
+                           }
                        }
                   } else {
                       // Still running

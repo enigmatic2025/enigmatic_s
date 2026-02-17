@@ -22,8 +22,8 @@ const AutomationNode = memo(({ id, data, selected }: NodeProps) => {
 
   return (
     <NodeCard
+      nodeId={id}
       isSelected={selected}
-      executionStatus={data.executionStatus}
       borderColorClass={borderClasses}
     >
       {/* Input Handle */}

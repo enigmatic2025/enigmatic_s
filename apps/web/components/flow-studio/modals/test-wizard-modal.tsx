@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { Node, Edge } from 'reactflow';
 import {
   Dialog,
@@ -199,6 +199,7 @@ export function TestWizardModal({
   const [triggerPayload, setTriggerPayload] = useState<Record<string, any>>({});
   const [triggerJson, setTriggerJson] = useState("{\n  \n}");
   const [triggerMode, setTriggerMode] = useState<'form' | 'json'>('form');
+  const [localMockPayloads, setLocalMockPayloads] = useState<Record<string, string>>({});
 
   // Compute wizard steps
   const steps = useMemo(() => {
@@ -223,61 +224,67 @@ export function TestWizardModal({
     return result;
   }, [nodes, edges]);
 
-  // Reset on open
+  // Track previous isOpen to detect open transition
+  const prevIsOpenRef = useRef(false);
+
+  // Reset only when modal opens (isOpen transitions false → true)
   useEffect(() => {
-    if (isOpen) {
-      setCurrentStep(0);
-      setTriggerMode('form');
+    const justOpened = isOpen && !prevIsOpenRef.current;
+    prevIsOpenRef.current = isOpen;
 
-      const triggerNode = nodes.find(n => n.type === 'api-trigger');
-      const storageKey = getStorageKey(flowId);
-      let loadedTrigger: Record<string, any> | null = null;
+    if (!justOpened) return;
 
-      // Try to load saved test data
-      if (storageKey) {
-        try {
-          const stored = sessionStorage.getItem(storageKey);
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            loadedTrigger = parsed.trigger || null;
+    setCurrentStep(0);
+    setTriggerMode('form');
 
-            // Restore mock data to nodes
-            if (parsed.mocks) {
-              for (const [nodeId, mockData] of Object.entries(parsed.mocks)) {
-                const node = nodes.find(n => n.id === nodeId);
-                if (node) {
-                  if (node.type === 'human-task' && mockData) {
-                    onUpdateNodeData(nodeId, { ...node.data, mockResponse: mockData });
-                  } else if (node.type === 'automation' && mockData) {
-                    onUpdateNodeData(nodeId, { ...node.data, mockPayload: mockData });
-                  }
+    const triggerNode = nodes.find(n => n.type === 'api-trigger');
+    const storageKey = getStorageKey(flowId);
+    let loadedTrigger: Record<string, any> | null = null;
+
+    // Try to load saved test data
+    if (storageKey) {
+      try {
+        const stored = sessionStorage.getItem(storageKey);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          loadedTrigger = parsed.trigger || null;
+
+          // Restore mock data to nodes
+          if (parsed.mocks) {
+            for (const [nodeId, mockData] of Object.entries(parsed.mocks)) {
+              const node = nodes.find(n => n.id === nodeId);
+              if (node) {
+                if (node.type === 'human-task' && mockData) {
+                  onUpdateNodeData(nodeId, { ...node.data, mockResponse: mockData });
+                } else if (node.type === 'automation' && mockData) {
+                  onUpdateNodeData(nodeId, { ...node.data, mockPayload: mockData });
                 }
               }
             }
           }
-        } catch { /* ignore */ }
-      }
-
-      if (loadedTrigger) {
-        setTriggerPayload(loadedTrigger);
-        setTriggerJson(JSON.stringify(loadedTrigger, null, 2));
-      } else if (triggerNode?.data?.schema) {
-        const initial: Record<string, any> = {};
-        (triggerNode.data.schema as SchemaField[]).forEach(f => {
-          if (f.type === 'string') initial[f.key] = "";
-          if (f.type === 'number') initial[f.key] = 0;
-          if (f.type === 'boolean') initial[f.key] = false;
-          if (f.type === 'array') initial[f.key] = [];
-          if (f.type === 'object') initial[f.key] = {};
-        });
-        setTriggerPayload(initial);
-        setTriggerJson(JSON.stringify(initial, null, 2));
-      } else {
-        setTriggerPayload({});
-        setTriggerJson("{\n  \n}");
-      }
+        }
+      } catch { /* ignore */ }
     }
-  }, [isOpen, nodes, flowId]);
+
+    if (loadedTrigger) {
+      setTriggerPayload(loadedTrigger);
+      setTriggerJson(JSON.stringify(loadedTrigger, null, 2));
+    } else if (triggerNode?.data?.schema) {
+      const initial: Record<string, any> = {};
+      (triggerNode.data.schema as SchemaField[]).forEach(f => {
+        if (f.type === 'string') initial[f.key] = "";
+        if (f.type === 'number') initial[f.key] = 0;
+        if (f.type === 'boolean') initial[f.key] = false;
+        if (f.type === 'array') initial[f.key] = [];
+        if (f.type === 'object') initial[f.key] = {};
+      });
+      setTriggerPayload(initial);
+      setTriggerJson(JSON.stringify(initial, null, 2));
+    } else {
+      setTriggerPayload({});
+      setTriggerJson("{\n  \n}");
+    }
+  }, [isOpen, nodes, flowId, onUpdateNodeData]);
 
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
@@ -328,10 +335,22 @@ export function TestWizardModal({
     } catch { /* invalid */ }
   };
 
+  // ─── Flush local mock payloads to node data ───
+
+  const flushLocalMockPayloads = useCallback(() => {
+    for (const [nodeId, value] of Object.entries(localMockPayloads)) {
+      const node = nodes.find(n => n.id === nodeId);
+      if (node && value !== undefined) {
+        onUpdateNodeData(nodeId, { ...node.data, mockPayload: value });
+      }
+    }
+  }, [localMockPayloads, nodes, onUpdateNodeData]);
+
   // ─── Navigation ───
 
   const handleNext = () => {
     if (isLastStep) return;
+    flushLocalMockPayloads();
     if (currentStepData.type === 'trigger' && triggerMode === 'json') {
       try { JSON.parse(triggerJson); } catch {
         toast.error("Invalid JSON in trigger payload");
@@ -343,10 +362,12 @@ export function TestWizardModal({
 
   const handlePrev = () => {
     if (isFirstStep) return;
+    flushLocalMockPayloads();
     setCurrentStep(s => s - 1);
   };
 
   const handleRun = () => {
+    flushLocalMockPayloads();
     let payload = triggerPayload;
     if (steps.some(s => s.type === 'trigger')) {
       if (triggerMode === 'json') {
@@ -707,7 +728,8 @@ export function TestWizardModal({
       return `{\n${lines.join(',\n')}\n}`;
     };
 
-    const currentValue = node.data?.mockPayload || buildDefault();
+    // Use local state if available, otherwise fall back to node data
+    const currentValue = localMockPayloads[node.id] ?? node.data?.mockPayload ?? buildDefault();
 
     return (
       <div className="space-y-5">
@@ -722,7 +744,11 @@ export function TestWizardModal({
             <Label className="text-xs text-muted-foreground">Webhook Body (JSON)</Label>
             <button
               type="button"
-              onClick={() => onUpdateNodeData(node.id, { ...node.data, mockPayload: buildDefault() })}
+              onClick={() => {
+                const def = buildDefault();
+                setLocalMockPayloads(prev => ({ ...prev, [node.id]: def }));
+                onUpdateNodeData(node.id, { ...node.data, mockPayload: def });
+              }}
               className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
@@ -731,7 +757,16 @@ export function TestWizardModal({
           </div>
           <Textarea
             value={currentValue}
-            onChange={(e) => onUpdateNodeData(node.id, { ...node.data, mockPayload: e.target.value })}
+            onChange={(e) => {
+              setLocalMockPayloads(prev => ({ ...prev, [node.id]: e.target.value }));
+            }}
+            onBlur={() => {
+              // Sync to parent on blur so node data stays up to date
+              const val = localMockPayloads[node.id];
+              if (val !== undefined) {
+                onUpdateNodeData(node.id, { ...node.data, mockPayload: val });
+              }
+            }}
             placeholder={buildDefault()}
             className="font-mono text-xs min-h-[320px] resize-none bg-muted/20"
             spellCheck={false}
@@ -842,7 +877,7 @@ export function TestWizardModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="!w-[960px] !max-w-[960px] !h-[640px] p-0 gap-0 overflow-hidden" showCloseButton={false}>
+      <DialogContent className="w-[90vw]! max-w-300! h-[85vh]! max-h-225! p-0 gap-0 overflow-hidden" showCloseButton={false}>
         <div className="flex h-full">
 
           {/* ─── Left: Step Nav ─── */}

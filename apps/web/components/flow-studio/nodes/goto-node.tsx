@@ -24,8 +24,9 @@ const GotoNode = memo(({ id, data, selected, isConnectable }: NodeProps) => {
   const targetName = targetNode?.data?.label || targetNode?.id || "Unknown";
 
   return (
-    <NodeCard 
-      isSelected={selected} 
+    <NodeCard
+      nodeId={id}
+      isSelected={selected}
       borderColorClass={borderColorClasses}
       testId="goto-node"
     >

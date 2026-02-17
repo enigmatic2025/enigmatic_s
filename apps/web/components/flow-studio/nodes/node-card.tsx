@@ -12,26 +12,27 @@ interface NodeCardProps {
   isSelected?: boolean;
   isConnectable?: boolean;
   testId?: string;
-  executionStatus?: any;
+  nodeId?: string;
 }
 
 /**
  * NodeCard
- * 
+ *
  * A wrapper component for Flow Studio nodes that handles:
  * 1. Consistent sizing and styling
  * 2. Safari-specific rendering fixes (isolated border layer + hardware accelerated content)
  * 3. Standard handle positioning
+ * 4. Execution status badges (success/error/running) via executionTrace store
  */
 export const NodeCard = ({
   children,
   className,
-  borderColorClass = "border-slate-500", // Default border color path
+  borderColorClass = "border-slate-500",
   handleColorClass = "bg-slate-500",
   isConnectable = true,
   testId,
   nodeId
-}: NodeCardProps & { nodeId?: string }) => {
+}: NodeCardProps) => {
   const executionTrace = useFlowStore((state) => state.executionTrace);
   const result = nodeId ? executionTrace[nodeId] : null;
 

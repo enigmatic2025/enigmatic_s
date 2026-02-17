@@ -17,6 +17,8 @@ export interface LogEntry {
     message: string;
     type: 'info' | 'success' | 'error' | 'warning';
     details?: any;
+    nodeType?: string;
+    nodeId?: string;
 }
 
 interface FlowStore {

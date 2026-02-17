@@ -25,9 +25,9 @@ const HumanTaskNode = memo(({ id, data, selected }: NodeProps) => {
   const readyLabel = "Ready for Human";
 
   return (
-    <NodeCard 
-      isSelected={selected} 
-      executionStatus={data.executionStatus}
+    <NodeCard
+      nodeId={id}
+      isSelected={selected}
       borderColorClass={borderClasses}
     >
        {/* Input Handle */}

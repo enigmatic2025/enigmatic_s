@@ -18,19 +18,19 @@ interface ConsoleModalProps {
 }
 
 export function ConsoleModal({ isOpen, onClose }: ConsoleModalProps) {
-  const { clearLogs, logs } = useFlowStore((state) => ({ 
+  const { clearLogs, logs } = useFlowStore((state) => ({
     clearLogs: state.clearLogs,
-    logs: state.logs 
+    logs: state.logs
   }));
 
   const handleClear = () => {
       clearLogs();
   };
-   
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent showCloseButton={false} className="max-w-5xl h-[85vh] flex flex-col p-0 gap-0 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-200 overflow-hidden rounded-xl sm:rounded-xl">
-        <DialogHeader className="px-4 py-3 border-b border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-slate-900/50 flex flex-row items-center justify-between space-y-0">
+      <DialogContent showCloseButton={false} className="max-w-5xl h-[85vh] flex flex-col p-0 gap-0 bg-background border-border text-foreground overflow-hidden rounded-xl sm:rounded-xl">
+        <DialogHeader className="px-4 py-3 border-b border-border bg-muted/30 flex flex-row items-center justify-between space-y-0">
           <DialogTitle className="text-sm font-mono flex items-center gap-2">
             Execution Console
           </DialogTitle>
@@ -38,11 +38,11 @@ export function ConsoleModal({ isOpen, onClose }: ConsoleModalProps) {
               <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={handleClear}
-                        className="h-8 w-8 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
                       >
                         <Eraser className="h-4 w-4" />
                       </Button>
@@ -51,16 +51,16 @@ export function ConsoleModal({ isOpen, onClose }: ConsoleModalProps) {
                   </Tooltip>
               </TooltipProvider>
 
-              <div className="w-px h-4 bg-slate-300 dark:bg-white/10 mx-1" />
+              <div className="w-px h-4 bg-border mx-1" />
 
               <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => onClose()}
-                        className="h-8 w-8 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-white/10"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -73,9 +73,6 @@ export function ConsoleModal({ isOpen, onClose }: ConsoleModalProps) {
 
 
         <div className="flex-1 overflow-hidden">
-             {/* We can reuse the SidebarConsole logic but style it specifically for modal if needed. 
-                 Since SidebarConsole is self-contained with useFlowStore, it works perfectly here. 
-             */}
              <SidebarConsole />
         </div>
       </DialogContent>
