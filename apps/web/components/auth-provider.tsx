@@ -25,12 +25,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user ?? null)
       setLoading(false)
+    }).catch(() => {
+      setUser(null)
+      setLoading(false)
     })
 
-    // Listen for auth changes
+    // Listen for subsequent auth changes only (sign-in, sign-out, token refresh).
+    // Skip INITIAL_SESSION — getUser() above handles initial state with server validation.
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') return
       setUser(session?.user ?? null)
     })
 

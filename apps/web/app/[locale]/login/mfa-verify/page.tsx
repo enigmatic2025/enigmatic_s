@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase, getUserOrgSlug } from '@/lib/supabase'
 import { useRouter } from '@/navigation'
 import { toast } from 'sonner'
@@ -12,6 +12,8 @@ export default function MFAVerifyPage() {
   const [redirecting, setRedirecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const routerRef = useRef(router)
+  useEffect(() => { routerRef.current = router })
   const t = useTranslations("MFA.verify")
 
   useEffect(() => {
@@ -19,11 +21,11 @@ export default function MFAVerifyPage() {
     const checkSession = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        router.push('/login')
+        routerRef.current.push('/login')
       }
     }
     checkSession()
-  }, [router])
+  }, [])
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,7 +57,7 @@ export default function MFAVerifyPage() {
       // Redirect to dashboard
       const orgSlug = await getUserOrgSlug()
       if (orgSlug) {
-        router.push(`/nodal/${orgSlug}/dashboard`)
+        routerRef.current.push(`/nodal/${orgSlug}/dashboard`)
       } else {
         toast.error('No organization found. Please contact an administrator.')
         setRedirecting(false)
@@ -121,7 +123,7 @@ export default function MFAVerifyPage() {
               type="button"
               disabled={redirecting}
               onClick={() => {
-                router.push('/login')
+                routerRef.current.push('/login')
               }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >

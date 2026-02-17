@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "@/navigation";
 import useSWR from "swr";
 import { supabase } from "@/lib/supabase";
@@ -19,6 +19,8 @@ export default function DashboardLayout({
   const [currentOrg, setCurrentOrg] = useState<any>(null);
   const [authReady, setAuthReady] = useState(false);
   const router = useRouter();
+  const routerRef = useRef(router);
+  useEffect(() => { routerRef.current = router; });
   const pathname = usePathname();
 
   // Auth + MFA check (not data fetching — stays as useEffect)
@@ -29,14 +31,14 @@ export default function DashboardLayout({
         error,
       } = await supabase.auth.getUser();
       if (error || !user) {
-        router.push("/login");
+        routerRef.current.push("/login");
         return;
       }
       setUser(user);
 
       const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
       if (!factorsError && (!factorsData?.totp || factorsData.totp.length === 0 || factorsData.totp[0].status !== 'verified')) {
-        router.push("/account/security/mfa-setup");
+        routerRef.current.push("/account/security/mfa-setup");
         return;
       }
 
@@ -44,7 +46,7 @@ export default function DashboardLayout({
     };
 
     checkAuth();
-  }, [router]);
+  }, []);
 
   // Fetch memberships via SWR (only after auth is confirmed)
   const { data: memberships } = useSWR(
@@ -58,6 +60,10 @@ export default function DashboardLayout({
       });
       if (!res.ok) throw new Error("Failed to fetch memberships");
       return res.json();
+    },
+    {
+      shouldRetryOnError: false,
+      revalidateOnFocus: false,
     }
   );
 
@@ -68,9 +74,9 @@ export default function DashboardLayout({
       const organizations = memberships.map((m: any) => m.organizations);
       setCurrentOrg(organizations[0]);
     } else {
-      router.push("/login");
+      routerRef.current.push("/login");
     }
-  }, [memberships, router]);
+  }, [memberships]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -94,7 +100,7 @@ export default function DashboardLayout({
       <div
         className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
           sidebarOpen
-            ? (isFlowStudioDesign ? "lg:ml-[400px]" : "lg:ml-64")
+            ? (isFlowStudioDesign ? "lg:ml-100" : "lg:ml-64")
             : "lg:ml-16"
         }`}
       >

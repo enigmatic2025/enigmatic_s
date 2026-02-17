@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useSWR from "swr";
 
 import { supabase, getUserOrgSlug } from "@/lib/supabase";
@@ -26,6 +26,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const routerRef = useRef(router);
+  useEffect(() => { routerRef.current = router; });
   const { user, loading: authLoading } = useAuth();
   const t = useTranslations("Login");
 
@@ -58,17 +60,17 @@ export default function LoginPage() {
     if (!loginCheck) return;
 
     if (loginCheck.needsMFA) {
-       router.push("/login/mfa-verify");
+       routerRef.current.push("/login/mfa-verify");
        return;
     }
 
     if (loginCheck.orgSlug) {
-        router.push(`/nodal/${loginCheck.orgSlug}/dashboard`);
+        routerRef.current.push(`/nodal/${loginCheck.orgSlug}/dashboard`);
     } else {
         toast.error("No organization found. Please contact an administrator.");
     }
 
-  }, [loginCheck, router]);
+  }, [loginCheck]);
 
 
   if (authLoading) {
@@ -102,12 +104,12 @@ export default function LoginPage() {
         factorsData.totp[0].status === "verified"
       ) {
         // MFA is enabled — session is at AAL1, redirect to verify
-        router.push("/login/mfa-verify");
+        routerRef.current.push("/login/mfa-verify");
         return;
       }
 
       // MFA NOT ENABLED - Force enrollment
-      router.push("/account/security/mfa-setup");
+      routerRef.current.push("/account/security/mfa-setup");
     } catch (err: any) {
       toast.error(err.message);
     } finally {

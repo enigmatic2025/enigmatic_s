@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase, getUserOrgSlug } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth-provider'
@@ -17,16 +17,18 @@ export default function MFAEnrollmentPage() {
   const [error, setError] = useState<string | null>(null)
   const [step, setStep] = useState<'enroll' | 'verify'>('enroll')
   const router = useRouter()
+  const routerRef = useRef(router)
+  useEffect(() => { routerRef.current = router })
   const { user } = useAuth()
   const t = useTranslations("MFA.setup")
 
   useEffect(() => {
     if (!user) {
-      router.push('/login')
+      routerRef.current.push('/login')
       return
     }
     enrollMFA()
-  }, [user, router])
+  }, [user])
 
   const enrollMFA = async () => {
     setLoading(true)
@@ -46,7 +48,7 @@ export default function MFAEnrollmentPage() {
         
         if (existingFactor.status === 'verified') {
           // Already verified, redirect to login to complete flow
-          router.push('/login')
+          routerRef.current.push('/login')
           return
         }
         
@@ -113,7 +115,7 @@ export default function MFAEnrollmentPage() {
       // Redirect based on memberships
       const orgSlug = await getUserOrgSlug()
       if (orgSlug) {
-        router.push(`/nodal/${orgSlug}/dashboard`)
+        routerRef.current.push(`/nodal/${orgSlug}/dashboard`)
       } else {
         toast.error('No organization found. Please contact an administrator.')
         setRedirecting(false)
