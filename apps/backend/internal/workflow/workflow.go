@@ -256,7 +256,6 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 		// C. Execute Node
 		nodeStatus[nodeID] = "RUNNING"
-		node, exists := nodesLookup[nodeID]
 		if !exists {
 			logger.Error("Node not found", "ID", nodeID)
 			return
