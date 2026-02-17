@@ -374,9 +374,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                 type = node.data?.subtype || 'http';
             } else if (node.type === 'variable') {
                 type = 'set';
-            } else if (node.type === 'manual-trigger') {
-                // Backend treats manual triggers as just entry points,
-                // but if we need a specific type:
+            } else if (node.type === 'manual-trigger' || node.type === 'schedule' || node.type === 'webhook') {
+                // Backend treats all trigger types as entry points
                 type = 'trigger';
             }
             // Loop, Switch, Condition likely map 1:1 if casing matches (backend handles casing)
@@ -507,6 +506,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                           if (
                               nodeType === 'api-trigger' ||
                               nodeType === 'manual-trigger' ||
+                              nodeType === 'schedule' ||
+                              nodeType === 'webhook' ||
                               nodeType === 'trigger' ||
                               nodeId === 'trigger' ||
                               !node
@@ -518,7 +519,12 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                           const output = result.output;
                           let logType: 'info' | 'success' | 'error' | 'warning' = 'info';
                           let message = `Step '${nodeName}' executed`;
-                          let details = output;
+                          // Strip the synthetic 'output' wrapper from default details
+                          let details: any = output;
+                          if (output && typeof output === 'object' && 'output' in output) {
+                              const { output: _nested, ...rest } = output;
+                              details = Object.keys(rest).length > 0 ? rest : null;
+                          }
 
                           // ── Per-node-type log enrichment ──
 
@@ -547,12 +553,20 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
                           } else if (nodeType === 'condition') {
                               const condResult = output?.result;
+                              const evalLeft = output?.evaluated_left;
+                              const evalRight = output?.evaluated_right;
+                              const op = output?.operator || '==';
                               message = `Step '${nodeName}' evaluated → ${condResult ? 'TRUE' : 'FALSE'}`;
-                              logType = 'info';
-                              details = null; // Condition output is just { result: bool }, not useful to show
+                              logType = condResult ? 'success' : 'info';
+                              // Show the evaluated comparison for debugging
+                              if (evalLeft !== undefined && evalRight !== undefined) {
+                                  details = { condition: `${evalLeft} ${op} ${evalRight}`, result: condResult };
+                              } else {
+                                  details = null;
+                              }
 
                           } else if (nodeType === 'variable' || nodeType === 'set') {
-                              const keys = output ? Object.keys(output).filter(k => k !== '_debug_message') : [];
+                              const keys = output ? Object.keys(output).filter(k => k !== '_debug_message' && k !== 'output') : [];
                               message = `Step '${nodeName}' set ${keys.length} variable${keys.length !== 1 ? 's' : ''}: ${keys.join(', ')}`;
                               logType = 'info';
 
@@ -571,8 +585,10 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
                           } else if (nodeType === 'switch') {
                               const selected = output?.selected_case;
+                              const switchValue = output?.value;
                               message = `Step '${nodeName}' matched case '${selected || 'default'}'`;
-                              details = null;
+                              // Show the evaluated value for debugging
+                              details = switchValue !== undefined ? { evaluated: switchValue, matched: selected || 'default' } : null;
 
                           } else if (nodeType === 'human-task') {
                               logType = 'success';
@@ -583,8 +599,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                               message = `Step '${nodeName}' received event`;
                               // Strip internal fields from display
                               if (output) {
-                                  const { webhook_url, status, message: _msg, ...payload } = output;
-                                  details = Object.keys(payload).length > 0 ? payload : output;
+                                  const { webhook_url, status, message: _msg, output: _nested, ...payload } = output;
+                                  details = Object.keys(payload).length > 0 ? payload : null;
                               }
 
                           } else if (nodeType === 'email') {

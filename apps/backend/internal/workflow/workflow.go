@@ -342,7 +342,16 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		}
 
 		// Save State
-		executionState[node.ID] = result.Output
+		// Store with both flat access and nested "output" key so expressions
+		// like {{ steps.nodeId.fieldName }} AND {{ steps.nodeId.output.fieldName }} both work.
+		merged := make(map[string]interface{})
+		if result.Output != nil {
+			for k, v := range result.Output {
+				merged[k] = v
+			}
+			merged["output"] = result.Output
+		}
+		executionState[node.ID] = merged
 		nodeStatus[nodeID] = "COMPLETED"
 		if node.Type == "set" || node.Type == "variable" {
 			for k, v := range result.Output {

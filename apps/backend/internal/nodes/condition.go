@@ -55,7 +55,10 @@ func (n *ConditionNode) Execute(ctx context.Context, input NodeContext) (*NodeRe
 	return &NodeResult{
 		Status: StatusSuccess,
 		Output: map[string]interface{}{
-			"result": result,
+			"result":          result,
+			"evaluated_left":  valLeft,
+			"evaluated_right": valRight,
+			"operator":        operator,
 		},
 		Error: "",
 	}, nil
