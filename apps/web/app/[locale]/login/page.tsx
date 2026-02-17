@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const routerRef = useRef(router);
   useEffect(() => { routerRef.current = router; });
@@ -84,6 +85,7 @@ export default function LoginPage() {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -111,7 +113,7 @@ export default function LoginPage() {
       // MFA NOT ENABLED - Force enrollment
       routerRef.current.push("/account/security/mfa-setup");
     } catch (err: any) {
-      toast.error(err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -184,6 +186,11 @@ export default function LoginPage() {
                 disabled={loading}
               />
             </div>
+            {error && (
+              <div className="text-red-500 text-sm text-center bg-red-500/10 p-2 rounded">
+                {error}
+              </div>
+            )}
             <Button className="w-full" type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("signIn")}

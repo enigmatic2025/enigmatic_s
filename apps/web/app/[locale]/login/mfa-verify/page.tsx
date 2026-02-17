@@ -64,7 +64,6 @@ export default function MFAVerifyPage() {
       }
     } catch (err: any) {
       setError(err.message)
-      toast.error(err.message)
       setLoading(false)
     }
   }
