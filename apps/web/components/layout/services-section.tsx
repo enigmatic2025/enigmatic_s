@@ -5,6 +5,44 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/navigation";
 import { ArrowRight } from "lucide-react";
+import { BrowserFrame } from "@/components/ui/browser-frame";
+
+const PlatformSkeleton = () => (
+  <div className="flex h-full w-full bg-background">
+    {/* Sidebar */}
+    <div className="w-12 border-r h-full flex flex-col items-center p-3 gap-4 bg-muted/30">
+      <div className="w-6 h-6 rounded-md bg-violet-500/20" />
+      <div className="w-full h-px bg-border" />
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="w-6 h-6 rounded-md bg-muted-foreground/10" />
+      ))}
+    </div>
+    {/* Main Content */}
+    <div className="flex-1 p-4 flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b pb-3 border-border/50">
+        <div className="h-4 w-24 rounded bg-muted-foreground/10" />
+        <div className="flex gap-2">
+          <div className="h-4 w-4 rounded-full bg-muted-foreground/10" />
+          <div className="h-4 w-4 rounded-full bg-muted-foreground/10" />
+        </div>
+      </div>
+      {/* Content Grid */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="col-span-2 h-24 rounded-lg border border-border/50 bg-muted/10 p-3">
+          <div className="h-3 w-1/3 rounded bg-muted-foreground/10 mb-2" />
+          <div className="h-12 w-full rounded bg-muted-foreground/5" />
+        </div>
+        {[1, 2].map((i) => (
+          <div key={i} className="h-20 rounded-lg border border-border/50 bg-muted/10 p-3">
+            <div className="h-3 w-1/2 rounded bg-muted-foreground/10 mb-2" />
+            <div className="h-8 w-full rounded bg-muted-foreground/5" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export function ServicesSection() {
   const t = useTranslations("Services");
@@ -70,11 +108,9 @@ export function ServicesSection() {
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 flex items-center justify-center p-4">
-                  <img
-                    src="/images/brand/nodal-logo.svg?v=3"
-                    alt="Nodal Platform"
-                    className="w-full h-full object-contain"
-                  />
+                  <BrowserFrame className="w-full h-full shadow-sm border-opacity-40" url="app.nodal.com/dashboard">
+                    <PlatformSkeleton />
+                  </BrowserFrame>
                 </div>
               </div>
             </div>
