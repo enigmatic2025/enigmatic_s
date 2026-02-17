@@ -126,7 +126,7 @@ export function FilterConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
       <div className="space-y-2">
             <div className="flex items-center justify-between">
                 <Label>Array to Filter (Variable) <span className="text-red-500">*</span></Label>
-                 <Button variant="outline" size="sm" onClick={() => setIsSchemaOpen(true)} className="h-6 text-[10px] gap-1 h-auto py-1">
+                 <Button variant="outline" size="sm" onClick={() => setIsSchemaOpen(true)} className="h-auto text-[10px] gap-1 py-1">
                     <Braces className="h-3 w-3" />
                     Define output structure
                 </Button>
@@ -187,11 +187,14 @@ export function FilterConfig({ data, onUpdate }: { data: any; onUpdate: (data: a
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="==">Equals</SelectItem>
-                                  <SelectItem value="!=">Not Equals</SelectItem>
-                                  <SelectItem value=">">Greater (&gt;)</SelectItem>
-                                  <SelectItem value="<">Less (&lt;)</SelectItem>
+                                  <SelectItem value="==">Equals (==)</SelectItem>
+                                  <SelectItem value="!=">Not Equals (!=)</SelectItem>
+                                  <SelectItem value=">">Greater Than (&gt;)</SelectItem>
+                                  <SelectItem value="<">Less Than (&lt;)</SelectItem>
+                                  <SelectItem value=">=">Greater or Equal (&gt;=)</SelectItem>
+                                  <SelectItem value="<=">Less or Equal (&lt;=)</SelectItem>
                                   <SelectItem value="contains">Contains</SelectItem>
+                                  <SelectItem value="matches">Matches Regex</SelectItem>
                                 </SelectContent>
                            </Select>
                        </div>
