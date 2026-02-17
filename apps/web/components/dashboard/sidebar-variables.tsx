@@ -1,21 +1,13 @@
 import { useFlowStore } from "@/lib/stores/flow-store";
 import { toast } from "sonner";
-import { ChevronRight, ChevronDown, Copy, Search, Braces, Trash2, Settings2 } from "lucide-react";
+import { ChevronRight, ChevronDown, Copy, Braces, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
-function JsonTree({ data, path, level = 0, contextLoopSource }: { data: any; path: string; level?: number; contextLoopSource?: string | null }) {
-  const [expanded, setExpanded] = useState(false);
-
+function JsonTree({ data, path, contextLoopSource }: { data: any; path: string; contextLoopSource?: string | null }) {
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Variable copied to clipboard");
-  };
-
-  const onDragStart = (e: React.DragEvent, text: string) => {
-    e.stopPropagation();
-    e.dataTransfer.setData("text/plain", text);
   };
 
   if (data === null || data === undefined) {
@@ -29,10 +21,8 @@ function JsonTree({ data, path, level = 0, contextLoopSource }: { data: any; pat
   if (typeof data !== "object") {
     // If it's a leaf node, allow copying the path
     return (
-      <div 
-        className="pl-4 py-1 text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 group cursor-grab hover:bg-muted/50 rounded"
-        draggable
-        onDragStart={(e) => onDragStart(e, `{{ ${path} }}`)}
+      <div
+        className="pl-4 py-1 text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 group cursor-pointer hover:bg-muted/50 rounded"
         onClick={(e) => {
           e.stopPropagation();
           handleCopy(`{{ ${path} }}`);
@@ -134,17 +124,10 @@ function JsonRow({ label, value, path, isPrimitive, contextLoopSource }: { label
         toast.success("Variable copied to clipboard");
     };
 
-    const onDragStart = (e: React.DragEvent, text: string) => {
-        e.stopPropagation();
-        e.dataTransfer.setData("text/plain", text);
-    };
-
     if (isPrimitive) {
         return (
-            <div 
-                className="flex items-center gap-2 w-full group select-none"
-                draggable
-                onDragStart={(e) => onDragStart(e, `{{ ${path} }}`)}
+            <div
+                className="flex items-center gap-2 w-full group select-none cursor-pointer"
                 onClick={() => handleCopy(`{{ ${path} }}`)}
             >
                 <div className="w-1 h-1 rounded-full bg-muted-foreground/30 mr-1" />
@@ -160,11 +143,9 @@ function JsonRow({ label, value, path, isPrimitive, contextLoopSource }: { label
     return (
 
         <div className="w-full">
-            <div 
+            <div
                 className="flex items-center gap-1 w-full hover:bg-muted/50 rounded pr-1 group select-none cursor-pointer"
                 onClick={() => setIsOpen(!isOpen)}
-                draggable
-                onDragStart={(e) => onDragStart(e, `{{ ${path} }}`)}
             >
                 {isOpen ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
                 <span className="text-xs font-mono font-medium whitespace-nowrap">{label}</span>
@@ -208,7 +189,7 @@ const DEFAULT_SCHEMAS: Record<string, any> = {
 };
 
 export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
-  const { nodes, variables, setVariable, deleteVariable, setSelectedNodeId, selectedNodeId, editingNodeId, editingNodeData } = useFlowStore();
+  const { nodes, variables, setVariable, deleteVariable, selectedNodeId, editingNodeId, editingNodeData } = useFlowStore();
   const [newVarName, setNewVarName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   
@@ -351,9 +332,9 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
             </div>
 
             {/* --- Node Variables Section --- */}
-            {filteredNodes.length === 0 && (
+            {searchQuery && filteredNodes.length === 0 && (
                 <div className="text-center py-8 text-xs text-muted-foreground">
-                    No nodes found matching "{searchQuery}"
+                    No nodes found matching &ldquo;{searchQuery}&rdquo;
                 </div>
             )}
             
@@ -403,7 +384,10 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                 }
 
                 const hasData = schema !== undefined;
-                
+
+                // Only render nodes that have variables/data
+                if (!hasData) return null;
+
                 return (
                     <div key={node.id} className="border rounded-md bg-card overflow-hidden">
                     <div className="flex items-center gap-2 p-2 bg-muted/30 border-b">
@@ -414,41 +398,18 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                         {node.type}
                         </span>
                     </div>
-                    
-                    <div className="p-2 bg-background min-h-[50px] max-h-[300px] overflow-auto">
-                        {hasData ? (
-                             <JsonTree 
-                                data={schema} 
-                                path={
-                                    node.type === 'variable' ? 'variables' : 
-                                    node.type === 'api-trigger' ? 'steps.trigger.body' :
-                                    node.type === 'automation' ? `steps.${node.id}.output` :
-                                    `steps.${node.id}`
-                                } 
-                                contextLoopSource={contextLoopSource}
-                            />
-                        ) : (
-                            <div className="flex flex-col items-center justify-center py-6 px-4 space-y-3 text-center opacity-80 hover:opacity-100 transition-opacity">
-                                <div className="p-2 rounded-full bg-muted">
-                                    <Braces className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-medium text-foreground">No Data Available</p>
-                                    <p className="text-[10px] text-muted-foreground leading-tight">
-                                        Run this step or define a schema to see variables.
-                                    </p>
-                                </div>
-                                <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className="h-7 text-xs w-full gap-2 border-dashed hover:border-solid hover:bg-muted/50"
-                                    onClick={() => setSelectedNodeId(node.id)}
-                                >
-                                    <Settings2 className="h-3 w-3" />
-                                    Configure Schema
-                                </Button>
-                            </div>
-                        )}
+
+                    <div className="p-2 bg-background max-h-[300px] overflow-auto">
+                        <JsonTree
+                            data={schema}
+                            path={
+                                node.type === 'variable' ? 'variables' :
+                                node.type === 'api-trigger' ? 'steps.trigger.body' :
+                                node.type === 'automation' ? `steps.${node.id}.output` :
+                                `steps.${node.id}`
+                            }
+                            contextLoopSource={contextLoopSource}
+                        />
                     </div>
                     </div>
                 );
