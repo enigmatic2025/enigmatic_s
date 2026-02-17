@@ -626,6 +626,8 @@
       "failedToStop": "無法停止工作流程",
       "failedToSendStop": "無法發送停止訊號",
       "stepExecuted": "步驟 '{{stepName}}' 已執行",
+      "savingBeforePublish": "發布前正在儲存變更...",
+      "publishing": "正在發布流程...",
       "publishSuccess": "流程已發布至生產環境！",
       "publishError": "無法發布流程"
     }

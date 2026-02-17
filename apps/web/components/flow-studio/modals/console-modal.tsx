@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { SidebarConsole } from "@/components/dashboard/sidebar-console";
 import { useFlowStore } from "@/lib/stores/flow-store";
 import { Eraser, X } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ConsoleModalProps {
@@ -26,7 +25,6 @@ export function ConsoleModal({ isOpen, onClose }: ConsoleModalProps) {
 
   const handleClear = () => {
       clearLogs();
-      toast.success("Console cleared");
   };
    
   return (

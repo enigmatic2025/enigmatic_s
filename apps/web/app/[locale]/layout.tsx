@@ -132,7 +132,7 @@ export default async function RootLayout({
           >
             <AuthProvider>
               {children}
-              <Toaster position="top-center" />
+              <Toaster position="bottom-right" richColors closeButton duration={3000} visibleToasts={3} />
             </AuthProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

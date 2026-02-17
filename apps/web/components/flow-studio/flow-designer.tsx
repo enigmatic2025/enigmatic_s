@@ -22,7 +22,7 @@ import { DeleteFlowModal } from "@/components/flow-studio/modals/delete-flow-mod
 import { PublishConfirmModal } from "@/components/flow-studio/modals/publish-confirm-modal";
 import { NodeConfigurationSheet } from "@/components/flow-studio/node-configuration-sheet";
 import { ConsoleModal } from "@/components/flow-studio/modals/console-modal";
-import { TestPayloadModal } from "@/components/flow-studio/modals/test-payload-modal";
+import { TestWizardModal } from "@/components/flow-studio/modals/test-wizard-modal";
 import {
   Tooltip,
   TooltipContent,
@@ -65,9 +65,8 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
   // Console/Logs State
   const [unreadLogs, setUnreadLogs] = useState(false);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-  // Payload Modal State
-  const [isTestPayloadModalOpen, setIsTestPayloadModalOpen] = useState(false);
-  const [triggerSchema, setTriggerSchema] = useState<any[]>([]);
+  // Test Wizard State
+  const [isTestWizardOpen, setIsTestWizardOpen] = useState(false);
   const logs = useFlowStore((state) => state.logs);
   const setFlowId = useFlowStore((state) => state.setFlowId);
   const prevLogsLength = useRef(0);
@@ -77,17 +76,9 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
     setFlowId(flowId || null);
   }, [flowId, setFlowId]);
 
-  // Intercept Play Click
+  // Intercept Play Click — always opens wizard
   const onPlayClick = () => {
-      // Check if we have an API Trigger with Schema
-      const triggerNode = nodes.find(n => n.type === 'api-trigger');
-      if (triggerNode && triggerNode.data?.schema && triggerNode.data.schema.length > 0) {
-          setTriggerSchema(triggerNode.data.schema);
-          setIsTestPayloadModalOpen(true);
-      } else {
-          // No schema or no trigger, run directly
-          handleTestRun({});
-      }
+      setIsTestWizardOpen(true);
   };
 
   // Custom Hooks
@@ -302,22 +293,24 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       setIsPublishModalOpen(true);
   };
 
+  const PUBLISH_TOAST_ID = "publish-status";
+
   const handlePublishConfirm = async () => {
       if (!flowId) return;
       setIsPublishModalOpen(false);
       try {
           if (isDirty) {
-             toast.info(t("toasts.savingBeforePublish"));
+             toast.loading(t("messages.savingBeforePublish"), { id: PUBLISH_TOAST_ID });
              await handleSave();
           }
 
-          toast.info(t("toasts.publishing"));
+          toast.loading(t("messages.publishing"), { id: PUBLISH_TOAST_ID });
           await flowService.publishFlow(flowId);
-          toast.success(t("toasts.publishSuccess"));
+          toast.success(t("messages.publishSuccess"), { id: PUBLISH_TOAST_ID });
           setPublishStatus('published');
       } catch (error) {
           console.error("Publish error:", error);
-          toast.error(t("toasts.publishError"));
+          toast.error(t("messages.publishError"), { id: PUBLISH_TOAST_ID });
       }
   };
   
@@ -327,6 +320,12 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
       baseOnUpdateNode(nodeId, newData);
       setIsDirty(true);
   }, [baseOnUpdateNode]);
+
+  // Used by test wizard to update node mock data
+  const handleUpdateNodeData = useCallback((nodeId: string, newData: any) => {
+      setNodes(nds => nds.map(n => n.id === nodeId ? { ...n, data: newData } : n));
+      setIsDirty(true);
+  }, [setNodes]);
 
   // CONSTANT TOAST ID for Test Runs
   const TEST_TOAST_ID = "test-run-status";
@@ -343,14 +342,11 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
 
       // Collect mock data from human-task and automation nodes for test mode
       const mockData: Record<string, any> = {};
-      const missingMockNodes: string[] = [];
 
       nodes.forEach(node => {
         if (node.type === 'human-task') {
           if (node.data?.mockResponse && Object.keys(node.data.mockResponse).length > 0) {
             mockData[node.id] = { type: 'human-task', response: node.data.mockResponse };
-          } else {
-            missingMockNodes.push(node.data?.label || node.data?.title || `Human Task (${node.id.slice(0, 6)})`);
           }
         }
         if (node.type === 'automation') {
@@ -358,22 +354,10 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
             try {
               const parsed = JSON.parse(node.data.mockPayload);
               mockData[node.id] = { type: 'automation', payload: parsed };
-            } catch {
-              missingMockNodes.push(node.data?.label || node.data?.eventName || `Wait for Event (${node.id.slice(0, 6)})`);
-            }
-          } else {
-            missingMockNodes.push(node.data?.label || node.data?.eventName || `Wait for Event (${node.id.slice(0, 6)})`);
+            } catch { /* skip invalid JSON */ }
           }
         }
       });
-
-      // Block test execution if blocking nodes are missing mock data
-      if (missingMockNodes.length > 0) {
-        setIsPolling(false);
-        toast.error(`Configure mock data for blocking steps before testing: ${missingMockNodes.join(', ')}`, { id: TEST_TOAST_ID, duration: 6000 });
-        addLog({ message: `Missing mock data for: ${missingMockNodes.join(', ')}`, type: "error" });
-        return;
-      }
 
       const hasMocks = Object.keys(mockData).length > 0;
       if (hasMocks) {
@@ -649,11 +633,13 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
         onClose={() => setIsConsoleOpen(false)} 
       />
 
-      <TestPayloadModal 
-        isOpen={isTestPayloadModalOpen}
-        onClose={() => setIsTestPayloadModalOpen(false)}
+      <TestWizardModal
+        isOpen={isTestWizardOpen}
+        onClose={() => setIsTestWizardOpen(false)}
         onRun={(payload) => handleTestRun(payload)}
-        schema={triggerSchema}
+        nodes={nodes}
+        edges={edges}
+        onUpdateNodeData={handleUpdateNodeData}
         flowId={flowId}
       />
     </div>

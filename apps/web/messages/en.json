@@ -622,6 +622,8 @@
       "failedToStop": "Failed to stop workflow",
       "failedToSendStop": "Failed to send stop signal",
       "stepExecuted": "Step '{{stepName}}' executed",
+      "savingBeforePublish": "Saving changes before publishing...",
+      "publishing": "Publishing flow...",
       "publishSuccess": "Flow published to production!",
       "publishError": "Failed to publish flow"
     }

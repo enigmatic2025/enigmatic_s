@@ -136,7 +136,7 @@ export function NodeConfigurationSheet({
       // -----------------------------
 
       onUpdate(selectedNode.id, formData);
-      toast.success(t("messages.configSaved"));
+      toast.success(t("messages.configSaved"), { duration: 1500 });
       // For Sheet, we often auto-save or save without closing, but let's stick to closing on Explicit Save
       // Actually, user requested "non-blocking", implied maybe stay open? 
       // But standard Sheet "Save & Close" is also common. Let's keep existing behavior for now.

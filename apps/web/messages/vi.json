@@ -626,6 +626,8 @@
       "failedToStop": "Không thể dừng luồng công việc",
       "failedToSendStop": "Không thể gửi tín hiệu dừng",
       "stepExecuted": "Bước '{{stepName}}' đã thực thi",
+      "savingBeforePublish": "Đang lưu thay đổi trước khi xuất bản...",
+      "publishing": "Đang xuất bản luồng...",
       "publishSuccess": "Luồng đã được xuất bản lên môi trường thực!",
       "publishError": "Không thể xuất bản luồng"
     }

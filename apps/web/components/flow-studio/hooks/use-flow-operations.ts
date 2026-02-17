@@ -191,7 +191,7 @@ export function useFlowOperations({
 
         try {
             const result = await flowService.saveFlow(flowId, flowData);
-            toast.success("Flow saved successfully!");
+            toast.success("Flow saved", { duration: 1500 });
 
             if (!flowId && result.id) {
                 router.push(`/nodal/${slug}/dashboard/flow-studio/design/${result.id}`);

@@ -54,7 +54,7 @@ export function NodeExecutionConsole({
             className="h-6 w-6"
             onClick={() => {
               navigator.clipboard.writeText(JSON.stringify(testResult, null, 2));
-              toast.success("Copied to clipboard");
+              toast.success("Copied", { duration: 1000 });
             }}
             title="Copy JSON"
           >

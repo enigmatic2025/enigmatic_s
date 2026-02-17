@@ -622,6 +622,8 @@
       "failedToStop": "Error al detener flujo de trabajo",
       "failedToSendStop": "Error al enviar señal de parada",
       "stepExecuted": "Paso '{{stepName}}' ejecutado",
+      "savingBeforePublish": "Guardando cambios antes de publicar...",
+      "publishing": "Publicando flujo...",
       "publishSuccess": "¡Flujo publicado a producción!",
       "publishError": "Error al publicar flujo"
     }
