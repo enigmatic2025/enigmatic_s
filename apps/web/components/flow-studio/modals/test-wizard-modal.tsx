@@ -200,6 +200,7 @@ export function TestWizardModal({
   const [triggerJson, setTriggerJson] = useState("{\n  \n}");
   const [triggerMode, setTriggerMode] = useState<'form' | 'json'>('form');
   const [localMockPayloads, setLocalMockPayloads] = useState<Record<string, string>>({});
+  const [isSaved, setIsSaved] = useState(false);
 
   // Compute wizard steps
   const steps = useMemo(() => {
@@ -242,10 +243,12 @@ export function TestWizardModal({
     let loadedTrigger: Record<string, any> | null = null;
 
     // Try to load saved test data
+    let hadSavedData = false;
     if (storageKey) {
       try {
         const stored = sessionStorage.getItem(storageKey);
         if (stored) {
+          hadSavedData = true;
           const parsed = JSON.parse(stored);
           loadedTrigger = parsed.trigger || null;
 
@@ -265,6 +268,7 @@ export function TestWizardModal({
         }
       } catch { /* ignore */ }
     }
+    setIsSaved(hadSavedData);
 
     if (loadedTrigger) {
       setTriggerPayload(loadedTrigger);
@@ -327,6 +331,7 @@ export function TestWizardModal({
 
     try {
       sessionStorage.setItem(storageKey, JSON.stringify(data));
+      setIsSaved(true);
       if (!silent) toast.success("Test data saved");
     } catch {
       if (!silent) toast.error("Failed to save test data");
@@ -1030,17 +1035,9 @@ export function TestWizardModal({
                   Save
                 </Button>
 
-                {isLastStep ? (
+                {!isLastStep && (
                   <Button
-                    size="sm"
-                    onClick={handleRun}
-                    className="gap-2 h-8"
-                  >
-                    <Play className="w-3.5 h-3.5" />
-                    Run Test
-                  </Button>
-                ) : (
-                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={handleNext}
                     className="gap-1.5 h-8"
@@ -1049,6 +1046,17 @@ export function TestWizardModal({
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Button>
                 )}
+
+                <Button
+                  size="sm"
+                  onClick={handleRun}
+                  disabled={!isSaved}
+                  className="gap-2 h-8"
+                  title={!isSaved ? "Save test data first" : ""}
+                >
+                  <Play className="w-3.5 h-3.5" />
+                  Run Test
+                </Button>
               </div>
             </div>
           </div>
