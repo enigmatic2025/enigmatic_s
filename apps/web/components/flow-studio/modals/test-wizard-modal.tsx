@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Node, Edge } from 'reactflow';
 import {
   Dialog,
@@ -15,6 +15,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -35,6 +37,8 @@ import {
   PenTool,
   FileText,
   Circle,
+  RotateCcw,
+  Save,
 } from 'lucide-react';
 
 // ─── Types ───
@@ -99,14 +103,19 @@ function bfsOrder(nodes: Node[], edges: Edge[]): Node[] {
 
 // ─── Helpers ───
 
-function StepIcon({ type, className }: { type: WizardStep['type']; className?: string }) {
-  switch (type) {
-    case 'trigger': return <Zap className={cn("w-3.5 h-3.5", className)} />;
-    case 'human-task': return <ClipboardList className={cn("w-3.5 h-3.5", className)} />;
-    case 'automation': return <RadioTower className={cn("w-3.5 h-3.5", className)} />;
-    case 'review': return <ListChecks className={cn("w-3.5 h-3.5", className)} />;
-  }
-}
+const STEP_ICONS: Record<WizardStep['type'], typeof Zap> = {
+  'trigger': Zap,
+  'human-task': ClipboardList,
+  'automation': RadioTower,
+  'review': ListChecks,
+};
+
+const STEP_COLORS: Record<WizardStep['type'], string> = {
+  'trigger': 'text-emerald-500',
+  'human-task': 'text-teal-500',
+  'automation': 'text-pink-500',
+  'review': 'text-foreground',
+};
 
 function stepLabel(step: WizardStep): string {
   switch (step.type) {
@@ -119,11 +128,60 @@ function stepLabel(step: WizardStep): string {
 
 function stepSubtitle(step: WizardStep): string {
   switch (step.type) {
-    case 'trigger': return 'API Trigger';
-    case 'human-task': return 'Human Task';
-    case 'automation': return 'Wait for Event';
-    case 'review': return 'Summary';
+    case 'trigger': return 'Input data';
+    case 'human-task': return 'Mock response';
+    case 'automation': return 'Mock payload';
+    case 'review': return 'Confirm & execute';
   }
+}
+
+// ─── Validation: Check if a step has valid data ───
+
+function isStepValid(step: WizardStep, triggerPayload: Record<string, any>): boolean {
+  switch (step.type) {
+    case 'trigger': {
+      const schema = (step.node?.data?.schema || []) as SchemaField[];
+      if (schema.length === 0) return true;
+      // Check all required fields have non-empty values
+      return schema.every(f => {
+        if (!f.required) return true;
+        const val = triggerPayload[f.key];
+        if (val === undefined || val === null) return false;
+        if (typeof val === 'string' && val.trim() === '') return false;
+        return true;
+      });
+    }
+    case 'human-task': {
+      const schema = (step.node?.data?.schema || []) as SchemaField[];
+      const mockResponse = step.node?.data?.mockResponse || {};
+      if (schema.length === 0) return true;
+      // Check all required fields have values
+      return schema.every(f => {
+        if (!f.required) return true;
+        const val = mockResponse[f.key];
+        if (val === undefined || val === null) return false;
+        if (typeof val === 'string' && val.trim() === '') return false;
+        return true;
+      });
+    }
+    case 'automation': {
+      const mockPayload = step.node?.data?.mockPayload;
+      if (!mockPayload) return false;
+      try {
+        JSON.parse(mockPayload);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    case 'review':
+      return true;
+  }
+}
+
+// ─── Storage Key ───
+function getStorageKey(flowId: string | undefined) {
+  return flowId ? `test_data_${flowId}` : null;
 }
 
 // ─── Main Component ───
@@ -154,15 +212,10 @@ export function TestWizardModal({
     const ordered = bfsOrder(nodes, edges);
     for (const node of ordered) {
       if (node.type === 'human-task') {
-        const hasMock = node.data?.mockResponse && Object.keys(node.data.mockResponse).length > 0;
-        if (!hasMock) result.push({ type: 'human-task', node });
+        result.push({ type: 'human-task', node });
       }
       if (node.type === 'automation') {
-        let hasMock = false;
-        if (node.data?.mockPayload) {
-          try { JSON.parse(node.data.mockPayload); hasMock = true; } catch { /* invalid */ }
-        }
-        if (!hasMock) result.push({ type: 'automation', node });
+        result.push({ type: 'automation', node });
       }
     }
 
@@ -174,21 +227,40 @@ export function TestWizardModal({
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(0);
+      setTriggerMode('form');
 
       const triggerNode = nodes.find(n => n.type === 'api-trigger');
-      const sessionKey = flowId ? `test_payload_${flowId}` : null;
-      let loaded: Record<string, any> | null = null;
+      const storageKey = getStorageKey(flowId);
+      let loadedTrigger: Record<string, any> | null = null;
 
-      if (sessionKey) {
+      // Try to load saved test data
+      if (storageKey) {
         try {
-          const stored = sessionStorage.getItem(sessionKey);
-          if (stored) loaded = JSON.parse(stored);
+          const stored = sessionStorage.getItem(storageKey);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            loadedTrigger = parsed.trigger || null;
+
+            // Restore mock data to nodes
+            if (parsed.mocks) {
+              for (const [nodeId, mockData] of Object.entries(parsed.mocks)) {
+                const node = nodes.find(n => n.id === nodeId);
+                if (node) {
+                  if (node.type === 'human-task' && mockData) {
+                    onUpdateNodeData(nodeId, { ...node.data, mockResponse: mockData });
+                  } else if (node.type === 'automation' && mockData) {
+                    onUpdateNodeData(nodeId, { ...node.data, mockPayload: mockData });
+                  }
+                }
+              }
+            }
+          }
         } catch { /* ignore */ }
       }
 
-      if (loaded) {
-        setTriggerPayload(loaded);
-        setTriggerJson(JSON.stringify(loaded, null, 2));
+      if (loadedTrigger) {
+        setTriggerPayload(loadedTrigger);
+        setTriggerJson(JSON.stringify(loadedTrigger, null, 2));
       } else if (triggerNode?.data?.schema) {
         const initial: Record<string, any> = {};
         (triggerNode.data.schema as SchemaField[]).forEach(f => {
@@ -204,8 +276,6 @@ export function TestWizardModal({
         setTriggerPayload({});
         setTriggerJson("{\n  \n}");
       }
-
-      setTriggerMode('form');
     }
   }, [isOpen, nodes, flowId]);
 
@@ -213,15 +283,41 @@ export function TestWizardModal({
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
 
+  // ─── Save all test data ───
+
+  const saveAllTestData = useCallback(() => {
+    const storageKey = getStorageKey(flowId);
+    if (!storageKey) {
+      toast.error("Cannot save: no flow ID");
+      return;
+    }
+
+    const mocks: Record<string, any> = {};
+    for (const step of steps) {
+      if (step.type === 'human-task' && step.node) {
+        mocks[step.node.id] = step.node.data?.mockResponse || null;
+      }
+      if (step.type === 'automation' && step.node) {
+        mocks[step.node.id] = step.node.data?.mockPayload || null;
+      }
+    }
+
+    const data = { trigger: triggerPayload, mocks };
+
+    try {
+      sessionStorage.setItem(storageKey, JSON.stringify(data));
+      toast.success("Test data saved");
+    } catch {
+      toast.error("Failed to save test data");
+    }
+  }, [flowId, steps, triggerPayload]);
+
   // ─── Trigger Handlers ───
 
   const handleTriggerFormChange = (key: string, value: any) => {
     const newData = { ...triggerPayload, [key]: value };
     setTriggerPayload(newData);
     setTriggerJson(JSON.stringify(newData, null, 2));
-    if (flowId) {
-      try { sessionStorage.setItem(`test_payload_${flowId}`, JSON.stringify(newData)); } catch { /* */ }
-    }
   };
 
   const handleTriggerJsonChange = (str: string) => {
@@ -229,9 +325,6 @@ export function TestWizardModal({
     try {
       const parsed = JSON.parse(str);
       setTriggerPayload(parsed);
-      if (flowId) {
-        try { sessionStorage.setItem(`test_payload_${flowId}`, JSON.stringify(parsed)); } catch { /* */ }
-      }
     } catch { /* invalid */ }
   };
 
@@ -280,9 +373,8 @@ export function TestWizardModal({
       }
     }
 
-    if (flowId) {
-      try { sessionStorage.setItem(`test_payload_${flowId}`, JSON.stringify(payload)); } catch { /* */ }
-    }
+    // Auto-save before running
+    saveAllTestData();
 
     onRun(payload);
     onClose();
@@ -293,49 +385,64 @@ export function TestWizardModal({
   const renderTriggerStep = (node: Node) => {
     const schema = (node.data?.schema || []) as SchemaField[];
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-end gap-2">
-          <span className="text-[11px] text-muted-foreground">JSON</span>
-          <Switch
-            checked={triggerMode === 'json'}
-            onCheckedChange={(checked: boolean) => setTriggerMode(checked ? 'json' : 'form')}
-          />
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Provide the data that will be sent to the trigger endpoint.
+          </p>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+              {triggerMode === 'form' ? 'Form' : 'JSON'}
+            </span>
+            <Switch
+              checked={triggerMode === 'json'}
+              onCheckedChange={(checked: boolean) => setTriggerMode(checked ? 'json' : 'form')}
+            />
+          </div>
         </div>
 
+        <div className="h-px bg-border" />
+
         {triggerMode === 'form' && schema.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-5">
             {schema.map((field) => (
-              <div key={field.key} className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">
-                  <span className="font-mono">{field.key}</span>
-                  {field.required && <span className="text-foreground ml-1">*</span>}
+              <div key={field.key} className="space-y-2">
+                <Label className="text-xs flex items-center gap-1.5">
+                  <span className="font-mono text-muted-foreground">{field.key}</span>
+                  {field.required && <span className="text-red-500 text-[10px]">*</span>}
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 font-normal ml-auto">
+                    {field.type}
+                  </Badge>
                 </Label>
-                <div>
-                  {field.type === 'boolean' ? (
+                {field.type === 'boolean' ? (
+                  <div className="flex items-center gap-3">
                     <Switch
                       checked={!!triggerPayload[field.key]}
                       onCheckedChange={(checked: boolean) => handleTriggerFormChange(field.key, checked)}
                     />
-                  ) : field.type === 'number' ? (
-                    <Input
-                      type="number"
-                      value={triggerPayload[field.key] || 0}
-                      onChange={(e) => handleTriggerFormChange(field.key, parseFloat(e.target.value))}
-                      className="h-9 text-sm"
-                    />
-                  ) : field.type === 'object' || field.type === 'array' ? (
-                    <p className="text-xs text-muted-foreground py-2 px-3 border border-dashed rounded-md">
-                      Switch to JSON mode to edit complex types
-                    </p>
-                  ) : (
-                    <Input
-                      value={triggerPayload[field.key] || ''}
-                      onChange={(e) => handleTriggerFormChange(field.key, e.target.value)}
-                      className="h-9 text-sm"
-                      placeholder={`Enter ${field.key}`}
-                    />
-                  )}
-                </div>
+                    <span className="text-xs text-muted-foreground">
+                      {triggerPayload[field.key] ? 'true' : 'false'}
+                    </span>
+                  </div>
+                ) : field.type === 'number' ? (
+                  <Input
+                    type="number"
+                    value={triggerPayload[field.key] ?? 0}
+                    onChange={(e) => handleTriggerFormChange(field.key, parseFloat(e.target.value))}
+                    className="h-9 text-sm font-mono"
+                  />
+                ) : field.type === 'object' || field.type === 'array' ? (
+                  <div className="flex items-center gap-2 py-2.5 px-3 border border-dashed rounded-md bg-muted/20">
+                    <span className="text-xs text-muted-foreground">Switch to JSON mode to edit complex types</span>
+                  </div>
+                ) : (
+                  <Input
+                    value={triggerPayload[field.key] || ''}
+                    onChange={(e) => handleTriggerFormChange(field.key, e.target.value)}
+                    className="h-9 text-sm"
+                    placeholder={`Enter ${field.key}...`}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -343,8 +450,9 @@ export function TestWizardModal({
           <Textarea
             value={triggerJson}
             onChange={(e) => handleTriggerJsonChange(e.target.value)}
-            className="font-mono text-xs h-70 resize-none bg-muted/30 border-border"
+            className="font-mono text-xs min-h-[320px] resize-none bg-muted/20"
             placeholder='{ "key": "value" }'
+            spellCheck={false}
           />
         )}
       </div>
@@ -362,31 +470,41 @@ export function TestWizardModal({
 
     if (schema.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center h-full py-12">
-          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3">
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
             <ClipboardList className="w-5 h-5 text-muted-foreground" />
           </div>
-          <p className="text-sm text-muted-foreground">No form fields defined</p>
-          <p className="text-xs text-muted-foreground/60 mt-1">Configure fields in the node settings first</p>
+          <p className="text-sm font-medium text-muted-foreground">No form fields defined</p>
+          <p className="text-xs text-muted-foreground/60 mt-1">Configure fields in the node settings first.</p>
         </div>
       );
     }
 
     return (
       <div className="space-y-5">
-        {schema.map((field) => {
-          const mockValue = mockResponse[field.key] ?? '';
-          return (
-            <div key={field.key} className="space-y-2">
-              <Label className="text-xs">
-                {field.label || field.key}
-                {field.required && <span className="text-foreground ml-0.5">*</span>}
-                <span className="text-muted-foreground/60 font-normal ml-1.5 text-[10px] uppercase tracking-wider">{field.type}</span>
-              </Label>
-              {renderFieldInput(field, mockValue, (val) => updateMock(field.key, val))}
-            </div>
-          );
-        })}
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Provide mock responses for this human task. These will be used instead of waiting for real input.
+        </p>
+
+        <div className="h-px bg-border" />
+
+        <div className="space-y-5">
+          {schema.map((field) => {
+            const mockValue = mockResponse[field.key] ?? '';
+            return (
+              <div key={field.key} className="space-y-2">
+                <Label className="text-xs flex items-center gap-1.5">
+                  {field.label || field.key}
+                  {field.required && <span className="text-red-500 text-[10px]">*</span>}
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 font-normal ml-auto">
+                    {field.type}
+                  </Badge>
+                </Label>
+                {renderFieldInput(field, mockValue, (val) => updateMock(field.key, val))}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -398,7 +516,7 @@ export function TestWizardModal({
           <Textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={`Enter ${field.label || field.key}`}
+            placeholder={`Enter ${field.label || field.key}...`}
             className="resize-none h-20 text-sm"
           />
         );
@@ -409,7 +527,7 @@ export function TestWizardModal({
               type="button"
               onClick={() => onChange(true)}
               className={cn(
-                "flex-1 py-2.5 px-3 rounded-lg border text-xs font-medium transition-all",
+                "flex-1 py-2 px-3 rounded-md border text-xs font-medium transition-all",
                 value === true
                   ? "border-foreground bg-foreground text-background"
                   : "border-border bg-background hover:bg-muted/50 text-muted-foreground"
@@ -421,7 +539,7 @@ export function TestWizardModal({
               type="button"
               onClick={() => onChange(false)}
               className={cn(
-                "flex-1 py-2.5 px-3 rounded-lg border text-xs font-medium transition-all",
+                "flex-1 py-2 px-3 rounded-md border text-xs font-medium transition-all",
                 value === false
                   ? "border-foreground bg-foreground text-background"
                   : "border-border bg-background hover:bg-muted/50 text-muted-foreground"
@@ -438,7 +556,7 @@ export function TestWizardModal({
             value={value}
             onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
             placeholder="0"
-            className="h-9 text-sm"
+            className="h-9 text-sm font-mono"
           />
         );
       case 'rating':
@@ -452,7 +570,7 @@ export function TestWizardModal({
                 className="p-0.5 rounded transition-all hover:scale-110"
               >
                 <Star className={cn(
-                  "w-6 h-6 transition-all",
+                  "w-5 h-5 transition-all",
                   (value || 0) >= star
                     ? "fill-foreground text-foreground"
                     : "text-border"
@@ -476,8 +594,8 @@ export function TestWizardModal({
                   !value && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground" />
-                {value ? format(new Date(value), field.type === 'datetime' ? 'PPP p' : 'PPP') : `Select ${field.type === 'datetime' ? 'date & time' : 'date'}`}
+                <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                {value ? format(new Date(value), field.type === 'datetime' ? 'PPP p' : 'PPP') : `Select ${field.type === 'datetime' ? 'date & time' : 'date'}...`}
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -543,7 +661,7 @@ export function TestWizardModal({
         return (
           <Select value={String(value)} onValueChange={(val) => onChange(val)}>
             <SelectTrigger className="h-9 text-sm">
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder="Select an option..." />
             </SelectTrigger>
             <SelectContent>
               {(field.options || []).map((opt, i) => (
@@ -554,16 +672,16 @@ export function TestWizardModal({
         );
       case 'signature':
         return (
-          <div className="py-4 border border-dashed border-border rounded-lg bg-muted/10 text-center">
-            <PenTool className="w-4 h-4 mx-auto mb-1.5 text-muted-foreground/50" />
-            <p className="text-[11px] text-muted-foreground">Auto-filled during test</p>
+          <div className="py-3 border border-dashed rounded-md bg-muted/10 text-center">
+            <PenTool className="w-4 h-4 mx-auto mb-1 text-muted-foreground/40" />
+            <p className="text-[10px] text-muted-foreground">Auto-filled during test</p>
           </div>
         );
       case 'file':
         return (
-          <div className="py-4 border border-dashed border-border rounded-lg bg-muted/10 text-center">
-            <FileText className="w-4 h-4 mx-auto mb-1.5 text-muted-foreground/50" />
-            <p className="text-[11px] text-muted-foreground">Skipped during test</p>
+          <div className="py-3 border border-dashed rounded-md bg-muted/10 text-center">
+            <FileText className="w-4 h-4 mx-auto mb-1 text-muted-foreground/40" />
+            <p className="text-[10px] text-muted-foreground">Skipped during test</p>
           </div>
         );
       default:
@@ -571,7 +689,7 @@ export function TestWizardModal({
           <Input
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={`Enter ${field.label || field.key}`}
+            placeholder={`Enter ${field.label || field.key}...`}
             className="h-9 text-sm"
           />
         );
@@ -592,29 +710,33 @@ export function TestWizardModal({
     const currentValue = node.data?.mockPayload || buildDefault();
 
     return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label className="text-[10px] uppercase text-muted-foreground tracking-wider font-medium">
-            Mock Webhook Body
-          </Label>
+      <div className="space-y-5">
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Provide the JSON payload this event would receive. This will be used instead of waiting for the real webhook.
+        </p>
+
+        <div className="h-px bg-border" />
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-muted-foreground">Webhook Body (JSON)</Label>
+            <button
+              type="button"
+              onClick={() => onUpdateNodeData(node.id, { ...node.data, mockPayload: buildDefault() })}
+              className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <RotateCcw className="w-3 h-3" />
+              Reset
+            </button>
+          </div>
           <Textarea
             value={currentValue}
             onChange={(e) => onUpdateNodeData(node.id, { ...node.data, mockPayload: e.target.value })}
             placeholder={buildDefault()}
-            className="font-mono text-xs h-60 resize-none bg-muted/20 border-border"
+            className="font-mono text-xs min-h-[320px] resize-none bg-muted/20"
             spellCheck={false}
           />
-          <p className="text-[11px] text-muted-foreground">
-            Valid JSON matching the expected payload schema.
-          </p>
         </div>
-        <button
-          type="button"
-          onClick={() => onUpdateNodeData(node.id, { ...node.data, mockPayload: buildDefault() })}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
-        >
-          Reset to defaults
-        </button>
       </div>
     );
   };
@@ -625,23 +747,31 @@ export function TestWizardModal({
     const hasTriggerSchema = triggerNode?.data?.schema?.length > 0;
     const blockingNodes = ordered.filter(n => n.type === 'human-task' || n.type === 'automation');
 
+    const hasAnyData = hasTriggerSchema || blockingNodes.length > 0;
+
     return (
-      <div className="space-y-3">
-        {/* Trigger */}
-        {hasTriggerSchema && (
-          <div className="rounded-lg border border-border overflow-hidden">
-            <div className="flex items-center gap-2.5 px-4 py-2.5 bg-muted/30">
-              <Zap className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-xs font-medium flex-1">Trigger Payload</span>
-              <Check className="w-3.5 h-3.5 text-muted-foreground" />
-            </div>
-            <pre className="text-[11px] font-mono px-4 py-2.5 text-muted-foreground overflow-x-auto max-h-18 border-t border-border bg-muted/10">
-              {JSON.stringify(triggerPayload, null, 2)}
-            </pre>
-          </div>
+      <div className="space-y-5">
+        {hasAnyData && (
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Review the test data below before running. Click a step in the sidebar to make changes.
+          </p>
         )}
 
-        {/* Blocking nodes */}
+        {hasTriggerSchema && (
+          <>
+            <div className="h-px bg-border" />
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2">
+                <Zap className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span className="text-xs font-medium">Trigger Payload</span>
+              </div>
+              <pre className="text-[11px] font-mono p-3 rounded-md bg-muted/30 text-muted-foreground overflow-auto max-h-32 border">
+                {JSON.stringify(triggerPayload, null, 2)}
+              </pre>
+            </div>
+          </>
+        )}
+
         {blockingNodes.map((node) => {
           const name = node.data?.label || node.data?.title || node.data?.eventName || node.id.slice(0, 8);
           const isHumanTask = node.type === 'human-task';
@@ -656,39 +786,44 @@ export function TestWizardModal({
             try { previewData = JSON.parse(node.data.mockPayload); } catch { previewData = node.data.mockPayload; }
           }
 
+          const Icon = isHumanTask ? ClipboardList : RadioTower;
+          const color = isHumanTask ? 'text-teal-500' : 'text-pink-500';
+
           return (
-            <div key={node.id} className="rounded-lg border border-border overflow-hidden">
-              <div className="flex items-center gap-2.5 px-4 py-2.5 bg-muted/30">
-                {isHumanTask
-                  ? <ClipboardList className="w-3.5 h-3.5 text-muted-foreground" />
-                  : <RadioTower className="w-3.5 h-3.5 text-muted-foreground" />
-                }
-                <span className="text-xs font-medium truncate flex-1">{name}</span>
-                <span className="text-[10px] text-muted-foreground/60 mr-1">
-                  {isHumanTask ? 'Task' : 'Event'}
-                </span>
-                {isConfigured ? (
-                  <Check className="w-3.5 h-3.5 text-muted-foreground" />
+            <React.Fragment key={node.id}>
+              <div className="h-px bg-border" />
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <Icon className={cn("w-3.5 h-3.5 shrink-0", color)} />
+                  <span className="text-xs font-medium truncate">{name}</span>
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 font-normal shrink-0">
+                    {isHumanTask ? 'Task' : 'Event'}
+                  </Badge>
+                  {isConfigured ? (
+                    <Check className="w-3 h-3 text-emerald-500 ml-auto shrink-0" />
+                  ) : (
+                    <Circle className="w-3 h-3 text-muted-foreground/30 ml-auto shrink-0" />
+                  )}
+                </div>
+                {previewData ? (
+                  <pre className="text-[11px] font-mono p-3 rounded-md bg-muted/30 text-muted-foreground overflow-auto max-h-28 border">
+                    {typeof previewData === 'string' ? previewData : JSON.stringify(previewData, null, 2)}
+                  </pre>
                 ) : (
-                  <Circle className="w-3 h-3 text-muted-foreground/40" />
+                  <p className="text-[11px] text-muted-foreground/50 italic pl-6">No mock data configured</p>
                 )}
               </div>
-              {previewData && (
-                <pre className="text-[11px] font-mono px-4 py-2.5 text-muted-foreground overflow-x-auto max-h-14 border-t border-border bg-muted/10">
-                  {typeof previewData === 'string' ? previewData : JSON.stringify(previewData, null, 2)}
-                </pre>
-              )}
-            </div>
+            </React.Fragment>
           );
         })}
 
-        {blockingNodes.length === 0 && !hasTriggerSchema && (
-          <div className="flex flex-col items-center justify-center py-10">
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3">
-              <Play className="w-4 h-4 text-muted-foreground" />
+        {!hasAnyData && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+              <Play className="w-5 h-5 text-muted-foreground" />
             </div>
-            <p className="text-sm text-muted-foreground">Ready to run</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">No test data required</p>
+            <p className="text-sm font-medium">Ready to run</p>
+            <p className="text-xs text-muted-foreground mt-1">No test data required for this flow.</p>
           </div>
         )}
       </div>
@@ -707,42 +842,50 @@ export function TestWizardModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-180 p-0 gap-0 overflow-hidden" showCloseButton={false}>
-        <div className="flex h-130">
+      <DialogContent className="!w-[960px] !max-w-[960px] !h-[640px] p-0 gap-0 overflow-hidden" showCloseButton={false}>
+        <div className="flex h-full">
 
           {/* ─── Left: Step Nav ─── */}
-          <div className="w-[200px] shrink-0 border-r border-border bg-muted/20 flex flex-col">
-            <div className="px-5 pt-5 pb-4">
-              <DialogHeader>
-                <DialogTitle className="text-sm font-medium tracking-tight">Test Wizard</DialogTitle>
-                <DialogDescription className="text-[11px] text-muted-foreground/70">
-                  Configure mock data
+          <div className="w-[240px] shrink-0 border-r border-border bg-muted/10 flex flex-col">
+            <div className="px-5 pt-5 pb-4 border-b border-border">
+              <DialogHeader className="space-y-1">
+                <DialogTitle className="text-sm font-semibold">Test Flow</DialogTitle>
+                <DialogDescription className="text-[11px] text-muted-foreground leading-tight">
+                  Configure test data for each step
                 </DialogDescription>
               </DialogHeader>
             </div>
 
-            <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
+            <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
               {steps.map((step, index) => {
-                const isComplete = index < currentStep;
+                const valid = isStepValid(step, triggerPayload);
                 const isCurrent = index === currentStep;
+                const isReview = step.type === 'review';
+                const Icon = STEP_ICONS[step.type];
+                const color = STEP_COLORS[step.type];
 
                 return (
                   <button
                     key={index}
                     onClick={() => setCurrentStep(index)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all text-xs group",
-                      isCurrent && "bg-foreground text-background",
-                      !isCurrent && "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                      "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-all text-xs",
+                      isCurrent && "bg-foreground text-background shadow-sm",
+                      !isCurrent && "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                     )}
                   >
                     <div className={cn(
-                      "w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-[9px] font-semibold transition-all",
-                      isCurrent && "bg-background text-foreground",
-                      isComplete && "bg-foreground/10 text-foreground border border-foreground/20",
-                      !isCurrent && !isComplete && "border border-border"
+                      "w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-all",
+                      isCurrent && "bg-background/15",
+                      valid && !isCurrent && !isReview && "bg-emerald-500/15",
+                      !valid && !isCurrent && !isReview && "bg-muted/50",
+                      isReview && !isCurrent && "bg-muted/50"
                     )}>
-                      {isComplete ? <Check className="w-3 h-3" /> : index + 1}
+                      {valid && !isCurrent && !isReview ? (
+                        <Check className="w-3 h-3 text-emerald-500" />
+                      ) : (
+                        <Icon className={cn("w-3.5 h-3.5", isCurrent ? "text-background" : color)} />
+                      )}
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -750,8 +893,8 @@ export function TestWizardModal({
                         {stepLabel(step)}
                       </span>
                       <span className={cn(
-                        "block text-[9px] mt-0.5 uppercase tracking-wider",
-                        isCurrent ? "text-background/60" : "text-muted-foreground/50"
+                        "block text-[9px] mt-0.5 leading-tight",
+                        isCurrent ? "text-background/50" : "text-muted-foreground/50"
                       )}>
                         {stepSubtitle(step)}
                       </span>
@@ -761,9 +904,17 @@ export function TestWizardModal({
               })}
             </nav>
 
-            <div className="px-5 py-3 border-t border-border">
-              <div className="flex items-center justify-between text-[10px] text-muted-foreground/60">
-                <span>{currentStep + 1}/{steps.length}</span>
+            <div className="px-4 py-3 border-t border-border">
+              <div className="flex items-center gap-1.5">
+                {steps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "h-1 rounded-full flex-1 transition-all",
+                      index <= currentStep ? "bg-foreground" : "bg-border"
+                    )}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -771,53 +922,70 @@ export function TestWizardModal({
           {/* ─── Right: Content ─── */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Header */}
-            <div className="px-6 pt-5 pb-4 border-b border-border">
-              <div className="flex items-center gap-2.5">
-                <StepIcon type={currentStepData?.type || 'review'} className="text-muted-foreground" />
-                <div>
-                  <h3 className="text-sm font-medium leading-tight">
-                    {currentStepData ? stepLabel(currentStepData) : 'Review'}
-                  </h3>
-                  <p className="text-[11px] text-muted-foreground/60 mt-0.5">
-                    {currentStepData ? stepSubtitle(currentStepData) : 'Summary'}
-                  </p>
-                </div>
+            <div className="px-6 py-4 border-b border-border flex items-center gap-3 shrink-0">
+              {(() => {
+                const Icon = STEP_ICONS[currentStepData?.type || 'review'];
+                const color = STEP_COLORS[currentStepData?.type || 'review'];
+                return (
+                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                    <Icon className={cn("w-4 h-4", color)} />
+                  </div>
+                );
+              })()}
+              <div className="min-w-0">
+                <h3 className="text-sm font-semibold leading-tight truncate">
+                  {currentStepData ? stepLabel(currentStepData) : 'Review'}
+                </h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Step {currentStep + 1} of {steps.length}
+                </p>
               </div>
             </div>
 
-            {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto px-6 py-5">
-              {renderStepContent()}
-            </div>
+            {/* Scrollable content — fixed height, no layout shift */}
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="px-6 py-5">
+                {renderStepContent()}
+              </div>
+            </ScrollArea>
 
             {/* Footer */}
-            <div className="px-6 py-3 border-t border-border flex items-center justify-between">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePrev}
-                disabled={isFirstStep}
-                className="gap-1.5 text-muted-foreground"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-                Back
-              </Button>
-
+            <div className="px-6 py-3 border-t border-border flex items-center justify-between shrink-0 bg-background">
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onClose}
-                  className="text-muted-foreground"
+                  onClick={isFirstStep ? onClose : handlePrev}
+                  className="gap-1.5 text-muted-foreground h-8"
                 >
-                  Cancel
+                  {isFirstStep ? (
+                    "Cancel"
+                  ) : (
+                    <>
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      Back
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Save button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={saveAllTestData}
+                  className="gap-1.5 h-8 text-muted-foreground"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  Save
                 </Button>
 
                 {isLastStep ? (
                   <Button
                     size="sm"
                     onClick={handleRun}
-                    className="gap-1.5 bg-foreground text-background hover:bg-foreground/90"
+                    className="gap-2 h-8"
                   >
                     <Play className="w-3.5 h-3.5" />
                     Run Test
@@ -826,7 +994,7 @@ export function TestWizardModal({
                   <Button
                     size="sm"
                     onClick={handleNext}
-                    className="gap-1.5 bg-foreground text-background hover:bg-foreground/90"
+                    className="gap-1.5 h-8"
                   >
                     Next
                     <ChevronRight className="w-3.5 h-3.5" />

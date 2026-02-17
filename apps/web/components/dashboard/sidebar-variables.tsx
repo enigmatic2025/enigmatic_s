@@ -173,20 +173,6 @@ function JsonRow({ label, value, path, isPrimitive, contextLoopSource }: { label
 }
 
 
-// Default schemas for known triggers
-const DEFAULT_SCHEMAS: Record<string, any> = {
-    'manual-trigger': {
-        timestamp: Date.now(),
-        user_id: "usr_mock123",
-        payload: { "key": "value" }
-    },
-    'webhook': {
-        body: { "message": "Hello World" },
-        headers: { "content-type": "application/json" },
-        query: { "id": "123" },
-        method: "POST"
-    }
-};
 
 export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
   const { nodes, variables, setVariable, deleteVariable, selectedNodeId, editingNodeId, editingNodeData } = useFlowStore();
@@ -237,8 +223,8 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
        // Deep Search: Check if any variable in the schema matches
        let matchesSchema = false;
        const runResult = n.data?.lastRunResult;
-       let schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[n.type || ""];
-       
+       let schema = runResult;
+
        // Re-resolve schema logic same as render (simplified for search)
        if (schema === undefined && (n.type === 'api-trigger' || n.type === 'automation') && n.data?.schema) {
            schema = {};
@@ -345,7 +331,7 @@ export function SidebarVariables({ searchQuery }: { searchQuery: string }) {
                 const activeData = isEditing && editingNodeData ? editingNodeData : node.data;
 
                 const runResult = activeData?.lastRunResult;
-                let schema = runResult !== undefined ? runResult : DEFAULT_SCHEMAS[node.type || ""];
+                let schema = runResult;
                 
                 // Special handling for API Trigger and Human Task Schema
                 const isSchemaNode = 
