@@ -620,6 +620,17 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                               } else {
                                   message = `Step '${nodeName}' parsed successfully`;
                               }
+                          } else if (nodeType === 'goto') {
+                              if (output?._test_stopped_at_goto) {
+                                  const targetNode = nodesMap.get(output._goto_target);
+                                  const targetName = targetNode?.data?.label || targetNode?.data?.title || output._goto_target || 'previous step';
+                                  logType = 'warning';
+                                  message = `Step '${nodeName}' — Test stopped here. In production this would retry back to '${targetName}'.`;
+                                  details = null;
+                              } else {
+                                  logType = 'info';
+                                  message = `Step '${nodeName}' — Retry/Revisit triggered`;
+                              }
                           }
 
                           addLog({ message, type: logType, details, nodeType, nodeId });

@@ -40,7 +40,15 @@ export const NodeCard = ({
   let StatusBadge = null;
 
   if (result) {
-    if (result.status === 'success') {
+    if (result.status === 'success' && result.output?._test_stopped_at_goto) {
+      statusBorder = "border-amber-500 ring-2 ring-amber-500/20";
+      StatusBadge = (
+        <div className="absolute -top-3 right-2 bg-amber-100 dark:bg-amber-900 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-[9px] px-1.5 py-0.5 rounded-full font-mono font-medium shadow-sm z-50 flex items-center gap-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+          Test stop
+        </div>
+      );
+    } else if (result.status === 'success') {
       statusBorder = "border-green-500 ring-2 ring-green-500/20";
       StatusBadge = (
         <div className="absolute -top-3 right-2 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-[9px] px-1.5 py-0.5 rounded-full font-mono font-medium shadow-sm z-50 flex items-center gap-1">

@@ -390,6 +390,18 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 
 		// Handle GOTO / LOOP
 		if gotoTarget, ok := result.Output["_goto_target"].(string); ok && gotoTarget != "" {
+			// In test mode, treat reaching a Retry/Revisit node as a successful terminal state.
+			// This prevents infinite loops during testing since there is no real event to
+			// satisfy the jump-back target.
+			if mockData != nil {
+				logger.Info("GOTO reached in test mode — stopping as success", "From", nodeID, "To", gotoTarget)
+				// Surface a marker so the test results UI can show a clear message
+				// instead of a generic success.
+				executionState[nodeID]["_test_stopped_at_goto"] = true
+				executionState[nodeID]["_goto_target"] = gotoTarget
+				return
+			}
+
 			gotoCounter++
 			if gotoCounter > maxGotoHops {
 				executionError = fmt.Errorf("maximum GOTO iterations (%d) exceeded — possible infinite loop detected", maxGotoHops)
