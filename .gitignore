@@ -64,3 +64,6 @@ next-env.d.ts
 fix_rls*.sql
 restrict_org_creation.sql
 .env*.local
+
+# Windows reserved device name (cannot be deleted on Windows)
+nul
