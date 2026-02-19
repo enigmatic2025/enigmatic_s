@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -60,11 +61,8 @@ func NewServer(cfg *config.Config) *http.Server {
 func (s *Server) RegisterRoutes() http.Handler {
 	mux := http.NewServeMux()
 
-	log.Println("Registering routes...")
-
 	// Health Check
-	mux.HandleFunc("/", s.HelloWorldHandler)
-	mux.HandleFunc("/health", s.HelloWorldHandler)
+	mux.HandleFunc("GET /health", s.healthHandler)
 
 	// Initialize Handlers
 	adminHandler := handlers.NewAdminHandler()
@@ -128,7 +126,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}
 
 	// Public routes (no auth)
-	mux.Handle("GET /api/health", http.HandlerFunc(s.HelloWorldHandler))
+	mux.Handle("GET /api/health", http.HandlerFunc(s.healthHandler))
 
 	// Automation Routes
 	if s.temporalClient != nil {
@@ -206,8 +204,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return mux
 }
 
-func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Health check received from %s", r.RemoteAddr)
+func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Hello from Nodal Backend! App is healthy."))
+	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }

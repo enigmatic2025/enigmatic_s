@@ -63,3 +63,4 @@ next-env.d.ts
 # Temporary SQL scripts (keep schema.sql)
 fix_rls*.sql
 restrict_org_creation.sql
+.env*.local
