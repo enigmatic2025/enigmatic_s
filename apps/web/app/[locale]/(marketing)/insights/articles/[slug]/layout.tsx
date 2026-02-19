@@ -36,10 +36,6 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
-  return getInsightPosts('en').map((post) => ({ slug: post.slug }));
-}
-
 export default function ArticleLayout({
   children,
 }: {
