@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { toast } from "sonner"
 import { Loader2, ArrowLeft } from "lucide-react"
 import { WaveLoader } from "@/components/ui/wave-loader"
+import { validatePassword as validatePw, PASSWORD_REQUIREMENTS } from "@/lib/password-validation"
 
 function UpdatePasswordContent() {
   const [password, setPassword] = useState('')
@@ -25,40 +26,22 @@ function UpdatePasswordContent() {
   const [challengeId, setChallengeId] = useState<string | null>(null)
 
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
-    const exchangeCode = async () => {
-      const code = searchParams.get('code')
-      if (code) {
-        try {
-          const { error } = await supabase.auth.exchangeCodeForSession(code)
-          if (error) throw error
-        } catch (err: any) {
-          console.error('Exchange error:', err)
-          setError(err.message || 'Failed to verify reset link')
-          toast.error('Failed to verify reset link: ' + err.message)
-        } finally {
-          setVerifying(false)
-        }
-      } else {
-        // Check if we already have a session (e.g. user navigated here manually)
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) {
-          setError('Invalid or expired reset link')
-        }
-        setVerifying(false)
+    // Session is already established by the auth callback route (server-side code exchange)
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Invalid or expired reset link')
       }
+      setVerifying(false)
     }
-    exchangeCode()
-  }, [searchParams])
+    checkSession()
+  }, [])
 
-  const validatePassword = (pass: string) => {
-    if (pass.length < 8) return "Password must be at least 8 characters long"
-    if (!/[A-Z]/.test(pass)) return "Password must contain at least one uppercase letter"
-    if (!/[a-z]/.test(pass)) return "Password must contain at least one lowercase letter"
-    if (!/[0-9]/.test(pass)) return "Password must contain at least one number"
-    return null
+  const checkPassword = (pass: string) => {
+    const result = validatePw(pass)
+    return result.error
   }
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -69,7 +52,7 @@ function UpdatePasswordContent() {
       return
     }
 
-    const validationError = validatePassword(password)
+    const validationError = checkPassword(password)
     if (validationError) {
       toast.error(validationError)
       return
@@ -295,10 +278,9 @@ function UpdatePasswordContent() {
             />
           </div>
           <ul className="text-xs text-muted-foreground list-disc list-inside space-y-1">
-            <li>At least 8 characters</li>
-            <li>One uppercase letter</li>
-            <li>One lowercase letter</li>
-            <li>One number</li>
+            {PASSWORD_REQUIREMENTS.map((req) => (
+              <li key={req}>{req}</li>
+            ))}
           </ul>
           <Button className="w-full" type="submit" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

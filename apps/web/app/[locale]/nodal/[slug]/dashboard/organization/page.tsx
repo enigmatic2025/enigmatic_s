@@ -65,6 +65,7 @@ import {
 } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { validatePassword, PASSWORD_REQUIREMENTS } from "@/lib/password-validation";
 
 // ─── Helpers ──────────────────────────────────────────
 function getInitials(name?: string) {
@@ -181,6 +182,11 @@ export default function OrganizationPage() {
   // ─── Handlers ─────────────────────────────────────────
   const handleCreateMember = async () => {
     if (!orgId || !newMember.email || !newMember.password || !newMember.full_name) return;
+    const pwValidation = validatePassword(newMember.password);
+    if (!pwValidation.valid) {
+      toast.error(pwValidation.error);
+      return;
+    }
     setSubmitting(true);
     try {
       await organizationService.createMember(orgId, {
@@ -298,6 +304,12 @@ export default function OrganizationPage() {
 
   const handleResetPassword = async () => {
     if (!orgId || !resetPasswordMember || !newPassword) return;
+    const pwValidation = validatePassword(newPassword);
+    if (!pwValidation.valid) {
+      toast.error(pwValidation.error);
+      return;
+    }
+    setSubmitting(true);
     try {
       await organizationService.resetMemberPassword(orgId, resetPasswordMember.user_id, newPassword);
       toast.success("Password reset successfully");
@@ -306,6 +318,8 @@ export default function OrganizationPage() {
       setResetPasswordMember(null);
     } catch {
       toast.error("Failed to reset password");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -623,7 +637,7 @@ export default function OrganizationPage() {
                   type="password"
                   value={newMember.password}
                   onChange={(e) => setNewMember({ ...newMember, password: e.target.value })}
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                 />
               </div>
               <div className="space-y-1.5">
@@ -640,6 +654,11 @@ export default function OrganizationPage() {
                 </Select>
               </div>
             </div>
+            <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5">
+              {PASSWORD_REQUIREMENTS.map((req) => (
+                <li key={req}>{req}</li>
+              ))}
+            </ul>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Job Title</Label>
@@ -875,16 +894,21 @@ export default function OrganizationPage() {
                 autoComplete="new-password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Min. 6 characters"
+                placeholder="Min. 8 characters"
               />
+              <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5">
+                {PASSWORD_REQUIREMENTS.map((req) => (
+                  <li key={req}>{req}</li>
+                ))}
+              </ul>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsResetPasswordOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleResetPassword} disabled={!newPassword}>
-              Reset Password
+            <Button onClick={handleResetPassword} disabled={!newPassword || submitting}>
+              {submitting ? "Resetting..." : "Reset Password"}
             </Button>
           </DialogFooter>
         </DialogContent>

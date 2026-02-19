@@ -10,6 +10,7 @@ import (
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/validation"
 )
 
 type AdminHandler struct{}
@@ -290,6 +291,11 @@ func (h *AdminHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if req.Email == "" || req.Password == "" {
 		http.Error(w, "Email and password are required", http.StatusBadRequest)
+		return
+	}
+
+	if err := validation.ValidatePassword(req.Password); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -697,6 +703,11 @@ func (h *AdminHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request
 
 	if req.Password == "" {
 		http.Error(w, "Password is required", http.StatusBadRequest)
+		return
+	}
+
+	if err := validation.ValidatePassword(req.Password); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

@@ -10,6 +10,7 @@ import (
 
 	"github.com/teavana/enigmatic_s/apps/backend/internal/database"
 	"github.com/teavana/enigmatic_s/apps/backend/internal/middleware"
+	"github.com/teavana/enigmatic_s/apps/backend/internal/validation"
 )
 
 type OrganizationHandler struct{}
@@ -145,6 +146,11 @@ func (h *OrganizationHandler) CreateMember(w http.ResponseWriter, r *http.Reques
 
 	if req.Email == "" || req.Password == "" || req.FullName == "" {
 		http.Error(w, "Email, password, and full name are required", http.StatusBadRequest)
+		return
+	}
+
+	if err := validation.ValidatePassword(req.Password); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -641,6 +647,11 @@ func (h *OrganizationHandler) ResetMemberPassword(w http.ResponseWriter, r *http
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Password == "" {
 		http.Error(w, "Password is required", http.StatusBadRequest)
+		return
+	}
+
+	if err := validation.ValidatePassword(req.Password); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

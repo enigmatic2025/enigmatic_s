@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Organization, User } from '@/types/admin'
+import { toast } from "sonner"
+import { validatePassword, PASSWORD_REQUIREMENTS } from "@/lib/password-validation"
 
 interface CreateUserDialogProps {
   open: boolean
@@ -40,6 +42,11 @@ export function CreateUserDialog({ open, onOpenChange, orgs, onSubmit }: CreateU
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async () => {
+    const validation = validatePassword(formData.password)
+    if (!validation.valid) {
+      toast.error(validation.error)
+      return
+    }
     setLoading(true)
     await onSubmit({
       ...formData,
@@ -67,7 +74,12 @@ export function CreateUserDialog({ open, onOpenChange, orgs, onSubmit }: CreateU
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" autoComplete="new-password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
+            <Input id="password" type="password" autoComplete="new-password" placeholder="Min. 8 characters" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
+            <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5">
+              {PASSWORD_REQUIREMENTS.map((req) => (
+                <li key={req}>{req}</li>
+              ))}
+            </ul>
           </div>
           <div className="grid gap-2">
             <Label>User Type</Label>
@@ -332,6 +344,11 @@ export function ChangePasswordDialog({ open, onOpenChange, onSubmit }: ChangePas
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async () => {
+    const validation = validatePassword(password)
+    if (!validation.valid) {
+      toast.error(validation.error)
+      return
+    }
     setLoading(true)
     await onSubmit(password)
     setLoading(false)
@@ -347,12 +364,17 @@ export function ChangePasswordDialog({ open, onOpenChange, onSubmit }: ChangePas
         <div className="grid gap-4 py-4">
             <div className="grid gap-2">
             <Label htmlFor="new-password">New Password</Label>
-            <Input id="new-password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input id="new-password" type="password" autoComplete="new-password" placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5">
+              {PASSWORD_REQUIREMENTS.map((req) => (
+                <li key={req}>{req}</li>
+              ))}
+            </ul>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={loading}>
+          <Button variant="outline" onClick={() => { onOpenChange(false); setPassword('') }}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={loading || !password}>
             {loading ? 'Updating...' : 'Update Password'}
           </Button>
         </DialogFooter>
