@@ -18,6 +18,7 @@ import {
   Globe,
   RotateCcw,
   RadioTower,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -482,9 +483,50 @@ export function Sidebar({
       </ScrollArea>
 
       {/* Footer */}
-      <div className="p-3 space-y-2">
+      <div className="p-3 space-y-1">
         <div className={!sidebarOpen ? "flex justify-center" : ""}>
           <NavItem href="/docs" icon={Book} label={t("docs")} />
+        </div>
+        <div className={!sidebarOpen ? "flex justify-center" : ""}>
+          {!sidebarOpen ? (
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 flex items-center justify-center text-muted-foreground"
+                    asChild
+                  >
+                    <a
+                      href="https://enigmatic.instatus.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Activity className="h-4 w-4" />
+                      <span className="sr-only">System Status</span>
+                    </a>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">System Status</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button
+              variant="ghost"
+              className="w-full justify-start h-8 px-2 text-muted-foreground"
+              asChild
+            >
+              <a
+                href="https://enigmatic.instatus.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Activity className="h-4 w-4 mr-3 shrink-0" />
+                <span className="text-sm">System Status</span>
+              </a>
+            </Button>
+          )}
         </div>
       </div>
     </aside>

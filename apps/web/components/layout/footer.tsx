@@ -31,6 +31,7 @@ export function Footer() {
     ],
     company: [
       { label: tNav("items.about"), href: "/company/about-us" },
+      { label: "System Status", href: "/status" },
     ],
     legal: [
       { label: tNav("items.privacy"), href: "/privacy" },
