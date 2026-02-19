@@ -9,7 +9,9 @@
     "title": "Insights",
     "backToInsights": "Back to Insights",
     "author": "Author",
-    "allContent": "All Content"
+    "allContent": "All Content",
+    "heroSubtitle": "Thoughts on logistics, technology, and the future of supply chain management.",
+    "featuredArticles": "Featured Articles"
   },
   "Admin": {
     "overview": "Overview",
@@ -20,42 +22,42 @@
     "blocked": "Blocked",
     "creditsUsed": "Credits Used",
     "common": {
-        "clear": "Clear",
-        "save": "Save",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "edit": "Edit",
-        "create": "Create",
-        "select": "Select",
-        "actions": "Actions",
-        "noOrg": "No Org",
-        "platform": "Platform"
+      "clear": "Clear",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "select": "Select",
+      "actions": "Actions",
+      "noOrg": "No Org",
+      "platform": "Platform"
     },
     "filters": {
-        "organization": "Organization",
-        "role": "Role",
-        "status": "Status",
-        "plan": "Plan",
-        "aiAccess": "AI Access",
-        "allOrgs": "All Orgs",
-        "allRoles": "All Roles",
-        "allStatus": "All Status",
-        "allPlans": "All Plans",
-        "allAccess": "All Access"
+      "organization": "Organization",
+      "role": "Role",
+      "status": "Status",
+      "plan": "Plan",
+      "aiAccess": "AI Access",
+      "allOrgs": "All Orgs",
+      "allRoles": "All Roles",
+      "allStatus": "All Status",
+      "allPlans": "All Plans",
+      "allAccess": "All Access"
     },
     "roles": {
-        "platformAdmin": "Platform Admin",
-        "owner": "Owner",
-        "admin": "Admin",
-        "member": "Member"
+      "platformAdmin": "Platform Admin",
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member"
     },
     "status": {
-        "active": "Active",
-        "blocked": "Blocked"
+      "active": "Active",
+      "blocked": "Blocked"
     },
     "types": {
-        "unlimited": "Unlimited",
-        "creditBased": "Credit-based"
+      "unlimited": "Unlimited",
+      "creditBased": "Credit-based"
     },
     "Users": {
       "title": "Users",
@@ -149,9 +151,9 @@
     "deliverables": "Deliverables",
     "tools": "Tools",
     "phases": {
-        "consulting": "Consulting Phase",
-        "engineering": "System Engineering Phase",
-        "engineeringNote": "Ideally, we build what we design. But clients may choose to conclude the engagement here, armed with a complete roadmap for internal execution."
+      "consulting": "Consulting Phase",
+      "engineering": "System Engineering Phase",
+      "engineeringNote": "Ideally, we build what we design. But clients may choose to conclude the engagement here, armed with a complete roadmap for internal execution."
     },
     "steps": {
       "step1": {
@@ -163,84 +165,84 @@
           "Executive sponsorship agreement"
         ],
         "tools": [
-            "Atlassian Confluence"
+          "Atlassian Confluence"
         ]
       },
       "step2": {
         "title": " Diagnostic & Financial Modeling",
         "description": "Map current systems and workflows to identify bottlenecks, building a financial baseline and transformation thesis with quantified impact.",
         "deliverables": [
-          "Current-state process maps", 
+          "Current-state process maps",
           "System architecture diagram",
           "Financial baseline model",
           "Bottleneck analysis",
           "Transformation thesis"
         ],
         "tools": [
-            "Lucid Chart",
-            "Excel",
-            "SQL",
-            "BPMN 2.0",
-            "Atlassian Confluence"
+          "Lucid Chart",
+          "Excel",
+          "SQL",
+          "BPMN 2.0",
+          "Atlassian Confluence"
         ]
       },
       "step3": {
         "title": " Future State Architecture",
         "description": "Design the target operating model, including technology blueprints, workflow redesigns, and governance structures for scalable operations.",
         "deliverables": [
-            "Future-state operating model",
-            "Workflow redesigns",
-            "Technology blueprint",
-            "Governance model",
-            "Change rollout plan"
+          "Future-state operating model",
+          "Workflow redesigns",
+          "Technology blueprint",
+          "Governance model",
+          "Change rollout plan"
         ],
         "tools": [
-            "BPMN 2.0",
-            "Lucid Chart",
-            "Atlassian Confluence"
+          "BPMN 2.0",
+          "Lucid Chart",
+          "Atlassian Confluence"
         ]
       },
       "step4": {
         "title": " Solution Engineering & Pilot",
         "description": "Validate the solution through a limited-scope pilot. We engineer standalone solutions but highly recommend adopting Nodal to organize and scale your workflows efficiently.",
         "deliverables": [
-            "Nodal environment configuration",
-            "Working pilot solution",
-            "KPI tracking dashboard",
-            "Adoption measurement report"
+          "Nodal environment configuration",
+          "Working pilot solution",
+          "KPI tracking dashboard",
+          "Adoption measurement report"
         ],
         "tools": [
-            "Nodal",
-            "n8n",
-            "Atlassian Jira",
-            "Atlassian Confluence"
+          "Nodal",
+          "n8n",
+          "Atlassian Jira",
+          "Atlassian Confluence"
         ]
       },
       "step5": {
         "title": " Scaled Rollout",
         "description": "Expand successful workflows across departments and locations, institutionalizing governance to ensure full solution adoption.",
         "deliverables": [
-            "Multi-department workflow expansion",
-            "Institutionalized governance playbook",
-            "Full solution adoption"
+          "Multi-department workflow expansion",
+          "Institutionalized governance playbook",
+          "Full solution adoption"
         ],
         "tools": [
-            "Nodal",
-            "n8n"
+          "Nodal",
+          "n8n"
         ]
       },
       "step6": {
         "title": " Continuous Optimization",
         "description": "Provide ongoing white-glove support and quarterly reviews to refined the solution and drive continuous improvement.",
         "deliverables": [
-            "Quarterly solution reviews",
-            "Optimization roadmap",
-            "Performance improvement report"
+          "Quarterly solution reviews",
+          "Optimization roadmap",
+          "Performance improvement report"
         ],
         "tools": [
-            "Nodal",
-            "PowerBI",
-            "Atlassian Confluence"
+          "Nodal",
+          "PowerBI",
+          "Atlassian Confluence"
         ]
       }
     },
@@ -431,31 +433,31 @@
     "reject": "Reject"
   },
   "Footer": {
-      "tagline": "Digitizing complex workflows and building automated solutions that power the future of industrial operations.",
-      "copyright": "© {year} Enigmatic Technologies. All rights reserved.",
-      "legal": "Legal"
+    "tagline": "Digitizing complex workflows and building automated solutions that power the future of industrial operations.",
+    "copyright": "© {year} Enigmatic Technologies. All rights reserved.",
+    "legal": "Legal"
   },
   "UseCasesPage": {
-      "title": "Use Cases.",
-      "description": "See how Enigmatic and Nodal digitize manual workflows and orchestrate complex operations at scale.",
-      "ctaTitle": "Have a unique challenge?",
-      "ctaDescription": "Our team of engineers can build custom workflows tailored to your specific operational needs.",
-      "cards": {
-          "onboarding": "Driver Onboarding & Hiring",
-          "onboardingDesc": "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
-          "maintenance": "Asset Maintenance & Inspections",
-          "maintenanceDesc": "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically, orchestrating cross-team work beyond the TMS.",
-          "billing": "Billing & Claims Processing",
-          "billingDesc": "Accelerate cash flow by reducing leakage. Nodal provides a single workflow view for billing and claims, handling tasks, attachments, and validations before submitting clean data to your TMS or accounting system.",
-          "predictive": "Predictive Manufacturing Operations",
-          "predictiveDesc": "Connect the shop floor to top floor. Ingest live sensor data to detect anomalies, automatically trigger work orders in your CMMS, and reschedule production shifts in your ERP without manual intervention.",
-          "production": "Production Line Visibility",
-          "productionDesc": "Real-time monitoring of material inputs and outputs. When inventory drops below thresholds, Nodal's AI agents negotiate replenishment with suppliers instantly.",
-          "field": "Field Communication Integration",
-          "fieldDesc": "Bridge the gap between the job site and the back office. Site foremen can report issues via SMS or Chat, which Nodal translates into formal RFI documents and ticket requests.",
-          "construction": "Construction Material Logistics",
-          "constructionDesc": "Just-in-time delivery for complex sites. Coordinate concrete pours and material drops by syncing site requests directly with batch plants and logistics dispatchers."
-      }
+    "title": "Use Cases.",
+    "description": "See how Enigmatic and Nodal digitize manual workflows and orchestrate complex operations at scale.",
+    "ctaTitle": "Have a unique challenge?",
+    "ctaDescription": "Our team of engineers can build custom workflows tailored to your specific operational needs.",
+    "cards": {
+      "onboarding": "Driver Onboarding & Hiring",
+      "onboardingDesc": "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
+      "maintenance": "Asset Maintenance & Inspections",
+      "maintenanceDesc": "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically, orchestrating cross-team work beyond the TMS.",
+      "billing": "Billing & Claims Processing",
+      "billingDesc": "Accelerate cash flow by reducing leakage. Nodal provides a single workflow view for billing and claims, handling tasks, attachments, and validations before submitting clean data to your TMS or accounting system.",
+      "predictive": "Predictive Manufacturing Operations",
+      "predictiveDesc": "Connect the shop floor to top floor. Ingest live sensor data to detect anomalies, automatically trigger work orders in your CMMS, and reschedule production shifts in your ERP without manual intervention.",
+      "production": "Production Line Visibility",
+      "productionDesc": "Real-time monitoring of material inputs and outputs. When inventory drops below thresholds, Nodal's AI agents negotiate replenishment with suppliers instantly.",
+      "field": "Field Communication Integration",
+      "fieldDesc": "Bridge the gap between the job site and the back office. Site foremen can report issues via SMS or Chat, which Nodal translates into formal RFI documents and ticket requests.",
+      "construction": "Construction Material Logistics",
+      "constructionDesc": "Just-in-time delivery for complex sites. Coordinate concrete pours and material drops by syncing site requests directly with batch plants and logistics dispatchers."
+    }
   },
   "Sidebar": {
     "searchPlaceholder": "Search...",

@@ -9,7 +9,9 @@
     "title": "Perspectivas",
     "backToInsights": "Volver a Perspectivas",
     "author": "Autor",
-    "allContent": "Todo el contenido"
+    "allContent": "Todo el contenido",
+    "heroSubtitle": "Reflexiones sobre logística, tecnología y el futuro de la gestión de la cadena de suministro.",
+    "featuredArticles": "Artículos destacados"
   },
   "Admin": {
     "overview": "Visión General",
@@ -20,42 +22,42 @@
     "blocked": "Bloqueado",
     "creditsUsed": "Créditos Usados",
     "common": {
-        "clear": "Borrar",
-        "save": "Guardar",
-        "cancel": "Cancelar",
-        "delete": "Eliminar",
-        "edit": "Editar",
-        "create": "Crear",
-        "select": "Seleccionar",
-        "actions": "Acciones",
-        "noOrg": "Sin Org",
-        "platform": "Plataforma"
+      "clear": "Borrar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "create": "Crear",
+      "select": "Seleccionar",
+      "actions": "Acciones",
+      "noOrg": "Sin Org",
+      "platform": "Plataforma"
     },
     "filters": {
-        "organization": "Organización",
-        "role": "Rol",
-        "status": "Estado",
-        "plan": "Plan",
-        "aiAccess": "Acceso IA",
-        "allOrgs": "Todas las Orgs",
-        "allRoles": "Todos los Roles",
-        "allStatus": "Todos los Estados",
-        "allPlans": "Todos los Planes",
-        "allAccess": "Todo Acceso"
+      "organization": "Organización",
+      "role": "Rol",
+      "status": "Estado",
+      "plan": "Plan",
+      "aiAccess": "Acceso IA",
+      "allOrgs": "Todas las Orgs",
+      "allRoles": "Todos los Roles",
+      "allStatus": "Todos los Estados",
+      "allPlans": "Todos los Planes",
+      "allAccess": "Todo Acceso"
     },
     "roles": {
-        "platformAdmin": "Admin de Plataforma",
-        "owner": "Propietario",
-        "admin": "Admin",
-        "member": "Miembro"
+      "platformAdmin": "Admin de Plataforma",
+      "owner": "Propietario",
+      "admin": "Admin",
+      "member": "Miembro"
     },
     "status": {
-        "active": "Activo",
-        "blocked": "Bloqueado"
+      "active": "Activo",
+      "blocked": "Bloqueado"
     },
     "types": {
-        "unlimited": "Ilimitado",
-        "creditBased": "Basado en créditos"
+      "unlimited": "Ilimitado",
+      "creditBased": "Basado en créditos"
     },
     "Users": {
       "title": "Usuarios",
@@ -149,9 +151,9 @@
     "deliverables": "Entregables",
     "tools": "Herramientas",
     "phases": {
-        "consulting": "Fase de Consultoría",
-        "engineering": "Fase de Ingeniería de Sistemas",
-        "engineeringNote": "Idealmente, construimos lo que diseñamos. Pero los clientes pueden optar por concluir el compromiso aquí, armados con una hoja de ruta completa para la ejecución interna."
+      "consulting": "Fase de Consultoría",
+      "engineering": "Fase de Ingeniería de Sistemas",
+      "engineeringNote": "Idealmente, construimos lo que diseñamos. Pero los clientes pueden optar por concluir el compromiso aquí, armados con una hoja de ruta completa para la ejecución interna."
     },
     "steps": {
       "step1": {
@@ -163,84 +165,84 @@
           "Acuerdo de patrocinio ejecutivo"
         ],
         "tools": [
-            "Atlassian Confluence"
+          "Atlassian Confluence"
         ]
       },
       "step2": {
         "title": "Diagnóstico y Modelado Financiero",
         "description": "Mapear sistemas y flujos de trabajo actuales para identificar cuellos de botella, construyendo una línea base financiera y una tesis de transformación con impacto cuantificado.",
         "deliverables": [
-          "Mapas de procesos del estado actual", 
+          "Mapas de procesos del estado actual",
           "Diagrama de arquitectura del sistema",
           "Modelo de línea base financiera",
           "Análisis de cuellos de botella",
           "Tesis de transformación"
         ],
         "tools": [
-            "Lucid Chart",
-            "Excel",
-            "SQL",
-            "BPMN 2.0",
-            "Atlassian Confluence"
+          "Lucid Chart",
+          "Excel",
+          "SQL",
+          "BPMN 2.0",
+          "Atlassian Confluence"
         ]
       },
       "step3": {
         "title": "Arquitectura del Estado Futuro",
         "description": "Diseñar el modelo operativo objetivo, incluyendo planos tecnológicos, rediseños de flujos de trabajo y estructuras de gobernanza para operaciones escalables.",
         "deliverables": [
-            "Modelo operativo del estado futuro",
-            "Rediseños de flujos de trabajo",
-            "Plano tecnológico",
-            "Modelo de gobernanza",
-            "Plan de despliegue de cambios"
+          "Modelo operativo del estado futuro",
+          "Rediseños de flujos de trabajo",
+          "Plano tecnológico",
+          "Modelo de gobernanza",
+          "Plan de despliegue de cambios"
         ],
         "tools": [
-            "BPMN 2.0",
-            "Lucid Chart",
-            "Atlassian Confluence"
+          "BPMN 2.0",
+          "Lucid Chart",
+          "Atlassian Confluence"
         ]
       },
       "step4": {
         "title": "Ingeniería de Soluciones y Piloto",
         "description": "Validar la solución a través de un piloto de alcance limitado. Diseñamos soluciones independientes pero recomendamos encarecidamente adoptar Nodal para organizar y escalar sus flujos de trabajo de manera eficiente.",
         "deliverables": [
-            "Configuración del entorno Nodal",
-            "Solución piloto funcional",
-            "Tablero de seguimiento de KPIs",
-            "Informe de medición de adopción"
+          "Configuración del entorno Nodal",
+          "Solución piloto funcional",
+          "Tablero de seguimiento de KPIs",
+          "Informe de medición de adopción"
         ],
         "tools": [
-            "Nodal",
-            "n8n",
-            "Atlassian Jira",
-            "Atlassian Confluence"
+          "Nodal",
+          "n8n",
+          "Atlassian Jira",
+          "Atlassian Confluence"
         ]
       },
       "step5": {
         "title": "Despliegue Escalado",
         "description": "Expandir flujos de trabajo exitosos a través de departamentos y ubicaciones, institucionalizando la gobernanza para asegurar la adopción completa de la solución.",
         "deliverables": [
-            "Expansión de flujo de trabajo multi-departamento",
-            "Manual de gobernanza institucionalizado",
-            "Adopción completa de la solución"
+          "Expansión de flujo de trabajo multi-departamento",
+          "Manual de gobernanza institucionalizado",
+          "Adopción completa de la solución"
         ],
         "tools": [
-            "Nodal",
-            "n8n"
+          "Nodal",
+          "n8n"
         ]
       },
       "step6": {
         "title": "Optimización Continua",
         "description": "Proporcionar soporte de guante blanco continuo y revisiones trimestrales para refinar la solución e impulsar la mejora continua.",
         "deliverables": [
-            "Revisiones trimestrales de la solución",
-            "Hoja de ruta de optimización",
-            "Informe de mejora de rendimiento"
+          "Revisiones trimestrales de la solución",
+          "Hoja de ruta de optimización",
+          "Informe de mejora de rendimiento"
         ],
         "tools": [
-            "Nodal",
-            "PowerBI",
-            "Atlassian Confluence"
+          "Nodal",
+          "PowerBI",
+          "Atlassian Confluence"
         ]
       }
     },
@@ -431,31 +433,31 @@
     "reject": "Rechazar"
   },
   "Footer": {
-      "tagline": "Digitalizando flujos de trabajo complejos y construyendo soluciones automatizadas que impulsan el futuro de las operaciones industriales.",
-      "copyright": "© {year} Enigmatic Technologies. Todos los derechos reservados.",
-      "legal": "Legal"
+    "tagline": "Digitalizando flujos de trabajo complejos y construyendo soluciones automatizadas que impulsan el futuro de las operaciones industriales.",
+    "copyright": "© {year} Enigmatic Technologies. Todos los derechos reservados.",
+    "legal": "Legal"
   },
   "UseCasesPage": {
-      "title": "Casos de Uso.",
-      "description": "Vea cómo Enigmatic y Nodal digitalizan flujos de trabajo manuales y orquestan operaciones complejas a escala.",
-      "ctaTitle": "¿Tiene un desafío único?",
-      "ctaDescription": "Nuestro equipo de ingenieros puede construir flujos de trabajo personalizados adaptados a sus necesidades operativas específicas.",
-      "cards": {
-          "onboarding": "Contratación e Incorporación de Conductores",
-          "onboardingDesc": "Cada transportista lidia con flujos de incorporación caóticos repartidos en Tenstreet, HRIS, correo, hojas de cálculo y verificaciones de seguridad. Nodal comprime este flujo desordenado en una vista unificada, automatizando pasos de cumplimiento y recolección de documentos.",
-          "maintenance": "Mantenimiento e Inspecciones de Activos",
-          "maintenanceDesc": "El mantenimiento suele ser reactivo y fragmentado. Con Nodal, un técnico que envía un DVIR dispara pedidos de partes, asignaciones de trabajo y aprobaciones automáticamente, orquestando el trabajo entre equipos más allá del TMS.",
-          "billing": "Facturación y Procesamiento de Reclamos",
-          "billingDesc": "Acelere el flujo de caja reduciendo fugas. Nodal proporciona una vista de flujo de trabajo única para facturación y reclamos, manejando tareas, adjuntos y validaciones antes de enviar datos limpios a su TMS o sistema contable.",
-          "predictive": "Operaciones de Manufactura Predictiva",
-          "predictiveDesc": "Conecte el piso de producción con la gerencia. Ingeste datos de sensores en vivo para detectar anomalías, disparar órdenes de trabajo automáticamente en su CMMS y reprogramar turnos de producción en su ERP sin intervención manual.",
-          "production": "Visibilidad de Línea de Producción",
-          "productionDesc": "Monitoreo en tiempo real de entradas y salidas de materiales. Cuando el inventario cae por debajo de los umbrales, los agentes de IA de Nodal negocian el reabastecimiento con proveedores al instante.",
-          "field": "Integración de Comunicación de Campo",
-          "fieldDesc": "Cierre la brecha entre el sitio de trabajo y la oficina administrativa. Los capataces del sitio pueden reportar problemas vía SMS o Chat, lo cual Nodal traduce en documentos RFI formales y solicitudes de tickets.",
-          "construction": "Logística de Materiales de Construcción",
-          "constructionDesc": "Entrega justo a tiempo para sitios complejos. Coordine vertidos de concreto y entregas de material sincronizando solicitudes del sitio directamente con plantas de lotes y despachadores de logística."
-      }
+    "title": "Casos de Uso.",
+    "description": "Vea cómo Enigmatic y Nodal digitalizan flujos de trabajo manuales y orquestan operaciones complejas a escala.",
+    "ctaTitle": "¿Tiene un desafío único?",
+    "ctaDescription": "Nuestro equipo de ingenieros puede construir flujos de trabajo personalizados adaptados a sus necesidades operativas específicas.",
+    "cards": {
+      "onboarding": "Contratación e Incorporación de Conductores",
+      "onboardingDesc": "Cada transportista lidia con flujos de incorporación caóticos repartidos en Tenstreet, HRIS, correo, hojas de cálculo y verificaciones de seguridad. Nodal comprime este flujo desordenado en una vista unificada, automatizando pasos de cumplimiento y recolección de documentos.",
+      "maintenance": "Mantenimiento e Inspecciones de Activos",
+      "maintenanceDesc": "El mantenimiento suele ser reactivo y fragmentado. Con Nodal, un técnico que envía un DVIR dispara pedidos de partes, asignaciones de trabajo y aprobaciones automáticamente, orquestando el trabajo entre equipos más allá del TMS.",
+      "billing": "Facturación y Procesamiento de Reclamos",
+      "billingDesc": "Acelere el flujo de caja reduciendo fugas. Nodal proporciona una vista de flujo de trabajo única para facturación y reclamos, manejando tareas, adjuntos y validaciones antes de enviar datos limpios a su TMS o sistema contable.",
+      "predictive": "Operaciones de Manufactura Predictiva",
+      "predictiveDesc": "Conecte el piso de producción con la gerencia. Ingeste datos de sensores en vivo para detectar anomalías, disparar órdenes de trabajo automáticamente en su CMMS y reprogramar turnos de producción en su ERP sin intervención manual.",
+      "production": "Visibilidad de Línea de Producción",
+      "productionDesc": "Monitoreo en tiempo real de entradas y salidas de materiales. Cuando el inventario cae por debajo de los umbrales, los agentes de IA de Nodal negocian el reabastecimiento con proveedores al instante.",
+      "field": "Integración de Comunicación de Campo",
+      "fieldDesc": "Cierre la brecha entre el sitio de trabajo y la oficina administrativa. Los capataces del sitio pueden reportar problemas vía SMS o Chat, lo cual Nodal traduce en documentos RFI formales y solicitudes de tickets.",
+      "construction": "Logística de Materiales de Construcción",
+      "constructionDesc": "Entrega justo a tiempo para sitios complejos. Coordine vertidos de concreto y entregas de material sincronizando solicitudes del sitio directamente con plantas de lotes y despachadores de logística."
+    }
   },
   "Sidebar": {
     "searchPlaceholder": "Buscar...",

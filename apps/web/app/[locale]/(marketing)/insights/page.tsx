@@ -24,10 +24,9 @@ export default function InsightsPage() {
             transition={{ duration: 0.5 }}
             className="text-3xl md:text-4xl font-normal tracking-tight max-w-3xl leading-[1.15] text-left"
           >
-            <span className="text-foreground">Insights. </span>
+            <span className="text-foreground">{t('title')}. </span>
             <span className="text-muted-foreground">
-              Thoughts on logistics, technology, and the future of supply chain
-              management.
+              {t('heroSubtitle')}
             </span>
           </motion.h1>
         </div>
@@ -41,7 +40,7 @@ export default function InsightsPage() {
           transition={{ duration: 0.5 }}
           className="text-2xl md:text-4xl font-normal tracking-tight mb-8 md:mb-12"
         >
-          Featured Articles
+          {t('featuredArticles')}
         </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {insightPosts.map((post, index) => (

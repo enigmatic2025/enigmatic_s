@@ -9,7 +9,9 @@
     "title": "洞察",
     "backToInsights": "返回洞察",
     "author": "作者",
-    "allContent": "所有內容"
+    "allContent": "所有內容",
+    "heroSubtitle": "關於物流、技術及供應鏈管理未來的思考。",
+    "featuredArticles": "精選文章"
   },
   "Admin": {
     "overview": "概覽",
@@ -20,42 +22,42 @@
     "blocked": "已封鎖",
     "creditsUsed": "已使用點數",
     "common": {
-        "clear": "清除",
-        "save": "儲存",
-        "cancel": "取消",
-        "delete": "刪除",
-        "edit": "編輯",
-        "create": "建立",
-        "select": "選擇",
-        "actions": "動作",
-        "noOrg": "無組織",
-        "platform": "平台"
+      "clear": "清除",
+      "save": "儲存",
+      "cancel": "取消",
+      "delete": "刪除",
+      "edit": "編輯",
+      "create": "建立",
+      "select": "選擇",
+      "actions": "動作",
+      "noOrg": "無組織",
+      "platform": "平台"
     },
     "filters": {
-        "organization": "組織",
-        "role": "角色",
-        "status": "狀態",
-        "plan": "方案",
-        "aiAccess": "AI 存取",
-        "allOrgs": "所有組織",
-        "allRoles": "所有角色",
-        "allStatus": "所有狀態",
-        "allPlans": "所有方案",
-        "allAccess": "所有存取權限"
+      "organization": "組織",
+      "role": "角色",
+      "status": "狀態",
+      "plan": "方案",
+      "aiAccess": "AI 存取",
+      "allOrgs": "所有組織",
+      "allRoles": "所有角色",
+      "allStatus": "所有狀態",
+      "allPlans": "所有方案",
+      "allAccess": "所有存取權限"
     },
     "roles": {
-        "platformAdmin": "平台管理員",
-        "owner": "擁有者",
-        "admin": "管理員",
-        "member": "成員"
+      "platformAdmin": "平台管理員",
+      "owner": "擁有者",
+      "admin": "管理員",
+      "member": "成員"
     },
     "status": {
-        "active": "啟用",
-        "blocked": "已封鎖"
+      "active": "啟用",
+      "blocked": "已封鎖"
     },
     "types": {
-        "unlimited": "無限制",
-        "creditBased": "點數制"
+      "unlimited": "無限制",
+      "creditBased": "點數制"
     },
     "Users": {
       "title": "用戶",
@@ -149,9 +151,9 @@
     "deliverables": "交付成果",
     "tools": "工具",
     "phases": {
-        "consulting": "諮詢階段",
-        "engineering": "系統工程階段",
-        "engineeringNote": "理想情況下，我們構建我們所設計的。但客戶可以選擇在這裡結束合作，帶著完整的路線圖進行內部執行。"
+      "consulting": "諮詢階段",
+      "engineering": "系統工程階段",
+      "engineeringNote": "理想情況下，我們構建我們所設計的。但客戶可以選擇在這裡結束合作，帶著完整的路線圖進行內部執行。"
     },
     "steps": {
       "step1": {
@@ -164,7 +166,7 @@
           "確保執行主辦人和備選主辦人"
         ],
         "tools": [
-            "Atlassian Confluence"
+          "Atlassian Confluence"
         ]
       },
       "step2": {
@@ -178,11 +180,11 @@
           "具有量化影響的轉型論點"
         ],
         "tools": [
-            "Lucid Chart",
-            "Excel",
-            "SQL",
-            "BPMN 2.0",
-            "Atlassian Confluence"
+          "Lucid Chart",
+          "Excel",
+          "SQL",
+          "BPMN 2.0",
+          "Atlassian Confluence"
         ]
       },
       "step3": {
@@ -197,9 +199,9 @@
           "未來狀態的運營模型規範"
         ],
         "tools": [
-            "BPMN 2.0",
-            "Lucid Chart",
-            "Atlassian Confluence"
+          "BPMN 2.0",
+          "Lucid Chart",
+          "Atlassian Confluence"
         ]
       },
       "step4": {
@@ -214,10 +216,10 @@
           "影響案例研究"
         ],
         "tools": [
-            "Nodal",
-            "n8n",
-            "Atlassian Jira",
-            "Atlassian Confluence"
+          "Nodal",
+          "n8n",
+          "Atlassian Jira",
+          "Atlassian Confluence"
         ]
       },
       "step5": {
@@ -230,8 +232,8 @@
           "全面解決方案推廣與採用"
         ],
         "tools": [
-            "Nodal",
-            "n8n"
+          "Nodal",
+          "n8n"
         ]
       },
       "step6": {
@@ -242,9 +244,9 @@
           "解決方案審查與改進"
         ],
         "tools": [
-            "Nodal",
-            "PowerBI",
-            "Atlassian Confluence"
+          "Nodal",
+          "PowerBI",
+          "Atlassian Confluence"
         ]
       }
     },
@@ -435,31 +437,31 @@
     "reject": "拒絕"
   },
   "Footer": {
-      "tagline": "將複雜的工作流程數位化，並構建推動工業運營未來的自動化解決方案。",
-      "copyright": "© {year} Enigmatic Technologies. 版權所有。",
-      "legal": "法律聲明"
+    "tagline": "將複雜的工作流程數位化，並構建推動工業運營未來的自動化解決方案。",
+    "copyright": "© {year} Enigmatic Technologies. 版權所有。",
+    "legal": "法律聲明"
   },
   "UseCasesPage": {
-      "title": "應用案例。",
-      "description": "了解 Enigmatic 和 Nodal 如何將手動工作流程數位化，並大規模協調複雜的運營。",
-      "ctaTitle": "有獨特的挑戰嗎？",
-      "ctaDescription": "我們的工程師團隊可以根據您的具體運營需求構建定制的工作流程。",
-      "cards": {
-          "onboarding": "駕駛員入職與招聘",
-          "onboardingDesc": "每個運輸公司都要處理混亂的入職流程，這些流程分散在 Tenstreet、HRIS、電子郵件、電子表格和安全檢查中。Nodal 將這個混亂的流程壓縮成一個統一的視圖，自動化合規步驟和文件收集。",
-          "maintenance": "資產維護與檢查",
-          "maintenanceDesc": "維護通常是被動且分散的。使用 Nodal，技術人員提交 DVIR 會自動觸發零件訂購、工作分配和批准，協調 TMS 之外的跨團隊工作。",
-          "billing": "帳單與索賠處理",
-          "billingDesc": "通過減少流失來加速現金流。Nodal 為帳單和索賠提供單一的工作流程視圖，在將乾淨的數據提交給您的 TMS 或會計系統之前處理任務、附件和驗證。",
-          "predictive": "預測性製造運營",
-          "predictiveDesc": "連接車間與管理層。攝取即時傳感器數據以檢測異常，自動觸發 CMMS 中的工單，並在沒有人工干預的情況下重新安排 ERP 中的生產班次。",
-          "production": "生產線可視化",
-          "productionDesc": "即時監控物料輸入和輸出。當庫存低於閾值時，Nodal 的 AI 代理會立即與供應商協商補貨。",
-          "field": "現場通訊整合",
-          "fieldDesc": "縮小工地與後勤辦公室之間的差距。工地領班可以通過簡訊或聊天報告問題，Nodal 將其轉化為正式的 RFI 文件和工單請求。",
-          "construction": "建築材料物流",
-          "constructionDesc": "為複雜工地提供即時交付 (Just-in-time)。通過將現場請求直接與攪拌站和物流調度員同步，協調混凝土澆築和材料投放。"
-      }
+    "title": "應用案例。",
+    "description": "了解 Enigmatic 和 Nodal 如何將手動工作流程數位化，並大規模協調複雜的運營。",
+    "ctaTitle": "有獨特的挑戰嗎？",
+    "ctaDescription": "我們的工程師團隊可以根據您的具體運營需求構建定制的工作流程。",
+    "cards": {
+      "onboarding": "駕駛員入職與招聘",
+      "onboardingDesc": "每個運輸公司都要處理混亂的入職流程，這些流程分散在 Tenstreet、HRIS、電子郵件、電子表格和安全檢查中。Nodal 將這個混亂的流程壓縮成一個統一的視圖，自動化合規步驟和文件收集。",
+      "maintenance": "資產維護與檢查",
+      "maintenanceDesc": "維護通常是被動且分散的。使用 Nodal，技術人員提交 DVIR 會自動觸發零件訂購、工作分配和批准，協調 TMS 之外的跨團隊工作。",
+      "billing": "帳單與索賠處理",
+      "billingDesc": "通過減少流失來加速現金流。Nodal 為帳單和索賠提供單一的工作流程視圖，在將乾淨的數據提交給您的 TMS 或會計系統之前處理任務、附件和驗證。",
+      "predictive": "預測性製造運營",
+      "predictiveDesc": "連接車間與管理層。攝取即時傳感器數據以檢測異常，自動觸發 CMMS 中的工單，並在沒有人工干預的情況下重新安排 ERP 中的生產班次。",
+      "production": "生產線可視化",
+      "productionDesc": "即時監控物料輸入和輸出。當庫存低於閾值時，Nodal 的 AI 代理會立即與供應商協商補貨。",
+      "field": "現場通訊整合",
+      "fieldDesc": "縮小工地與後勤辦公室之間的差距。工地領班可以通過簡訊或聊天報告問題，Nodal 將其轉化為正式的 RFI 文件和工單請求。",
+      "construction": "建築材料物流",
+      "constructionDesc": "為複雜工地提供即時交付 (Just-in-time)。通過將現場請求直接與攪拌站和物流調度員同步，協調混凝土澆築和材料投放。"
+    }
   },
   "Sidebar": {
     "searchPlaceholder": "搜尋...",

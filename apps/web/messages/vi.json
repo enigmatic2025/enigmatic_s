@@ -9,7 +9,9 @@
     "title": "Thông tin chi tiết",
     "backToInsights": "Quay lại Thông tin chi tiết",
     "author": "Tác giả",
-    "allContent": "Tất cả nội dung"
+    "allContent": "Tất cả nội dung",
+    "heroSubtitle": "Suy nghĩ về logistics, công nghệ và tương lai của quản lý chuỗi cung ứng.",
+    "featuredArticles": "Bài viết nổi bật"
   },
   "Admin": {
     "overview": "Tổng quan",
@@ -20,42 +22,42 @@
     "blocked": "Đã chặn",
     "creditsUsed": "Tín dụng đã dùng",
     "common": {
-        "clear": "Xóa",
-        "save": "Lưu",
-        "cancel": "Hủy",
-        "delete": "Xóa",
-        "edit": "Chỉnh sửa",
-        "create": "Tạo",
-        "select": "Chọn",
-        "actions": "Hành động",
-        "noOrg": "Không có tổ chức",
-        "platform": "Nền tảng"
+      "clear": "Xóa",
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "delete": "Xóa",
+      "edit": "Chỉnh sửa",
+      "create": "Tạo",
+      "select": "Chọn",
+      "actions": "Hành động",
+      "noOrg": "Không có tổ chức",
+      "platform": "Nền tảng"
     },
     "filters": {
-        "organization": "Tổ chức",
-        "role": "Vai trò",
-        "status": "Trạng thái",
-        "plan": "Gói",
-        "aiAccess": "Truy cập AI",
-        "allOrgs": "Tất cả tổ chức",
-        "allRoles": "Tất cả vai trò",
-        "allStatus": "Tất cả trạng thái",
-        "allPlans": "Tất cả gói",
-        "allAccess": "Tất cả quyền truy cập"
+      "organization": "Tổ chức",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "plan": "Gói",
+      "aiAccess": "Truy cập AI",
+      "allOrgs": "Tất cả tổ chức",
+      "allRoles": "Tất cả vai trò",
+      "allStatus": "Tất cả trạng thái",
+      "allPlans": "Tất cả gói",
+      "allAccess": "Tất cả quyền truy cập"
     },
     "roles": {
-        "platformAdmin": "Quản trị viên nền tảng",
-        "owner": "Chủ sở hữu",
-        "admin": "Quản trị viên",
-        "member": "Thành viên"
+      "platformAdmin": "Quản trị viên nền tảng",
+      "owner": "Chủ sở hữu",
+      "admin": "Quản trị viên",
+      "member": "Thành viên"
     },
     "status": {
-        "active": "Hoạt động",
-        "blocked": "Đã chặn"
+      "active": "Hoạt động",
+      "blocked": "Đã chặn"
     },
     "types": {
-        "unlimited": "Không giới hạn",
-        "creditBased": "Dựa trên tín dụng"
+      "unlimited": "Không giới hạn",
+      "creditBased": "Dựa trên tín dụng"
     },
     "Users": {
       "title": "Người dùng",
@@ -149,9 +151,9 @@
     "deliverables": "Sản phẩm bàn giao",
     "tools": "Công cụ",
     "phases": {
-        "consulting": "Giai đoạn Tư vấn",
-        "engineering": "Giai đoạn Kỹ thuật Hệ thống",
-        "engineeringNote": "Lý tưởng nhất là chúng tôi xây dựng những gì chúng tôi thiết kế. Nhưng khách hàng có thể chọn kết thúc sự hợp tác tại đây, được trang bị một lộ trình hoàn chỉnh để thực hiện nội bộ."
+      "consulting": "Giai đoạn Tư vấn",
+      "engineering": "Giai đoạn Kỹ thuật Hệ thống",
+      "engineeringNote": "Lý tưởng nhất là chúng tôi xây dựng những gì chúng tôi thiết kế. Nhưng khách hàng có thể chọn kết thúc sự hợp tác tại đây, được trang bị một lộ trình hoàn chỉnh để thực hiện nội bộ."
     },
     "steps": {
       "step1": {
@@ -164,7 +166,7 @@
           "Đảm bảo nhà tài trợ điều hành và nhà tài trợ dự phòng"
         ],
         "tools": [
-            "Atlassian Confluence"
+          "Atlassian Confluence"
         ]
       },
       "step2": {
@@ -178,11 +180,11 @@
           "Luận án chuyển đổi với tác động định lượng"
         ],
         "tools": [
-            "Lucid Chart",
-            "Excel",
-            "SQL",
-            "BPMN 2.0",
-            "Atlassian Confluence"
+          "Lucid Chart",
+          "Excel",
+          "SQL",
+          "BPMN 2.0",
+          "Atlassian Confluence"
         ]
       },
       "step3": {
@@ -197,9 +199,9 @@
           "Đặc tả mô hình hoạt động cho trạng thái tương lai"
         ],
         "tools": [
-            "BPMN 2.0",
-            "Lucid Chart",
-            "Atlassian Confluence"
+          "BPMN 2.0",
+          "Lucid Chart",
+          "Atlassian Confluence"
         ]
       },
       "step4": {
@@ -214,10 +216,10 @@
           "Nghiên cứu trường hợp tác động"
         ],
         "tools": [
-            "Nodal",
-            "n8n",
-            "Atlassian Jira",
-            "Atlassian Confluence"
+          "Nodal",
+          "n8n",
+          "Atlassian Jira",
+          "Atlassian Confluence"
         ]
       },
       "step5": {
@@ -230,8 +232,8 @@
           "Triển khai và áp dụng giải pháp đầy đủ"
         ],
         "tools": [
-            "Nodal",
-            "n8n"
+          "Nodal",
+          "n8n"
         ]
       },
       "step6": {
@@ -242,9 +244,9 @@
           "Đánh giá và cải tiến giải pháp"
         ],
         "tools": [
-            "Nodal",
-            "PowerBI",
-            "Atlassian Confluence"
+          "Nodal",
+          "PowerBI",
+          "Atlassian Confluence"
         ]
       }
     },
@@ -435,31 +437,31 @@
     "reject": "Từ chối"
   },
   "Footer": {
-      "tagline": "Số hóa quy trình làm việc phức tạp và xây dựng các giải pháp tự động hóa thúc đẩy tương lai của vận hành công nghiệp.",
-      "copyright": "© {year} Enigmatic Technologies. Đã đăng ký bản quyền.",
-      "legal": "Pháp lý"
+    "tagline": "Số hóa quy trình làm việc phức tạp và xây dựng các giải pháp tự động hóa thúc đẩy tương lai của vận hành công nghiệp.",
+    "copyright": "© {year} Enigmatic Technologies. Đã đăng ký bản quyền.",
+    "legal": "Pháp lý"
   },
   "UseCasesPage": {
-      "title": "Các Trường hợp Sử dụng.",
-      "description": "Xem cách Enigmatic và Nodal số hóa quy trình vận hành thủ công và điều phối vận hành phức tạp trên quy mô lớn.",
-      "ctaTitle": "Bạn có thách thức riêng biệt?",
-      "ctaDescription": "Đội ngũ kỹ sư của chúng tôi có thể xây dựng quy trình tùy chỉnh phù hợp với nhu cầu vận hành cụ thể của bạn.",
-      "cards": {
-          "onboarding": "Tuyển dụng & Đón nhận Tài xế",
-          "onboardingDesc": "Mọi đơn vị vận tải đều đối mặt với quy trình tuyển dụng hỗn loạn trải rộng trên Tenstreet, HRIS, email, bảng tính và kiểm tra an toàn. Nodal nén luồng công việc lộn xộn này thành một chế độ xem thống nhất, tự động hóa các bước tuân thủ và thu thập tài liệu.",
-          "maintenance": "Bảo trì & Kiểm tra Tài sản",
-          "maintenanceDesc": "Bảo trì thường mang tính phản ứng và rời rạc. Với Nodal, kỹ thuật viên gửi DVIR sẽ kích hoạt đặt hàng phụ tùng, phân công công việc và phê duyệt tự động, điều phối công việc liên đội ngũ bên ngoài TMS.",
-          "billing": "Xử lý Thanh toán & Khiếu nại",
-          "billingDesc": "Tăng tốc dòng tiền bằng cách giảm thất thoát. Nodal cung cấp chế độ xem quy trình làm việc duy nhất cho thanh toán và khiếu nại, xử lý các tác vụ, tệp đính kèm và xác thực trước khi gửi dữ liệu sạch đến TMS hoặc hệ thống kế toán của bạn.",
-          "predictive": "Vận hành Sản xuất Dự báo",
-          "predictiveDesc": "Kết nối phân xưởng với văn phòng quản lý. Thu thập dữ liệu cảm biến trực tiếp để phát hiện bất thường, tự động kích hoạt lệnh làm việc trong CMMS của bạn và lên lịch lại ca sản xuất trong ERP mà không cần can thiệp thủ công.",
-          "production": "Khả năng hiển thị Dây chuyền Sản xuất",
-          "productionDesc": "Giám sát thời gian thực đầu vào và đầu ra vật liệu. Khi hàng tồn kho giảm xuống dưới ngưỡng, các tác nhân AI của Nodal sẽ thương lượng bổ sung với nhà cung cấp ngay lập tức.",
-          "field": "Tích hợp Giao tiếp Thực địa",
-          "fieldDesc": "Thu hẹp khoảng cách giữa công trường và văn phòng hỗ trợ. Đốc công công trường có thể báo cáo vấn đề qua SMS hoặc Trò chuyện, Nodal dịch thành tài liệu RFI chính thức và yêu cầu vé.",
-          "construction": "Hậu cần Vật liệu Xây dựng",
-          "constructionDesc": "Giao hàng đúng lúc (Just-in-time) cho các công trường phức tạp. Phối hợp đổ bê tông và giao vật liệu bằng cách đồng bộ hóa yêu cầu công trường trực tiếp với trạm trộn và điều phối viên hậu cần."
-      }
+    "title": "Các Trường hợp Sử dụng.",
+    "description": "Xem cách Enigmatic và Nodal số hóa quy trình vận hành thủ công và điều phối vận hành phức tạp trên quy mô lớn.",
+    "ctaTitle": "Bạn có thách thức riêng biệt?",
+    "ctaDescription": "Đội ngũ kỹ sư của chúng tôi có thể xây dựng quy trình tùy chỉnh phù hợp với nhu cầu vận hành cụ thể của bạn.",
+    "cards": {
+      "onboarding": "Tuyển dụng & Đón nhận Tài xế",
+      "onboardingDesc": "Mọi đơn vị vận tải đều đối mặt với quy trình tuyển dụng hỗn loạn trải rộng trên Tenstreet, HRIS, email, bảng tính và kiểm tra an toàn. Nodal nén luồng công việc lộn xộn này thành một chế độ xem thống nhất, tự động hóa các bước tuân thủ và thu thập tài liệu.",
+      "maintenance": "Bảo trì & Kiểm tra Tài sản",
+      "maintenanceDesc": "Bảo trì thường mang tính phản ứng và rời rạc. Với Nodal, kỹ thuật viên gửi DVIR sẽ kích hoạt đặt hàng phụ tùng, phân công công việc và phê duyệt tự động, điều phối công việc liên đội ngũ bên ngoài TMS.",
+      "billing": "Xử lý Thanh toán & Khiếu nại",
+      "billingDesc": "Tăng tốc dòng tiền bằng cách giảm thất thoát. Nodal cung cấp chế độ xem quy trình làm việc duy nhất cho thanh toán và khiếu nại, xử lý các tác vụ, tệp đính kèm và xác thực trước khi gửi dữ liệu sạch đến TMS hoặc hệ thống kế toán của bạn.",
+      "predictive": "Vận hành Sản xuất Dự báo",
+      "predictiveDesc": "Kết nối phân xưởng với văn phòng quản lý. Thu thập dữ liệu cảm biến trực tiếp để phát hiện bất thường, tự động kích hoạt lệnh làm việc trong CMMS của bạn và lên lịch lại ca sản xuất trong ERP mà không cần can thiệp thủ công.",
+      "production": "Khả năng hiển thị Dây chuyền Sản xuất",
+      "productionDesc": "Giám sát thời gian thực đầu vào và đầu ra vật liệu. Khi hàng tồn kho giảm xuống dưới ngưỡng, các tác nhân AI của Nodal sẽ thương lượng bổ sung với nhà cung cấp ngay lập tức.",
+      "field": "Tích hợp Giao tiếp Thực địa",
+      "fieldDesc": "Thu hẹp khoảng cách giữa công trường và văn phòng hỗ trợ. Đốc công công trường có thể báo cáo vấn đề qua SMS hoặc Trò chuyện, Nodal dịch thành tài liệu RFI chính thức và yêu cầu vé.",
+      "construction": "Hậu cần Vật liệu Xây dựng",
+      "constructionDesc": "Giao hàng đúng lúc (Just-in-time) cho các công trường phức tạp. Phối hợp đổ bê tông và giao vật liệu bằng cách đồng bộ hóa yêu cầu công trường trực tiếp với trạm trộn và điều phối viên hậu cần."
+    }
   },
   "Sidebar": {
     "searchPlaceholder": "Tìm kiếm...",
