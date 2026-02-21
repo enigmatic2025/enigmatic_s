@@ -54,7 +54,7 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 		nodesLookup[n.ID] = n
 		nodeStatus[n.ID] = "PENDING"
 		// Optimization: Pre-fill API trigger data
-		if n.Type == "api-trigger" || n.Type == "manual-trigger" || n.Type == "webhook" {
+		if n.Type == "api-trigger" || n.Type == "manual-trigger" || n.Type == "webhook" || n.Type == "trigger" {
 			executionState[n.ID] = inputData
 		}
 	}
@@ -506,6 +506,14 @@ func NodalWorkflow(ctx workflow.Context, flowDefinition FlowDefinition, inputDat
 	for k := range executionState {
 		stateKeys = append(stateKeys, k)
 	}
+	// Embed node status metadata so frontend can verify which nodes completed
+	// This is backwards-compatible: executionState is map[string]map[string]interface{}
+	nodeStatusConverted := make(map[string]interface{}, len(nodeStatus))
+	for k, v := range nodeStatus {
+		nodeStatusConverted[k] = v
+	}
+	executionState["__node_status"] = nodeStatusConverted
+
 	logger.Info("Nodal workflow completed successfully", "ExecutionStateKeys", stateKeys, "NodeStatuses", nodeStatus)
 	return executionState, nil
 }

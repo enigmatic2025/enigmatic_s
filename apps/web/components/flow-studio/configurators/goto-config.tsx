@@ -29,7 +29,7 @@ export function GotoConfig({ data, onUpdate }: GotoConfigProps) {
           <>
             <Select
               value={data.targetId || ""}
-              onValueChange={(value) => onUpdate({ targetId: value })}
+              onValueChange={(value) => onUpdate({ ...data, targetId: value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a step to retry..." />

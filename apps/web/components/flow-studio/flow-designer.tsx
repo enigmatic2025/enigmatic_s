@@ -437,10 +437,15 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                       const rawOutput = data.output || {};
                       const traceData: Record<string, any> = {};
 
+                      // Extract nodeStatus metadata from backend (keyed by __node_status)
+                      const nodeStatusMap: Record<string, string> = rawOutput.__node_status || {};
+                      delete rawOutput.__node_status; // Don't create a trace entry for metadata
+
                       // Debug: Log raw output keys to identify missing nodes
                       console.log('[Flow Debug] Raw output keys:', Object.keys(rawOutput));
+                      console.log('[Flow Debug] Node status map:', nodeStatusMap);
                       console.log('[Flow Debug] Frontend node IDs:', nodes.map(n => `${n.id} (${n.type})`));
-                       
+
                       // 1. Process Trace Data first to get timestamps/ordering if possible (or just map keys)
                       Object.entries(rawOutput).forEach(([nodeId, nodeOut]) => {
                           traceData[nodeId] = {
@@ -450,6 +455,21 @@ function FlowDesignerContent({ flowId }: FlowDesignerProps) {
                               timestamp: Date.now()
                           };
                       });
+
+                      // 2. Defensive: add trace entries for nodes that completed but are missing from results
+                      Object.entries(nodeStatusMap).forEach(([nodeId, status]) => {
+                          if (status === 'COMPLETED' && !traceData[nodeId]) {
+                              console.warn(`[Flow Debug] Node ${nodeId} COMPLETED but missing from results — creating placeholder`);
+                              traceData[nodeId] = {
+                                  nodeId,
+                                  status: 'success',
+                                  output: {},
+                                  timestamp: Date.now()
+                              };
+                          }
+                      });
+
+                      console.log('[Flow Debug] Trace data keys:', Object.keys(traceData));
 
                       // 2. Add granular logs
                       // Try to sort by some logical order if possible? 
