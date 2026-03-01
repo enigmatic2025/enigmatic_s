@@ -5,7 +5,17 @@ import { motion, useScroll, useTransform, useSpring, easeOut, AnimatePresence } 
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { 
+  ChevronDown, 
+  ChevronUp,
+  Target,
+  Search,
+  Compass,
+  Code,
+  Rocket,
+  TrendingUp,
+  LucideIcon
+} from "lucide-react";
 import { CTASection } from "@/components/layout/cta-section";
 
 
@@ -17,6 +27,16 @@ const timelineVariants = {
 export default function ServicesPage() {
   const t = useTranslations("ServicesPage");
   const steps = [1, 2, 3, 4, 5, 6];
+  
+  const stepIcons = [
+    Target,
+    Search,
+    Compass,
+    Code,
+    Rocket,
+    TrendingUp
+  ];
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -131,14 +151,15 @@ export default function ServicesPage() {
               </div>
             </motion.div>
 
-            {steps.slice(0, 3).map((index) => (
+            {steps.slice(0, 3).map((step) => (
               <TimelineItem 
-                key={index}
-                index={index}
-                title={t(`steps.step${index}.title`)}
-                description={t(`steps.step${index}.description`)}
-                deliverables={t.raw(`steps.step${index}.deliverables`)}
-                tools={t.raw(`steps.step${index}.tools`)}
+                key={step}
+                index={step}
+                icon={stepIcons[step - 1]}
+                title={t(`steps.step${step}.title`)}
+                description={t(`steps.step${step}.description`)}
+                deliverables={t.raw(`steps.step${step}.deliverables`)}
+                tools={t.raw(`steps.step${step}.tools`)}
                 deliverablesLabel={t('deliverables')}
                 toolsLabel={t('tools')}
               />
@@ -161,14 +182,15 @@ export default function ServicesPage() {
               </p>
             </motion.div>
 
-            {steps.slice(3).map((index) => (
+            {steps.slice(3).map((step) => (
               <TimelineItem 
-                key={index}
-                index={index}
-                title={t(`steps.step${index}.title`)}
-                description={t(`steps.step${index}.description`)}
-                deliverables={t.raw(`steps.step${index}.deliverables`)}
-                tools={t.raw(`steps.step${index}.tools`)}
+                key={step}
+                index={step}
+                icon={stepIcons[step - 1]}
+                title={t(`steps.step${step}.title`)}
+                description={t(`steps.step${step}.description`)}
+                deliverables={t.raw(`steps.step${step}.deliverables`)}
+                tools={t.raw(`steps.step${step}.tools`)}
                 deliverablesLabel={t('deliverables')}
                 toolsLabel={t('tools')}
               />
@@ -245,6 +267,7 @@ function FAQItem({ question, answer }: { question: string, answer: string }) {
 
 function TimelineItem({  
   index, 
+  icon: Icon,
   title, 
   description,
   deliverables,
@@ -253,6 +276,7 @@ function TimelineItem({
   toolsLabel
 }: { 
   index: number, 
+  icon: LucideIcon,
   title: string, 
   description: string,
   deliverables: string[],
@@ -282,13 +306,16 @@ function TimelineItem({
           "flex flex-col gap-4",
           isEven ? "items-start" : "items-start md:items-end"
         )}>
-          <span className="text-4xl text-center aspect-square text-foreground px-3 py-1">
-            {index}
+          <span className="text-4xl text-center aspect-square text-foreground px-3 py-1 font-light">
+            {index.toFixed(1)}
           </span>
           <div className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
-            <h3 className="text-2xl md:text-3xl text-foreground">
-              {title}
-            </h3>
+            <div className={cn("flex items-center gap-3", isEven ? "flex-row" : "flex-row md:flex-row-reverse")}>
+              <Icon className="w-6 h-6 md:w-8 md:h-8 text-violet-500" strokeWidth={1.5} />
+              <h3 className="text-2xl text-foreground">
+                {title}
+              </h3>
+            </div>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
               {description}
             </p>
