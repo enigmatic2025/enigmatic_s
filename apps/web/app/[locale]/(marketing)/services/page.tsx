@@ -9,7 +9,7 @@ import {
   ChevronDown, 
   ChevronUp,
   Target,
-  Search,
+  CircleDollarSign,
   Compass,
   Code,
   Rocket,
@@ -30,7 +30,7 @@ export default function ServicesPage() {
   
   const stepIcons = [
     Target,
-    Search,
+    CircleDollarSign,
     Compass,
     Code,
     Rocket,
@@ -328,10 +328,10 @@ function TimelineItem({
               <ul className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
                 {deliverables.map((item, i) => (
                   <li key={i} className={cn(
-                    "flex items-center gap-2 text-sm md:text-base text-muted-foreground",
+                    "flex items-baseline gap-2 text-sm md:text-base text-muted-foreground",
                     !isEven && "md:flex-row-reverse text-right"
                   )}>
-                     <div className="w-1.5 h-1.5 bg-foreground shrink-0" />
+                     <div className="w-1.5 h-1.5 mt-2 rounded-full bg-zinc-400/60 dark:bg-zinc-500/60 shrink-0" />
                      <span>{item}</span>
                   </li>
                 ))}
