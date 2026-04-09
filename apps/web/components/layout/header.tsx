@@ -42,6 +42,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   const t = useTranslations("Navigation");
   const pathname = usePathname();
   const isArticlePage = pathname?.startsWith("/insights/articles/");
+  const isDocsPage = pathname?.startsWith("/docs");
   const { user, loading } = useAuth();
 
   const { data: memberships } = useSWR(
@@ -259,6 +260,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
         </Button>
       </nav>
       {/* Promo Banner */}
+      {!isDocsPage && (
       <div className="w-full h-14 bg-linear-to-r from-violet-500 via-blue-500 to-pink-500 flex items-center justify-center px-4 overflow-hidden">
         <div className="flex flex-row items-center justify-center gap-3 w-full max-w-5xl mx-auto">
           <p className="text-sm font-medium text-white truncate shrink-0">
@@ -276,6 +278,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </Button>
         </div>
       </div>
+      )}
       <MobileMenu
         className="flex flex-col justify-between gap-2 overflow-y-auto"
         open={open}

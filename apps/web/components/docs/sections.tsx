@@ -170,7 +170,6 @@ function SectionHeader({ icon, title, description }: { icon: React.ReactNode; ti
   return (
     <div className="mb-8 pb-6 border-b border-border/40">
       <div className="flex items-center gap-2.5 mb-3">
-        <span className="text-muted-foreground">{icon}</span>
         <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
       </div>
       <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
@@ -291,7 +290,7 @@ function StepList({ steps }: { steps: { title: string; desc: string }[] }) {
     <div className="space-y-4 mb-8">
       {steps.map((step, i) => (
         <div key={i} className="flex gap-4">
-          <span className="shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary border border-primary/20">
+          <span className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-primary border border-primary/20">
             {i + 1}
           </span>
           <div className="pt-1">
