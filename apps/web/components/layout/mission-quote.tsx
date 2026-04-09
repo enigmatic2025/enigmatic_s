@@ -22,39 +22,36 @@ type IndustryItem = {
 const industries: IndustryItem[] = [
   {
     nameKey: "industries.transportation",
-    image: "/images/home/transportation.png",
+    image: "/images/home/transportation.jpg",
     descriptionKey: "industries.transportationDesc",
     objectPosition: "object-bottom"
   },
   {
     nameKey: "industries.supplyChain",
-    image: "/images/home/supplychain.png",
-    descriptionKey: "industries.supplyChainDesc",
-    className: "brightness-[0.8]"
+    image: "/images/home/supplychain.jpg",
+    descriptionKey: "industries.supplyChainDesc"
   },
   {
     nameKey: "industries.manufacturing",
-    image: "/images/home/manufacturing.png",
+    image: "/images/home/manufacturing.jpg",
     descriptionKey: "industries.manufacturingDesc",
     objectPosition: "object-bottom"
   },
   {
     nameKey: "industries.construction",
-    image: "/images/home/construction.png",
+    image: "/images/home/construction.jpg",
     descriptionKey: "industries.constructionDesc",
     objectPosition: "object-bottom"
   },
   {
     nameKey: "industries.storage",
-    image: "/images/home/storage.png",
-    descriptionKey: "industries.storageDesc",
-    className: "brightness-[0.8]"
+    image: "/images/home/storage.jpg",
+    descriptionKey: "industries.storageDesc"
   },
   {
     nameKey: "industries.energy",
-    image: "/images/home/energy.png",
-    descriptionKey: "industries.energyDesc",
-    className: "brightness-[0.9]"
+    image: "/images/home/energy.jpg",
+    descriptionKey: "industries.energyDesc"
   }
 ];
 
@@ -94,6 +91,7 @@ function ParallaxStat({
           src={image}
           alt={desc}
           fill
+          quality={60}
           className="object-cover transition-transform duration-700"
         />
       </motion.div>
@@ -164,10 +162,11 @@ export function MissionQuote() {
                 src={industries[currentIndex].image!}
                 alt={t(industries[currentIndex].nameKey)}
                 fill
+                quality={60}
                 className={`object-cover ${industries[currentIndex].objectPosition || "object-center"} ${industries[currentIndex].className || ""}`}
                 priority
               />
-              <div className="absolute inset-0" />
+              <div className="absolute inset-0 bg-black/40" />
               <div className="absolute bottom-0 left-0 p-8 md:p-12 max-w-2xl">
                 <motion.h3
                   initial={{ opacity: 0, y: 20 }}
