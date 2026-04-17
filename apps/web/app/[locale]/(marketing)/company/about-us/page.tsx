@@ -6,20 +6,20 @@ import { CTASection } from "@/components/layout/cta-section";
 import { useTranslations } from "next-intl";
 
 const team = [
-  // {
-  //   name: "Sam Tran",
-  //   roleKey: "samRole",
-  //   descriptionKey: "samDescription",
-  //   image: "/images/company/team/sam.jpg",
-  //   linkedin: "https://www.linkedin.com/in/htsam22/",
-  // },
-//   {
-//     name: "Chris Schmitt",
-//     roleKey: "chrisRole",
-//     descriptionKey: "chrisDescription",
-//     image: "/images/company/team/chris.jpg",
-//     linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/",
-//   },
+  {
+    name: "Sam Tran",
+    roleKey: "samRole",
+    descriptionKey: "samDescription",
+    image: "/images/company/team/sam.jpg",
+    linkedin: "https://www.linkedin.com/in/htsam22/",
+  },
+  {
+    name: "Chris Schmitt",
+    roleKey: "chrisRole",
+    descriptionKey: "chrisDescription",
+    image: "/images/company/team/chris.jpg",
+    linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/",
+  },
   {
     name: "Phi Tran",
     roleKey: "phiRole",
