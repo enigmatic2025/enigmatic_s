@@ -238,8 +238,8 @@ export const BillingClaimsPreview = () => {
 export const ManufacturingMaterialFlowPreview = () => {
     const t = useTranslations('UseCaseVisualizations');
   return (
-    <div className="relative flex flex-col items-center justify-center h-full w-full p-6 bg-slate-50 dark:bg-zinc-950/50">
-      <div className="w-full max-w-lg bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center h-full w-full p-6">
+      <div className="w-full max-w-lg bg-card border border-border rounded-xl shadow-sm overflow-hidden">
         {/* Header */}
         <div className="bg-muted/30 px-6 py-4 border-b flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -325,9 +325,9 @@ export const ManufacturingMaterialFlowPreview = () => {
 export const ConstructionSiteCoordinationPreview = () => {
     const t = useTranslations('UseCaseVisualizations');
     return (
-        <div className="relative flex flex-col items-center justify-center h-full w-full p-6 bg-slate-50 dark:bg-zinc-950/50">
+    <div className="relative flex flex-col items-center justify-center h-full w-full p-6">
            {/* Mobile Phone Simulation */}
-           <div className="w-[320px] bg-background border border-border shadow-2xl rounded-[32px] overflow-hidden flex flex-col h-[500px]">
+       <div className="w-[320px] bg-background border border-border shadow-sm rounded-[32px] overflow-hidden flex flex-col h-[500px]">
               
               {/* App Header */}
               <div className="bg-zinc-900 text-white p-4 pt-12">

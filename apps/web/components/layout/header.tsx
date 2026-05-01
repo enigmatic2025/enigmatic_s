@@ -42,7 +42,6 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   const t = useTranslations("Navigation");
   const pathname = usePathname();
   const isArticlePage = pathname?.startsWith("/insights/articles/");
-  const isDocsPage = pathname?.startsWith("/docs");
   const { user, loading } = useAuth();
 
   const { data: memberships } = useSWR(
@@ -259,26 +258,6 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           <MenuToggleIcon className="size-5" duration={300} open={open} />
         </Button>
       </nav>
-      {/* Promo Banner */}
-      {!isDocsPage && (
-      <div className="w-full h-14 bg-linear-to-r from-violet-500 via-blue-500 to-pink-500 flex items-center justify-center px-4 overflow-hidden">
-        <div className="flex flex-row items-center justify-center gap-3 w-full max-w-5xl mx-auto">
-          <p className="text-sm font-medium text-white truncate shrink-0">
-            {t("projectBabel")}
-          </p>
-          <Button 
-            asChild 
-            size="sm" 
-            variant="secondary"
-            className="h-8 px-4 rounded-full bg-white/10 hover:bg-white/20 text-white border-0 font-medium shrink-0"
-          >
-            <a href="mailto:collaborate@enigmatic.works?subject=Project%20Babel%20Inquiry&body=What%20is%20project%20Babel%20and%20how%20can%20we%20be%20a%20part%20of%20it%3F">
-              {t("learnMore")}
-            </a>
-          </Button>
-        </div>
-      </div>
-      )}
       <MobileMenu
         className="flex flex-col justify-between gap-2 overflow-y-auto"
         open={open}
