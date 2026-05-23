@@ -7,13 +7,6 @@ import { useTranslations } from "next-intl";
 
 const team = [
   {
-    name: "Sam Tran",
-    roleKey: "samRole",
-    descriptionKey: "samDescription",
-    image: "/images/company/team/sam.jpg",
-    linkedin: "https://www.linkedin.com/in/htsam22/",
-  },
-  {
     name: "Chris Schmitt",
     roleKey: "chrisRole",
     descriptionKey: "chrisDescription",
@@ -62,7 +55,7 @@ export default function AboutUsPage() {
         >
           {t("team.title")}
         </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           {team.map((member, index) => (
             <div key={index} className="flex flex-col space-y-4 group">
               <div className="relative w-full aspect-3/4 rounded-2xl overflow-hidden bg-muted">
