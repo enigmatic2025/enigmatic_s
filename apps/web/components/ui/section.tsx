@@ -6,7 +6,7 @@ const sectionVariants = cva("", {
   variants: {
     tone: {
       base: "",
-      raised: "border-y border-border bg-surface-1",
+      raised: "border-y border-border bg-(--section-background)",
       /** Always dark: a black band on light pages, a deeper "ink" band on dark pages. */
       inverse: "dark band-inverse",
     },

@@ -23,8 +23,9 @@
 :root {
   color-scheme: light;
 
-  /* Ground and surfaces — warm paper, white cards */
-  --background: oklch(0.985 0.002 90);
+  /* White pages with warm off-white alternating sections. */
+  --background: oklch(1 0 0);
+  --section-background: oklch(0.985 0.002 90);
   --surface-1: oklch(1 0 0);
   --surface-2: oklch(0.96 0.002 90);
 
@@ -60,6 +61,7 @@
   color-scheme: dark;
 
   --background: oklch(0.14 0 0);
+  --section-background: oklch(0.175 0 0);
   --surface-1: oklch(0.175 0 0);
   --surface-2: oklch(0.215 0 0);
 

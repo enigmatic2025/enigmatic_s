@@ -3,7 +3,7 @@ import { services, servicesTitle } from "@/lib/content";
 import { contactHref, contactLabel } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/list-items";
-import { Media } from "@/components/ui/media";
+import { ParallaxPhoto } from "@/components/marketing/parallax-photo";
 import { Section } from "@/components/ui/section";
 import { Heading, Text } from "@/components/ui/typography";
 import { ContactBand } from "@/components/marketing/contact-band";
@@ -75,9 +75,8 @@ export default function ServicesPage() {
         accent="To automation that lasts."
         description="Automation strategy, process automation, AI, and data: one partner from the first assessment to a solution your teams rely on."
         actions={<Button asChild><a href={contactHref}>{contactLabel}<ArrowRight size={17} /></a></Button>}
-      >
-        <Media src="/images/home/energy.jpg" alt="Offshore wind turbines on a calm sea." priority scrim className="h-[clamp(240px,30vw,380px)]" />
-      </PageHero>
+        media={<ParallaxPhoto src="/images/home/freight.jpg" alt="An aerial view of shipping containers in a freight terminal." />}
+      />
 
       <Section aria-labelledby="services-title">
         <SectionHeader id="services-title" title={servicesTitle} />

@@ -15,6 +15,7 @@ import { CapabilityGrid } from "@/components/marketing/capability-grid";
 import { ContactBand } from "@/components/marketing/contact-band";
 import { PrinciplesRow } from "@/components/marketing/principles-row";
 import { ServiceList } from "@/components/marketing/service-list";
+import { ParallaxPhoto } from "@/components/marketing/parallax-photo";
 import { PageHero } from "@/components/marketing/page-hero";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { SplitSection } from "@/components/marketing/split-section";
@@ -56,15 +57,13 @@ export default function Home() {
         title="Less busywork."
         accent="More possibility."
         description={intro}
+        media={<ParallaxPhoto src="/images/home/corporate.jpg" alt="Glass office towers viewed from street level." />}
         actions={<>
           <Button asChild><a href={contactHref}>{contactLabel}<ArrowRight size={17} /></a></Button>
           <Button asChild variant="link"><a href="#in-practice">See automation in practice<ArrowDown size={16} /></a></Button>
         </>}
       >
-        <figure>
-          <Media src="/images/home/corporate.jpg" alt="Glass office towers viewed from street level." priority scrim className="h-44 sm:h-[clamp(240px,26vw,340px)]" />
-        </figure>
-        <TechMarquee items={techStack} label="Built on open technology" note={techNote} className="mt-10 lg:mt-12" />
+        <TechMarquee items={techStack} label="Built on open technology" note={techNote} />
       </PageHero>
 
       <Section aria-labelledby="services-title">
