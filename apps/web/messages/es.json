@@ -151,8 +151,9 @@
     "deliverables": "Entregables",
     "tools": "Herramientas",
     "phases": {
-      "consulting": "Fase de Consultoría",
-      "engineering": "Fase de Ingeniería de Sistemas",
+      "consulting": "Consulting",
+      "consultingNote": "Comenzamos por comprender la realidad operativa detrás de su desafío y aclarar el camino estratégico antes de comenzar cualquier trabajo de desarrollo.",
+      "engineering": "Engineering",
       "engineeringNote": "Idealmente, construimos lo que diseñamos. Pero los clientes pueden optar por concluir el compromiso aquí, armados con una hoja de ruta completa para la ejecución interna."
     },
     "steps": {
@@ -204,18 +205,20 @@
       },
       "step4": {
         "title": "Ingeniería de Soluciones y Piloto",
-        "description": "Validar la solución a través de un piloto de alcance limitado. Diseñamos soluciones independientes pero recomendamos encarecidamente adoptar Nodal para organizar y escalar sus flujos de trabajo de manera eficiente.",
+        "description": "Validar la solución a través de un piloto de alcance limitado. Diseñamos soluciones a medida y autónomas que se adaptan a sus sistemas actuales, objetivos y restricciones operativas.",
         "deliverables": [
-          "Configuración del entorno Nodal",
+          "Configuración del entorno personalizado",
           "Solución piloto funcional",
           "Tablero de seguimiento de KPIs",
           "Informe de medición de adopción"
         ],
         "tools": [
-          "Nodal",
           "n8n",
-          "Atlassian Jira",
-          "Atlassian Confluence"
+          "React",
+          "Node.JS",
+          "Supabase",
+          "Power BI",
+          "PDF"
         ]
       },
       "step5": {
@@ -227,8 +230,11 @@
           "Adopción completa de la solución"
         ],
         "tools": [
-          "Nodal",
-          "n8n"
+          "n8n",
+          "React",
+          "Node.JS",
+          "Supabase",
+          "Power BI"
         ]
       },
       "step6": {
@@ -240,9 +246,8 @@
           "Informe de mejora de rendimiento"
         ],
         "tools": [
-          "Nodal",
-          "PowerBI",
-          "Atlassian Confluence"
+          "Power BI",
+          "PDF"
         ]
       }
     },
@@ -254,8 +259,8 @@
           "answer": "Asignamos un consultor dedicado para servir como su socio estratégico y punto de contacto principal. Coordinan todo el proceso de diagnóstico y diseño, trabajando directamente con el equipo de ingeniería de Enigmatic para construir, probar y desplegar su solución personalizada."
         },
         {
-          "question": "¿Necesito usar la plataforma Nodal?",
-          "answer": "No. Podemos ingeniar soluciones independientes que se integren directamente con su infraestructura existente. Sin embargo, recomendamos encarecidamente Nodal como una capa de orquestación para centralizar la gobernanza, el monitoreo y el despliegue a medida que escala de uno a muchos flujos de trabajo."
+          "question": "¿Necesito usar una plataforma o un sistema genérico?",
+          "answer": "No. Diseñamos soluciones a medida y autónomas que encajan con su infraestructura actual, equipo y modelo operativo. Nuestro trabajo está pensado para resolver la necesidad directamente sin forzar la adopción de una plataforma ni un reemplazo completo del software."
         },
         {
           "question": "¿Cuánto tiempo toma un compromiso típico?",
@@ -271,7 +276,7 @@
         },
         {
           "question": "¿Cómo manejan la seguridad de los datos?",
-          "answer": "La seguridad es primordial. Diseñamos arquitecturas que respetan su soberanía de datos. Ya sea usando Nodal o construcciones independientes, nos adherimos a estrictos estándares de seguridad empresarial y podemos desplegar soluciones dentro de su entorno de nube privada si es necesario."
+          "answer": "La seguridad es primordial. Diseñamos arquitecturas que respetan su soberanía de datos. Ya sea que la solución sea completamente personalizada y autónoma o esté integrada estrechamente con sus sistemas actuales, nos adherimos a estrictos estándares de seguridad empresarial y podemos desplegar soluciones dentro de su entorno de nube privada si es necesario."
         }
       ]
     },
@@ -292,8 +297,8 @@
     "signIn": "Iniciar Sesión",
     "loading": "Cargando...",
     "items": {
-      "nodal": "Nodal",
-      "nodalDesc": "El sistema operativo central para operaciones industriales modernas",
+      "nodal": "Soluciones Personalizadas",
+      "nodalDesc": "Sistemas hechos a medida para la excelencia operativa",
       "docs": "Documentación",
       "docsDesc": "Guías completas y referencias de API",
       "useCases": "Casos de Uso",
@@ -350,8 +355,8 @@
     "panels": {
       "consulting": "Transformación Digital Estratégica",
       "consultingDesc": "No solo parchamos agujeros. Reingenierizamos sus flujos de trabajo operativos centrales, reemplazando cuellos de botella manuales con soluciones escalables y automatizadas adaptadas a su infraestructura única.",
-      "nodal": "El Sistema Operativo Nodal",
-      "nodalDesc": "El sistema nervioso central para su negocio. Nodal conecta sus equipos, herramientas y datos en una sola interfaz inteligente—ejecutando acciones para que usted no tenga que hacerlo."
+      "nodal": "Sistemas Operativos a Medida",
+      "nodalDesc": "Entornos digitales diseñados para sus equipos, procesos reales y datos, sin imponer una plataforma genérica ni una solución de talla única."
     },
     "grid": {
       "triggers": "Desencadenadores Inteligentes",
@@ -372,21 +377,21 @@
       "step2": "Diseñar Estado Futuro",
       "step2Desc": "Diseñamos un flujo de trabajo optimizado diseñado para maximizar el valor financiero y la fluidez operativa.",
       "step3": "Construir e Implementar",
-      "step3Desc": "Construimos la solución utilizando tecnologías modernas, con Nodal como el sistema operativo central para orquestar su nuevo ecosistema."
+      "step3Desc": "Construimos la solución utilizando tecnologías modernas, adaptando la arquitectura a su modelo operativo, infraestructura y restricciones comerciales exactas."
     }
   },
   "NodalPlatform": {
-    "title": "Unifique Sus Sistemas.",
-    "description": "Nodal añade una capa de orquestación poderosa sobre sus sistemas y herramientas centrales existentes, dándole consistencia y visibilidad perfectas sin reemplazar una sola herramienta.",
+    "title": "Sistemas a Medida, Diseñados para Usted.",
+    "description": "Diseñamos capas operativas a medida alrededor de sus sistemas y herramientas existentes, brindando coherencia y visibilidad sin imponer una plataforma genérica ni un reemplazo disruptivo.",
     "cards": {
-      "flow": "Orqueste con Flujos de Acción.",
-      "flowDesc": "Diseñe tuberías que guíen a los usuarios a través de sus tareas diarias. Ya sea un disparador de eventos de su TMS o un inicio manual, Nodal asegura que todos sigan el mismo proceso estandarizado.",
-      "connect": "Conecte y Automatice.",
-      "connectDesc": "Facilite procesos de negocio conectando sistemas dispares. Dispare acciones automáticamente y monitoree la ejecución a través de toda su pila.",
+      "flow": "Guíe el trabajo con flujos de trabajo personalizados.",
+      "flowDesc": "Diseñe recorridos de proceso que coincidan con la forma real en que opera su equipo. Ya sea activado por un evento, un cambio de estado o un inicio manual, el flujo sigue su modelo operativo real.",
+      "connect": "Conecte y automatice.",
+      "connectDesc": "Relacione sus datos, sistemas y rutinas operativas de una manera que refleje su negocio, no una plantilla.",
       "extend": "Extienda sus capacidades.",
-      "extendDesc": "Añada cálculos personalizados y alertas automatizadas. Obtenga visibilidad completa de sus datos sin cambiar su pila tecnológica existente.",
+      "extendDesc": "Añada cálculos, alertas y lógica operativa personalizada para mejorar el control sin reemplazar su pila actual.",
       "human": "Control humano en el bucle.",
-      "humanDesc": "Enrute excepciones a operadores sin problemas. Asegure que las decisiones críticas reciban atención humana mientras mantiene el resto de su proceso funcionando en piloto automático."
+      "humanDesc": "Dirija las excepciones a la persona adecuada mientras el trabajo repetitivo sigue avanzando de manera eficiente."
     },
     "seeUseCases": "Ver Casos de Uso"
   },
@@ -441,22 +446,22 @@
   },
   "UseCasesPage": {
     "title": "Casos de Uso.",
-    "description": "Vea cómo Enigmatic y Nodal digitalizan flujos de trabajo manuales y orquestan operaciones complejas a escala.",
+    "description": "Vea cómo Enigmatic crea flujos de trabajo digitales a medida y sistemas operativos personalizados que responden a la realidad de su negocio.",
     "ctaTitle": "¿Tiene un desafío único?",
     "ctaDescription": "Nuestro equipo de ingenieros puede construir flujos de trabajo personalizados adaptados a sus necesidades operativas específicas.",
     "cards": {
       "onboarding": "Contratación e Incorporación de Conductores",
-      "onboardingDesc": "Cada transportista lidia con flujos de incorporación caóticos repartidos en Tenstreet, HRIS, correo, hojas de cálculo y verificaciones de seguridad. Nodal comprime este flujo desordenado en una vista unificada, automatizando pasos de cumplimiento y recolección de documentos.",
+      "onboardingDesc": "Cada transportista lidia con flujos de incorporación caóticos repartidos en Tenstreet, HRIS, correo, hojas de cálculo y verificaciones de seguridad. Un flujo a medida reúne este proceso caótico en una vista unificada, automatizando pasos de cumplimiento y recolección de documentos.",
       "maintenance": "Mantenimiento e Inspecciones de Activos",
-      "maintenanceDesc": "El mantenimiento suele ser reactivo y fragmentado. Con Nodal, un técnico que envía un DVIR dispara pedidos de partes, asignaciones de trabajo y aprobaciones automáticamente, orquestando el trabajo entre equipos más allá del TMS.",
+      "maintenanceDesc": "El mantenimiento suele ser reactivo y fragmentado. Un flujo personalizado puede disparar pedidos de piezas, asignaciones de trabajo y aprobaciones automáticamente cuando un técnico envía un DVIR, manteniendo el trabajo entre equipos alineado más allá del TMS.",
       "billing": "Facturación y Procesamiento de Reclamos",
-      "billingDesc": "Acelere el flujo de caja reduciendo fugas. Nodal proporciona una vista de flujo de trabajo única para facturación y reclamos, manejando tareas, adjuntos y validaciones antes de enviar datos limpios a su TMS o sistema contable.",
+      "billingDesc": "Acelere el flujo de caja reduciendo fugas. Un flujo a medida ofrece una vista operativa única para facturación y reclamos, gestionando tareas, adjuntos y validaciones antes de enviar datos limpios a su TMS o sistema contable.",
       "predictive": "Operaciones de Manufactura Predictiva",
       "predictiveDesc": "Conecte el piso de producción con la gerencia. Ingeste datos de sensores en vivo para detectar anomalías, disparar órdenes de trabajo automáticamente en su CMMS y reprogramar turnos de producción en su ERP sin intervención manual.",
       "production": "Visibilidad de Línea de Producción",
-      "productionDesc": "Monitoreo en tiempo real de entradas y salidas de materiales. Cuando el inventario cae por debajo de los umbrales, los agentes de IA de Nodal negocian el reabastecimiento con proveedores al instante.",
+      "productionDesc": "Monitoreo en tiempo real de entradas y salidas de materiales. Cuando el inventario cae por debajo de los umbrales, un disparador automatizado puede coordinar decisiones de reabastecimiento con proveedores y equipos internos sin seguimiento manual.",
       "field": "Integración de Comunicación de Campo",
-      "fieldDesc": "Cierre la brecha entre el sitio de trabajo y la oficina administrativa. Los capataces del sitio pueden reportar problemas vía SMS o Chat, lo cual Nodal traduce en documentos RFI formales y solicitudes de tickets.",
+      "fieldDesc": "Cierre la brecha entre el sitio de trabajo y la oficina administrativa. Los capataces del sitio pueden reportar problemas vía SMS o Chat, y los flujos personalizados pueden convertir esos reportes en documentos RFI estructurados y solicitudes de tickets.",
       "construction": "Logística de Materiales de Construcción",
       "constructionDesc": "Entrega justo a tiempo para sitios complejos. Coordine vertidos de concreto y entregas de material sincronizando solicitudes del sitio directamente con plantas de lotes y despachadores de logística."
     }
@@ -484,7 +489,7 @@
     "items": {
       "overview": "Visión General",
       "natalie": "Natalie",
-      "actionFlows": "Flujos de Acción",
+      "workflows": "Flujos de Trabajo",
       "organization": "Organización",
       "peopleAndTeams": "Gente y Equipos",
       "flowStudio": "Estudio de Flujo",
@@ -534,8 +539,12 @@
       "phiDescription": "Phi arquitecta la base técnica de Enigmatic, liderando investigación y desarrollo para entregar soluciones robustas de vanguardia que empujan los límites de la tecnología industrial."
     },
     "story": {
-      "title": "Fundado por Entusiastas Industriales.",
-      "description": "Somos un equipo de profesionales de operaciones industriales con décadas de experiencia práctica optimizando flujos de trabajo. Combinamos esta profundidad operativa con experiencia seria en ingeniería para entregar consultoría estratégica y Nodal, nuestra plataforma para estandarizar y orquestar procesos de negocio."
+      "title": "Fundado por Entusiastas de la Eficiencia.",
+      "description": "Somos un equipo de profesionales de operaciones industriales con décadas de experiencia práctica optimizando flujos de trabajo. Combinamos esta profundidad operativa con ingeniería sólida para ofrecer consultoría estratégica y automatización que estandariza y coordina procesos de negocio."
+    },
+    "principle": {
+      "title": "Nuestro Principio de Solución",
+      "description": "Creemos que las soluciones más sólidas son rápidas de construir, lo bastante versátiles para adaptarse y lo bastante escalables para crecer. A medida que la tecnología avanza y la competencia se intensifica, la clave para mantenerse a la vanguardia es crear soluciones que puedan evolucionar con el cambio y al mismo tiempo generar valor hoy."
     },
     "cta": {
       "title": "Únase a nuestro viaje",
@@ -543,8 +552,8 @@
     }
   },
   "Login": {
-    "title": "Iniciar sesión en Nodal",
-    "subtitle": "Ingrese sus credenciales para acceder a la plataforma",
+    "title": "Iniciar sesión",
+    "subtitle": "Ingrese sus credenciales para acceder a su espacio de trabajo",
     "email": "Correo",
     "emailPlaceholder": "nombre@ejemplo.com",
     "password": "Contraseña",

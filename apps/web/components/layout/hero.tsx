@@ -52,7 +52,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10"
         >
-          <CTAButtons />
+          <CTAButtons hideSignIn />
         </motion.div>
       </div>
     </section>

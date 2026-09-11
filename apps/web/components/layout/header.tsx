@@ -1,7 +1,5 @@
 "use client";
 import {
-  FileText,
-  GlobeIcon,
   LayersIcon,
   type LucideIcon,
   Users,
@@ -77,18 +75,6 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   const scrolled = useScroll(10);
 
   const productLinks: LinkItem[] = [
-    {
-      titleKey: "items.nodal",
-      href: "/login",
-      descriptionKey: "items.nodalDesc",
-      icon: GlobeIcon,
-    },
-    {
-      titleKey: "items.docs",
-      href: "/docs",
-      descriptionKey: "items.docsDesc",
-      icon: FileText,
-    },
     {
       titleKey: "items.useCases",
       href: "/product/use-cases",
@@ -224,20 +210,6 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </NavigationMenu>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          {loading || (user && !dashboardUrl) ? (
-            <Button variant="ghost" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t("loading")}
-            </Button>
-          ) : user && dashboardUrl ? (
-            <Button variant="ghost" asChild>
-              <Link href={dashboardUrl}>{t("dashboard")}</Link>
-            </Button>
-          ) : (
-            <Button variant="ghost" asChild>
-              <Link href="/login">{t("signIn")}</Link>
-            </Button>
-          )}
           <Button asChild>
             <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
               {t("collaborate")}
@@ -303,28 +275,6 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           </div>
         </NavigationMenu>
         <div className="flex flex-col gap-2">
-          {loading || (user && !dashboardUrl) ? (
-            <Button
-              className="w-full bg-transparent"
-              variant="outline"
-              disabled
-            >
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t("loading")}
-            </Button>
-          ) : user && dashboardUrl ? (
-            <Button className="w-full bg-transparent" variant="outline" asChild>
-              <Link href={dashboardUrl} onClick={() => setOpen(false)}>
-                {t("dashboard")}
-              </Link>
-            </Button>
-          ) : (
-            <Button className="w-full bg-transparent" variant="outline" asChild>
-              <Link href="/login" onClick={() => setOpen(false)}>
-                {t("signIn")}
-              </Link>
-            </Button>
-          )}
           <Button className="w-full" asChild>
             <Link
               href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry"

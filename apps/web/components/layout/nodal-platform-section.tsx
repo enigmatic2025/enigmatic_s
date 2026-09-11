@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { Link } from "@/navigation";
 import { ArrowRight } from "lucide-react";
@@ -18,12 +19,14 @@ export function NodalPlatformSection() {
   return (
     <section className="flex flex-col bg-background text-foreground py-12 md:py-20 min-h-full">
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col px-6">
-        {/* Nodal SVG Logo */}
+        {/* Enigmatic logo */}
         <div className="flex justify-center mb-12 md:mb-24">
-          <img
-            src="/images/brand/nodal-logo.svg?v=3"
-            alt="Nodal Platform"
-            className="md:w-40 md:h-40 w-32 h-32 object-contain"
+          <Image
+            src="/images/brand/enigmatic-logo.png"
+            alt="Enigmatic"
+            width={112}
+            height={112}
+            className="md:w-28 md:h-28 w-24 h-24 object-contain"
           />
         </div>
 

@@ -151,8 +151,9 @@
     "deliverables": "Sản phẩm bàn giao",
     "tools": "Công cụ",
     "phases": {
-      "consulting": "Giai đoạn Tư vấn",
-      "engineering": "Giai đoạn Kỹ thuật Hệ thống",
+      "consulting": "Consulting",
+      "consultingNote": "Chúng tôi bắt đầu bằng việc hiểu thực tế vận hành đằng sau thách thức của bạn và làm rõ lộ trình chiến lược trước khi bắt đầu bất kỳ công việc xây dựng nào.",
+      "engineering": "Engineering",
       "engineeringNote": "Lý tưởng nhất là chúng tôi xây dựng những gì chúng tôi thiết kế. Nhưng khách hàng có thể chọn kết thúc sự hợp tác tại đây, được trang bị một lộ trình hoàn chỉnh để thực hiện nội bộ."
     },
     "steps": {
@@ -206,9 +207,9 @@
       },
       "step4": {
         "title": "Kỹ sư Giải pháp & Thí điểm",
-        "description": "Xác thực giải pháp thông qua thí điểm phạm vi hạn chế. Chúng tôi thiết kế các giải pháp độc lập nhưng đặc biệt khuyến nghị áp dụng Nodal để tổ chức và mở rộng quy trình làm việc hiệu quả.",
+        "description": "Xác thực giải pháp thông qua thí điểm phạm vi hạn chế. Chúng tôi thiết kế các giải pháp độc lập, tùy chỉnh và tự chủ phù hợp với hệ thống hiện có, mục tiêu và ràng buộc vận hành của bạn.",
         "deliverables": [
-          "Xây dựng kỹ thuật bên trong Nodal",
+          "Cấu hình môi trường tùy chỉnh",
           "Triển khai phạm vi giới hạn",
           "Theo dõi KPI",
           "Đo lường mức độ chấp nhận",
@@ -216,10 +217,12 @@
           "Nghiên cứu trường hợp tác động"
         ],
         "tools": [
-          "Nodal",
           "n8n",
-          "Atlassian Jira",
-          "Atlassian Confluence"
+          "React",
+          "Node.JS",
+          "Supabase",
+          "Power BI",
+          "PDF"
         ]
       },
       "step5": {
@@ -232,8 +235,11 @@
           "Triển khai và áp dụng giải pháp đầy đủ"
         ],
         "tools": [
-          "Nodal",
-          "n8n"
+          "n8n",
+          "React",
+          "Node.JS",
+          "Supabase",
+          "Power BI"
         ]
       },
       "step6": {
@@ -244,9 +250,8 @@
           "Đánh giá và cải tiến giải pháp"
         ],
         "tools": [
-          "Nodal",
-          "PowerBI",
-          "Atlassian Confluence"
+          "Power BI",
+          "PDF"
         ]
       }
     },
@@ -258,8 +263,8 @@
           "answer": "Chúng tôi chỉ định một tư vấn viên chuyên trách làm đối tác chiến lược và đầu mối liên hệ chính của bạn. Họ điều phối toàn bộ quá trình chẩn đoán và thiết kế, làm việc trực tiếp với đội ngũ kỹ thuật của Enigmatic để xây dựng, thử nghiệm và triển khai giải pháp tùy chỉnh của bạn."
         },
         {
-          "question": "Tôi có cần sử dụng nền tảng Nodal không?",
-          "answer": "Không. Chúng tôi có thể thiết kế các giải pháp độc lập tích hợp trực tiếp với cơ sở hạ tầng hiện có của bạn. Tuy nhiên, chúng tôi đặc biệt khuyến nghị Nodal như một lớp điều phối để tập trung quản trị, giám sát và triển khai khi bạn mở rộng quy trình làm việc."
+          "question": "Tôi có cần sử dụng nền tảng hay hệ thống bán sẵn không?",
+          "answer": "Không. Chúng tôi xây dựng các giải pháp độc lập, tùy chỉnh phù hợp với hạ tầng hiện tại, đội ngũ và mô hình hoạt động của bạn. Công việc của chúng tôi được thiết kế để giải quyết trực tiếp khoảng trống mà không ép buộc bạn áp dụng một nền tảng hoặc thay thế phần mềm lớn."
         },
         {
           "question": "Một dự án thông thường kéo dài bao lâu?",
@@ -275,7 +280,7 @@
         },
         {
           "question": "Bạn xử lý bảo mật dữ liệu như thế nào?",
-          "answer": "Bảo mật là tối quan trọng. Chúng tôi thiết kế kiến trúc tôn trọng chủ quyền dữ liệu của bạn. Cho dù sử dụng Nodal hay xây dựng độc lập, chúng tôi tuân thủ các tiêu chuẩn bảo mật doanh nghiệp nghiêm ngặt và có thể triển khai giải pháp trong môi trường đám mây riêng của bạn nếu cần."
+          "answer": "Bảo mật là tối quan trọng. Chúng tôi thiết kế kiến trúc tôn trọng chủ quyền dữ liệu của bạn. Cho dù giải pháp của bạn là một bản dựng tùy chỉnh, tự chủ hoàn toàn hay một môi trường tích hợp chặt chẽ với hệ thống hiện có, chúng tôi tuân thủ các tiêu chuẩn bảo mật doanh nghiệp nghiêm ngặt và có thể triển khai trong môi trường đám mây riêng của bạn nếu cần."
         }
       ]
     },
@@ -296,8 +301,8 @@
     "signIn": "Đăng nhập",
     "loading": "Đang tải...",
     "items": {
-      "nodal": "Nodal",
-      "nodalDesc": "Hệ điều hành trung tâm cho vận hành công nghiệp hiện đại",
+      "nodal": "Giải pháp Tùy chỉnh",
+      "nodalDesc": "Hệ thống được xây dựng riêng cho sự xuất sắc vận hành",
       "docs": "Tài liệu",
       "docsDesc": "Hướng dẫn chi tiết và tài liệu tham khảo API",
       "useCases": "Trường hợp sử dụng",
@@ -354,8 +359,8 @@
     "panels": {
       "consulting": "Chuyển đổi Kỹ thuật số Chiến lược",
       "consultingDesc": "Chúng tôi không chỉ vá lỗi. Chúng tôi tái thiết kế các quy trình vận hành cốt lõi của bạn, thay thế các nút thắt thủ công bằng các giải pháp tự động, có thể mở rộng phù hợp với cơ sở hạ tầng độc đáo của bạn.",
-      "nodal": "Hệ điều hành Nodal",
-      "nodalDesc": "Hệ thần kinh trung ương cho doanh nghiệp của bạn. Nodal kết nối các đội, công cụ và dữ liệu của bạn thành một giao diện thông minh duy nhất—thực hiện các hành động để bạn không phải làm."
+      "nodal": "Hệ thống vận hành tùy chỉnh",
+      "nodalDesc": "Môi trường kỹ thuật số được thiết kế riêng cho đội ngũ, thực tế quy trình và dữ liệu của bạn—không ép buộc một nền tảng chung hay giải pháp một kích cỡ cho tất cả."
     },
     "grid": {
       "triggers": "Kích hoạt Thông minh",
@@ -376,21 +381,21 @@
       "step2": "Thiết kế Tương lai",
       "step2Desc": "Chúng tôi phác thảo một quy trình làm việc tối ưu được thiết kế để tối đa hóa giá trị tài chính và sự trôi chảy trong vận hành.",
       "step3": "Xây dựng & Triển khai",
-      "step3Desc": "Chúng tôi xây dựng giải pháp sử dụng công nghệ hiện đại, với Nodal là hệ điều hành trung tâm để điều phối hệ sinh thái mới của bạn."
+      "step3Desc": "Chúng tôi xây dựng giải pháp bằng công nghệ hiện đại, tùy chỉnh kiến trúc theo đúng mô hình vận hành, hạ tầng và ràng buộc kinh doanh của bạn."
     }
   },
   "NodalPlatform": {
-    "title": "Hợp nhất Hệ thống của Bạn.",
-    "description": "Nodal thêm một lớp điều phối mạnh mẽ lên trên các hệ thống cốt lõi và công cụ hiện có của bạn, mang lại sự nhất quán và khả năng hiển thị hoàn hảo mà không cần thay thế bất kỳ công cụ nào.",
+    "title": "Hệ thống Tùy chỉnh, Xây dựng cho Bạn.",
+    "description": "Chúng tôi thiết kế các lớp vận hành được xây dựng riêng xung quanh các hệ thống và công cụ cốt lõi hiện có của bạn, mang lại tính nhất quán và khả năng hiển thị mà không cần ép buộc một nền tảng chung hay thay thế phá vỡ quy trình hiện có.",
     "cards": {
-      "flow": "Điều phối với Luồng Hành động.",
-      "flowDesc": "Thiết kế các đường ống dẫn hướng người dùng qua các nhiệm vụ hàng ngày của họ. Cho dù đó là kích hoạt sự kiện từ TMS hay khởi động thủ công, Nodal đảm bảo mọi người tuân theo cùng một quy trình chuẩn hóa.",
+      "flow": "Dẫn dắt công việc bằng các quy trình làm việc tùy chỉnh.",
+      "flowDesc": "Thiết kế hành trình quy trình phù hợp với cách đội ngũ của bạn thực sự vận hành. Dù được kích hoạt bởi sự kiện, thay đổi trạng thái hay khởi động thủ công, quy trình vẫn tuân theo mô hình vận hành thực tế của bạn.",
       "connect": "Kết nối & Tự động hóa.",
-      "connectDesc": "Tạo điều kiện cho các quy trình kinh doanh bằng cách kết nối các hệ thống khác biệt. Kích hoạt hành động tự động và giám sát việc thực thi trên toàn bộ hệ thống của bạn.",
+      "connectDesc": "Liên kết dữ liệu, hệ thống và quy trình vận hành của bạn theo cách phản ánh doanh nghiệp của bạn, không phải một mẫu chung.",
       "extend": "Mở rộng khả năng của bạn.",
-      "extendDesc": "Thêm các tính toán tùy chỉnh và cảnh báo tự động. Có được khả năng hiển thị đầy đủ vào dữ liệu của bạn mà không cần thay đổi hệ thống công nghệ hiện có.",
+      "extendDesc": "Thêm tính toán, cảnh báo và logic vận hành tùy chỉnh để cải thiện kiểm soát mà không thay thế stack hiện tại của bạn.",
       "human": "Kiểm soát con người trong vòng lặp.",
-      "humanDesc": "Định tuyến ngoại lệ liền mạch đến người vận hành. Đảm bảo các quyết định quan trọng nhận được sự chú ý của con người trong khi vẫn giữ cho phần còn lại của quy trình chạy tự động."
+      "humanDesc": "Định tuyến ngoại lệ đến đúng người trong khi phần công việc lặp đi lặp lại vẫn tiếp tục chạy hiệu quả phía sau."
     },
     "seeUseCases": "Xem các trường hợp sử dụng"
   },
@@ -445,22 +450,22 @@
   },
   "UseCasesPage": {
     "title": "Các Trường hợp Sử dụng.",
-    "description": "Xem cách Enigmatic và Nodal số hóa quy trình vận hành thủ công và điều phối vận hành phức tạp trên quy mô lớn.",
+    "description": "Xem cách Enigmatic xây dựng các quy trình kỹ thuật số tùy chỉnh và hệ thống vận hành riêng biệt để phù hợp với thực tế kinh doanh của bạn.",
     "ctaTitle": "Bạn có thách thức riêng biệt?",
     "ctaDescription": "Đội ngũ kỹ sư của chúng tôi có thể xây dựng quy trình tùy chỉnh phù hợp với nhu cầu vận hành cụ thể của bạn.",
     "cards": {
       "onboarding": "Tuyển dụng & Đón nhận Tài xế",
-      "onboardingDesc": "Mọi đơn vị vận tải đều đối mặt với quy trình tuyển dụng hỗn loạn trải rộng trên Tenstreet, HRIS, email, bảng tính và kiểm tra an toàn. Nodal nén luồng công việc lộn xộn này thành một chế độ xem thống nhất, tự động hóa các bước tuân thủ và thu thập tài liệu.",
+      "onboardingDesc": "Mọi đơn vị vận tải đều đối mặt với quy trình tuyển dụng hỗn loạn trải rộng trên Tenstreet, HRIS, email, bảng tính và kiểm tra an toàn. Một quy trình tùy chỉnh mang luồng công việc rối rắm này thành một chế độ xem thống nhất, tự động hóa các bước tuân thủ và thu thập tài liệu.",
       "maintenance": "Bảo trì & Kiểm tra Tài sản",
-      "maintenanceDesc": "Bảo trì thường mang tính phản ứng và rời rạc. Với Nodal, kỹ thuật viên gửi DVIR sẽ kích hoạt đặt hàng phụ tùng, phân công công việc và phê duyệt tự động, điều phối công việc liên đội ngũ bên ngoài TMS.",
+      "maintenanceDesc": "Bảo trì thường mang tính phản ứng và rời rạc. Một quy trình tùy chỉnh có thể kích hoạt đặt hàng phụ tùng, phân công công việc và phê duyệt tự động khi kỹ thuật viên gửi DVIR, giúp công việc liên phòng ban còn đồng bộ hơn ngoài TMS.",
       "billing": "Xử lý Thanh toán & Khiếu nại",
-      "billingDesc": "Tăng tốc dòng tiền bằng cách giảm thất thoát. Nodal cung cấp chế độ xem quy trình làm việc duy nhất cho thanh toán và khiếu nại, xử lý các tác vụ, tệp đính kèm và xác thực trước khi gửi dữ liệu sạch đến TMS hoặc hệ thống kế toán của bạn.",
+      "billingDesc": "Tăng tốc dòng tiền bằng cách giảm thất thoát. Một quy trình tùy chỉnh cung cấp một chế độ xem vận hành duy nhất cho thanh toán và khiếu nại, xử lý các tác vụ, tệp đính kèm và xác thực trước khi dữ liệu sạch được gửi đến TMS hoặc hệ thống kế toán của bạn.",
       "predictive": "Vận hành Sản xuất Dự báo",
       "predictiveDesc": "Kết nối phân xưởng với văn phòng quản lý. Thu thập dữ liệu cảm biến trực tiếp để phát hiện bất thường, tự động kích hoạt lệnh làm việc trong CMMS của bạn và lên lịch lại ca sản xuất trong ERP mà không cần can thiệp thủ công.",
       "production": "Khả năng hiển thị Dây chuyền Sản xuất",
-      "productionDesc": "Giám sát thời gian thực đầu vào và đầu ra vật liệu. Khi hàng tồn kho giảm xuống dưới ngưỡng, các tác nhân AI của Nodal sẽ thương lượng bổ sung với nhà cung cấp ngay lập tức.",
+      "productionDesc": "Giám sát thời gian thực đầu vào và đầu ra vật liệu. Khi hàng tồn kho giảm xuống dưới ngưỡng, một kích hoạt tự động có thể phối hợp quyết định bổ sung với nhà cung cấp và các bộ phận nội bộ mà không cần theo dõi thủ công.",
       "field": "Tích hợp Giao tiếp Thực địa",
-      "fieldDesc": "Thu hẹp khoảng cách giữa công trường và văn phòng hỗ trợ. Đốc công công trường có thể báo cáo vấn đề qua SMS hoặc Trò chuyện, Nodal dịch thành tài liệu RFI chính thức và yêu cầu vé.",
+      "fieldDesc": "Thu hẹp khoảng cách giữa công trường và văn phòng hỗ trợ. Đốc công công trường có thể báo cáo vấn đề qua SMS hoặc Trò chuyện, và các quy trình tùy chỉnh có thể biến những báo cáo đó thành tài liệu RFI có cấu trúc và yêu cầu vé.",
       "construction": "Hậu cần Vật liệu Xây dựng",
       "constructionDesc": "Giao hàng đúng lúc (Just-in-time) cho các công trường phức tạp. Phối hợp đổ bê tông và giao vật liệu bằng cách đồng bộ hóa yêu cầu công trường trực tiếp với trạm trộn và điều phối viên hậu cần."
     }
@@ -488,7 +493,7 @@
     "items": {
       "overview": "Tổng quan",
       "natalie": "Natalie",
-      "actionFlows": "Luồng hành động",
+      "workflows": "Quy trình làm việc",
       "organization": "Tổ chức",
       "peopleAndTeams": "Nhân sự & Nhóm",
       "flowStudio": "Phòng Thiết Kế Luồng",
@@ -538,8 +543,12 @@
       "phiDescription": "Phi thiết kế nền tảng kỹ thuật của Enigmatic, dẫn dắt nghiên cứu và phát triển để cung cấp các giải pháp tiên tiến, vững chắc, vượt qua ranh giới của công nghệ logistics."
     },
     "story": {
-      "title": "Được Thành Lập Bởi Những Người Đam Mê Logistics.",
-      "description": "Chúng tôi là một đội ngũ những người kỳ cựu trong ngành logistics với hàng thập kỷ kinh nghiệm thực tế trong việc tối ưu hóa chuỗi cung ứng. Chúng tôi kết hợp chiều sâu vận hành này với chuyên môn kỹ thuật nghiêm túc để cung cấp tư vấn chiến lược và Nodal, nền tảng của chúng tôi để chuẩn hóa và điều phối các quy trình kinh doanh."
+      "title": "Được Thành Lập Bởi Những Người Đam Mê Hiệu Quả.",
+      "description": "Chúng tôi là một đội ngũ những người có kinh nghiệm trong hoạt động công nghiệp với hàng thập kỷ thực hành tối ưu hóa quy trình. Chúng tôi kết hợp chiều sâu vận hành này với chuyên môn kỹ thuật vững chắc để mang đến tư vấn chiến lược và tự động hóa giúp chuẩn hóa và điều phối các quy trình kinh doanh."
+    },
+    "principle": {
+      "title": "Nguyên Tắc Giải Quyết Của Chúng Tôi",
+      "description": "Chúng tôi tin rằng các giải pháp mạnh nhất phải nhanh chóng được xây dựng, đủ linh hoạt để thích ứng và đủ mở rộng để phát triển. Khi công nghệ không ngừng tiến bộ và cạnh tranh ngày càng khốc liệt, chìa khóa để giữ vị thế dẫn đầu là tạo ra các giải pháp có thể phát triển cùng sự thay đổi trong khi vẫn mang lại giá trị ngay hôm nay."
     },
     "cta": {
       "title": "Tham gia hành trình của chúng tôi",
@@ -547,8 +556,8 @@
     }
   },
   "Login": {
-    "title": "Đăng nhập vào Nodal",
-    "subtitle": "Nhập thông tin đăng nhập của bạn để truy cập nền tảng",
+    "title": "Đăng nhập",
+    "subtitle": "Nhập thông tin đăng nhập của bạn để truy cập không gian làm việc",
     "email": "Email",
     "emailPlaceholder": "ten@example.com",
     "password": "Mật khẩu",

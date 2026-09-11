@@ -6,15 +6,15 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { 
+  ArrowRightLeft,
+  BarChart3,
   ChevronDown, 
   ChevronUp,
-  Target,
-  CircleDollarSign,
+  Code2,
   Compass,
-  Code,
+  Gauge,
   Rocket,
-  TrendingUp,
-  LucideIcon
+  Target
 } from "lucide-react";
 import { CTASection } from "@/components/layout/cta-section";
 
@@ -27,16 +27,8 @@ const timelineVariants = {
 export default function ServicesPage() {
   const t = useTranslations("ServicesPage");
   const steps = [1, 2, 3, 4, 5, 6];
+  const stepIcons = [Target, BarChart3, Compass, Code2, Rocket, Gauge];
   
-  const stepIcons = [
-    Target,
-    CircleDollarSign,
-    Compass,
-    Code,
-    Rocket,
-    TrendingUp
-  ];
-
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -111,7 +103,7 @@ export default function ServicesPage() {
           className="absolute inset-0 w-full h-[130%] -top-[15%]"
         >
             <Image 
-              src="/images/home/blackwhite.jpg" 
+              src="/images/home/corporate.jpg" 
               alt="Operational Excellence" 
               fill
               className="object-cover"
@@ -126,12 +118,11 @@ export default function ServicesPage() {
         <div className="max-w-5xl mx-auto relative">
           
           {/* Timeline Line Container */}
-          <div className="absolute left-5 md:left-1/2 top-10 bottom-10 w-px -translate-x-1/2">
-            <div className="w-full h-full border-l border-dashed border-border" />
-            {/* The Beam */}
+          <div className="absolute left-5 md:left-1/2 top-8 bottom-8 w-px -translate-x-1/2">
+            <div className="w-full h-full border-l border-dashed border-border/80" />
             <motion.div 
               style={{ height: lineHeight }}
-              className="absolute top-0 left-0 w-full border-l border-dashed border-violet-400 origin-top overflow-hidden"
+              className="absolute top-0 left-[-0.5px] w-[2px] border-l border-dashed border-violet-400/80 origin-top overflow-hidden"
             />
           </div>
 
@@ -142,13 +133,16 @@ export default function ServicesPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex justify-center"
+              className="flex flex-col items-center gap-6 py-12 backdrop-blur-sm z-20 -my-12"
             >
-              <div className="bg-background px-6 py-12 z-20">
+              <div className="bg-background px-6 py-2">
                 <h3 className="text-xl md:text-2xl font-normal text-foreground">
                   {t("phases.consulting")}
                 </h3>
               </div>
+              <p className="text-center text-muted-foreground max-w-lg px-4">
+                {t("phases.consultingNote")}
+              </p>
             </motion.div>
 
             {steps.slice(0, 3).map((step) => (
@@ -266,7 +260,7 @@ function FAQItem({ question, answer }: { question: string, answer: string }) {
 }
 
 function TimelineItem({  
-  index, 
+  index,
   icon: Icon,
   title, 
   description,
@@ -275,8 +269,8 @@ function TimelineItem({
   deliverablesLabel,
   toolsLabel
 }: { 
-  index: number, 
-  icon: LucideIcon,
+  index: number,
+  icon: typeof Target,
   title: string, 
   description: string,
   deliverables: string[],
@@ -293,45 +287,51 @@ function TimelineItem({
       viewport={{ once: true, margin: "-100px" }}
       variants={timelineVariants}
       className={cn(
-        "flex flex-col md:flex-row items-center w-full gap-8 md:gap-0",
+        "relative flex flex-col md:flex-row items-center w-full gap-6 md:gap-0",
         isEven ? "md:flex-row-reverse" : ""
       )}
     >
       {/* Content Side */}
       <div className={cn(
         "w-full md:w-[calc(50%-40px)] pl-12 md:pl-0 flex flex-col justify-center",
-        isEven ? "md:text-left" : "md:text-right"
+        isEven ? "md:pr-10" : "md:pl-10"
       )}>
         <div className={cn(
-          "flex flex-col gap-4",
-          isEven ? "items-start" : "items-start md:items-end"
+          "flex flex-col gap-5 rounded-[28px] border border-border/80 bg-card/60 p-5 md:p-7 shadow-[0_1px_0_rgba(0,0,0,0.02)] backdrop-blur-sm w-full md:max-w-[640px]",
+          isEven ? "items-start md:mr-auto" : "items-start md:ml-auto md:items-end"
         )}>
-          <span className="text-4xl text-center aspect-square text-foreground px-3 py-1 font-light">
-            {index.toFixed(1)}
-          </span>
-          <div className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
-            <div className={cn("flex items-center gap-3", isEven ? "flex-row" : "flex-row md:flex-row-reverse")}>
-              <Icon className="w-6 h-6 md:w-8 md:h-8 text-violet-500" strokeWidth={1.5} />
-              <h3 className="text-2xl text-foreground">
+          <div className={cn(
+            "flex w-full items-start gap-3",
+            isEven ? "justify-start" : "flex-row-reverse justify-start"
+          )}>
+            <div className={cn("flex min-w-0 flex-1 flex-col gap-1", isEven ? "items-start" : "items-end")}>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80">
+                Phase {String(index).padStart(2, "0")}
+              </span>
+              <h3 className="text-2xl text-foreground leading-tight">
                 {title}
               </h3>
             </div>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
-              {description}
-            </p>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-violet-500/30 bg-transparent text-violet-500">
+              <Icon className="h-4 w-4" />
+            </div>
           </div>
 
-          <div className={cn("flex flex-col gap-6 mt-2 w-full", isEven ? "items-start" : "items-start md:items-end")}>
+          <p className={cn("text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg", isEven ? "text-left" : "text-left md:text-right")}>
+            {description}
+          </p>
+
+          <div className={cn("flex flex-col gap-6 mt-1 w-full", isEven ? "items-start" : "items-start md:items-end")}>
             {/* Deliverables */}
             <div className={cn("flex flex-col gap-3", isEven ? "items-start" : "items-start md:items-end")}>
-              <h4 className="text-sm font-semibold text-foreground">{deliverablesLabel}</h4>
-              <ul className={cn("flex flex-col gap-2", isEven ? "items-start" : "items-start md:items-end")}>
+              <h4 className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground/80">{deliverablesLabel}</h4>
+              <ul className={cn("flex flex-col gap-2.5", isEven ? "items-start" : "items-start md:items-end")}>
                 {deliverables.map((item, i) => (
                   <li key={i} className={cn(
-                    "flex items-baseline gap-2 text-sm md:text-base text-muted-foreground",
+                    "flex items-start gap-2 text-sm md:text-base text-muted-foreground",
                     !isEven && "md:flex-row-reverse text-right"
                   )}>
-                     <div className="w-1.5 h-1.5 mt-2 rounded-full bg-zinc-400/60 dark:bg-zinc-500/60 shrink-0" />
+                     <div className="mt-2 h-1.5 w-1.5 rounded-full bg-violet-500/70 shrink-0" />
                      <span>{item}</span>
                   </li>
                 ))}
@@ -340,12 +340,12 @@ function TimelineItem({
 
             {/* Tools */}
             <div className={cn("flex flex-col gap-3", isEven ? "items-start" : "items-start md:items-end")}>
-              <h4 className="text-sm font-semibold text-foreground">{toolsLabel}</h4>
-              <div className={cn("flex flex-wrap items-center gap-4", isEven ? "justify-start" : "justify-start md:justify-end")}>
+              <h4 className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground/80">{toolsLabel}</h4>
+              <div className={cn("flex flex-wrap items-center gap-2", isEven ? "justify-start" : "justify-start md:justify-end")}>
                 {tools.map((item, i) => (
                   <span 
                     key={i} 
-                    className="text-xs md:text-sm px-2.5 py-1 rounded-sm text-violet-500 dark:text-violet-400 border border-violet-500 dark:border-violet-400"
+                    className="rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] md:text-xs text-foreground/80"
                   >
                     {item}
                   </span>
@@ -358,7 +358,7 @@ function TimelineItem({
 
       {/* Center Point */}
       <div className="absolute left-5 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
-        <div className="w-4 h-4 rounded-full bg-background border-2 border-violet-500 z-10 relative" />
+        <div className="relative z-10 h-4 w-4 rounded-full border-2 border-violet-500 bg-background shadow-[0_0_0_4px_rgba(139,92,246,0.08)]" />
       </div>
 
       {/* Empty Side (Spacer for Desktop) */}

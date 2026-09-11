@@ -130,6 +130,34 @@ export default function AboutUsPage() {
         </div>
       </section>
 
+      {/* Solutioning Principle Section */}
+      <section className="w-full flex items-center justify-center py-20 px-4 md:px-6">
+        <div className="w-full max-w-[95%] text-foreground rounded-3xl overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <div className="mb-8 md:mb-10">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15] mb-6"
+              >
+                {t("principle.title")}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-xl md:text-2xl text-muted-foreground max-w-3xl text-left font-light"
+              >
+                {t("principle.description")}
+              </motion.p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <CTASection
         title={t("cta.title")}

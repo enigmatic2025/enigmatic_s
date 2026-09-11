@@ -151,8 +151,9 @@
     "deliverables": "Deliverables",
     "tools": "Tools",
     "phases": {
-      "consulting": "Consulting Phase",
-      "engineering": "System Engineering Phase",
+      "consulting": "Consulting",
+      "consultingNote": "We begin by understanding the operational reality behind your challenge and clarifying the strategic path forward before any build work begins.",
+      "engineering": "Engineering",
       "engineeringNote": "Ideally, we build what we design. But clients may choose to conclude the engagement here, armed with a complete roadmap for internal execution."
     },
     "steps": {
@@ -165,7 +166,7 @@
           "Executive sponsorship agreement"
         ],
         "tools": [
-          "Atlassian Confluence"
+          "PDF"
         ]
       },
       "step2": {
@@ -183,7 +184,7 @@
           "Excel",
           "SQL",
           "BPMN 2.0",
-          "Atlassian Confluence"
+          "PDF"
         ]
       },
       "step3": {
@@ -199,23 +200,25 @@
         "tools": [
           "BPMN 2.0",
           "Lucid Chart",
-          "Atlassian Confluence"
+          "PDF"
         ]
       },
       "step4": {
         "title": " Solution Engineering & Pilot",
-        "description": "Validate the solution through a limited-scope pilot. We engineer standalone solutions but highly recommend adopting Nodal to organize and scale your workflows efficiently.",
+        "description": "Validate the solution through a limited-scope pilot. We engineer bespoke standalone solutions that are designed around your current systems, goals, and operating constraints.",
         "deliverables": [
-          "Nodal environment configuration",
+          "Custom environment configuration",
           "Working pilot solution",
           "KPI tracking dashboard",
           "Adoption measurement report"
         ],
         "tools": [
-          "Nodal",
           "n8n",
-          "Atlassian Jira",
-          "Atlassian Confluence"
+          "React",
+          "Node.JS",
+          "Supabase",
+          "Power BI",
+          "PDF"
         ]
       },
       "step5": {
@@ -227,8 +230,11 @@
           "Full solution adoption"
         ],
         "tools": [
-          "Nodal",
-          "n8n"
+          "n8n",
+          "React",
+          "Node.JS",
+          "Supabase",
+          "Power BI"
         ]
       },
       "step6": {
@@ -240,9 +246,8 @@
           "Performance improvement report"
         ],
         "tools": [
-          "Nodal",
-          "PowerBI",
-          "Atlassian Confluence"
+          "Power BI",
+          "PDF"
         ]
       }
     },
@@ -254,8 +259,8 @@
           "answer": "We assign a dedicated consultant to serve as your strategic partner and primary point of contact. They coordinate the entire diagnostic and design process, working directly with Enigmatic's engineering team to build, test, and deploy your custom solution."
         },
         {
-          "question": "Do I need to use the Nodal platform?",
-          "answer": "No. We can engineer standalone solutions that integrate directly with your existing infrastructure. However, we highly recommend Nodal as an orchestration layer to centralize governance, monitoring, and deployment as you scale from one workflow to many."
+          "question": "Do I need a platform or off-the-shelf system?",
+          "answer": "No. We build bespoke standalone solutions that fit your current infrastructure, teams, and operating model. Our work is designed to solve the gap directly without forcing a platform adoption or a software rip-and-replace."
         },
         {
           "question": "How long does a typical engagement take?",
@@ -271,7 +276,7 @@
         },
         {
           "question": "How do you handle data security?",
-          "answer": "Security is paramount. We design architectures that respect your data sovereignty. Whether using Nodal or standalone builds, we adhere to strict enterprise security standards and can deploy solutions within your private cloud environment if required."
+          "answer": "Security is paramount. We design architectures that respect your data sovereignty. Whether your solution is a fully custom standalone build or a tightly integrated environment, we adhere to strict enterprise security standards and can deploy within your private cloud environment if required."
         }
       ]
     },
@@ -292,8 +297,8 @@
     "signIn": "Sign In",
     "loading": "Loading...",
     "items": {
-      "nodal": "Nodal",
-      "nodalDesc": "The central operating system for modern industrial operations",
+      "nodal": "Custom Solutions",
+      "nodalDesc": "Purpose-built systems for operational excellence",
       "docs": "Documentation",
       "docsDesc": "Comprehensive guides and API references",
       "useCases": "Use Cases",
@@ -350,8 +355,8 @@
     "panels": {
       "consulting": "Strategic Digital Transformation",
       "consultingDesc": "We don't just patch holes. We re-engineer your core operational workflows, replacing manual bottlenecks with scalable, automated solutions tailored to your unique infrastructure.",
-      "nodal": "The Nodal Operating System",
-      "nodalDesc": "The central nervous system for your business. Nodal connects your teams, tools, and data into a single, intelligent interface—executing actions so you don't have to."
+      "nodal": "Custom Operating Systems",
+      "nodalDesc": "Purpose-built digital environments designed around your teams, workflow realities, and data—without forcing a generic platform or a one-size-fits-all workaround."
     },
     "grid": {
       "triggers": "Intelligent Triggers",
@@ -372,21 +377,21 @@
       "step2": "Design Future State",
       "step2Desc": "We blueprint an optimized workflow designed to maximize financial value and operational fluidity.",
       "step3": "Build & Implement",
-      "step3Desc": "We build the solution using modern technologies, with Nodal as the central operating system to orchestrate your new ecosystem."
+      "step3Desc": "We build the solution using modern technologies, tailoring the architecture to your exact operating model, infrastructure, and business constraints."
     }
   },
   "NodalPlatform": {
-    "title": "Unify Your Systems.",
-    "description": "Nodal adds a powerful orchestration layer on top of your existing core systems and tools, giving you perfect consistency and visibility without replacing a single tool.",
+    "title": "Tailored Systems, Built for You.",
+    "description": "We design purpose-built operating layers around your existing core systems and tools, giving you consistency and visibility without forcing a generic platform or a disruptive rip-and-replace.",
     "cards": {
-      "flow": "Orchestrate with Action Flows.",
-      "flowDesc": "Design pipelines that guide users through their daily tasks. Whether it's an event trigger from your TMS or a manual start, Nodal ensures everyone follows the same standardized process.",
-      "connect": "Connect & Automate.",
-      "connectDesc": "Facilitate business processes by connecting disparate systems. Trigger actions automatically and monitor execution across your entire stack.",
+      "flow": "Guide the work with custom workflows.",
+      "flowDesc": "Design process journeys that match how your team actually operates. Whether triggered by an event, a status change, or a manual start, the workflow follows your real operating model.",
+      "connect": "Connect & automate.",
+      "connectDesc": "Tie together your data, systems, and operational routines in a way that reflects your business, not a template.",
       "extend": "Extend your capabilities.",
-      "extendDesc": "Add custom calculations and automated alerts. Get full visibility into your data without changing your existing tech stack.",
+      "extendDesc": "Add custom calculations, alerts, and operational logic to improve control without replacing your current stack.",
       "human": "Human-in-the-loop control.",
-      "humanDesc": "Seamlessly route exceptions to operators. Ensure critical decisions get human attention while keeping the rest of your process running on autopilot."
+      "humanDesc": "Route the exceptions to the right people while keeping repetitive work moving efficiently behind the scenes."
     },
     "seeUseCases": "See Use Cases"
   },
@@ -441,22 +446,22 @@
   },
   "UseCasesPage": {
     "title": "Use Cases.",
-    "description": "See how Enigmatic and Nodal digitize manual workflows and orchestrate complex operations at scale.",
+    "description": "See how Enigmatic builds bespoke digital workflows and custom operating systems around the realities of your business.",
     "ctaTitle": "Have a unique challenge?",
     "ctaDescription": "Our team of engineers can build custom workflows tailored to your specific operational needs.",
     "cards": {
       "onboarding": "Driver Onboarding & Hiring",
-      "onboardingDesc": "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Nodal compresses this messy flow into one unified view, automating compliance steps and document collection.",
+      "onboardingDesc": "Every carrier deals with chaotic onboarding workflows spread across Tenstreet, HRIS, email, spreadsheets, and safety checks. Our bespoke workflow layer brings this messy process into one unified view, automating compliance steps and document collection.",
       "maintenance": "Asset Maintenance & Inspections",
-      "maintenanceDesc": "Maintenance is often reactive and fragmented. With Nodal, a technician submitting a DVIR triggers parts ordering, work assignments, and approvals automatically, orchestrating cross-team work beyond the TMS.",
+      "maintenanceDesc": "Maintenance is often reactive and fragmented. A custom workflow can trigger parts ordering, work assignments, and approvals automatically when a technician submits a DVIR, keeping cross-team work aligned beyond the TMS.",
       "billing": "Billing & Claims Processing",
-      "billingDesc": "Accelerate cash flow by reducing leakage. Nodal provides a single workflow view for billing and claims, handling tasks, attachments, and validations before submitting clean data to your TMS or accounting system.",
+      "billingDesc": "Accelerate cash flow by reducing leakage. A bespoke workflow gives your team a single operational view for billing and claims, handling tasks, attachments, and validations before clean data is submitted to your TMS or accounting system.",
       "predictive": "Predictive Manufacturing Operations",
       "predictiveDesc": "Connect the shop floor to top floor. Ingest live sensor data to detect anomalies, automatically trigger work orders in your CMMS, and reschedule production shifts in your ERP without manual intervention.",
       "production": "Production Line Visibility",
-      "productionDesc": "Real-time monitoring of material inputs and outputs. When inventory drops below thresholds, Nodal's AI agents negotiate replenishment with suppliers instantly.",
+      "productionDesc": "Real-time monitoring of material inputs and outputs. When inventory drops below thresholds, an automated trigger can coordinate replenishment decisions with suppliers and internal teams without manual chasing.",
       "field": "Field Communication Integration",
-      "fieldDesc": "Bridge the gap between the job site and the back office. Site foremen can report issues via SMS or Chat, which Nodal translates into formal RFI documents and ticket requests.",
+      "fieldDesc": "Bridge the gap between the job site and the back office. Site foremen can report issues via SMS or Chat, and custom workflows can turn those reports into structured RFI documents and ticket requests.",
       "construction": "Construction Material Logistics",
       "constructionDesc": "Just-in-time delivery for complex sites. Coordinate concrete pours and material drops by syncing site requests directly with batch plants and logistics dispatchers."
     }
@@ -484,7 +489,7 @@
     "items": {
       "overview": "Overview",
       "natalie": "Natalie",
-      "actionFlows": "Action Flows",
+      "workflows": "Workflows",
       "organization": "Organization",
       "peopleAndTeams": "People & Teams",
       "flowStudio": "Flow Studio",
@@ -534,8 +539,12 @@
       "phiDescription": "Phi architects Enigmatic's technical foundation, leading research and development to deliver cutting-edge, robust solutions that push the boundaries of industrial technology."
     },
     "story": {
-      "title": "Founded by Industrial Enthusiasts.",
-      "description": "We are a team of industrial operation professionals with decades of hands-on experience optimizing workflows. We combine this operational depth with serious engineering expertise to deliver strategic consulting and Nodal, our platform for standardizing and orchestrating business processes."
+      "title": "Founded by Efficiency Enthusiasts.",
+      "description": "We are a team of industrial operation professionals with decades of hands-on experience optimizing workflows. We combine this operational depth with serious engineering expertise to deliver strategic consulting and automation that standardizes and orchestrates business processes."
+    },
+    "principle": {
+      "title": "Our Solutioning Principle",
+      "description": "We believe the strongest solutions are quick to build, versatile enough to adapt, and scalable enough to grow. As technology keeps advancing and competition keeps intensifying, the key to staying ahead is creating solutions that can evolve with change while delivering value today."
     },
     "cta": {
       "title": "Join our journey",
@@ -543,8 +552,8 @@
     }
   },
   "Login": {
-    "title": "Sign in to Nodal",
-    "subtitle": "Enter your credentials to access the platform",
+    "title": "Sign in",
+    "subtitle": "Enter your credentials to access your workspace",
     "email": "Email",
     "emailPlaceholder": "name@example.com",
     "password": "Password",
