@@ -9,7 +9,7 @@ type SplitSectionProps = {
   /** Extra content under the intro in the left column (links, images). */
   aside?: React.ReactNode;
   children: React.ReactNode;
-  tone?: "base" | "raised";
+  tone?: "base" | "raised" | "inverse";
   id?: string;
 };
 

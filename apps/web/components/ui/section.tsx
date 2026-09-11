@@ -7,6 +7,8 @@ const sectionVariants = cva("", {
     tone: {
       base: "",
       raised: "border-y border-border bg-surface-1",
+      /** Always dark: a black band on light pages, a deeper "ink" band on dark pages. */
+      inverse: "dark band-inverse",
     },
     pad: {
       lg: "py-14 sm:py-18 lg:py-24",

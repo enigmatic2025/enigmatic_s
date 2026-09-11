@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { siteName } from "@/lib/site";
 
 const title = "Services";
-const description = "Consulting, data engineering, app development, and workflow automation — from the first process map to a deployed, supported solution.";
+const description = "AI strategy, intelligent automation, applied AI and machine learning, and managed services — one partner from the first assessment to results that last.";
 
 export const metadata: Metadata = {
   title, description,

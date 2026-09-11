@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import { ArrowRight, FileText, GitBranch, ScanText } from "lucide-react";
-import { capabilities, principles, stack, stackNote } from "@/lib/content";
+import { capabilities, capabilitiesNote, principles, services } from "@/lib/content";
 import { accentTones, type Tone } from "@/lib/tones";
 import { Button } from "@/components/ui/button";
 import { Disclosure, NumberedItem } from "@/components/ui/list-items";
 import { Media } from "@/components/ui/media";
 import { Section } from "@/components/ui/section";
 import { IconTile, Panel, Tag } from "@/components/ui/surface";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Eyebrow, Heading, Text } from "@/components/ui/typography";
 import { ContactBand } from "@/components/marketing/contact-band";
-import { FeatureGrid, PrinciplesRow } from "@/components/marketing/feature-grid";
+import { PrinciplesRow } from "@/components/marketing/principles-row";
+import { ServiceList } from "@/components/marketing/service-list";
 import { SectionHeader } from "@/components/marketing/section-header";
-import { StackGrid } from "@/components/marketing/stack-grid";
+import { CapabilityGrid } from "@/components/marketing/capability-grid";
 
 export const metadata: Metadata = {
   title: "Style guide",
@@ -39,10 +41,10 @@ const typeScale = [
   ["display", "text-display", "Less busywork."],
   ["heading-cta", "text-heading-cta", "What's slowing your team down?"],
   ["heading-xl", "text-heading-xl", "From incoming document to work done."],
-  ["title-lg", "text-title-lg", "Connected workflows"],
+  ["title-lg", "text-title-lg", "Find where AI pays off"],
   ["title-md", "text-title-md", "How do engagements work?"],
   ["title-sm", "text-title-sm", "Built around your business"],
-  ["lead", "text-lead text-muted-foreground", "Consulting, data engineering, and custom software for operations teams."],
+  ["lead", "text-lead text-muted-foreground", "Your AI and automation partner."],
   ["body", "text-body text-muted-foreground", "Connect the tools you already use and automate the steps between them."],
   ["body-sm", "text-body-sm text-muted-foreground", "Documented workflows, visible exceptions, and human control."],
   ["caption", "text-caption text-subtle", "Illustrative workflow · Sample data"],
@@ -68,14 +70,17 @@ export default function StyleguidePage() {
   return (
     <main>
       <Section pad="md">
-        <Eyebrow dot="violet">Internal · not indexed</Eyebrow>
+        <div className="flex items-center justify-between gap-4">
+          <Eyebrow dot="violet">Internal · not indexed</Eyebrow>
+          <ThemeToggle />
+        </div>
         <Heading as="h1" size="display" accent="Enigmatic design system." className="mt-6">Style guide.</Heading>
         <Text size="lead" className="mt-8 max-w-[640px]">
-          Every token lives in <code className="font-mono text-foreground">app/globals.css</code>. Every page is built from the components below. If something new doesn&apos;t fit, add it here first.
+          Every token lives in <code className="font-mono text-foreground">app/globals.css</code>, with a light set on <code className="font-mono text-foreground">:root</code> and a dark set on <code className="font-mono text-foreground">.dark</code>. Every page is built from the components below. If something new doesn&apos;t fit, add it here first.
         </Text>
 
         <div className="mt-14">
-          <Block title="Color" note="Black-only. Brand trio from the logo; status tones for diagrams only.">
+          <Block title="Color" note="Light and dark sets swap under the .dark class; use the toggle at the top to compare. Brand trio from the logo; status tones for diagrams only.">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
               {colors.map(([name, cls]) => (
                 <div key={name}>
@@ -151,10 +156,10 @@ export default function StyleguidePage() {
             <Disclosure title="Plain disclosure"><Text>Expandable body content.</Text></Disclosure>
           </Block>
 
-          <Block title="Sections" note="SectionHeader, FeatureGrid, StackGrid, PrinciplesRow.">
+          <Block title="Sections" note="SectionHeader, ServiceList, CapabilityGrid, PrinciplesRow.">
             <SectionHeader label="02 / What we build" title="Practical technology." description="SectionHeader with a right-hand intro." />
-            <FeatureGrid items={capabilities} />
-            <StackGrid items={stack} note={stackNote} className="mt-12" />
+            <ServiceList items={services} />
+            <CapabilityGrid items={capabilities} note={capabilitiesNote} className="mt-12" />
             <PrinciplesRow items={principles} className="mt-12" />
           </Block>
         </div>

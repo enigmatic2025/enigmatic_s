@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { siteName } from "@/lib/site";
 
 const title = "Use Cases";
-const description = "Examples of the workflows, data systems, and applications we build for logistics and operations teams.";
+const description = "How AI and automation change everyday work across finance, people, customer service, operations, and planning.";
 
 export const metadata: Metadata = {
   title, description,

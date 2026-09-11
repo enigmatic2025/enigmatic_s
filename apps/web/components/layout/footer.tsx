@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { contactEmail, navLinks, siteName } from "@/lib/site";
+import { contactEmail, navLinks, siteName, siteTagline } from "@/lib/site";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="dark band-inverse border-t border-border bg-none">
       <div className="wrap py-12 lg:py-14">
         <div className="flex flex-col justify-between gap-10 md:flex-row">
           <div>
             <Link href="/" className="text-title-md">{siteName}</Link>
-            <p className="mt-3 max-w-xs text-body-sm text-muted-foreground">Consulting, data engineering, and custom software for operations teams.</p>
+            <p className="mt-3 max-w-xs text-body-sm text-muted-foreground">{siteTagline}</p>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-12 gap-y-4 text-body-sm">
             {navLinks.map(link => (

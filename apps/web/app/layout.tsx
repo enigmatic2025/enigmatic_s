@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import { contactEmail, siteDescription, siteName, siteUrl } from "@/lib/site";
 
 const geistMono = Geist_Mono({
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         url: "/images/brand/brand-image.jpg",
         width: 1200,
         height: 630,
-        alt: `${siteName} — consulting, data engineering, and custom software`,
+        alt: `${siteName} — AI and automation consulting`,
       },
     ],
   },
@@ -54,8 +54,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#090909",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafaf8" },
+    { media: "(prefers-color-scheme: dark)", color: "#090909" },
+  ],
+  colorScheme: "light dark",
 };
 
 const jsonLd = {
@@ -68,6 +71,7 @@ const jsonLd = {
       logo: `${siteUrl}/images/brand/enigmatic-logo.png`,
       email: contactEmail,
       description: siteDescription,
+      knowsAbout: ["Artificial intelligence", "Automation", "Machine learning", "AI strategy"],
     },
     {
       "@type": "WebSite",
@@ -84,7 +88,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -92,8 +96,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistMono.variable} antialiased font-sans`}>
-        {children}
-        <Toaster theme="dark" position="bottom-right" richColors closeButton duration={3000} visibleToasts={3} />
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

@@ -4,10 +4,10 @@ import { contactHref, contactLabel } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { Eyebrow, Heading, Text } from "@/components/ui/typography";
 
-/** Closing call to action on every page. The brand glow is its signature. */
+/** Closing call to action on every page. Always dark, so the brand glow reads the same in both themes. */
 export function ContactBand() {
   return (
-    <section aria-labelledby="contact-title" className="border-t border-border bg-surface-1 bg-brand-glow">
+    <section aria-labelledby="contact-title" className="dark band-inverse bg-brand-glow">
       <div className="wrap py-16 lg:py-24">
         <Eyebrow dot="pink" tone="default">{contactBand.label}</Eyebrow>
         <Heading id="contact-title" size="cta" className="mt-6 max-w-[800px]">{contactBand.title}</Heading>

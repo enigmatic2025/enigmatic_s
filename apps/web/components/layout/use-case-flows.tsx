@@ -6,12 +6,18 @@ import "reactflow/dist/style.css";
 import {
   AlertTriangle,
   BarChart3,
+  Boxes,
   Calendar,
+  CheckCircle2,
   Database,
   FileCheck2,
-  Radio,
+  KeyRound,
+  Mail,
   RefreshCw,
+  Send,
+  Sparkles,
   Truck,
+  Upload,
   User,
   Webhook,
   Wrench,
@@ -21,7 +27,7 @@ import type { Tone } from "@/lib/tones";
 import { FlowBlockNode, type FlowBlockData } from "@/components/ui/flow-nodes";
 
 // Tone carries meaning across every diagram:
-// blue = system / data, violet = automated, pink = human, success = done,
+// blue = system / data, violet = automated or AI, pink = human, success = done,
 // warning = alert, neutral = field input.
 
 const nodeTypes = { flowBlock: FlowBlockNode };
@@ -89,41 +95,54 @@ function FlowCanvas({ nodes, links }: { nodes: Node<FlowBlockData>[]; links: Edg
   );
 }
 
-export const DriverOnboardingFlow = () => (
+export const EmployeeOnboardingFlow = () => (
   <FlowCanvas
     nodes={[
-      block("1", CENTER, 0, "Application received", "Tenstreet webhook", Webhook, "API", "blue"),
-      block("2", CENTER, 130, "Documents review", "Recruiting team", User, "Human", "pink"),
-      block("3", CENTER, 260, "Document validation", "Contract & safety rules", FileCheck2, "Automated", "violet"),
-      block("4", LEFT, 400, "Orientation scheduled", "Operations", Calendar, "Human", "pink"),
-      block("5", RIGHT, 400, "Systems provisioning", "TMS, HR, payroll", Database, "Assisted", "blue"),
-      block("6", CENTER, 540, "Ready for dispatch", "Status: active", Truck, "Complete", "success"),
+      block("o1", CENTER, 0, "Application received", "HR system", Webhook, "Source", "blue"),
+      block("o2", CENTER, 130, "Documents collected", "Candidate portal", Upload, "Portal", "blue"),
+      block("o3", CENTER, 260, "AI credential check", "Licenses & certifications", FileCheck2, "AI", "violet"),
+      block("o4", LEFT, 400, "Orientation scheduled", "HR team", Calendar, "Human", "pink"),
+      block("o5", RIGHT, 400, "Systems access", "Email, records, payroll", KeyRound, "Assisted", "blue"),
+      block("o6", CENTER, 540, "Ready to start", "Day one confirmed", CheckCircle2, "Complete", "success"),
     ]}
-    links={edges([["1", "2"], ["2", "3"], ["3", "4"], ["3", "5"], ["4", "6"], ["5", "6"]])}
+    links={edges([["o1", "o2"], ["o2", "o3"], ["o3", "o4"], ["o3", "o5"], ["o4", "o6"], ["o5", "o6"]])}
+  />
+);
+
+export const CustomerServiceFlow = () => (
+  <FlowCanvas
+    nodes={[
+      block("c1", CENTER, 0, "Customer email received", "Shared inbox", Mail, "Source", "blue"),
+      block("c2", CENTER, 130, "AI reads & classifies", "Orders, returns, quotes", Sparkles, "AI", "violet"),
+      block("c3", LEFT, 270, "Routine: reply sent", "Includes order status", Send, "Automated", "violet"),
+      block("c4", RIGHT, 270, "Complex: to a specialist", "Context & draft attached", User, "Human", "pink"),
+      block("c5", CENTER, 410, "CRM updated", "Full history logged", Database, "Complete", "success"),
+    ]}
+    links={edges([["c1", "c2"], ["c2", "c3"], ["c2", "c4"], ["c3", "c5"], ["c4", "c5"]])}
   />
 );
 
 export const AssetMaintenanceFlow = () => (
   <FlowCanvas
     nodes={[
-      block("m1", 0, 0, "Inspection submitted", "Technician DVIR", Truck, "Mobile", "neutral"),
+      block("m1", 0, 0, "Inspection submitted", "Technician app", Truck, "Mobile", "neutral"),
       block("m2", 0, 130, "Defect detected: brakes", "Rule-based alert", AlertTriangle, "Alert", "warning"),
-      block("m3", 0, 260, "Work order created", "Parts & labor suggested", Wrench, "Automated", "violet"),
-      block("m4", 0, 390, "Fleet status updated", "ERP & TMS", Database, "Sync", "success"),
+      block("m3", 0, 260, "Work order created", "AI suggests parts & labor", Wrench, "AI", "violet"),
+      block("m4", 0, 390, "Fleet status updated", "ERP & fleet systems", Database, "Sync", "success"),
     ]}
     links={edges([["m1", "m2"], ["m2", "m3"], ["m3", "m4"]])}
   />
 );
 
-export const OperationsReportingFlow = () => (
+export const OperationsIntelligenceFlow = () => (
   <FlowCanvas
     nodes={[
-      block("d1", LEFT, 0, "TMS & dispatch", "Loads, stops, rates", Database, "Source", "blue"),
-      block("d2", RIGHT, 0, "Telematics & ELD", "Location, hours, fuel", Radio, "Source", "blue"),
+      block("d1", LEFT, 0, "ERP & finance", "Orders, invoices, costs", Database, "Source", "blue"),
+      block("d2", RIGHT, 0, "Operations systems", "Jobs, schedules, assets", Boxes, "Source", "blue"),
       block("d3", CENTER, 140, "Ingest & validate", "Scheduled pipelines", RefreshCw, "Automated", "violet"),
-      block("d4", CENTER, 280, "Operations data model", "Supabase · Postgres", Database, "Model", "blue"),
-      block("d5", LEFT, 420, "KPI dashboard", "On-time, cost per mile", BarChart3, "Live", "success"),
-      block("d6", RIGHT, 420, "Exception alerts", "Detention, late loads", AlertTriangle, "Alert", "warning"),
+      block("d4", CENTER, 280, "Unified data model", "One source of truth", Database, "Model", "blue"),
+      block("d5", LEFT, 420, "Executive dashboard", "Live KPIs by location", BarChart3, "Live", "success"),
+      block("d6", RIGHT, 420, "AI weekly briefing", "Trends & anomalies", Sparkles, "AI", "violet"),
     ]}
     links={edges([["d1", "d3"], ["d2", "d3"], ["d3", "d4"], ["d4", "d5"], ["d4", "d6"]])}
   />

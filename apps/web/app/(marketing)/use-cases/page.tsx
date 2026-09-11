@@ -1,36 +1,42 @@
 import { pad2 } from "@/lib/tones";
-import { AssetMaintenanceFlow, DriverOnboardingFlow, OperationsReportingFlow } from "@/components/layout/use-case-flows";
-import { BillingClaimsPreview, ManufacturingMaterialFlowPreview } from "@/components/layout/use-case-visualizations";
-import { Panel } from "@/components/ui/surface";
+import { AssetMaintenanceFlow, CustomerServiceFlow, EmployeeOnboardingFlow, OperationsIntelligenceFlow } from "@/components/layout/use-case-flows";
+import { BillingClaimsPreview, DemandForecastPreview } from "@/components/layout/use-case-visualizations";
+import { Panel, Tag } from "@/components/ui/surface";
 import { Eyebrow, Heading, Text } from "@/components/ui/typography";
 import { ContactBand } from "@/components/marketing/contact-band";
 import { PageHero } from "@/components/marketing/page-hero";
 
+// Organized by business function; each case draws its example from a different industry.
 const cases = [
   {
-    id: "driver-onboarding", industry: "Logistics", service: "Workflow automation", Visual: DriverOnboardingFlow, flow: true,
-    title: "Driver onboarding & hiring",
-    description: "Onboarding is spread across a recruiting system, HR, email, spreadsheets, and safety checks. A connected workflow collects documents, validates them against your rules, and hands each step to the right person, so recruiters see one clear status instead of chasing it.",
+    id: "finance", fn: "Finance & back office", industry: "Transportation", Visual: BillingClaimsPreview, flow: false,
+    title: "Invoice & claims processing",
+    description: "AI reads incoming invoices and claims, matches them to contracts and records, and flags anything that doesn't add up. Your team works from one view of exceptions instead of rekeying documents, and cash comes in faster.",
   },
   {
-    id: "maintenance", industry: "Logistics", service: "Workflow automation", Visual: AssetMaintenanceFlow, flow: true,
+    id: "onboarding", fn: "People & HR", industry: "Healthcare", Visual: EmployeeOnboardingFlow, flow: true,
+    title: "Employee onboarding",
+    description: "Onboarding touches HR systems, email, credentials, and scheduling. An automated workflow collects documents, uses AI to check licenses and certifications, and hands each step to the right person, so new hires are ready on day one.",
+  },
+  {
+    id: "customer-service", fn: "Customer service", industry: "Distribution", Visual: CustomerServiceFlow, flow: true,
+    title: "Inquiry triage",
+    description: "AI reads every incoming email, understands what the customer needs, and answers routine questions like order status automatically. Complex requests go to a specialist with the context and a draft reply already attached.",
+  },
+  {
+    id: "operations", fn: "Operations", industry: "Transportation", Visual: AssetMaintenanceFlow, flow: true,
     title: "Maintenance & inspections",
-    description: "When a technician submits an inspection with a defect, the workflow flags it, drafts the work order with suggested parts and labor, and updates fleet status in your ERP and TMS. Nothing waits on someone noticing an email.",
+    description: "When an inspection reports a defect, the workflow flags it, drafts the work order with AI-suggested parts and labor, and updates asset status across your systems. Nothing waits on someone noticing an email.",
   },
   {
-    id: "billing-claims", industry: "Logistics", service: "App development", Visual: BillingClaimsPreview, flow: false,
-    title: "Billing & claims",
-    description: "A focused internal app gives your team one view of invoices and claims, with attachments, validation, and exceptions in one place. Clean data goes to your TMS or accounting system, and cash comes in faster.",
+    id: "planning", fn: "Planning", industry: "Manufacturing", Visual: DemandForecastPreview, flow: false,
+    title: "Demand & inventory forecasting",
+    description: "Machine learning forecasts material needs from live output and past usage. When a shortage is likely, the workflow drafts the reorder and confirms delivery with the supplier, so the line keeps running.",
   },
   {
-    id: "operations-reporting", industry: "Logistics", service: "Data engineering", Visual: OperationsReportingFlow, flow: true,
-    title: "Unified operations reporting",
-    description: "Pipelines bring TMS and telematics data into one validated model. Leaders get a single source of truth for on-time performance, cost per mile, and detention, and the team gets alerts on the exceptions that need attention.",
-  },
-  {
-    id: "material-replenishment", industry: "Manufacturing", service: "Workflow automation", Visual: ManufacturingMaterialFlowPreview, flow: false,
-    title: "Material replenishment",
-    description: "When production output puts material levels at risk, the workflow reads the signal from your ERP, suggests a reorder, and confirms delivery with the supplier, so the line keeps running without manual chasing.",
+    id: "reporting", fn: "Reporting & insights", industry: "Professional services", Visual: OperationsIntelligenceFlow, flow: true,
+    title: "Operations intelligence",
+    description: "Data from finance and operations systems flows into one trusted model. Leaders get a live dashboard by location, plus an AI-written weekly briefing on trends and anomalies worth their attention.",
   },
 ] as const;
 
@@ -38,16 +44,17 @@ export default function UseCasesPage() {
   return (
     <>
       <PageHero
+        label="Use cases"
         title="Real processes."
         accent="New possibilities."
-        description="Examples of the workflows, data systems, and applications we build for logistics and operations teams."
+        description="How AI and automation change everyday work across finance, people, customer service, operations, and planning. Illustrative examples from a range of industries."
       />
       <div className="wrap pb-10">
         <nav aria-label="Use cases" className="flex flex-wrap gap-x-6 gap-y-2.5 border-y border-border py-5 text-body-sm text-muted-foreground">
-          {cases.map(item => <a key={item.id} href={`#${item.id}`} className="transition-colors duration-200 hover:text-foreground">{item.title}</a>)}
+          {cases.map(item => <a key={item.id} href={`#${item.id}`} className="transition-colors duration-200 hover:text-foreground">{item.fn}</a>)}
         </nav>
         <Text size="caption" tone="subtle" className="mt-4">Illustrative workflows and sample interfaces. Each solution is designed around the client&apos;s process.</Text>
-        {cases.map(({ id, industry, service, Visual, flow, title, description }, index) => (
+        {cases.map(({ id, fn, industry, Visual, flow, title, description }, index) => (
           <section
             key={id}
             id={id}
@@ -55,9 +62,10 @@ export default function UseCasesPage() {
             className="grid scroll-mt-24 items-center gap-7 border-b border-border py-10 last:border-b-0 sm:py-14 md:grid-cols-[1fr_1.3fr] md:gap-9 lg:grid-cols-[1fr_1.5fr] lg:gap-14"
           >
             <div>
-              <Eyebrow tone="violet" className="mb-5">{pad2(index + 1)} / {industry} · {service}</Eyebrow>
+              <Eyebrow tone="violet" className="mb-5">{pad2(index + 1)} / {fn}</Eyebrow>
               <Heading id={`${id}-title`} size="lg" className="mb-5">{title}</Heading>
               <Text>{description}</Text>
+              <Tag className="mt-6">Industry example: {industry}</Tag>
             </div>
             {/* ReactFlow needs a fixed height; sample UIs grow to fit on small screens. */}
             <Panel className={flow ? "h-[440px] min-w-0 sm:h-[540px] lg:h-[560px]" : "min-h-[540px] min-w-0 lg:h-[560px]"}><Visual /></Panel>

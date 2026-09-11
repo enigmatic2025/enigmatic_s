@@ -10,26 +10,63 @@
   font-display: swap;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
  * Design tokens — the single source of truth for color, type, radius, and motion.
- * The site is black-only. Use these through Tailwind utilities (bg-surface-1,
+ * Light values live on :root, dark values on .dark (set by next-themes; default
+ * follows the visitor's system). Components only ever reference tokens, so they
+ * work in both themes. Use them through Tailwind utilities (bg-surface-1,
  * text-brand-violet, text-heading-xl, rounded-md…) or as var(--token) in CSS.
  * See /styleguide for every token and component rendered.
  */
 :root {
+  color-scheme: light;
+
+  /* Ground and surfaces — warm paper, white cards */
+  --background: oklch(0.985 0.002 90);
+  --surface-1: oklch(1 0 0);
+  --surface-2: oklch(0.96 0.002 90);
+
+  /* Text */
+  --foreground: oklch(0.2 0 0);
+  --muted-foreground: oklch(0.46 0 0);
+  --subtle: oklch(0.53 0 0);
+
+  /* Hairlines */
+  --border: oklch(0 0 0 / 0.08);
+  --border-strong: oklch(0 0 0 / 0.15);
+
+  /* Brand trio — the logo hues, deepened to pass 4.5:1 on light surfaces */
+  --brand-blue: #4f65c7;
+  --brand-violet: #7c53d1;
+  --brand-pink: #a047b3;
+
+  /* Status (diagrams and sample interfaces only) */
+  --success: oklch(0.5 0.12 158);
+  --warning: oklch(0.52 0.115 70);
+  --danger: oklch(0.52 0.19 25);
+
+  /* Effects */
+  --highlight: 0 1px 2px oklch(0 0 0 / 0.04);
+  --dot: oklch(0 0 0 / 0.12);
+  --scrim: transparent;
+
+  /* Layout */
+  --header-height: 80px;
+}
+
+.dark {
   color-scheme: dark;
 
-  /* Ground and surfaces */
   --background: oklch(0.14 0 0);
   --surface-1: oklch(0.175 0 0);
   --surface-2: oklch(0.215 0 0);
 
-  /* Text */
   --foreground: oklch(0.96 0 0);
   --muted-foreground: oklch(0.73 0 0);
   --subtle: oklch(0.62 0 0);
 
-  /* Hairlines */
   --border: oklch(1 0 0 / 0.09);
   --border-strong: oklch(1 0 0 / 0.16);
 
@@ -37,14 +74,23 @@
   --brand-blue: #6582ff;
   --brand-violet: #9765ff;
   --brand-pink: #e465ff;
-  --gradient-brand: linear-gradient(110deg, var(--brand-blue), var(--brand-violet) 55%, var(--brand-pink));
 
-  /* Status (diagrams and sample interfaces only) */
   --success: oklch(0.8 0.15 158);
   --warning: oklch(0.84 0.14 78);
   --danger: oklch(0.72 0.17 22);
 
-  /* shadcn-compatible aliases */
+  --highlight: inset 0 1px 0 oklch(1 0 0 / 0.05);
+  --dot: oklch(1 0 0 / 0.1);
+  --scrim: oklch(0.14 0 0 / 0.5);
+}
+
+/*
+ * Tokens derived from others. They are declared on every theme scope so they
+ * re-resolve inside a nested `.dark` band on a light page.
+ */
+:root,
+.dark {
+  --gradient-brand: linear-gradient(110deg, var(--brand-blue), var(--brand-violet) 55%, var(--brand-pink));
   --card: var(--surface-1);
   --card-foreground: var(--foreground);
   --primary: var(--foreground);
@@ -56,9 +102,30 @@
   --accent-foreground: var(--foreground);
   --input: var(--border-strong);
   --ring: var(--brand-violet);
+}
 
-  /* Layout */
-  --header-height: 80px;
+/*
+ * Inverse band: an always-dark section (use with the `dark` class, e.g. via
+ * <Section tone="inverse">). On a light page it's a black band; on a dark page
+ * it drops to a deeper "ink" black with a faint brand glow, so dark mode layers
+ * three tones — ink, black, graphite — instead of one flat black.
+ */
+/* Token overrides stay unlayered so they beat the unlayered `.dark` token rule. */
+.dark .band-inverse {
+  --background: oklch(0.105 0 0);
+  --surface-1: oklch(0.145 0 0);
+  --surface-2: oklch(0.185 0 0);
+}
+
+/* Paint stays in a layer so utilities (bg-brand-glow, bg-none) can override it. */
+@layer components {
+  .band-inverse {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+  .dark .band-inverse {
+    background-image: radial-gradient(70% 55% at 50% 0%, color-mix(in oklch, var(--brand-violet) 9%, transparent), transparent 70%);
+  }
 }
 
 @theme inline {
@@ -190,9 +257,9 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Raised surface: 1px inner top highlight so panels read as layered, not flat. */
+/* Raised surface: inner top highlight (dark) or soft drop shadow (light) so panels read as layered. */
 @utility surface-highlight {
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.05);
+  box-shadow: var(--highlight);
 }
 
 /* Low-opacity brand glow — the contact band's signature. */
@@ -205,6 +272,6 @@
 
 /* Dotted grid used behind diagrams and demos. */
 @utility bg-dot-grid {
-  background-image: radial-gradient(oklch(1 0 0 / 0.1) 0.8px, transparent 0.8px);
+  background-image: radial-gradient(var(--dot) 0.8px, transparent 0.8px);
   background-size: 20px 20px;
 }

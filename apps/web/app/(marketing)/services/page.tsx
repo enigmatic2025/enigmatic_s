@@ -1,95 +1,94 @@
 import { ArrowRight } from "lucide-react";
-import { capabilities, capabilitiesTitle } from "@/lib/content";
+import { services, servicesTitle } from "@/lib/content";
 import { contactHref, contactLabel } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/list-items";
 import { Media } from "@/components/ui/media";
 import { Section } from "@/components/ui/section";
-import { Tag } from "@/components/ui/surface";
 import { Heading, Text } from "@/components/ui/typography";
 import { ContactBand } from "@/components/marketing/contact-band";
-import { FeatureGrid } from "@/components/marketing/feature-grid";
+import { ServiceList } from "@/components/marketing/service-list";
 import { PageHero } from "@/components/marketing/page-hero";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { SplitSection } from "@/components/marketing/split-section";
 
 const steps = [
   {
-    title: "Executive Alignment",
-    description: "Establish clear transformation objectives and secure executive sponsorship to drive organizational buy-in and target operational goals.",
-    deliverables: ["Measurable transformation objectives", "EBITDA or operational target definition", "Executive sponsorship agreement"],
-    tools: [],
+    title: "AI Opportunity Assessment",
+    description: "Map how work really gets done today, where time and money are lost, and where AI and automation could make the biggest difference.",
+    deliverables: ["Current-state process maps", "Pain-point and cost analysis", "Long list of AI and automation opportunities"],
+    outcome: "A shared, fact-based view of where to focus.",
   },
   {
-    title: "Diagnostic & Financial Modeling",
-    description: "Map current systems and workflows to identify bottlenecks, building a financial baseline and transformation thesis with quantified impact.",
-    deliverables: ["Current-state process maps", "System architecture diagram", "Financial baseline model", "Bottleneck analysis", "Transformation thesis"],
-    tools: ["Lucid Chart", "Excel", "SQL", "BPMN 2.0"],
+    title: "Readiness & Business Case",
+    description: "Check whether your data, systems, and teams are ready, and quantify the return for the opportunities that matter most.",
+    deliverables: ["Data and systems readiness review", "Prioritized use cases", "Business case and ROI model"],
+    outcome: "A short list your leadership can confidently fund.",
   },
   {
-    title: "Future State Architecture",
-    description: "Design the target operating model, including technology blueprints, workflow redesigns, and governance structures for scalable operations.",
-    deliverables: ["Future-state operating model", "Workflow redesigns", "Technology blueprint", "Governance model", "Change rollout plan"],
-    tools: ["BPMN 2.0", "Lucid Chart"],
+    title: "Roadmap & Solution Design",
+    description: "Design the future-state process, the role AI plays in it, and the controls that keep people in charge.",
+    deliverables: ["Future-state process design", "Solution blueprint", "Governance and human-review model", "Phased roadmap"],
+    outcome: "A clear plan from first pilot to full rollout.",
   },
   {
-    title: "Solution Engineering & Pilot",
-    description: "Validate the solution through a limited-scope pilot. We engineer bespoke standalone solutions that are designed around your current systems, goals, and operating constraints.",
-    deliverables: ["Custom environment configuration", "Working pilot solution", "KPI tracking dashboard", "Adoption measurement report"],
-    tools: ["Next.js", "Express", "Supabase", "n8n", "SQL"],
+    title: "Pilot",
+    description: "Build a focused pilot around your existing systems and prove it with the people who will use it every day.",
+    deliverables: ["Working pilot solution", "Success metrics and baseline", "User feedback and adoption report"],
+    outcome: "Measured results before you scale.",
   },
   {
-    title: "Deployment & Rollout",
-    description: "Take the validated solution to production and expand it across departments and locations, with the monitoring and documentation your team needs to rely on it.",
-    deliverables: ["Production deployment", "Monitoring and alerting", "Multi-department rollout", "Runbooks and team training"],
-    tools: ["Next.js", "Express", "Supabase", "n8n"],
+    title: "Deployment & Scale",
+    description: "Take what works to production and expand it across teams and locations, with the monitoring and training that make it stick.",
+    deliverables: ["Production deployment", "Monitoring and alerting", "Rollout across teams", "Training and runbooks"],
+    outcome: "A solution your organization relies on.",
   },
   {
-    title: "Support & Optimization",
-    description: "Ongoing maintenance, updates, and quarterly reviews keep the solution healthy and improving as your business changes.",
-    deliverables: ["Maintenance and updates", "Quarterly solution reviews", "Optimization roadmap"],
-    tools: ["Dashboards", "SQL"],
+    title: "Managed Operations",
+    description: "We keep models, workflows, and integrations accurate and healthy, and review performance with you every quarter.",
+    deliverables: ["Maintenance and updates", "Quarterly performance reviews", "Improvement roadmap"],
+    outcome: "Results that keep improving over time.",
   },
 ];
 
 const phases = [
-  { title: "Consulting", note: "We begin by understanding the operational reality behind your challenge and clarifying the strategic path forward before any build work begins.", steps: steps.slice(0, 3), offset: 1 },
-  { title: "Engineering", note: "Build a focused pilot, validate it with your team, then deploy, support, and expand what works. Each stage connects the design to day-to-day operations.", steps: steps.slice(3), offset: 4 },
+  { title: "Strategy", note: "Understand the operational reality, find the opportunities worth pursuing, and build the case before anything is built.", steps: steps.slice(0, 3), offset: 1 },
+  { title: "Delivery", note: "Pilot, deploy, and run solutions that connect the plan to day-to-day work, then keep improving them.", steps: steps.slice(3), offset: 4 },
 ];
 
 const faqItems = [
-  { question: "How do engagements work?", answer: "We assign a dedicated consultant to serve as your strategic partner and primary point of contact. They coordinate the entire diagnostic and design process, working directly with Enigmatic's engineering team to build, test, and deploy your custom solution." },
-  { question: "Do I need a platform or off-the-shelf system?", answer: "No. We build bespoke standalone solutions that fit your current infrastructure, teams, and operating model. Our work is designed to solve the gap directly without forcing a platform adoption or a software rip-and-replace." },
-  { question: "How long does a typical engagement take?", answer: "Timelines vary by scope, but we move fast. A typical diagnostic phase completes in 2-3 weeks, and we aim to have a pilot solution live within 6-8 weeks. Our goal is to deliver measurable value in a single quarter." },
-  { question: "Does this require replacing our current software?", answer: "Rarely. Our philosophy is to connect and orchestrate, not rip and replace. We build the \"missing middle\" that bridges your ERP, CRM, and legacy systems to close gaps in your operations." },
-  { question: "What happens after the pilot?", answer: "Once the pilot validates the ROI, we move to a scaled rollout. We help you institutionalize the solution across departments and provide ongoing support. You can choose to manage it internally or retain our team for continuous optimization." },
-  { question: "What technology do you use?", answer: "Our core stack is Next.js for applications, Express for APIs and integrations, Supabase for data, and n8n for workflow automation. We work open-source first and check licensing for every tool we bring in. When it makes more sense, we build on the cloud and platforms you already run." },
-  { question: "Do you support what you build?", answer: "Yes. We deploy to production, set up monitoring, and offer maintenance and improvement plans after launch. If you'd rather own it in-house, we hand over documentation and train your team." },
-  { question: "How do you handle data security?", answer: "Security is paramount. We design architectures that respect your data sovereignty. Whether your solution is a fully custom standalone build or a tightly integrated environment, we adhere to strict enterprise security standards and can deploy within your private cloud environment if required." },
+  { question: "Where should we start with AI?", answer: "With the work, not the technology. We begin with a short assessment of your processes to find the opportunities with a clear, measurable return, then pilot the strongest one before committing to more." },
+  { question: "Do we need perfect data first?", answer: "No. Most organizations start with imperfect data. Part of our readiness review is identifying what's good enough to start with, and what needs to be cleaned up or connected as you scale." },
+  { question: "Will AI replace our people?", answer: "Our goal is to take repetitive work off your team's plate, not to remove the judgment and relationships that make your business run. We design every solution with people approving what matters and handling the exceptions." },
+  { question: "How do you keep AI accurate and secure?", answer: "Every solution includes validation rules, human review where it matters, and monitoring in production. Security and privacy are designed in from day one, and solutions can run in environments you control, including your own cloud." },
+  { question: "Which AI models and tools do you use?", answer: "We're model- and platform-agnostic. We choose proven AI models and open-source tools for each job, check licensing before anything goes into your environment, and build on the systems and cloud platforms you already run." },
+  { question: "How long until we see results?", answer: "Timelines vary by scope, but we move fast. An assessment typically takes 2–3 weeks, and we aim to have a pilot live within 6–8 weeks, with measurable value in a single quarter." },
+  { question: "Do you support what you build?", answer: "Yes. We deploy to production, set up monitoring, and offer managed operations after launch. If you'd rather run it in-house, we hand over documentation and train your team." },
 ];
 
 export default function ServicesPage() {
   return (
     <>
       <PageHero
-        title="Better processes."
-        accent="Built for your business."
-        description="From the first process map to a deployed, supported solution, we bring consulting, data engineering, and software development together to make your operations run better."
+        label="Services"
+        title="From AI strategy."
+        accent="To results that last."
+        description="Strategy, automation, applied AI, and managed services: one partner from the first assessment to a solution your teams rely on."
         actions={<Button asChild><a href={contactHref}>{contactLabel}<ArrowRight size={17} /></a></Button>}
       >
-        <Media src="/images/home/corporate.jpg" alt="Glass office towers viewed from street level." priority scrim className="h-[clamp(240px,30vw,380px)]" />
+        <Media src="/images/home/energy.jpg" alt="Offshore wind turbines on a calm sea." priority scrim className="h-[clamp(240px,30vw,380px)]" />
       </PageHero>
 
-      <Section aria-labelledby="capabilities-title">
-        <SectionHeader id="capabilities-title" title={capabilitiesTitle} />
-        <FeatureGrid items={capabilities} />
+      <Section aria-labelledby="services-title">
+        <SectionHeader id="services-title" title={servicesTitle} />
+        <ServiceList items={services} showExamples />
       </Section>
 
       <SplitSection
-        tone="raised"
+        tone="inverse"
         label="How we work"
         title="Map. Build. Improve."
-        intro="A clear path from understanding the problem to building and improving the solution. Explore each stage for its scope, deliverables, and tools."
+        intro="A clear path from finding the right opportunity to running a solution that keeps improving. Explore each stage for its scope, deliverables, and outcome."
       >
         <div className="space-y-10">
           {phases.map(phase => (
@@ -106,12 +105,10 @@ export default function ServicesPage() {
                         {step.deliverables.map(item => <li key={item}>{item}</li>)}
                       </ul>
                     </div>
-                    {step.tools.length > 0 && (
-                      <div>
-                        <h4 className="mb-3 text-eyebrow text-foreground">Tools</h4>
-                        <div className="flex flex-wrap gap-1.5">{step.tools.map(tool => <Tag key={tool}>{tool}</Tag>)}</div>
-                      </div>
-                    )}
+                    <div>
+                      <h4 className="mb-3 text-eyebrow text-foreground">Outcome</h4>
+                      <Text size="sm" tone="default">{step.outcome}</Text>
+                    </div>
                   </div>
                 </Disclosure>
               ))}

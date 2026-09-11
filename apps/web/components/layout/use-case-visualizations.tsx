@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, CreditCard, Database, FileText, Workflow } from "lucide-react";
+import { AlertTriangle, CheckCircle, CreditCard, Database, FileText, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toneSoft, toneText, type Tone } from "@/lib/tones";
 import { Tag } from "@/components/ui/surface";
@@ -91,24 +91,24 @@ export const BillingClaimsPreview = () => (
   </div>
 );
 
-// --- Manufacturing Material Flow -------------------------------------------
+// --- Demand & inventory forecasting ----------------------------------------
 
 const resolutionSteps: { icon: typeof Database; tone: Tone; title: string; meta: string }[] = [
-  { icon: Database, tone: "blue", title: "ERP Signal Received", meta: "08:42:15 AM" },
-  { icon: Workflow, tone: "violet", title: "Reorder Suggested", meta: "08:42:16 AM" },
-  { icon: CheckCircle, tone: "success", title: "Supplier Confirmed", meta: "Delivery: Tomorrow, 6 AM" },
+  { icon: TrendingUp, tone: "violet", title: "Forecast updated", meta: "08:42:15 AM" },
+  { icon: Database, tone: "blue", title: "Reorder drafted in ERP", meta: "08:42:16 AM" },
+  { icon: CheckCircle, tone: "success", title: "Supplier confirmed", meta: "Delivery: Tomorrow, 6 AM" },
 ];
 
-export const ManufacturingMaterialFlowPreview = () => (
+export const DemandForecastPreview = () => (
   <div className="flex h-full w-full items-center justify-center bg-dot-grid p-6">
     <div className={cn(cardClass, "max-w-lg")}>
       <div className={cn(cardHeaderClass, "px-6")}>
-        <div className="flex items-center gap-2"><LiveDot /><span className="text-body-sm font-medium">Production Line A4 Status</span></div>
+        <div className="flex items-center gap-2"><LiveDot /><span className="text-body-sm font-medium">Line A4 · Demand forecast</span></div>
         <span className="font-mono text-caption text-muted-foreground">LIVE</span>
       </div>
 
       <div className="grid grid-cols-2 gap-4 p-6">
-        {[["Output Rate", "98%"], ["Active Shift", "Morning"]].map(([label, value]) => (
+        {[["Output rate", "98%"], ["Forecast horizon", "7 days"]].map(([label, value]) => (
           <div key={label} className="rounded-sm border border-border bg-background p-4">
             <span className="mb-1 block text-caption text-muted-foreground">{label}</span>
             <span className="text-title-lg font-light">{value}</span>
@@ -119,13 +119,13 @@ export const ManufacturingMaterialFlowPreview = () => (
       <div className={cn("mx-6 mb-6 flex items-start gap-4 rounded-sm border p-4", toneSoft.warning)}>
         <div className="shrink-0 rounded-sm bg-warning/15 p-2"><AlertTriangle className="size-5" aria-hidden /></div>
         <div>
-          <h4 className="text-body-sm font-medium text-foreground">Potential Inventory Shortage</h4>
-          <p className="mt-1 text-caption text-muted-foreground">Based on current output, resin levels may be low in 4 hours.</p>
+          <h4 className="text-body-sm font-medium text-foreground">Resin shortage likely in 4 hours</h4>
+          <p className="mt-1 text-caption text-muted-foreground">Machine-learning forecast from current output and past usage.</p>
         </div>
       </div>
 
       <div className="px-6 pb-6">
-        <h5 className="mb-3 text-center text-micro uppercase tracking-wider text-muted-foreground">Automated Resolution Steps</h5>
+        <h5 className="mb-3 text-center text-micro uppercase tracking-wider text-muted-foreground">What happened next</h5>
         <div className="relative space-y-3">
           <div aria-hidden className="absolute top-2 bottom-2 left-3.5 w-px bg-border" />
           {resolutionSteps.map(({ icon: Icon, tone, title, meta }) => (

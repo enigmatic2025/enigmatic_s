@@ -1,6 +1,7 @@
 export const siteName = "Enigmatic Partners";
 export const siteUrl = "https://enigmaticpartners.com";
-export const siteDescription = "Consulting, data engineering, and custom software for logistics and operations teams. We map the process, build the workflows, data, and applications behind it, then deploy and support what we build.";
+export const siteDescription = "Enigmatic Partners is an AI and automation consultancy. We help organizations find where AI creates real value, then design, build, and run the automation that delivers it, with people in control.";
+export const siteTagline = "Your AI and automation partner.";
 
 export const contactEmail = "collaborate@enigmaticpartners.com";
 export const contactHref = `mailto:${contactEmail}?subject=Project%20inquiry`;
