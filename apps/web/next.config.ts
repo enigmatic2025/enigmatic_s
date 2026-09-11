@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   images: {
+    qualities: [60, 75, 85],
     remotePatterns: [
       {
         protocol: 'https',
