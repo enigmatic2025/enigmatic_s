@@ -13,7 +13,7 @@ export default function InsightsPage() {
       <PageHero
         title="Ideas for better work."
         accent="A practical perspective."
-        description="Thoughts on AI, automation, and the people behind business processes. What to question, where to start, and how to build with purpose."
+        description="Thoughts on automation, AI, and the people behind business processes. What to question, where to start, and how to build with purpose."
       />
       <Section className="pt-0 sm:pt-0 lg:pt-0" aria-label="Featured perspective">
         {featured

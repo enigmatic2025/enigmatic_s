@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowRight, FileText, GitBranch, ScanText } from "lucide-react";
-import { capabilities, capabilitiesNote, principles, services } from "@/lib/content";
+import { capabilities, capabilitiesNote, principles, services, techNote, techStack } from "@/lib/content";
 import { accentTones, type Tone } from "@/lib/tones";
 import { Button } from "@/components/ui/button";
 import { Disclosure, NumberedItem } from "@/components/ui/list-items";
@@ -13,6 +13,7 @@ import { ContactBand } from "@/components/marketing/contact-band";
 import { PrinciplesRow } from "@/components/marketing/principles-row";
 import { ServiceList } from "@/components/marketing/service-list";
 import { SectionHeader } from "@/components/marketing/section-header";
+import { TechMarquee } from "@/components/marketing/tech-marquee";
 import { CapabilityGrid } from "@/components/marketing/capability-grid";
 
 export const metadata: Metadata = {
@@ -41,13 +42,13 @@ const typeScale = [
   ["display", "text-display", "Less busywork."],
   ["heading-cta", "text-heading-cta", "What's slowing your team down?"],
   ["heading-xl", "text-heading-xl", "From incoming document to work done."],
-  ["title-lg", "text-title-lg", "Find where AI pays off"],
+  ["title-lg", "text-title-lg", "Find what's worth automating"],
   ["title-md", "text-title-md", "How do engagements work?"],
   ["title-sm", "text-title-sm", "Built around your business"],
-  ["lead", "text-lead text-muted-foreground", "Your AI and automation partner."],
+  ["lead", "text-lead text-muted-foreground", "Your intelligent automation partner."],
   ["body", "text-body text-muted-foreground", "Connect the tools you already use and automate the steps between them."],
-  ["body-sm", "text-body-sm text-muted-foreground", "Documented workflows, visible exceptions, and human control."],
-  ["caption", "text-caption text-subtle", "Illustrative workflow · Sample data"],
+  ["body-sm", "text-body-sm text-muted-foreground", "Documented processes, visible exceptions, and human control."],
+  ["caption", "text-caption text-subtle", "Illustrative process · Sample data"],
   ["micro", "text-micro text-subtle", "Minimum size. Chips and diagram labels only."],
   ["eyebrow", "text-eyebrow text-muted-foreground", "01 / What we build"],
 ] as const;
@@ -156,10 +157,11 @@ export default function StyleguidePage() {
             <Disclosure title="Plain disclosure"><Text>Expandable body content.</Text></Disclosure>
           </Block>
 
-          <Block title="Sections" note="SectionHeader, ServiceList, CapabilityGrid, PrinciplesRow.">
+          <Block title="Sections" note="SectionHeader, ServiceList, CapabilityGrid, PrinciplesRow, TechMarquee.">
             <SectionHeader label="02 / What we build" title="Practical technology." description="SectionHeader with a right-hand intro." />
             <ServiceList items={services} />
             <CapabilityGrid items={capabilities} note={capabilitiesNote} className="mt-12" />
+            <TechMarquee items={techStack} label="Built on open technology" note={techNote} className="mt-12" />
             <PrinciplesRow items={principles} className="mt-12" />
           </Block>
         </div>

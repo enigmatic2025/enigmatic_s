@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { siteName } from "@/lib/site";
 
 const title = "Use Cases";
-const description = "How AI and automation change everyday work across finance, people, customer service, operations, and planning.";
+const description = "How automation changes everyday work across finance, people, customer service, operations, and planning, with AI and data where they add the most.";
 
 export const metadata: Metadata = {
   title, description,

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         url: "/images/brand/brand-image.jpg",
         width: 1200,
         height: 630,
-        alt: `${siteName} — AI and automation consulting`,
+        alt: `${siteName} — intelligent automation consulting`,
       },
     ],
   },
@@ -71,7 +71,7 @@ const jsonLd = {
       logo: `${siteUrl}/images/brand/enigmatic-logo.png`,
       email: contactEmail,
       description: siteDescription,
-      knowsAbout: ["Artificial intelligence", "Automation", "Machine learning", "AI strategy"],
+      knowsAbout: ["Intelligent automation", "Business process automation", "Artificial intelligence", "Data analytics"],
     },
     {
       "@type": "WebSite",

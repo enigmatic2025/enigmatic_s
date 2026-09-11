@@ -206,6 +206,14 @@
 
 @theme {
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Slow, continuous logo band. The track holds the list twice, so -50% loops seamlessly. */
+  --animate-marquee: marquee 70s linear infinite;
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 @layer base {

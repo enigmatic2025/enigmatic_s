@@ -14,9 +14,9 @@ import { SplitSection } from "@/components/marketing/split-section";
 
 const steps = [
   {
-    title: "AI Opportunity Assessment",
-    description: "Map how work really gets done today, where time and money are lost, and where AI and automation could make the biggest difference.",
-    deliverables: ["Current-state process maps", "Pain-point and cost analysis", "Long list of AI and automation opportunities"],
+    title: "Opportunity Assessment",
+    description: "Map how work really gets done today, where time and money are lost, and where automation could make the biggest difference.",
+    deliverables: ["Current-state process maps", "Pain-point and cost analysis", "Long list of automation opportunities"],
     outcome: "A shared, fact-based view of where to focus.",
   },
   {
@@ -27,7 +27,7 @@ const steps = [
   },
   {
     title: "Roadmap & Solution Design",
-    description: "Design the future-state process, the role AI plays in it, and the controls that keep people in charge.",
+    description: "Design the future-state process, the role automation and AI play in it, and the controls that keep people in charge.",
     deliverables: ["Future-state process design", "Solution blueprint", "Governance and human-review model", "Phased roadmap"],
     outcome: "A clear plan from first pilot to full rollout.",
   },
@@ -45,7 +45,7 @@ const steps = [
   },
   {
     title: "Managed Operations",
-    description: "We keep models, workflows, and integrations accurate and healthy, and review performance with you every quarter.",
+    description: "We keep automations, models, and integrations accurate and healthy, and review performance with you every quarter.",
     deliverables: ["Maintenance and updates", "Quarterly performance reviews", "Improvement roadmap"],
     outcome: "Results that keep improving over time.",
   },
@@ -57,11 +57,12 @@ const phases = [
 ];
 
 const faqItems = [
-  { question: "Where should we start with AI?", answer: "With the work, not the technology. We begin with a short assessment of your processes to find the opportunities with a clear, measurable return, then pilot the strongest one before committing to more." },
+  { question: "Where should we start?", answer: "With the work, not the technology. We begin with a short assessment of your processes to find the opportunities with a clear, measurable return, then pilot the strongest one before committing to more." },
   { question: "Do we need perfect data first?", answer: "No. Most organizations start with imperfect data. Part of our readiness review is identifying what's good enough to start with, and what needs to be cleaned up or connected as you scale." },
-  { question: "Will AI replace our people?", answer: "Our goal is to take repetitive work off your team's plate, not to remove the judgment and relationships that make your business run. We design every solution with people approving what matters and handling the exceptions." },
-  { question: "How do you keep AI accurate and secure?", answer: "Every solution includes validation rules, human review where it matters, and monitoring in production. Security and privacy are designed in from day one, and solutions can run in environments you control, including your own cloud." },
-  { question: "Which AI models and tools do you use?", answer: "We're model- and platform-agnostic. We choose proven AI models and open-source tools for each job, check licensing before anything goes into your environment, and build on the systems and cloud platforms you already run." },
+  { question: "Will automation replace our people?", answer: "Our goal is to take repetitive work off your team's plate, not to remove the judgment and relationships that make your business run. We design every solution with people approving what matters and handling the exceptions." },
+  { question: "Is every solution AI-powered?", answer: "No. We use the simplest technology that solves the problem. Often that's straightforward automation; AI comes in where it adds real value, like reading documents or forecasting demand." },
+  { question: "How do you keep automation accurate and secure?", answer: "Every solution includes validation rules, human review where it matters, and monitoring in production. Security and privacy are designed in from day one, and solutions can run in environments you control, including your own cloud." },
+  { question: "Which technology do you use?", answer: "We're model- and platform-agnostic. We choose proven AI models and open-source tools for each job, check licensing before anything goes into your environment, and build on the systems and cloud platforms you already run." },
   { question: "How long until we see results?", answer: "Timelines vary by scope, but we move fast. An assessment typically takes 2–3 weeks, and we aim to have a pilot live within 6–8 weeks, with measurable value in a single quarter." },
   { question: "Do you support what you build?", answer: "Yes. We deploy to production, set up monitoring, and offer managed operations after launch. If you'd rather run it in-house, we hand over documentation and train your team." },
 ];
@@ -71,9 +72,9 @@ export default function ServicesPage() {
     <>
       <PageHero
         label="Services"
-        title="From AI strategy."
-        accent="To results that last."
-        description="Strategy, automation, applied AI, and managed services: one partner from the first assessment to a solution your teams rely on."
+        title="From strategy."
+        accent="To automation that lasts."
+        description="Automation strategy, process automation, AI, and data: one partner from the first assessment to a solution your teams rely on."
         actions={<Button asChild><a href={contactHref}>{contactLabel}<ArrowRight size={17} /></a></Button>}
       >
         <Media src="/images/home/energy.jpg" alt="Offshore wind turbines on a calm sea." priority scrim className="h-[clamp(240px,30vw,380px)]" />

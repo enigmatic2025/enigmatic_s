@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowDown, ArrowRight, FileText, GitBranch, ScanText, ShieldCheck } from "lucide-react";
-import { capabilities, capabilitiesIntro, capabilitiesNote, capabilitiesTitle, principles, principlesTitle, services, servicesTitle } from "@/lib/content";
+import { capabilities, capabilitiesIntro, capabilitiesNote, capabilitiesTitle, principles, principlesTitle, services, servicesTitle, techNote, techStack } from "@/lib/content";
 import { getInsightPosts } from "@/lib/insights-data";
 import { contactHref, contactLabel, siteDescription, siteName } from "@/lib/site";
 import { Button } from "@/components/ui/button";
@@ -18,8 +18,9 @@ import { ServiceList } from "@/components/marketing/service-list";
 import { PageHero } from "@/components/marketing/page-hero";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { SplitSection } from "@/components/marketing/split-section";
+import { TechMarquee } from "@/components/marketing/tech-marquee";
 
-const intro = "We help organizations put AI and automation to work: finding where they create real value, then designing, building, and running solutions your teams trust.";
+const intro = "We solve business problems with automation: from the first process map to systems that run on their own, with AI and data where they make the biggest difference.";
 
 // One photo per kind of work we touch — industrial, corporate, logistics.
 const industryStrip = [
@@ -37,7 +38,7 @@ const stages = [
 ] as const;
 
 const steps = [
-  { key: "map", title: "Find where AI pays off.", description: "Understand the process, the data, and the cost of manual work. Prioritize the opportunities with a clear return and define what success looks like." },
+  { key: "map", title: "Find what's worth automating.", description: "Understand the process, the data, and the cost of manual work. Prioritize the opportunities with a clear return and define what success looks like." },
   { key: "build", title: "Make it work in the real world.", description: "Build a focused pilot around your existing systems, and validate it with the people who will use it." },
   { key: "run", title: "Deploy, support, and improve.", description: "Take it to production, monitor and maintain it, and expand what works with a clear plan for ownership." },
 ];
@@ -49,7 +50,7 @@ const invoiceFields = [
 ];
 
 export const metadata: Metadata = {
-  title: { absolute: `${siteName} | AI & Automation Consulting` },
+  title: { absolute: `${siteName} | Intelligent Automation Consulting` },
   description: siteDescription,
   openGraph: { title: siteName, description: siteDescription, images: ["/images/brand/brand-image.jpg"] },
   twitter: { card: "summary_large_image", title: siteName, description: siteDescription, images: ["/images/brand/brand-image.jpg"] },
@@ -60,13 +61,13 @@ export default function Home() {
   return (
     <>
       <PageHero
-        label="AI & Automation Partner"
+        label="Intelligent Automation Partner"
         title="Less busywork."
         accent="More possibility."
         description={intro}
         actions={<>
           <Button asChild><a href={contactHref}>{contactLabel}<ArrowRight size={17} /></a></Button>
-          <Button asChild variant="link"><a href="#in-practice">See AI in practice<ArrowDown size={16} /></a></Button>
+          <Button asChild variant="link"><a href="#in-practice">See automation in practice<ArrowDown size={16} /></a></Button>
         </>}
       >
         <figure>
@@ -75,11 +76,9 @@ export default function Home() {
               <Media key={photo.src} src={photo.src} alt={photo.alt} sizes={stripSizes} priority={i === 0} scrim className="h-44 sm:h-[clamp(240px,26vw,340px)]" />
             ))}
           </div>
-          <figcaption className="mt-3.5 text-caption text-subtle">From the plant floor to the back office: AI and automation for the work that keeps organizations running.</figcaption>
+          <figcaption className="mt-3.5 text-caption text-subtle">From the plant floor to the back office: automation for the work that keeps organizations running.</figcaption>
         </figure>
-        <div className="mt-6 flex justify-between gap-6 border-t border-border pt-5 text-caption text-subtle">
-          <span>{siteName}</span><span>Map. Build. Improve.</span>
-        </div>
+        <TechMarquee items={techStack} label="Built on open technology" note={techNote} className="mt-10 lg:mt-12" />
       </PageHero>
 
       <Section aria-labelledby="services-title">
@@ -95,14 +94,14 @@ export default function Home() {
       <Section id="in-practice" tone="raised" pad="md" aria-labelledby="demo-title" className="scroll-mt-(--header-height)">
         <SectionHeader
           id="demo-title"
-          label="02 / AI in practice"
+          label="02 / Automation in practice"
           title="From incoming document to work done."
-          description="AI reads each invoice and extracts the data, business rules validate it, and people review only the exceptions."
+          description="Documents arrive, AI extracts the data, rules validate it, and the process moves on its own. People review only the exceptions."
         />
         <Panel variant="inset">
           <div className="flex flex-wrap justify-between gap-4 border-b border-border px-4 py-4 text-caption sm:px-6">
-            <span className="flex items-center gap-2.5"><span aria-hidden className="size-1.5 rounded-full bg-brand-violet" />Invoice intake workflow</span>
-            <span className="text-subtle">Illustrative workflow · Sample data</span>
+            <span className="flex items-center gap-2.5"><span aria-hidden className="size-1.5 rounded-full bg-brand-violet" />Invoice intake process</span>
+            <span className="text-subtle">Illustrative process · Sample data</span>
           </div>
           <div className="grid items-center gap-9 bg-dot-grid px-5 py-7 sm:p-8 md:grid-cols-[240px_1fr] lg:grid-cols-[290px_1fr] lg:gap-14 lg:p-11">
             <Panel className="w-full max-w-[290px] justify-self-center p-6 md:-rotate-2">
@@ -158,7 +157,7 @@ export default function Home() {
       </SplitSection>
 
       <Section aria-labelledby="principles-title">
-        <SectionHeader id="principles-title" label="05 / Responsible AI" title={principlesTitle} />
+        <SectionHeader id="principles-title" label="05 / Our commitments" title={principlesTitle} />
         <PrinciplesRow items={principles} />
       </Section>
 

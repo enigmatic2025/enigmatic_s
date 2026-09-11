@@ -10,8 +10,8 @@ import { SectionHeader } from "@/components/marketing/section-header";
 import { SplitSection } from "@/components/marketing/split-section";
 
 const team = [
-  { name: "Chris Schmitt", role: "Strategy & Consulting", description: "Chris leads client partnerships and AI strategy, working with leadership teams to find the processes worth transforming and define what success looks like.", image: "/images/company/team/chris.jpg", linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/" },
-  { name: "Phi Tran", role: "AI & Engineering", description: "Phi leads AI and automation delivery, from the first prototype through deployment and ongoing support.", image: "/images/company/team/phitran.jpg", linkedin: "https://www.linkedin.com/in/phi-tran-m-s/" },
+  { name: "Chris Schmitt", role: "Strategy & Consulting", description: "Chris leads client partnerships and automation strategy, working with leadership teams to find the processes worth transforming and define what success looks like.", image: "/images/company/team/chris.jpg", linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/" },
+  { name: "Phi Tran", role: "Engineering & AI", description: "Phi leads engineering, spanning automation, AI, and data, from the first prototype through deployment and ongoing support.", image: "/images/company/team/phitran.jpg", linkedin: "https://www.linkedin.com/in/phi-tran-m-s/" },
 ];
 
 export default function AboutUsPage() {
@@ -21,11 +21,11 @@ export default function AboutUsPage() {
         label="About us"
         title="Operational experience."
         accent="Engineering curiosity."
-        description="We bring people who understand the work together with people who build AI and automation. One team, focused on making your business work better."
+        description="We bring people who understand the work together with people who build automation. One team, focused on making your business work better."
       />
 
       <Section className="pt-0 sm:pt-0 lg:pt-0" aria-labelledby="team-title">
-        <SectionHeader id="team-title" title="Our team" description="The people connecting business goals with what AI and automation make possible." />
+        <SectionHeader id="team-title" title="Our team" description="The people connecting business goals with what technology makes possible." />
         <div className="grid gap-11 md:grid-cols-2 md:gap-8 lg:gap-12">
           {team.map(member => (
             <article key={member.name}>

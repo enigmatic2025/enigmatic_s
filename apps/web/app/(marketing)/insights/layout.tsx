@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { siteName } from "@/lib/site";
 
 const title = "Insights";
-const description = "Perspectives on AI, automation, and the people behind business processes. What to question, where to start, and how to build with purpose.";
+const description = "Perspectives on automation, AI, and the people behind business processes. What to question, where to start, and how to build with purpose.";
 
 export const metadata: Metadata = {
   title, description,

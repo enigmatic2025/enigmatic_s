@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { siteName } from "@/lib/site";
 
 const title = "About Us";
-const description = "Operations experience and AI engineering in one team. Meet the people behind Enigmatic Partners.";
+const description = "Operations experience and engineering depth in one team. Meet the people behind Enigmatic Partners.";
 
 export const metadata: Metadata = {
   title, description,
