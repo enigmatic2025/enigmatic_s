@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { useTranslations } from "next-intl";
 import styles from "./editorial.module.css";
 
 export { styles };
@@ -21,9 +20,8 @@ export function EditorialPhoto({ src, alt }: { src: string; alt: string }) {
 }
 
 export function ContactBand() {
-  const t = useTranslations("HomeRefresh");
   return <section className={styles.contact}><div className={styles.wrap}>
-    <p className={styles.eyebrow}>{t("contactLabel")}</p><h2>{t("contactTitle")}</h2>
-    <div className={styles.heroBottom}><p>{t("contactIntro")}</p><a href={contactHref} className={styles.primary}>{t("contact")}<ArrowRight size={17} /></a></div>
+    <p className={styles.eyebrow}>Let&apos;s build something useful</p><h2>What&apos;s slowing your team down?</h2>
+    <div className={styles.heroBottom}><p>Tell us about the process, the tools, and the bottleneck. We&apos;ll help you explore where automation can make a difference.</p><a href={contactHref} className={styles.primary}>Discuss your process<ArrowRight size={17} /></a></div>
   </div></section>;
 }

@@ -13,7 +13,6 @@ import {
   FileText,
   LucideIcon,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 // --- Flow Block (Standard Process Step) ---
 interface FlowBlockProps {
@@ -67,7 +66,6 @@ export const FlowBlock = ({
 
 // --- Condition Block (e.g. "Is Shipment Delayed?") ---
 export const ConditionBlock = () => {
-  const t = useTranslations("Visualizations");
 
   return (
     <div className="relative rounded-lg border border-border bg-background p-1 shadow-sm w-full max-w-[250px]">
@@ -75,32 +73,32 @@ export const ConditionBlock = () => {
         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30">
           <ArrowRightLeft className="h-3 w-3 text-blue-600 dark:text-blue-400" />
         </div>
-        <span className="text-sm font-medium">{t("isShipmentDelayed")}</span>
+        <span className="text-sm font-medium">{"Is Shipment Delayed?"}</span>
       </div>
 
       <div className="p-2 space-y-2">
         <div className="relative pl-4 border-l-2 border-border">
           <span className="absolute -left-px -top-2 text-[10px] bg-background px-1 text-muted-foreground">
-            {t("isTrue")}
+            {"Is true"}
           </span>
           <div className="mt-2 rounded border border-blue-200 bg-background dark:border-blue-800 dark:bg-blue-900/10 p-2 flex items-center gap-2">
             <div className="h-5 w-5 rounded bg-blue-50 dark:bg-blue-800 flex items-center justify-center">
               <MessageSquare className="h-3 w-3 text-blue-600 dark:text-blue-300" />
             </div>
-            <span className="text-xs font-medium">{t("notifyCustomer")}</span>
+            <span className="text-xs font-medium">{"Notify Customer"}</span>
             <span className="ml-auto text-[10px] bg-blue-50 dark:bg-purple-800 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-200">
-              {t("email")}
+              {"Email"}
             </span>
           </div>
         </div>
 
         <div className="relative pl-4 border-l-2 border-border">
           <span className="absolute -left-px -top-2 text-[10px] bg-background px-1 text-muted-foreground">
-            {t("isFalse")}
+            {"Is false"}
           </span>
           <div className="mt-2 rounded border border-dashed border-border p-2 flex items-center gap-2 text-muted-foreground">
             <Plus className="h-4 w-4" />
-            <span className="text-xs">{t("selectBlock")}</span>
+            <span className="text-xs">{"Select block"}</span>
           </div>
         </div>
       </div>
@@ -146,7 +144,6 @@ export const ListBlock = ({
 
 // --- Human-in-the-Loop Block ---
 export const HumanInLoopBlock = () => {
-  const t = useTranslations("Visualizations");
 
   return (
     <div className="relative w-full max-w-md mx-auto">
@@ -154,17 +151,17 @@ export const HumanInLoopBlock = () => {
         <div className="flex items-center justify-between border-b border-border p-3 bg-muted/20">
           <div className="flex items-center gap-2">
             <UserCheck className="h-4 w-4 text-orange-500" />
-            <span className="text-sm font-normal">{t("exceptionReview")}</span>
+            <span className="text-sm font-normal">{"Exception Review"}</span>
           </div>
           <span className="text-[10px] font-normal bg-muted/50 px-2 py-0.5 rounded-full text-muted-foreground border border-border/50">
-            {t("humanAction")}
+            {"Human Action"}
           </span>
         </div>
         <div className="p-4">
           <div className="text-sm text-muted-foreground mb-4 flex items-center gap-2 font-light">
             <AlertCircle className="h-4 w-4 text-red-500/80" />
             <span>
-              {t("rateVariance")}{" "}
+              {"Rate variance detected:"}{" "}
               <span className="text-foreground font-normal">$450</span> vs{" "}
               <span className="text-foreground font-normal">$380</span>
             </span>
@@ -176,15 +173,15 @@ export const HumanInLoopBlock = () => {
                 <FileText className="h-3 w-3 text-blue-500" />
               </div>
               <span className="text-xs font-normal text-foreground">
-                {t("carrierInvoice")}
+                {"Carrier Invoice #INV-2024-001"}
               </span>
             </div>
             <div className="flex gap-2">
               <button className="flex-1 border border-green-500/30 text-green-600 dark:text-green-400 text-xs py-2 rounded font-normal">
-                {t("approve")}
+                {"Approve"}
               </button>
               <button className="flex-1 border border-red-500/30 text-red-600 dark:text-red-400 text-xs py-2 rounded font-normal">
-                {t("reject")}
+                {"Reject"}
               </button>
             </div>
           </div>
@@ -196,14 +193,13 @@ export const HumanInLoopBlock = () => {
 
 // --- Visual Canvas Preview (The Flowchart) ---
 export const VisualCanvasPreview = () => {
-  const t = useTranslations("Visualizations");
 
   return (
     <div className="relative flex flex-col items-center h-full w-full pt-8 pb-4">
       {/* Node 1 */}
       <FlowBlock
-        label={t("rateCalculation")}
-        subLabel={t("contractLogic")}
+        label={"Rate Calculation"}
+        subLabel={"Contract Logic"}
         icon={Calculator}
         className="z-10"
       />
@@ -215,8 +211,8 @@ export const VisualCanvasPreview = () => {
 
       {/* Node 2 */}
       <FlowBlock
-        label={t("checkCapacity")}
-        subLabel={t("carrierApi")}
+        label={"Check Capacity"}
+        subLabel={"Carrier API"}
         icon={ArrowRightLeft}
         className="z-10"
       />
@@ -233,10 +229,10 @@ export const VisualCanvasPreview = () => {
 
         {/* Labels */}
         <span className="absolute top-2 left-[10%] text-[10px] text-muted-foreground bg-background px-1">
-          {t("full")}
+          {"Full"}
         </span>
         <span className="absolute top-2 right-[10%] text-[10px] text-muted-foreground bg-background px-1">
-          {t("available")}
+          {"Available"}
         </span>
       </div>
 
@@ -244,8 +240,8 @@ export const VisualCanvasPreview = () => {
 
       {/* Node 3 (Right branch - Add to sequence) */}
       <FlowBlock
-        label={t("dispatchDriver")}
-        subLabel={t("samsara")}
+        label={"Dispatch Driver"}
+        subLabel={"Samsara"}
         icon={Truck}
         iconBg="bg-background border border-border"
         className="z-10 mt-2"
@@ -264,12 +260,11 @@ export const VisualCanvasPreview = () => {
 
 // --- Powerful Blocks Preview ---
 export const PowerfulBlocksPreview = () => {
-  const t = useTranslations("Visualizations");
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full p-4">
       <div className="text-sm text-muted-foreground mb-4 self-start">
-        {t("nextStep")}
+        {"Next step"}
       </div>
       <ConditionBlock />
     </div>
@@ -278,13 +273,12 @@ export const PowerfulBlocksPreview = () => {
 
 // --- Extend Functionality Preview ---
 export const ExtendFunctionalityPreview = () => {
-  const t = useTranslations("Visualizations");
 
   return (
     <div className="flex flex-col justify-center h-full w-full p-4">
-      <ListBlock label={t("calculateEta")} icon={Calculator} />
-      <ListBlock label={t("consolidateLoads")} icon={Hash} />
-      <ListBlock label={t("updateTms")} icon={Database} />
+      <ListBlock label={"Calculate ETA"} icon={Calculator} />
+      <ListBlock label={"Consolidate Loads"} icon={Hash} />
+      <ListBlock label={"Update TMS"} icon={Database} />
     </div>
   );
 };

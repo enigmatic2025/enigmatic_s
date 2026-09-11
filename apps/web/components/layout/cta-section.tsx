@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
 
 interface CTASectionProps {
   title?: string;
@@ -21,12 +20,11 @@ export function CTASection({
   buttonText,
   buttonLink = "/careers",
 }: CTASectionProps) {
-  const t = useTranslations("CTA");
   
-  const contentTitle = title || t("title");
-  const contentDescription = description || t("description");
-  const contentLabel = label || t("label");
-  const contentButtonText = buttonText || t("button");
+  const contentTitle = title || "Modernize what moves the world.";
+  const contentDescription = description || "Help us untangle the world's most complex systems. If you're driven by real problems and real impact, Enigmatic is where your work matters.";
+  const contentLabel = label || "Get in Touch";
+  const contentButtonText = buttonText || "Collaborate";
 
   return (
     <section className="w-full bg-black text-white py-16 md:py-24 overflow-hidden relative min-h-[600px] flex items-center">

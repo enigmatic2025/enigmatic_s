@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslations } from "next-intl";
 import ReactFlow, {
   Background,
   Edge,
@@ -95,7 +94,6 @@ const FlowWrapper = ({
 // --- Driver Onboarding Flow ---
 // Layout: Vertical flow with parallel branches
 export const DriverOnboardingFlow = () => {
-  const t = useTranslations('UseCaseFlows');
 
   const onboardingNodes: Node[] = [
     // 1. Application received
@@ -105,10 +103,10 @@ export const DriverOnboardingFlow = () => {
       position: { x: 130, y: 0 },
       style: { width: 240 },
       data: {
-        label: t('onboarding.appReceived'),
-        subLabel: t('onboarding.tenstreetWebhook'),
+        label: "Application Received",
+        subLabel: "Tenstreet Webhook",
         icon: Webhook,
-        badge: t('badges.api'),
+        badge: "API",
         iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
       },
     },
@@ -119,10 +117,10 @@ export const DriverOnboardingFlow = () => {
       position: { x: 130, y: 140 },
       style: { width: 240 },
       data: {
-        label: t('onboarding.docsReview'),
-        subLabel: t('onboarding.recruiting'),
+        label: "Documents Review",
+        subLabel: "Stacy (Recruiting)",
         icon: User,
-        badge: t('badges.human'),
+        badge: "Human",
         iconBg:
           "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
       },
@@ -134,10 +132,10 @@ export const DriverOnboardingFlow = () => {
       position: { x: 130, y: 280 },
       style: { width: 240 },
       data: {
-        label: t('onboarding.bgChecks'),
-        subLabel: t('onboarding.natalieAgent'),
+        label: "Background Review",
+        subLabel: "Natalie (Assistant)",
         icon: Sparkles,
-        badge: t('badges.automated'),
+        badge: "Assisted",
         iconBg:
           "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
       },
@@ -149,10 +147,10 @@ export const DriverOnboardingFlow = () => {
       position: { x: 0, y: 440 },
       style: { width: 240 },
       data: {
-        label: t('onboarding.orientation'),
-        subLabel: t('onboarding.ops'),
+        label: "Orientation Scheduled",
+        subLabel: "John (Ops)",
         icon: Calendar,
-        badge: t('badges.human'),
+        badge: "Human",
         iconBg:
           "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
       },
@@ -164,10 +162,10 @@ export const DriverOnboardingFlow = () => {
       position: { x: 260, y: 440 },
       style: { width: 240 },
       data: {
-        label: t('onboarding.provisioning'),
-        subLabel: t('onboarding.systems'),
+        label: "Systems Provisioning",
+        subLabel: "TMS, HR, Payroll",
         icon: Database,
-        badge: t('badges.automated'),
+        badge: "Assisted",
         iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
       },
     },
@@ -178,10 +176,10 @@ export const DriverOnboardingFlow = () => {
       position: { x: 130, y: 600 },
       style: { width: 240 },
       data: {
-        label: t('onboarding.ready'),
-        subLabel: t('onboarding.active'),
+        label: "Ready for Dispatch",
+        subLabel: "Status: Active",
         icon: Truck,
-        badge: t('badges.complete'),
+        badge: "Complete",
         iconBg:
           "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
       },
@@ -210,7 +208,6 @@ export const DriverOnboardingFlow = () => {
 
 // --- Asset Maintenance Flow ---
 export const AssetMaintenanceFlow = () => {
-  const t = useTranslations('UseCaseFlows');
 
   const maintenanceNodes: Node[] = [
     // 1. DVIR Submitted
@@ -220,10 +217,10 @@ export const AssetMaintenanceFlow = () => {
       position: { x: 0, y: 0 },
       style: { width: 240 },
       data: {
-        label: t('maintenance.dvir'),
-        subLabel: t('maintenance.techApp'),
+        label: "DVIR Submitted",
+        subLabel: "Technician App",
         icon: Truck,
-        badge: t('badges.mobile'),
+        badge: "Mobile",
         iconBg:
           "bg-slate-50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400",
       },
@@ -235,10 +232,10 @@ export const AssetMaintenanceFlow = () => {
       position: { x: 0, y: 140 },
       style: { width: 240 },
       data: {
-        label: t('maintenance.defect'),
-        subLabel: t('maintenance.trigger'),
+        label: "Defect Detected: Brakes",
+        subLabel: "Smart Alert",
         icon: AlertTriangle,
-        badge: t('badges.alert'),
+        badge: "Alert",
         iconBg:
           "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
       },
@@ -250,10 +247,10 @@ export const AssetMaintenanceFlow = () => {
       position: { x: 0, y: 280 },
       style: { width: 240 },
       data: {
-        label: t('maintenance.orchestration'),
-        subLabel: t('maintenance.assigned'),
+        label: "Work Orchestration",
+        subLabel: "Parts & Labor Suggested",
         icon: Wrench,
-        badge: t('badges.auto'),
+        badge: "Auto",
         iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
       },
     },
@@ -264,10 +261,10 @@ export const AssetMaintenanceFlow = () => {
       position: { x: 0, y: 420 },
       style: { width: 240 },
       data: {
-        label: t('maintenance.update'),
-        subLabel: t('maintenance.erpTms'),
+        label: "Update Fleet Status",
+        subLabel: "ERP & TMS",
         icon: Database,
-        badge: t('badges.sync'),
+        badge: "Sync",
         iconBg:
           "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
       },
@@ -291,7 +288,6 @@ export const AssetMaintenanceFlow = () => {
 
 // --- Manufacturing Predictive Flow ---
 export const ManufacturingFlow = () => {
-  const t = useTranslations('UseCaseFlows');
 
   const manufacturingNodes: Node[] = [
     // 1. IoT Sensor Stream
@@ -301,10 +297,10 @@ export const ManufacturingFlow = () => {
       position: { x: 130, y: 0 },
       style: { width: 240 },
       data: {
-        label: t('manufacturing.iot'),
-        subLabel: t('manufacturing.vibration'),
+        label: "IoT Sensor Stream",
+        subLabel: "Vibration > Threshold",
         icon: Activity,
-        badge: t('badges.mqtt'),
+        badge: "MQTT",
         iconBg:
           "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400",
       },
@@ -316,10 +312,10 @@ export const ManufacturingFlow = () => {
       position: { x: 130, y: 140 },
       style: { width: 240 },
       data: {
-        label: t('manufacturing.anomaly'),
-        subLabel: t('manufacturing.confidence'),
+        label: "Anomaly Alert",
+        subLabel: "Natalie Suggested Review",
         icon: Sparkles,
-        badge: t('badges.aiAnalysis'),
+        badge: "Smart Alert",
         iconBg:
           "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
       },
@@ -331,10 +327,10 @@ export const ManufacturingFlow = () => {
       position: { x: 0, y: 300 },
       style: { width: 240 },
       data: {
-        label: t('manufacturing.workOrder'),
-        subLabel: t('manufacturing.shiftLead'),
+        label: "Review Work Order",
+        subLabel: "Reviewer: Shift Lead",
         icon: Wrench,
-        badge: t('badges.cmms'),
+        badge: "CMMS",
         iconBg:
           "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
       },
@@ -346,10 +342,10 @@ export const ManufacturingFlow = () => {
       position: { x: 260, y: 300 },
       style: { width: 240 },
       data: {
-        label: t('manufacturing.adjust'),
-        subLabel: t('manufacturing.reroute'),
+        label: "Adjust Schedule",
+        subLabel: "Reroute Line 4",
         icon: Calendar,
-        badge: t('badges.erpSync'),
+        badge: "ERP Sync",
         iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
       },
     },
@@ -372,7 +368,6 @@ export const ManufacturingFlow = () => {
 
 // --- Construction Material Flow ---
 export const ConstructionFlow = () => {
-  const t = useTranslations('UseCaseFlows');
 
   const constructionNodes: Node[] = [
     // 1. Site Request
@@ -382,10 +377,10 @@ export const ConstructionFlow = () => {
       position: { x: 130, y: 0 },
       style: { width: 240 },
       data: {
-        label: t('construction.request'),
-        subLabel: t('construction.concrete'),
+        label: "Material Request",
+        subLabel: "Concrete - Zone B",
         icon: ClipboardList,
-        badge: t('badges.fieldApp'),
+        badge: "Field App",
         iconBg:
           "bg-slate-50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400",
       },
@@ -397,10 +392,10 @@ export const ConstructionFlow = () => {
       position: { x: 130, y: 140 },
       style: { width: 240 },
       data: {
-        label: t('construction.inventory'),
-        subLabel: t('construction.plant'),
+        label: "Inventory Check",
+        subLabel: "Batch Plant #4",
         icon: Package,
-        badge: t('badges.erp'),
+        badge: "ERP",
         iconBg: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
       },
     },
@@ -411,10 +406,10 @@ export const ConstructionFlow = () => {
       position: { x: 0, y: 300 },
       style: { width: 240 },
       data: {
-        label: t('construction.dispatch'),
-        subLabel: t('construction.eta'),
+        label: "Dispatch Driver",
+        subLabel: "ETA: 45 min",
         icon: Truck,
-        badge: t('badges.logistics'),
+        badge: "Logistics",
         iconBg:
           "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
       },
@@ -426,10 +421,10 @@ export const ConstructionFlow = () => {
       position: { x: 260, y: 300 },
       style: { width: 240 },
       data: {
-        label: t('construction.gate'),
-        subLabel: t('construction.access'),
+        label: "Gate Code",
+        subLabel: "Access Granted",
         icon: HardHat,
-        badge: t('badges.security'),
+        badge: "Security",
         iconBg:
           "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
       },
@@ -441,10 +436,10 @@ export const ConstructionFlow = () => {
       position: { x: 130, y: 480 },
       style: { width: 240 },
       data: {
-        label: t('construction.pour'),
-        subLabel: t('construction.quality'),
+        label: "Pour Complete",
+        subLabel: "Quality Logged",
         icon: Database,
-        badge: t('badges.record'),
+        badge: "Record",
         iconBg:
           "bg-slate-50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400",
       },

@@ -1,19 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { Link } from "@/navigation";
+import Link from "next/link";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight,
-  LucideIcon
+  ArrowRight
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useTranslations } from "next-intl";
 
 type IndustryItem = {
-  nameKey: string;
-  descriptionKey: string;
-  icon?: LucideIcon;
+  name: string;
+  description: string;
   image?: string;
   objectPosition?: string;
   className?: string;
@@ -21,49 +18,70 @@ type IndustryItem = {
 
 const industries: IndustryItem[] = [
   {
-    nameKey: "industries.transportation",
+    name: "Transportations",
     image: "/images/home/transportation.jpg",
-    descriptionKey: "industries.transportationDesc",
+    description: "Unify carrier networks into a single command center for seamless execution.",
     objectPosition: "object-bottom"
   },
   {
-    nameKey: "industries.supplyChain",
+    name: "Supply Chain",
     image: "/images/home/supplychain.jpg",
-    descriptionKey: "industries.supplyChainDesc"
+    description: "Replace manual tracking with intelligent orchestration to predict disruptions."
   },
   {
-    nameKey: "industries.manufacturing",
+    name: "Manufacturing",
     image: "/images/home/manufacturing.jpg",
-    descriptionKey: "industries.manufacturingDesc",
+    description: "Synchronize material flows with production schedules for zero-delay operations.",
     objectPosition: "object-bottom"
   },
   {
-    nameKey: "industries.construction",
+    name: "Construction",
     image: "/images/home/construction.jpg",
-    descriptionKey: "industries.constructionDesc",
+    description: "Streamline coordination between sites and suppliers for precise delivery.",
     objectPosition: "object-bottom"
   },
   {
-    nameKey: "industries.storage",
+    name: "Storage",
     image: "/images/home/storage.jpg",
-    descriptionKey: "industries.storageDesc"
+    description: "Accelerate fulfillment through intelligent workflows that optimize inventory."
   },
   {
-    nameKey: "industries.energy",
+    name: "Energy",
     image: "/images/home/energy.jpg",
-    descriptionKey: "industries.energyDesc"
+    description: "Modernize compliance tracking to ensure safe, efficient infrastructure logistics."
   }
 ];
 
-function ParallaxStat({ 
-  image, 
-  stat, 
-  desc, 
-  delay 
-}: { 
-  image: string; 
-  stat: string; 
-  desc: string; 
+const stats = [
+  {
+    image: "/images/home/stat1.jpg",
+    stat: "80%+",
+    desc: "of industrial enterprises struggle with fragmented data across disconnected legacy systems.",
+    delay: 0.2
+  },
+  {
+    image: "/images/home/stat2.jpg",
+    stat: "Up to 50%",
+    desc: "of operational bandwidth is consumed by manual coordination between field and office.",
+    delay: 0.3
+  },
+  {
+    image: "/images/home/stat3.jpg",
+    stat: "30–40%",
+    desc: "of potential margin is eroded by reactive problem-solving instead of strategic planning.",
+    delay: 0.4
+  }
+];
+
+function ParallaxStat({
+  image,
+  stat,
+  desc,
+  delay
+}: {
+  image: string;
+  stat: string;
+  desc: string;
   delay: number;
 }) {
   const ref = useRef(null);
@@ -71,7 +89,7 @@ function ParallaxStat({
     target: ref,
     offset: ["start end", "end start"]
   });
-  
+
   const y = useTransform(scrollYProgress, [0, 1], ["-25%", "25%"]);
 
   return (
@@ -83,8 +101,8 @@ function ParallaxStat({
       transition={{ duration: 0.5, delay }}
       className="relative h-200 w-full flex flex-col justify-end p-8 md:p-12 group overflow-hidden"
     >
-      <motion.div 
-        style={{ y }} 
+      <motion.div
+        style={{ y }}
         className="absolute inset-0 h-[130%] w-full -top-[15%]"
       >
         <Image
@@ -109,7 +127,6 @@ function ParallaxStat({
 }
 
 export function MissionQuote() {
-  const t = useTranslations("Mission");
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -132,17 +149,17 @@ export function MissionQuote() {
             transition={{ duration: 0.5 }}
             className="text-2xl md:text-4xl font-normal tracking-tight text-left leading-[1.15] max-w-4xl"
           >
-            <span className="text-foreground">{t("label")} </span>
+            <span className="text-foreground">The Mission. </span>
             <span className="text-muted-foreground">
-              {t("description")}
+              As your process improvement partner, we use technology to help your operations be more integrated, intelligent, and intuitive.
             </span>
           </motion.h2>
 
-          <Link 
-            href="/company/about-us" 
+          <Link
+            href="/company/about-us"
             className="group inline-flex items-center gap-2 text-violet-500 text-lg"
           >
-            <span>{t("aboutUs")}</span>
+            <span>About Us</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -160,7 +177,7 @@ export function MissionQuote() {
             >
               <Image
                 src={industries[currentIndex].image!}
-                alt={t(industries[currentIndex].nameKey)}
+                alt={industries[currentIndex].name}
                 fill
                 quality={60}
                 className={`object-cover ${industries[currentIndex].objectPosition || "object-center"} ${industries[currentIndex].className || ""}`}
@@ -174,7 +191,7 @@ export function MissionQuote() {
                   transition={{ delay: 0.3 }}
                   className="text-3xl md:text-4xl font-normal text-white mb-4"
                 >
-                  {t(industries[currentIndex].nameKey)}
+                  {industries[currentIndex].name}
                 </motion.h3>
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
@@ -182,12 +199,12 @@ export function MissionQuote() {
                   transition={{ delay: 0.4 }}
                   className="text-lg text-white/90 leading-relaxed"
                 >
-                  {t(industries[currentIndex].descriptionKey)}
+                  {industries[currentIndex].description}
                 </motion.p>
               </div>
             </motion.div>
           </AnimatePresence>
-          
+
           {/* Indicators */}
           <div className="absolute bottom-8 right-8 flex gap-2 z-10">
             {industries.map((_, idx) => (
@@ -207,29 +224,17 @@ export function MissionQuote() {
 
       {/* Statistics */}
       <div className="w-full grid grid-cols-1 md:grid-cols-3">
-        <ParallaxStat 
-          image="/images/home/stat1.jpg"
-          stat={t("stats.stat1")}
-          desc={t("stats.desc1")}
-          delay={0.2}
-        />
-        <ParallaxStat 
-          image="/images/home/stat2.jpg"
-          stat={t("stats.stat2")}
-          desc={t("stats.desc2")}
-          delay={0.3}
-        />
-        <ParallaxStat 
-          image="/images/home/stat3.jpg"
-          stat={t("stats.stat3")}
-          desc={t("stats.desc3")}
-          delay={0.4}
-        />
+        {stats.map((s) => (
+          <ParallaxStat
+            key={s.image}
+            image={s.image}
+            stat={s.stat}
+            desc={s.desc}
+            delay={s.delay}
+          />
+        ))}
 
       </div>
     </section>
   );
 }
-
-
-

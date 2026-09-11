@@ -1,15 +1,10 @@
 "use client";
-
 import { siNodedotjs } from "simple-icons";
-import { useTranslations } from "next-intl";
-
 export function TechStack() {
-  const t = useTranslations("HomePage");
-
   return (
     <div className="w-full py-12">
       <p className="text-center text-md text-muted-foreground mb-8">
-        {t("poweredBy")}
+        Powered by modern technologies.
       </p>
       <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
         <NextJsLogo className="h-8 w-auto grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
@@ -20,7 +15,6 @@ export function TechStack() {
     </div>
   );
 }
-
 function NextJsLogo({ className }: { className?: string }) {
   return (
     <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -29,7 +23,6 @@ function NextJsLogo({ className }: { className?: string }) {
     </svg>
   );
 }
-
 function NodeJsLogo({ className }: { className?: string }) {
   return (
     <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -38,7 +31,6 @@ function NodeJsLogo({ className }: { className?: string }) {
     </svg>
   );
 }
-
 function SupabaseLogo({ className }: { className?: string }) {
   return (
     <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -47,7 +39,6 @@ function SupabaseLogo({ className }: { className?: string }) {
     </svg>
   );
 }
-
 function N8nLogo({ className }: { className?: string }) {
   return (
     <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>

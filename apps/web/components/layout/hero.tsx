@@ -3,11 +3,8 @@
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { CTAButtons } from "@/components/ui/cta-buttons";
-import { useTranslations } from "next-intl";
 
 export function Hero() {
-  const t = useTranslations("HomePage");
-
   return (
     <section className="relative flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden px-4 md:px-6 py-20">
       <AuroraBackground />
@@ -20,7 +17,7 @@ export function Hero() {
           className="mb-8"
         >
           <div className="inline-block text-3xl font-light tracking-tight sm:text-5xl md:text-6xl lg:text-7xl bg-linear-to-r from-blue-500 via-violet-500 to-pink-500 bg-clip-text text-transparent px-1 pb-4 -mb-4">
-            {t("title")}
+            Enigmatic
           </div>
         </motion.div>
 
@@ -31,7 +28,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <h1 className="text-3xl font-light tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-            {t("subtitle")}
+            Map. Build. Improve.
           </h1>
         </motion.div>
 
@@ -42,7 +39,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-6 max-w-2xl text-xl text-foreground/80 sm:text-2xl font-light"
         >
-          {t("description")}
+          We design, connect, and orchestrate the processes your core systems ignore.
         </motion.div>
 
         {/* CTA Buttons */}
@@ -52,7 +49,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10"
         >
-          <CTAButtons hideSignIn />
+          <CTAButtons />
         </motion.div>
       </div>
     </section>

@@ -1,40 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/navigation";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/components/auth-provider";
-import { getUserOrgSlug } from "@/lib/supabase";
-import { useTranslations } from "next-intl";
 
 interface CTAButtonsProps {
   className?: string;
-  hideSignIn?: boolean;
 }
 
-export function CTAButtons({ className, hideSignIn = false }: CTAButtonsProps) {
-  const { user } = useAuth();
-  const [dashboardUrl, setDashboardUrl] = useState<string | null>(null);
-  const t = useTranslations("Navigation");
-
-  useEffect(() => {
-    const getDashboardUrl = async () => {
-      if (!user) {
-        setDashboardUrl(null);
-        return;
-      }
-
-      const slug = await getUserOrgSlug();
-      if (slug) {
-        setDashboardUrl(`/nodal/${slug}/dashboard/flow-studio`);
-      }
-    };
-
-    getDashboardUrl();
-  }, [user]);
-
+export function CTAButtons({ className }: CTAButtonsProps) {
   return (
     <div
       className={cn(
@@ -44,23 +19,10 @@ export function CTAButtons({ className, hideSignIn = false }: CTAButtonsProps) {
     >
       <Button className="w-full sm:w-auto hover:bg-black dark:hover:bg-white" asChild>
         <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
-          {t("collaborate")}
+          Collaborate
           <ArrowRight className="ml-2 w-4 h-4" />
         </Link>
       </Button>
-      {!hideSignIn && (
-        <Button 
-          variant="outline"
-          className="w-full sm:w-auto border-none bg-muted"
-          asChild
-        >
-          {user && dashboardUrl ? (
-            <Link href={dashboardUrl}>{t("dashboard")}</Link>
-          ) : (
-            <Link href="/login">{t("signIn")}</Link>
-          )}
-        </Button>
-      )}
     </div>
   );
 }

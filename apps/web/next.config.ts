@@ -1,7 +1,4 @@
-import createNextIntlPlugin from 'next-intl/plugin';
 import type { NextConfig } from "next";
-
-const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
@@ -28,14 +25,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Aggressive caching for static docs (JSON, txt) — changes only on deploy
-        source: "/docs/:path*",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=86400, s-maxage=31536000, stale-while-revalidate=86400" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-        ],
-      },
-      {
         // Cache llms.txt
         source: "/llms.txt",
         headers: [
@@ -53,19 +42,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async rewrites() {
-    const backendUrl = process.env.BACKEND_URL?.replace(/\/$/, "") || "";
-    return {
-      beforeFiles: [],
-      afterFiles: [],
-      fallback: [
-        {
-          source: "/api/:path*",
-          destination: `${backendUrl}/api/:path*`,
-        },
-      ],
-    };
-  },
 };
 
-export default withNextIntl(nextConfig);
+export default nextConfig;

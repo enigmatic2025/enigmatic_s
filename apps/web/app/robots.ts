@@ -8,11 +8,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/nodal/", "/login", "/account/"],
       },
       {
         userAgent: ["GPTBot", "ClaudeBot", "Bytespider", "ChatGPT-User"],
-        allow: ["/llms.txt", "/llms-full.txt", "/docs/"],
+        allow: ["/llms.txt", "/llms-full.txt"],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

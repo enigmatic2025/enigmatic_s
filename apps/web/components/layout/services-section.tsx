@@ -2,8 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
-import { Link } from "@/navigation";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { BrowserFrame } from "@/components/ui/browser-frame";
 
@@ -44,9 +43,25 @@ const PlatformSkeleton = () => (
   </div>
 );
 
-export function ServicesSection() {
-  const t = useTranslations("Services");
+const gridItems = [
+  {
+    title: "Intelligent Triggers",
+    description: "Automatically initiate complex workflows based on e-mails, status updates, or API events.",
+    dot: "bg-blue-500",
+  },
+  {
+    title: "Human Control",
+    description: "Route critical exceptions to experts; automate the rest.",
+    dot: "bg-violet-500",
+  },
+  {
+    title: "Total Connectivity",
+    description: "Unify data from ERPs, devices, and partners into one source.",
+    dot: "bg-pink-500",
+  },
+];
 
+export function ServicesSection() {
   return (
     <section className="w-full min-h-full flex flex-col items-center justify-center py-12 md:py-20">
       <div className="max-w-7xl mx-auto px-6 w-full mb-8 md:mb-10">
@@ -58,9 +73,9 @@ export function ServicesSection() {
             transition={{ duration: 0.5 }}
             className="text-2xl md:text-4xl font-normal tracking-tight max-w-5xl text-left leading-[1.15]"
           >
-            <span className="text-foreground">{t("title")}{" "}</span>
+            <span className="text-foreground">Orchestrate Your Operations.{" "}</span>
             <span className="text-muted-foreground">
-              {t("description")}
+              Move from chaos to clarity. Enigmatic unifies your fragmented tools and workflows into a single, intelligent digital ecosystem.
             </span>
           </motion.h2>
 
@@ -68,7 +83,7 @@ export function ServicesSection() {
             href="/services"
             className="group inline-flex items-center gap-2 text-violet-500 text-lg"
           >
-            <span>{t("learnMore")}</span>
+            <span>Learn More</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -83,10 +98,10 @@ export function ServicesSection() {
               {/* Left Panel */}
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
-                  {t("panels.consulting")}
+                  Strategic Digital Transformation
                 </h3>
                 <p className="text-base text-muted-foreground mb-6">
-                  {t("panels.consultingDesc")}
+                  We don&apos;t just patch holes. We re-engineer your core operational workflows, replacing manual bottlenecks with scalable, automated solutions tailored to your unique infrastructure.
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 bg-muted/30 rounded-xl border border-border/50 relative overflow-hidden flex items-center justify-center">
@@ -101,10 +116,10 @@ export function ServicesSection() {
               {/* Right Panel */}
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <h3 className="text-xl md:text-2xl font-normal mb-4">
-                  {t("panels.nodal")}
+                  Custom Operating Systems
                 </h3>
                 <p className="text-base text-muted-foreground mb-6">
-                  {t("panels.nodalDesc")}
+                  Purpose-built digital environments designed around your teams, workflow realities, and data—without forcing a generic platform or a one-size-fits-all workaround.
                 </p>
                 {/* Visual Placeholder */}
                 <div className="w-full h-64 flex items-center justify-center p-4">
@@ -117,44 +132,19 @@ export function ServicesSection() {
 
             {/* Bottom Row - 3 Columns */}
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border border-t border-border">
-              {/* Item 1 */}
-              <div className="p-6 md:p-8">
-                <div className="mb-4">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+              {gridItems.map((item) => (
+                <div key={item.title} className="p-6 md:p-8">
+                  <div className="mb-4">
+                    <div className={`w-2 h-2 rounded-full ${item.dot}`} />
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-normal mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-base text-muted-foreground leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-                <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  {t("grid.triggers")}
-                </h3>
-                <p className="text-base text-muted-foreground leading-relaxed">
-                  {t("grid.triggersDesc")}
-                </p>
-              </div>
-
-              {/* Item 2 */}
-              <div className="p-6 md:p-8">
-                <div className="mb-4">
-                  <div className="w-2 h-2 rounded-full bg-violet-500" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  {t("grid.human")}
-                </h3>
-                <p className="text-base text-muted-foreground leading-relaxed">
-                  {t("grid.humanDesc")}
-                </p>
-              </div>
-
-              {/* Item 3 */}
-              <div className="p-6 md:p-8">
-                <div className="mb-4">
-                  <div className="w-2 h-2 rounded-full bg-pink-500" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-normal mb-3">
-                  {t("grid.connectivity")}
-                </h3>
-                <p className="text-base text-muted-foreground leading-relaxed">
-                  {t("grid.connectivityDesc")}
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
