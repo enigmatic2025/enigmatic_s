@@ -21,7 +21,7 @@ type MediaProps = {
   imgClassName?: string;
 };
 
-/** Photo in a crisp 6px frame with a hairline edge. */
+/** Borderless photo with rounded corners. */
 export function Media({ src, alt, sizes = "wide", priority, scrim, caption, className, imgClassName }: MediaProps) {
   const frame = (
     <div className={cn("relative overflow-hidden rounded-md bg-surface-1", className)}>
@@ -34,7 +34,6 @@ export function Media({ src, alt, sizes = "wide", priority, scrim, caption, clas
         className={cn("object-cover", imgClassName)}
       />
       {scrim && <div aria-hidden className="pointer-events-none absolute inset-0 bg-linear-to-t from-(--scrim) via-transparent to-transparent" />}
-      <div aria-hidden className="pointer-events-none absolute inset-0 rounded-md ring-1 ring-border ring-inset" />
     </div>
   );
   if (!caption) return frame;

@@ -22,14 +22,6 @@ import { TechMarquee } from "@/components/marketing/tech-marquee";
 
 const intro = "We solve business problems with automation: from the first process map to systems that run on their own, with AI and data where they make the biggest difference.";
 
-// One photo per kind of work we touch — industrial, corporate, logistics.
-const industryStrip = [
-  { src: "/images/home/manufacturing.jpg", alt: "A worker grinding metal on a factory floor, sparks flying." },
-  { src: "/images/home/corporate.jpg", alt: "Glass office towers viewed from street level." },
-  { src: "/images/home/freight.jpg", alt: "An aerial view of shipping containers in a freight terminal." },
-];
-const stripSizes = "(max-width: 639px) calc((100vw - 56px) / 3), (max-width: 1296px) calc((100vw - 120px) / 3), 390px";
-
 const stages = [
   { key: "receive", icon: FileText, tone: "blue", title: "Receive", description: "A document arrives by email, upload, or a connected system." },
   { key: "extract", icon: ScanText, tone: "violet", title: "Extract", description: "AI reads the document and pulls out the fields that matter." },
@@ -71,12 +63,7 @@ export default function Home() {
         </>}
       >
         <figure>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            {industryStrip.map((photo, i) => (
-              <Media key={photo.src} src={photo.src} alt={photo.alt} sizes={stripSizes} priority={i === 0} scrim className="h-44 sm:h-[clamp(240px,26vw,340px)]" />
-            ))}
-          </div>
-          <figcaption className="mt-3.5 text-caption text-subtle">From the plant floor to the back office: automation for the work that keeps organizations running.</figcaption>
+          <Media src="/images/home/corporate.jpg" alt="Glass office towers viewed from street level." priority scrim className="h-44 sm:h-[clamp(240px,26vw,340px)]" />
         </figure>
         <TechMarquee items={techStack} label="Built on open technology" note={techNote} className="mt-10 lg:mt-12" />
       </PageHero>
