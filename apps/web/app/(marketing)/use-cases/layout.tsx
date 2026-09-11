@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { siteName } from "@/lib/site";
 
-const title = "Insights";
-const description = "Thoughts on data, automation, and the people behind business processes. What to question, where to start, and how to build with purpose.";
+const title = "Use Cases";
+const description = "Examples of the workflows, data systems, and applications we build for logistics and operations teams.";
 
 export const metadata: Metadata = {
   title, description,

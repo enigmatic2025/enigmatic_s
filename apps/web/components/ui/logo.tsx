@@ -15,16 +15,16 @@ export function Logo({
   showText = false,
 }: LogoProps) {
   return (
-    <div className={cn("relative flex items-center gap-2", className)}>
+    <div className={cn("relative flex items-center gap-2.5", className)}>
       <Image
         src="/images/brand/enigmatic-logo.png"
-        alt="Logo"
+        alt=""
         width={width}
         height={height}
         className="object-contain"
         priority
       />
-      {showText && <span className="text-xl font-normal">Enigmatic</span>}
+      {showText && <span className="text-title-md tracking-[-0.03em]">Enigmatic Partners</span>}
     </div>
   );
 }

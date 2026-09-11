@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { siteName } from "@/lib/site";
 
-const title = "Services | Enigmatic Partners";
-const description = "From the first process map to a working solution, we bring consulting, AI, and engineering together to make your operations run better.";
+const title = "Services";
+const description = "Consulting, data engineering, app development, and workflow automation — from the first process map to a deployed, supported solution.";
 
 export const metadata: Metadata = {
-  title: { absolute: title }, description,
-  openGraph: { title, description, images: ["/images/brand/brand-image.jpg"] },
-  twitter: { card: "summary_large_image", title, description, images: ["/images/brand/brand-image.jpg"] },
+  title, description,
+  openGraph: { title: `${title} | ${siteName}`, description, images: ["/images/brand/brand-image.jpg"] },
+  twitter: { card: "summary_large_image", title: `${title} | ${siteName}`, description, images: ["/images/brand/brand-image.jpg"] },
 };
 
 export default function PageLayout({ children }: { children: React.ReactNode }) {

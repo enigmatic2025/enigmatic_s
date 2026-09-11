@@ -1,23 +1,32 @@
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { getInsightPosts } from "@/lib/insights-data";
-import { PageHero, ContactBand, halfImageSizes, styles } from "@/components/marketing/editorial";
+import { Section } from "@/components/ui/section";
+import { Eyebrow, Text } from "@/components/ui/typography";
+import { ArticleFeature, ArticleRow } from "@/components/marketing/articles";
+import { ContactBand } from "@/components/marketing/contact-band";
+import { PageHero } from "@/components/marketing/page-hero";
+import { SectionHeader } from "@/components/marketing/section-header";
 
 export default function InsightsPage() {
   const [featured, ...remaining] = getInsightPosts();
-  return <div className={styles.page}>
-    <PageHero title="Ideas for better work." accent="A practical perspective." description="Thoughts on AI, automation, and the people behind business processes. What to question, where to start, and how to build with purpose." />
-    <section className={`${styles.wrap} ${styles.section}`} style={{ paddingTop: 0 }}>
-      {featured ? <>
-        <p className={styles.eyebrow}>Featured perspective</p>
-        <Link href={`/insights/articles/${featured.slug}`} className={styles.feature}>
-          <div className={styles.featureImage}>{featured.image && <Image src={featured.image} alt="" fill sizes={halfImageSizes} className={styles.cover} />}</div>
-          <div><div className={styles.articleMeta}><span>{featured.category}</span><span>{featured.readTime}</span></div><h2>{featured.title}</h2><p className={styles.bodyCopy}>{featured.excerpt}</p><div className={styles.articleMeta} style={{ marginTop: 24 }}><span>{featured.author}</span><span>{featured.date}</span></div><span className={styles.textLink}>Read the article<ArrowRight size={17} /></span></div>
-        </Link>
-      </> : <p className={styles.bodyCopy}>New perspectives are on the way.</p>}
-    </section>
-    {remaining.length > 0 && <section className={`${styles.wrap} ${styles.section}`} style={{ paddingTop: 0 }}><div className={styles.sectionHeading}><h2>More perspectives</h2></div>{remaining.map(post => <Link href={`/insights/articles/${post.slug}`} key={post.slug} className={styles.articleRow}><span>{post.date}</span><div><div className={styles.articleMeta}><span>{post.category}</span></div><h3>{post.title}</h3></div><ArrowRight size={20} /></Link>)}</section>}
-    <ContactBand />
-  </div>;
+  return (
+    <>
+      <PageHero
+        title="Ideas for better work."
+        accent="A practical perspective."
+        description="Thoughts on AI, automation, and the people behind business processes. What to question, where to start, and how to build with purpose."
+      />
+      <Section className="pt-0 sm:pt-0 lg:pt-0" aria-label="Featured perspective">
+        {featured
+          ? <><Eyebrow className="mb-6">Featured perspective</Eyebrow><ArticleFeature post={featured} /></>
+          : <Text>New perspectives are on the way.</Text>}
+      </Section>
+      {remaining.length > 0 && (
+        <Section className="pt-0 sm:pt-0 lg:pt-0" aria-labelledby="more-title">
+          <SectionHeader id="more-title" title="More perspectives" />
+          {remaining.map(post => <ArticleRow key={post.slug} post={post} />)}
+        </Section>
+      )}
+      <ContactBand />
+    </>
+  );
 }

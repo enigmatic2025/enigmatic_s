@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   reactCompiler: true,
+  async redirects() {
+    return [{ source: "/product/use-cases", destination: "/use-cases", permanent: true }];
+  },
   async headers() {
     return [
       {

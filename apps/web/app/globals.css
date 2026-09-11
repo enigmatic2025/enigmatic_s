@@ -2,8 +2,6 @@
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
-@variant dark (&:where(.dark, .dark *));
-
 @font-face {
   font-family: "Aspekta";
   src: url("/fonts/aspekta/AspektaVF.woff2") format("woff2-variations");
@@ -12,140 +10,201 @@
   font-display: swap;
 }
 
+/*
+ * Design tokens — the single source of truth for color, type, radius, and motion.
+ * The site is black-only. Use these through Tailwind utilities (bg-surface-1,
+ * text-brand-violet, text-heading-xl, rounded-md…) or as var(--token) in CSS.
+ * See /styleguide for every token and component rendered.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Ground and surfaces */
+  --background: oklch(0.14 0 0);
+  --surface-1: oklch(0.175 0 0);
+  --surface-2: oklch(0.215 0 0);
+
+  /* Text */
+  --foreground: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.73 0 0);
+  --subtle: oklch(0.62 0 0);
+
+  /* Hairlines */
+  --border: oklch(1 0 0 / 0.09);
+  --border-strong: oklch(1 0 0 / 0.16);
+
+  /* Brand trio — sampled from the logo mark */
+  --brand-blue: #6582ff;
+  --brand-violet: #9765ff;
+  --brand-pink: #e465ff;
+  --gradient-brand: linear-gradient(110deg, var(--brand-blue), var(--brand-violet) 55%, var(--brand-pink));
+
+  /* Status (diagrams and sample interfaces only) */
+  --success: oklch(0.8 0.15 158);
+  --warning: oklch(0.84 0.14 78);
+  --danger: oklch(0.72 0.17 22);
+
+  /* shadcn-compatible aliases */
+  --card: var(--surface-1);
+  --card-foreground: var(--foreground);
+  --primary: var(--foreground);
+  --primary-foreground: var(--background);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface-2);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--foreground);
+  --input: var(--border-strong);
+  --ring: var(--brand-violet);
+
+  /* Layout */
+  --header-height: 80px;
+}
+
 @theme inline {
+  --font-sans: "Aspekta", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Aspekta", sans-serif;
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
   --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-violet: var(--brand-violet);
+  --color-brand-pink: var(--brand-pink);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Type scale — size / line-height / tracking / weight travel together */
+  --text-display: clamp(2.75rem, 1.6rem + 5vw, 5.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.05em;
+  --text-display--font-weight: 400;
+  --text-heading-cta: clamp(2.25rem, 1.5rem + 3.4vw, 4rem);
+  --text-heading-cta--line-height: 1.08;
+  --text-heading-cta--letter-spacing: -0.045em;
+  --text-heading-cta--font-weight: 400;
+  --text-heading-xl: clamp(2rem, 1.45rem + 2.2vw, 3rem);
+  --text-heading-xl--line-height: 1.12;
+  --text-heading-xl--letter-spacing: -0.04em;
+  --text-heading-xl--font-weight: 400;
+  --text-title-lg: 1.5rem;
+  --text-title-lg--line-height: 1.25;
+  --text-title-lg--letter-spacing: -0.025em;
+  --text-title-lg--font-weight: 400;
+  --text-title-md: 1.1875rem;
+  --text-title-md--line-height: 1.35;
+  --text-title-md--letter-spacing: -0.02em;
+  --text-title-md--font-weight: 400;
+  --text-title-sm: 0.9375rem;
+  --text-title-sm--line-height: 1.4;
+  --text-title-sm--letter-spacing: -0.005em;
+  --text-title-sm--font-weight: 500;
+  --text-lead: clamp(1.0625rem, 0.95rem + 0.5vw, 1.1875rem);
+  --text-lead--line-height: 1.65;
+  --text-body: 1rem;
+  --text-body--line-height: 1.7;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.7;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.6;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.5;
+
+  /* Crisp corners: tags 2px, controls 4px, surfaces 6px. Larger steps collapse to 6px. */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
+  --radius-2xl: 6px;
+  --radius-3xl: 6px;
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.145 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.145 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-
-  /* Aurora Gradients (Light Mode - Subtle Gray/Slate) */
-  --gradient-1: #e5e7eb; /* gray-200 */
-  --gradient-2: #f3f4f6; /* gray-100 */
-  --gradient-3: #d1d5db; /* gray-300 */
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.812 0.29 29.933);
-  --destructive-foreground: oklch(0.812 0.29 29.933);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
-
-  /* Aurora Gradients (Dark Mode - Transparent for solid background) */
-  --gradient-1: transparent;
-  --gradient-2: transparent;
-  --gradient-3: transparent;
+@theme {
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
+  }
+  html {
+    background: var(--background);
   }
   body {
     @apply bg-background text-foreground;
   }
-  
-  /* Vietnamese font override - Aspekta doesn't support Vietnamese diacritics properly */
-  :lang(vi) {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  ::selection {
+    background: color-mix(in oklch, var(--brand-violet) 45%, transparent);
+    color: var(--foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
   }
 }
 
-@layer utilities {
+/* Page width: 1200px max, with 20 / 32 / 48px gutters. */
+@utility wrap {
+  width: min(100% - 40px, 1200px);
+  margin-inline: auto;
+  @media (width >= 40rem) {
+    width: min(100% - 64px, 1200px);
+  }
+  @media (width >= 64rem) {
+    width: min(100% - 96px, 1200px);
+  }
+}
+
+/* Uppercase label that sits above headings. */
+@utility text-eyebrow {
+  font-size: var(--text-caption);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Gradient-filled text for the accent line of a headline. */
+@utility text-gradient-brand {
+  background: var(--gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Raised surface: 1px inner top highlight so panels read as layered, not flat. */
+@utility surface-highlight {
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.05);
+}
+
+/* Low-opacity brand glow — the contact band's signature. */
+@utility bg-brand-glow {
+  background-image:
+    radial-gradient(55% 90% at 88% 110%, color-mix(in oklch, var(--brand-violet) 26%, transparent), transparent 70%),
+    radial-gradient(40% 70% at 62% 120%, color-mix(in oklch, var(--brand-pink) 16%, transparent), transparent 70%),
+    radial-gradient(40% 70% at 108% 30%, color-mix(in oklch, var(--brand-blue) 16%, transparent), transparent 70%);
+}
+
+/* Dotted grid used behind diagrams and demos. */
+@utility bg-dot-grid {
+  background-image: radial-gradient(oklch(1 0 0 / 0.1) 0.8px, transparent 0.8px);
+  background-size: 20px 20px;
 }

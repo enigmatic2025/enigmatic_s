@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { accentAt, toneSolid } from "@/lib/tones";
 
 interface WaveLoaderProps {
   className?: string;
@@ -23,7 +24,7 @@ export function WaveLoader({ className, barClassName, size = "md" }: WaveLoaderP
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.div
           key={i}
-          className={cn("rounded-full bg-foreground", barWidth, barClassName)}
+          className={cn("rounded-full", toneSolid[accentAt(i)], barWidth, barClassName)}
           initial={{ height: "20%" }}
           animate={{ height: ["20%", "80%", "20%"] }}
           transition={{

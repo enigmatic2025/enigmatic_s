@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { contactEmail, siteDescription, siteName, siteUrl } from "@/lib/site";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -10,30 +10,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://enigmaticpartners.com"),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Enigmatic | We design, connect, and orchestrate the processes your core systems ignore.",
-    template: "%s | Enigmatic",
+    default: siteName,
+    template: `%s | ${siteName}`,
   },
-  description:
-    "Modern supply chains are breaking under the weight of outdated tools and disconnected systems. Manual workflows, disconnected TMS modules, and fragmented processes quietly eat margins and create bottlenecks. Discover how Enigmatic helps solve logistics fragmentation.",
+  description: siteDescription,
   openGraph: {
     type: "website",
-    siteName: "Enigmatic",
+    siteName,
     locale: "en_US",
     images: [
       {
         url: "/images/brand/brand-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Enigmatic — Operational Orchestration Platform",
+        alt: `${siteName} — consulting, data engineering, and custom software`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Enigmatic | Operational Orchestration Platform",
-    description: "We design, connect, and orchestrate the processes your core systems ignore. Solve logistics fragmentation with automated flows.",
+    title: siteName,
+    description: siteDescription,
     images: ["/images/brand/brand-image.jpg"],
   },
   icons: {
@@ -50,24 +49,30 @@ export const metadata: Metadata = {
   },
   manifest: "/Enigmatic/site.webmanifest",
   appleWebApp: {
-    title: "Enigmatic",
+    title: siteName,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#090909",
+  colorScheme: "dark",
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Organization",
-      name: "Enigmatic",
-      url: "https://enigmaticpartners.com",
-      logo: "https://enigmaticpartners.com/images/brand/enigmatic-logo.png",
-      description: "We design, connect, and orchestrate the processes your core systems ignore. Operational orchestration for modern supply chains.",
+      "@type": "ProfessionalService",
+      name: siteName,
+      url: siteUrl,
+      logo: `${siteUrl}/images/brand/enigmatic-logo.png`,
+      email: contactEmail,
+      description: siteDescription,
     },
     {
       "@type": "WebSite",
-      name: "Enigmatic",
-      url: "https://enigmaticpartners.com",
+      name: siteName,
+      url: siteUrl,
       inLanguage: "en",
     },
   ],
@@ -79,26 +84,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body
-        className={`${geistMono.variable} antialiased font-sans`}
-        suppressHydrationWarning
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster position="bottom-right" richColors closeButton duration={3000} visibleToasts={3} />
-        </ThemeProvider>
+      <body className={`${geistMono.variable} antialiased font-sans`}>
+        {children}
+        <Toaster theme="dark" position="bottom-right" richColors closeButton duration={3000} visibleToasts={3} />
       </body>
     </html>
   );
