@@ -53,7 +53,6 @@ export default function Home() {
   return (
     <>
       <PageHero
-        label="Intelligent Automation Partner"
         title="Less busywork."
         accent="More possibility."
         description={intro}
@@ -71,7 +70,6 @@ export default function Home() {
       <Section aria-labelledby="services-title">
         <SectionHeader
           id="services-title"
-          label="01 / What we do"
           title={servicesTitle}
           action={<Button asChild variant="link"><Link href="/services">Explore our services<ArrowRight size={16} /></Link></Button>}
         />
@@ -81,7 +79,6 @@ export default function Home() {
       <Section id="in-practice" tone="raised" pad="md" aria-labelledby="demo-title" className="scroll-mt-(--header-height)">
         <SectionHeader
           id="demo-title"
-          label="02 / Automation in practice"
           title="From incoming document to work done."
           description="Documents arrive, AI extracts the data, rules validate it, and the process moves on its own. People review only the exceptions."
         />
@@ -119,13 +116,12 @@ export default function Home() {
       </Section>
 
       <Section tone="inverse" aria-labelledby="capabilities-title">
-        <SectionHeader id="capabilities-title" label="03 / Capabilities" title={capabilitiesTitle} description={capabilitiesIntro} />
+        <SectionHeader id="capabilities-title" title={capabilitiesTitle} description={capabilitiesIntro} />
         <CapabilityGrid items={capabilities} note={capabilitiesNote} />
       </Section>
 
       <SplitSection
         tone="raised"
-        label="04 / How we work"
         title="Map. Build. Improve."
         intro="Start with a worthwhile problem. Build a focused solution. Improve it as your business grows."
         aside={<>
@@ -144,7 +140,7 @@ export default function Home() {
       </SplitSection>
 
       <Section aria-labelledby="principles-title">
-        <SectionHeader id="principles-title" label="05 / Our commitments" title={principlesTitle} />
+        <SectionHeader id="principles-title" title={principlesTitle} />
         <PrinciplesRow items={principles} />
       </Section>
 
@@ -152,7 +148,6 @@ export default function Home() {
         <Section className="pt-0 sm:pt-0 lg:pt-0" aria-labelledby="insights-title">
           <SectionHeader
             id="insights-title"
-            label="06 / Insights"
             title="Latest perspective"
             action={<Button asChild variant="link"><Link href="/insights">All insights<ArrowRight size={16} /></Link></Button>}
           />

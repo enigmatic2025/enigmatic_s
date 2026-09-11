@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { toneSolid, toneText, type Tone } from "@/lib/tones";
+import { toneText, type Tone } from "@/lib/tones";
 
 // --- Heading ---------------------------------------------------------------
 
@@ -65,23 +65,20 @@ export function Text({ as: Tag = "p", size, tone, className, ...props }: TextPro
 // --- Eyebrow ---------------------------------------------------------------
 
 type EyebrowProps = React.HTMLAttributes<HTMLParagraphElement> & {
-  /** Leading status dot in the given tone. */
-  dot?: Tone;
   /** Color the label itself. Defaults to muted. */
   tone?: Tone | "default";
 };
 
-export function Eyebrow({ dot, tone, className, children, ...props }: EyebrowProps) {
+export function Eyebrow({ tone, className, children, ...props }: EyebrowProps) {
   return (
     <p
       className={cn(
-        "text-eyebrow flex items-center gap-2.5",
+        "text-eyebrow",
         tone === "default" ? "text-foreground" : tone ? toneText[tone] : "text-muted-foreground",
         className
       )}
       {...props}
     >
-      {dot && <span aria-hidden className={cn("size-1.5 shrink-0 rounded-full", toneSolid[dot])} />}
       {children}
     </p>
   );

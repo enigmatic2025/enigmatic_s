@@ -2,15 +2,14 @@ import { ArrowRight } from "lucide-react";
 import { contactBand } from "@/lib/content";
 import { contactHref, contactLabel } from "@/lib/site";
 import { Button } from "@/components/ui/button";
-import { Eyebrow, Heading, Text } from "@/components/ui/typography";
+import { Heading, Text } from "@/components/ui/typography";
 
 /** Closing call to action on every page. Always dark, so the brand glow reads the same in both themes. */
 export function ContactBand() {
   return (
     <section aria-labelledby="contact-title" className="dark band-inverse bg-brand-glow">
       <div className="wrap py-16 lg:py-24">
-        <Eyebrow dot="pink" tone="default">{contactBand.label}</Eyebrow>
-        <Heading id="contact-title" size="cta" className="mt-6 max-w-[800px]">{contactBand.title}</Heading>
+        <Heading id="contact-title" size="cta" className="max-w-[800px]">{contactBand.title}</Heading>
         <div className="mt-8 flex flex-col items-start gap-8 lg:flex-row lg:items-end lg:justify-between">
           <Text className="max-w-[490px]">{contactBand.description}</Text>
           <Button asChild size="lg">

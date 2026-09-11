@@ -57,21 +57,20 @@ const phases = [
 ];
 
 const faqItems = [
-  { question: "Where should we start?", answer: "With the work, not the technology. We begin with a short assessment of your processes to find the opportunities with a clear, measurable return, then pilot the strongest one before committing to more." },
-  { question: "Do we need perfect data first?", answer: "No. Most organizations start with imperfect data. Part of our readiness review is identifying what's good enough to start with, and what needs to be cleaned up or connected as you scale." },
-  { question: "Will automation replace our people?", answer: "Our goal is to take repetitive work off your team's plate, not to remove the judgment and relationships that make your business run. We design every solution with people approving what matters and handling the exceptions." },
-  { question: "Is every solution AI-powered?", answer: "No. We use the simplest technology that solves the problem. Often that's straightforward automation; AI comes in where it adds real value, like reading documents or forecasting demand." },
-  { question: "How do you keep automation accurate and secure?", answer: "Every solution includes validation rules, human review where it matters, and monitoring in production. Security and privacy are designed in from day one, and solutions can run in environments you control, including your own cloud." },
-  { question: "Which technology do you use?", answer: "We're model- and platform-agnostic. We choose proven AI models and open-source tools for each job, check licensing before anything goes into your environment, and build on the systems and cloud platforms you already run." },
-  { question: "How long until we see results?", answer: "Timelines vary by scope, but we move fast. An assessment typically takes 2–3 weeks, and we aim to have a pilot live within 6–8 weeks, with measurable value in a single quarter." },
-  { question: "Do you support what you build?", answer: "Yes. We deploy to production, set up monitoring, and offer managed operations after launch. If you'd rather run it in-house, we hand over documentation and train your team." },
+  { question: "How do we know automation is worth the investment?", answer: "We start by understanding what the process costs today: time spent, errors, delays, and missed capacity. Then we weigh the potential benefits against the cost of building and running a solution. You get a prioritized business case, with assumptions made clear, so you can decide which opportunities are worth funding." },
+  { question: "What does an engagement cost, and how is it scoped?", answer: "Cost depends on the processes involved, the systems we need to connect, and the complexity of delivery. We define the scope, deliverables, and pricing with you before work begins. Strategy establishes the business case and roadmap, giving you a basis for deciding how much to invest in delivery." },
+  { question: "How much time will you need from our team?", answer: "We'll need a process owner, people who do the work, and access to the relevant systems or IT contacts. Their involvement is focused on mapping the current process, reviewing the proposed approach, and testing the solution. We agree on those touchpoints up front so your team can plan around day-to-day responsibilities." },
+  { question: "Can we end the engagement after strategy?", answer: "Ideally, we build what we design. But you can end the engagement after the strategy phase, with no obligation to continue into delivery. You'll leave with a prioritized roadmap, business case, and solution blueprint that your internal team or another partner can use to move forward." },
+  { question: "How quickly can we expect measurable results?", answer: "Timing depends on scope, access to your systems, and data readiness. We start with a focused pilot and agree on success measures before building, such as hours saved, faster turnaround, or fewer errors. The pilot lets you compare results against the current process before committing to a wider rollout." },
+  { question: "Can you work with our existing systems?", answer: "Yes. We design around the systems your team already uses and assess integration options during strategy. If a system limitation or data issue affects feasibility, cost, or timing, we make that clear before delivery so you can weigh the options." },
+  { question: "What happens if the assessment or pilot shows it isn't worth pursuing?", answer: "That is a useful outcome, too. We review the evidence with you and recommend stopping, narrowing the scope, or pursuing a stronger opportunity. Each phase gives you a decision point, so further investment depends on a business case that still holds up." },
+  { question: "Who owns and maintains the solution after launch?", answer: "We agree on ownership, access, and any third-party licensing as part of the engagement scope. After launch, we can provide managed operations, including monitoring, maintenance, and improvements. If your team will run the solution, we hand over documentation and provide training, with ongoing responsibilities made clear." },
 ];
 
 export default function ServicesPage() {
   return (
     <>
       <PageHero
-        label="Services"
         title="From strategy."
         accent="To automation that lasts."
         description="Automation strategy, process automation, AI, and data: one partner from the first assessment to a solution your teams rely on."
@@ -87,7 +86,6 @@ export default function ServicesPage() {
 
       <SplitSection
         tone="inverse"
-        label="How we work"
         title="Map. Build. Improve."
         intro="A clear path from finding the right opportunity to running a solution that keeps improving. Explore each stage for its scope, deliverables, and outcome."
       >
@@ -118,7 +116,7 @@ export default function ServicesPage() {
         </div>
       </SplitSection>
 
-      <SplitSection label="Before we begin" title="Frequently asked questions">
+      <SplitSection title="Frequently asked questions">
         {faqItems.map(item => (
           <Disclosure key={item.question} title={item.question}><Text>{item.answer}</Text></Disclosure>
         ))}

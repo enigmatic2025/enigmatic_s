@@ -18,7 +18,6 @@ export default function AboutUsPage() {
   return (
     <>
       <PageHero
-        label="About us"
         title="Operational experience."
         accent="Engineering curiosity."
         description="We bring people who understand the work together with people who build automation. One team, focused on making your business work better."
@@ -49,7 +48,7 @@ export default function AboutUsPage() {
         </div>
       </Section>
 
-      <SplitSection tone="inverse" label="Why Enigmatic" title="Founded by efficiency enthusiasts.">
+      <SplitSection tone="inverse" title="Founded by efficiency enthusiasts.">
         <div className="space-y-6">
           <Text>We come from operations and engineering, with hands-on experience running and improving the kind of processes we now help clients transform. That is why we start with the work, not the technology: AI and automation earn their place by making day-to-day work simpler, faster, and more reliable.</Text>
           <Text>We believe the strongest solutions are quick to build, versatile enough to adapt, and scalable enough to grow. As technology keeps advancing and competition keeps intensifying, the key to staying ahead is creating solutions that can evolve with change while delivering value today.</Text>

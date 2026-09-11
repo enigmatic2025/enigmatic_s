@@ -72,7 +72,7 @@ export default function StyleguidePage() {
     <main>
       <Section pad="md">
         <div className="flex items-center justify-between gap-4">
-          <Eyebrow dot="violet">Internal · not indexed</Eyebrow>
+          <Eyebrow>Internal · not indexed</Eyebrow>
           <ThemeToggle />
         </div>
         <Heading as="h1" size="display" accent="Enigmatic design system." className="mt-6">Style guide.</Heading>
@@ -129,7 +129,7 @@ export default function StyleguidePage() {
           <Block title="Eyebrow, Tag, IconTile" note="Tone-driven via lib/tones.ts.">
             <div className="space-y-6">
               <div className="flex flex-wrap gap-6">
-                <Eyebrow>Default eyebrow</Eyebrow><Eyebrow dot="violet">With dot</Eyebrow><Eyebrow tone="violet">Violet</Eyebrow>
+                <Eyebrow>Default eyebrow</Eyebrow><Eyebrow tone="default">Foreground</Eyebrow><Eyebrow tone="violet">Violet</Eyebrow>
               </div>
               <div className="flex flex-wrap gap-2">{tones.map(t => <Tag key={t} tone={t}>{t}</Tag>)}</div>
               <div className="flex flex-wrap gap-3">{tones.map(t => <IconTile key={t} icon={ScanText} tone={t} />)}</div>
@@ -158,7 +158,7 @@ export default function StyleguidePage() {
           </Block>
 
           <Block title="Sections" note="SectionHeader, ServiceList, CapabilityGrid, PrinciplesRow, TechMarquee.">
-            <SectionHeader label="02 / What we build" title="Practical technology." description="SectionHeader with a right-hand intro." />
+            <SectionHeader title="Practical technology." description="SectionHeader with a right-hand intro." />
             <ServiceList items={services} />
             <CapabilityGrid items={capabilities} note={capabilitiesNote} className="mt-12" />
             <TechMarquee items={techStack} label="Built on open technology" note={techNote} className="mt-12" />

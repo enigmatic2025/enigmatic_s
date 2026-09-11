@@ -1,8 +1,7 @@
-import { pad2 } from "@/lib/tones";
 import { AssetMaintenanceFlow, CustomerServiceFlow, EmployeeOnboardingFlow, OperationsIntelligenceFlow } from "@/components/layout/use-case-flows";
 import { BillingClaimsPreview, DemandForecastPreview } from "@/components/layout/use-case-visualizations";
 import { Panel, Tag } from "@/components/ui/surface";
-import { Eyebrow, Heading, Text } from "@/components/ui/typography";
+import { Heading, Text } from "@/components/ui/typography";
 import { ContactBand } from "@/components/marketing/contact-band";
 import { PageHero } from "@/components/marketing/page-hero";
 
@@ -44,7 +43,6 @@ export default function UseCasesPage() {
   return (
     <>
       <PageHero
-        label="Use cases"
         title="Real processes."
         accent="New possibilities."
         description="How automation changes everyday work across finance, people, customer service, operations, and planning, with AI and data where they add the most. Illustrative examples from a range of industries."
@@ -54,7 +52,7 @@ export default function UseCasesPage() {
           {cases.map(item => <a key={item.id} href={`#${item.id}`} className="transition-colors duration-200 hover:text-foreground">{item.fn}</a>)}
         </nav>
         <Text size="caption" tone="subtle" className="mt-4">Illustrative processes and sample interfaces. Each solution is designed around the client&apos;s process.</Text>
-        {cases.map(({ id, fn, industry, pillar, Visual, flow, title, description }, index) => (
+        {cases.map(({ id, industry, pillar, Visual, flow, title, description }) => (
           <section
             key={id}
             id={id}
@@ -62,7 +60,6 @@ export default function UseCasesPage() {
             className="grid scroll-mt-24 items-center gap-7 border-b border-border py-10 last:border-b-0 sm:py-14 md:grid-cols-[1fr_1.3fr] md:gap-9 lg:grid-cols-[1fr_1.5fr] lg:gap-14"
           >
             <div>
-              <Eyebrow tone="violet" className="mb-5">{pad2(index + 1)} / {fn}</Eyebrow>
               <Heading id={`${id}-title`} size="lg" className="mb-5">{title}</Heading>
               <Text>{description}</Text>
               <div className="mt-6 flex flex-wrap gap-2">

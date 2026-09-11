@@ -1,11 +1,10 @@
 import * as React from "react";
-import { Eyebrow, Heading, Text } from "@/components/ui/typography";
+import { Heading, Text } from "@/components/ui/typography";
 
 type PageHeroProps = {
-  label?: string;
   title: React.ReactNode;
   /** Second headline line, rendered in the brand gradient. */
-  accent: React.ReactNode;
+  accent?: React.ReactNode;
   description: React.ReactNode;
   /** Buttons / links shown beside the lead on desktop. */
   actions?: React.ReactNode;
@@ -14,11 +13,10 @@ type PageHeroProps = {
 };
 
 /** The one hero for every marketing page. Clears the fixed header. */
-export function PageHero({ label, title, accent, description, actions, children }: PageHeroProps) {
+export function PageHero({ title, accent, description, actions, children }: PageHeroProps) {
   const titleId = React.useId();
   return (
     <section aria-labelledby={titleId} className="wrap pt-28 pb-14 sm:pt-32 lg:pt-38 lg:pb-16">
-      {label && <Eyebrow dot="violet" className="mb-6">{label}</Eyebrow>}
       <Heading as="h1" id={titleId} size="display" accent={accent} className="max-w-[1080px]">{title}</Heading>
       <div className="mt-8 flex flex-col items-start gap-7 lg:mt-9 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
         <Text size="lead" className="max-w-[600px]">{description}</Text>

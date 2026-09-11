@@ -1,6 +1,6 @@
 import { getInsightPosts } from "@/lib/insights-data";
 import { Section } from "@/components/ui/section";
-import { Eyebrow, Text } from "@/components/ui/typography";
+import { Text } from "@/components/ui/typography";
 import { ArticleFeature, ArticleRow } from "@/components/marketing/articles";
 import { ContactBand } from "@/components/marketing/contact-band";
 import { PageHero } from "@/components/marketing/page-hero";
@@ -17,7 +17,7 @@ export default function InsightsPage() {
       />
       <Section className="pt-0 sm:pt-0 lg:pt-0" aria-label="Featured perspective">
         {featured
-          ? <><Eyebrow className="mb-6">Featured perspective</Eyebrow><ArticleFeature post={featured} /></>
+          ? <ArticleFeature post={featured} />
           : <Text>New perspectives are on the way.</Text>}
       </Section>
       {remaining.length > 0 && (
