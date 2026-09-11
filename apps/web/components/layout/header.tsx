@@ -1,327 +1,60 @@
 "use client";
-import {
-  LayersIcon,
-  type LucideIcon,
-  Users,
-  Loader2,
-} from "lucide-react";
-import { Link } from "@/navigation";
-import React from "react";
-import { createPortal } from "react-dom";
-import useSWR from "swr";
+
+import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { ArrowRight, Menu, X } from "lucide-react";
+import { Link, usePathname } from "@/navigation";
 import { Logo } from "@/components/ui/logo";
-import { MenuToggleIcon } from "@/components/menu-toggle-icon";
-import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { useScroll } from "@/hooks/use-scroll";
-import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { usePathname } from "@/navigation";
-import { useAuth } from "@/components/auth-provider";
-import { supabase } from "@/lib/supabase";
 import { useTranslations } from "next-intl";
 
-type LinkItem = {
-  titleKey: string;
-  href: string;
-  icon: LucideIcon;
-  descriptionKey: string;
-};
+const contact = "mailto:collaborate@enigmatic.works?subject=Automation%20inquiry";
+const focus = "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-500";
 
-export function Header({ transparent = false }: { transparent?: boolean }) {
+export function Header() {
   const t = useTranslations("Navigation");
+  const home = useTranslations("HomeRefresh");
   const pathname = usePathname();
-  const isArticlePage = pathname?.startsWith("/insights/articles/");
-  const { user, loading } = useAuth();
-
-  const { data: memberships } = useSWR(
-    user ? "/api/user/memberships" : null,
-    async (url: string) => {
-      const session = (await supabase.auth.getSession()).data.session;
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      });
-      if (!res.ok) return null;
-      return res.json();
-    }
-  );
-
-  const dashboardUrl = React.useMemo(() => {
-    if (!user) return null;
-    if (memberships === undefined) return null; // still loading
-    if (!memberships || memberships.length === 0) return null;
-    const org = Array.isArray(memberships[0].organizations)
-      ? memberships[0].organizations[0]
-      : memberships[0].organizations;
-    if (org?.slug) return `/nodal/${org.slug}/dashboard/flow-studio`;
-    return null;
-  }, [user, memberships]);
-
-  const [open, setOpen] = React.useState(false);
-  const [scrollDirection, setScrollDirection] = React.useState<"up" | "down">(
-    "up"
-  );
-  const [lastScrollY, setLastScrollY] = React.useState(0);
-  const scrolled = useScroll(10);
-
-  const productLinks: LinkItem[] = [
-    {
-      titleKey: "items.useCases",
-      href: "/product/use-cases",
-      descriptionKey: "items.useCasesDesc",
-      icon: LayersIcon,
-    },
+  const [open, setOpen] = useState(false);
+  const links = [
+    { key: "services", href: "/services" },
+    { key: "items.useCases", href: "/product/use-cases" },
+    { key: "items.about", href: "/company/about-us" },
+    { key: "insights", href: "/insights" },
   ];
 
-  const companyLinks: LinkItem[] = [
-    {
-      titleKey: "items.about",
-      href: "/company/about-us",
-      descriptionKey: "items.aboutDesc",
-      icon: Users,
-    },
-  ];
-
-  React.useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  React.useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setScrollDirection("down");
-      } else if (currentScrollY < lastScrollY) {
-        setScrollDirection("up");
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
-  if (isArticlePage) return null;
+  if (pathname?.startsWith("/insights/articles/")) return null;
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 z-50 w-full transition-all duration-300",
-        {
-          "translate-y-0": scrollDirection === "up" || pathname?.startsWith("/docs"),
-          "-translate-y-full": scrollDirection === "down" && !pathname?.startsWith("/docs"),
-          "bg-background": (scrolled || !transparent) && !pathname?.startsWith("/docs"), // Removed border-b border-border
-          "bg-background/95": pathname?.startsWith("/docs"),
-          "bg-transparent border-transparent": !scrolled && transparent && !pathname?.startsWith("/docs"),
-        }
-      )}
-    >
-      <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
-        <div className="flex items-center gap-5">
-          <Link href="/" className="p-2">
-            <Logo width={32} height={32} showText />
-          </Link>
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent cursor-pointer">
-                  {t("product")}
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-[400px] p-4">
-                    {productLinks.map((item, i) => (
-                      <li key={i}>
-                        <Link
-                          href={item.href}
-                          className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
-                        >
-                          <div className="font-medium text-base mb-1">
-                            {t(item.titleKey)}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {t(item.descriptionKey)}
-                          </div>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuLink asChild className="px-4">
-                <Link
-                  className="rounded-md p-2 text-sm hover:bg-accent"
-                  href="/services"
-                >
-                  {t("services")}
-                </Link>
-              </NavigationMenuLink>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent cursor-pointer">
-                  {t("company")}
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-[400px] p-4">
-                    {companyLinks.map((item, i) => (
-                      <li key={i}>
-                        <Link
-                          href={item.href}
-                          className="block px-4 py-3 rounded-md hover:bg-accent transition-colors group"
-                        >
-                          <div className="font-medium text-base mb-1">
-                            {t(item.titleKey)}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {t(item.descriptionKey)}
-                          </div>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuLink asChild className="px-4">
-                <Link
-                  className="rounded-md p-2 text-sm hover:bg-accent"
-                  href="/insights"
-                >
-                  {t("insights")}
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuList>
-          </NavigationMenu>
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur-md">
+      <nav aria-label={home("menu")} className="mx-auto flex h-20 w-[calc(100%-40px)] max-w-[1200px] items-center justify-between gap-4 sm:w-[calc(100%-64px)] lg:w-[calc(100%-96px)]">
+        <Link href="/" aria-label="Enigmatic Partners" className={focus}><Logo width={30} height={30} showText /></Link>
+        <div className="hidden items-center gap-6 xl:gap-8 lg:flex">
+          {links.map(link => <Link key={link.key} href={link.href} aria-current={pathname === link.href ? "page" : undefined} className={`text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground ${focus}`}>{t(link.key)}</Link>)}
         </div>
-        <div className="hidden items-center gap-2 md:flex">
-          <Button asChild>
-            <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
-              {t("collaborate")}
-            </Link>
-          </Button>
-          <ModeToggle />
-          <LanguageSwitcher />
+        <div className="hidden items-center gap-2 lg:flex">
+          <ModeToggle /><LanguageSwitcher />
+          <a href={contact} className={`ml-3 inline-flex items-center gap-3 rounded-md bg-foreground px-4 py-2.5 text-sm text-background ${focus}`}>{home("contactNav")}<ArrowRight size={14} /></a>
         </div>
-        <Button
-          aria-controls="mobile-menu"
-          aria-expanded={open}
-          aria-label="Toggle menu"
-          className="md:hidden"
-          onClick={() => setOpen(!open)}
-          size="icon"
-          variant="outline"
-        >
-          <MenuToggleIcon className="size-5" duration={300} open={open} />
-        </Button>
+        <Dialog.Root open={open} onOpenChange={setOpen}>
+          <Dialog.Trigger className={`inline-flex size-11 items-center justify-center rounded-md border border-border lg:hidden ${focus}`} aria-label={home("menu")}><Menu size={21} /></Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40" />
+            <Dialog.Content aria-describedby={undefined} className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col overflow-y-auto bg-background p-7 shadow-xl">
+              <Dialog.Title className="mb-12 text-lg">{home("menu")}</Dialog.Title>
+              <Dialog.Close aria-label={home("closeMenu")} className={`absolute right-5 top-5 flex size-11 items-center justify-center ${focus}`}><X size={22} /></Dialog.Close>
+              <nav aria-label={home("menu")} className="flex flex-col gap-1">
+                {links.map(link => <Dialog.Close asChild key={link.key}><Link href={link.href} aria-current={pathname === link.href ? "page" : undefined} className={`border-b border-border py-5 text-xl ${focus}`}>{t(link.key)}</Link></Dialog.Close>)}
+              </nav>
+              <div className="mt-auto pt-12">
+                <Dialog.Close asChild><a href={contact} className={`flex items-center justify-between rounded-md bg-foreground p-4 text-background ${focus}`}>{home("contactNav")}<ArrowRight size={18} /></a></Dialog.Close>
+                <div className="mt-6 flex items-center gap-3"><ModeToggle /><LanguageSwitcher /></div>
+              </div>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
       </nav>
-      <MobileMenu
-        className="flex flex-col justify-between gap-2 overflow-y-auto"
-        open={open}
-      >
-        <NavigationMenu className="max-w-full">
-          <div className="flex w-full flex-col gap-y-2">
-            <span className="text-sm font-medium">{t("product")}</span>
-            {productLinks.map((link) => (
-              <Link
-                key={link.titleKey}
-                href={link.href}
-                className="px-3 py-2 text-sm rounded-md hover:bg-accent"
-                onClick={() => setOpen(false)}
-              >
-                {t(link.titleKey)}
-              </Link>
-            ))}
-            <Link
-              href="/services"
-              className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2"
-              onClick={() => setOpen(false)}
-            >
-              {t("services")}
-            </Link>
-            <span className="text-sm font-medium mt-2">{t("company")}</span>
-            {companyLinks.map((link) => (
-              <Link
-                key={link.titleKey}
-                href={link.href}
-                className="px-3 py-2 text-sm rounded-md hover:bg-accent"
-                onClick={() => setOpen(false)}
-              >
-                {t(link.titleKey)}
-              </Link>
-            ))}
-            <Link
-              href="/insights"
-              className="px-3 py-2 text-sm rounded-md hover:bg-accent mt-2"
-              onClick={() => setOpen(false)}
-            >
-              {t("insights")}
-            </Link>
-          </div>
-        </NavigationMenu>
-        <div className="flex flex-col gap-2">
-          <Button className="w-full" asChild>
-            <Link
-              href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry"
-              onClick={() => setOpen(false)}
-            >
-              {t("collaborate")}
-            </Link>
-          </Button>
-          <div className="flex justify-center gap-4">
-            <ModeToggle />
-            <LanguageSwitcher />
-          </div>
-        </div>
-      </MobileMenu>
     </header>
-  );
-}
-
-type MobileMenuProps = React.ComponentProps<"div"> & {
-  open: boolean;
-};
-
-function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
-  if (!open || typeof window === "undefined") {
-    return null;
-  }
-
-  return createPortal(
-    <div
-      className={cn(
-        "bg-background/95 backdrop-blur-lg supports-backdrop-filter:bg-background/50",
-        "fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden"
-      )}
-      id="mobile-menu"
-    >
-      <div
-        className={cn(
-          "data-[slot=open]:zoom-in-97 ease-out data-[slot=open]:animate-in",
-          "size-full p-4",
-          className
-        )}
-        data-slot={open ? "open" : "closed"}
-        {...props}
-      >
-        {children}
-      </div>
-    </div>,
-    document.body
   );
 }

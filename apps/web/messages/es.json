@@ -1035,5 +1035,149 @@
     "org": {
       "description": "Diseñamos, conectamos y orquestamos los procesos que sus sistemas centrales ignoran. Orquestación operacional para cadenas de suministro modernas."
     }
+  },
+  "HomeRefresh": {
+    "eyebrow": "Consultoría de IA y automatización",
+    "headline": "Menos tareas repetitivas.",
+    "headlineAccent": "Más posibilidades.",
+    "intro": "Creamos flujos de trabajo con IA y aplicaciones a medida que conectan tus sistemas, reducen el trabajo manual de tu equipo y crecen con tu negocio.",
+    "contact": "Hablemos de tu proceso",
+    "explore": "Ver la automatización en acción",
+    "mantra": "Analizar. Construir. Mejorar.",
+    "exampleLabel": "01 / Automatización en acción",
+    "exampleTitle": "Del documento recibido al trabajo resuelto.",
+    "exampleIntro": "Convierte facturas, formularios y documentos no estructurados en datos útiles y acciones fiables.",
+    "demoName": "Procesamiento inteligente de documentos",
+    "illustrative": "Flujo ilustrativo · Datos de ejemplo",
+    "invoice": "Factura de proveedor",
+    "supplier": "Proveedor",
+    "reference": "Número de factura",
+    "total": "Total",
+    "extracted": "Campos extraídos para su validación",
+    "stages": {
+      "receive": {
+        "title": "Recibir",
+        "description": "Un documento llega por correo, carga de archivo o un sistema conectado."
+      },
+      "extract": {
+        "title": "Comprender",
+        "description": "La IA identifica el documento y extrae los campos relevantes."
+      },
+      "review": {
+        "title": "Validar",
+        "description": "Las reglas de negocio verifican los datos. Tu equipo revisa las excepciones."
+      },
+      "sync": {
+        "title": "Actuar",
+        "description": "Los datos aprobados actualizan tus sistemas y activan el siguiente paso."
+      }
+    },
+    "demoNote": "Revisión humana donde importa. Reglas claras para los pasos siguientes.",
+    "exampleOutcome": "Menos transcripción. Menos traspasos. Un proceso que tu equipo puede seguir.",
+    "moreExamples": "Explorar casos de uso",
+    "capabilitiesLabel": "02 / Qué construimos",
+    "capabilitiesTitle": "Tecnología práctica. Grandes posibilidades.",
+    "servicesLink": "Explorar nuestros servicios",
+    "capabilities": {
+      "automation": {
+        "title": "Flujos conectados",
+        "description": "Conecta las herramientas que ya usas y automatiza los pasos entre ellas. n8n une tus sistemas, reglas y personas.",
+        "examples": "Aprobaciones · Incorporación · Integración de sistemas"
+      },
+      "ai": {
+        "title": "IA que aporta valor",
+        "description": "Añade inteligencia a los procesos con muchos documentos e información, con validación y supervisión humana integradas.",
+        "examples": "Procesamiento documental · Clasificación · Gestión inicial"
+      },
+      "applications": {
+        "title": "Software a tu medida",
+        "description": "Ofrece a tu equipo una interfaz clara para su trabajo. Aplicaciones a medida, diseñadas para tu proceso y conectadas a tus datos.",
+        "examples": "Herramientas internas · Portales operativos · Paneles"
+      }
+    },
+    "stackIntro": "Tecnologías elegidas para trabajar juntas.",
+    "stackNote": "n8n coordina el trabajo. React, Node.js y Supabase unen la interfaz, la lógica y los datos.",
+    "approachLabel": "03 / Cómo trabajamos",
+    "approachTitle": "Analizar. Construir. Mejorar.",
+    "approachIntro": "Partimos de un problema que merece resolverse. Creamos una solución enfocada y la mejoramos a medida que crece tu negocio.",
+    "approachLink": "Nuestro enfoque de trabajo",
+    "steps": {
+      "map": {
+        "title": "Identificar la oportunidad adecuada.",
+        "description": "Entender el proceso, las excepciones y el coste del trabajo manual. Definir un alcance claro y criterios de éxito."
+      },
+      "build": {
+        "title": "Hacerlo funcionar en la práctica.",
+        "description": "Construir y probar un piloto con tus sistemas actuales. Validarlo con las personas que lo usarán."
+      },
+      "improve": {
+        "title": "Ampliar lo que funciona.",
+        "description": "Medir resultados, perfeccionar el flujo y ampliar la solución con un plan claro de soporte y responsabilidades."
+      }
+    },
+    "principlesLabel": "Nuestros principios de trabajo",
+    "principles": {
+      "fit": {
+        "title": "Diseñado para tu negocio",
+        "description": "Soluciones independientes y a medida que se adaptan a tu operación."
+      },
+      "control": {
+        "title": "Claridad en cada paso",
+        "description": "Flujos documentados, excepciones visibles y control humano."
+      },
+      "scale": {
+        "title": "Espacio para crecer",
+        "description": "Empieza con un proceso. Amplía según tus necesidades."
+      }
+    },
+    "contactLabel": "Construyamos algo útil",
+    "contactTitle": "¿Qué está frenando a tu equipo?",
+    "contactIntro": "Cuéntanos sobre el proceso, las herramientas y el cuello de botella. Te ayudaremos a identificar dónde puede aportar valor la automatización.",
+    "footerTagline": "IA y automatización diseñadas para tu negocio.",
+    "menu": "Menú",
+    "closeMenu": "Cerrar menú",
+    "contactNav": "Hablemos",
+    "photography": {
+      "industryAlt": "Vista aérea de contenedores y vías de una terminal de carga.",
+      "industryCaption": "Detrás de cada operación hay personas, procesos y trabajo que merece ser más sencillo.",
+      "approachAlt": "Una persona trabajando con una computadora portátil en un escritorio, vista desde arriba."
+    }
+  },
+  "Editorial": {
+    "beforeWeBegin": "Antes de empezar",
+    "services": {
+      "title": "Mejores procesos.",
+      "accent": "Diseñados para tu negocio.",
+      "intro": "Desde el primer mapa de procesos hasta una solución en funcionamiento, unimos consultoría, IA e ingeniería para mejorar tus operaciones.",
+      "photoAlt": "Torres de oficinas de vidrio vistas desde la calle.",
+      "deliveryIntro": "Un camino claro desde comprender el problema hasta construir y mejorar la solución. Explora cada etapa, su alcance, entregables y herramientas.",
+      "engineeringNote": "Construimos un piloto enfocado, lo validamos con tu equipo y ampliamos lo que funciona. Cada etapa conecta el diseño con la operación diaria."
+    },
+    "about": {
+      "title": "Experiencia operativa.",
+      "accent": "Curiosidad técnica.",
+      "intro": "Unimos a quienes conocen el trabajo con quienes construyen la tecnología. Un equipo centrado en hacer que tu negocio funcione mejor.",
+      "teamIntro": "Las personas que conectan las necesidades del negocio con las posibilidades técnicas.",
+      "storyLabel": "Por qué Enigmatic",
+      "principlesTitle": "Prácticos por diseño."
+    },
+    "cases": {
+      "title": "Procesos reales.",
+      "accent": "Nuevas posibilidades.",
+      "intro": "Descubre cómo los flujos conectados y las aplicaciones a medida pueden simplificar el trabajo entre personas, documentos y sistemas.",
+      "note": "Flujos ilustrativos e interfaces de ejemplo. Cada solución se diseña alrededor del proceso del cliente.",
+      "people": "Personas y coordinación",
+      "operations": "Operaciones y sistemas",
+      "documents": "Documentos y datos"
+    },
+    "insights": {
+      "title": "Ideas para trabajar mejor.",
+      "accent": "Una perspectiva práctica.",
+      "intro": "Reflexiones sobre IA, automatización y las personas detrás de los procesos. Qué cuestionar, por dónde empezar y cómo construir con propósito.",
+      "featured": "Perspectiva destacada",
+      "read": "Leer el artículo",
+      "more": "Más perspectivas",
+      "empty": "Próximamente compartiremos nuevas perspectivas."
+    }
   }
 }

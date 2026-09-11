@@ -1035,5 +1035,149 @@
     "org": {
       "description": "We design, connect, and orchestrate the processes your core systems ignore. Operational orchestration for modern supply chains."
     }
+  },
+  "HomeRefresh": {
+    "eyebrow": "AI & automation consulting",
+    "headline": "Less busywork.",
+    "headlineAccent": "More possibility.",
+    "intro": "We build AI-powered workflows and custom applications that connect your systems, take manual work off your team, and grow with your business.",
+    "contact": "Discuss your process",
+    "explore": "See automation in practice",
+    "mantra": "Map. Build. Improve.",
+    "exampleLabel": "01 / Automation in practice",
+    "exampleTitle": "From incoming document to work done.",
+    "exampleIntro": "Turn invoices, forms, and unstructured documents into usable data and dependable next steps.",
+    "demoName": "Intelligent document processing",
+    "illustrative": "Illustrative workflow · Sample data",
+    "invoice": "Supplier invoice",
+    "supplier": "Supplier",
+    "reference": "Invoice number",
+    "total": "Total",
+    "extracted": "Fields extracted for validation",
+    "stages": {
+      "receive": {
+        "title": "Receive",
+        "description": "A document arrives by email, upload, or a connected system."
+      },
+      "extract": {
+        "title": "Understand",
+        "description": "AI identifies the document and extracts the fields that matter."
+      },
+      "review": {
+        "title": "Validate",
+        "description": "Business rules check the data. Exceptions go to your team."
+      },
+      "sync": {
+        "title": "Put it to work",
+        "description": "Approved data updates your systems and triggers the next step."
+      }
+    },
+    "demoNote": "Human review where it matters. Clear rules for everything that follows.",
+    "exampleOutcome": "Less rekeying. Fewer handoffs. A process your team can follow.",
+    "moreExamples": "Explore use cases",
+    "capabilitiesLabel": "02 / What we build",
+    "capabilitiesTitle": "Practical technology. Powerful possibilities.",
+    "servicesLink": "Explore our services",
+    "capabilities": {
+      "automation": {
+        "title": "Connected workflows",
+        "description": "Connect the tools you already use and automate the steps between them. n8n brings your systems, rules, and people together.",
+        "examples": "Approvals · Onboarding · System integration"
+      },
+      "ai": {
+        "title": "AI that does useful work",
+        "description": "Bring intelligence to document-heavy and information-heavy processes, with validation and human oversight built in.",
+        "examples": "Document processing · Classification · Triage"
+      },
+      "applications": {
+        "title": "Software that fits",
+        "description": "Give your team a clear interface for the work that matters. Bespoke applications built around your process and connected to your data.",
+        "examples": "Internal tools · Operational portals · Dashboards"
+      }
+    },
+    "stackIntro": "A focused stack. Built to work together.",
+    "stackNote": "n8n orchestrates the work. React, Node.js, and Supabase bring the interface, logic, and data together.",
+    "approachLabel": "03 / How we work",
+    "approachTitle": "Map. Build. Improve.",
+    "approachIntro": "Start with a worthwhile problem. Build a focused solution. Improve it as your business grows.",
+    "approachLink": "Our delivery approach",
+    "steps": {
+      "map": {
+        "title": "Find the right opportunity.",
+        "description": "Understand the process, the exceptions, and the cost of manual work. Define a clear scope and what success looks like."
+      },
+      "build": {
+        "title": "Make it work in the real world.",
+        "description": "Build and test a focused pilot around your existing systems. Validate it with the people who will use it."
+      },
+      "improve": {
+        "title": "Scale what works.",
+        "description": "Measure the results, refine the workflow, and expand with a clear plan for support and ownership."
+      }
+    },
+    "principlesLabel": "Our delivery principles",
+    "principles": {
+      "fit": {
+        "title": "Built around your business",
+        "description": "Bespoke, standalone solutions that fit how you operate."
+      },
+      "control": {
+        "title": "Clarity at every step",
+        "description": "Documented workflows, visible exceptions, and human control."
+      },
+      "scale": {
+        "title": "Room to grow",
+        "description": "Start with one process. Expand as your needs evolve."
+      }
+    },
+    "contactLabel": "Let’s build something useful",
+    "contactTitle": "What’s slowing your team down?",
+    "contactIntro": "Tell us about the process, the tools, and the bottleneck. We’ll help you explore where automation can make a difference.",
+    "footerTagline": "AI and automation, built around your business.",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "contactNav": "Let’s talk",
+    "photography": {
+      "industryAlt": "An aerial view of shipping containers and lanes in a freight terminal.",
+      "industryCaption": "Behind every operation are people, processes, and work worth making simpler.",
+      "approachAlt": "A person working on a laptop at a desk, viewed from above."
+    }
+  },
+  "Editorial": {
+    "beforeWeBegin": "Before we begin",
+    "services": {
+      "title": "Better processes.",
+      "accent": "Built for your business.",
+      "intro": "From the first process map to a working solution, we bring consulting, AI, and engineering together to make your operations run better.",
+      "photoAlt": "Glass office towers viewed from street level.",
+      "deliveryIntro": "A clear path from understanding the problem to building and improving the solution. Explore each stage for its scope, deliverables, and tools.",
+      "engineeringNote": "Build a focused pilot, validate it with your team, and expand what works. Each stage connects the design to day-to-day operations."
+    },
+    "about": {
+      "title": "Operational experience.",
+      "accent": "Engineering curiosity.",
+      "intro": "We bring the people who understand the work together with the people who build the technology. One team, focused on making your business work better.",
+      "teamIntro": "The people connecting business needs with technical possibilities.",
+      "storyLabel": "Why Enigmatic",
+      "principlesTitle": "Practical by design."
+    },
+    "cases": {
+      "title": "Real processes.",
+      "accent": "New possibilities.",
+      "intro": "Explore how connected workflows and custom applications can simplify the work between your people, documents, and systems.",
+      "note": "Illustrative workflows and sample interfaces. Each solution is designed around the client’s process.",
+      "people": "People & coordination",
+      "operations": "Operations & systems",
+      "documents": "Documents & data"
+    },
+    "insights": {
+      "title": "Ideas for better work.",
+      "accent": "A practical perspective.",
+      "intro": "Thoughts on AI, automation, and the people behind business processes. What to question, where to start, and how to build with purpose.",
+      "featured": "Featured perspective",
+      "read": "Read the article",
+      "more": "More perspectives",
+      "empty": "New perspectives are on the way."
+    }
   }
 }

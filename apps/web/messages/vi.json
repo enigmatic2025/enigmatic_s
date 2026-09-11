@@ -1039,5 +1039,149 @@
     "org": {
       "description": "Chúng tôi thiết kế, kết nối và điều phối các quy trình mà hệ thống cốt lõi của bạn bỏ qua. Điều phối vận hành cho chuỗi cung ứng hiện đại."
     }
+  },
+  "HomeRefresh": {
+    "eyebrow": "Tư vấn AI & tự động hóa",
+    "headline": "Bớt việc lặp lại.",
+    "headlineAccent": "Thêm cơ hội mới.",
+    "intro": "Chúng tôi xây dựng quy trình ứng dụng AI và phần mềm tùy chỉnh để kết nối hệ thống, giảm công việc thủ công và phát triển cùng doanh nghiệp bạn.",
+    "contact": "Trao đổi về quy trình",
+    "explore": "Xem tự động hóa thực tế",
+    "mantra": "Khảo sát. Xây dựng. Cải tiến.",
+    "exampleLabel": "01 / Tự động hóa thực tế",
+    "exampleTitle": "Từ tài liệu đầu vào đến công việc hoàn tất.",
+    "exampleIntro": "Chuyển hóa đơn, biểu mẫu và tài liệu phi cấu trúc thành dữ liệu hữu ích và các bước xử lý đáng tin cậy.",
+    "demoName": "Xử lý tài liệu thông minh",
+    "illustrative": "Quy trình minh họa · Dữ liệu mẫu",
+    "invoice": "Hóa đơn nhà cung cấp",
+    "supplier": "Nhà cung cấp",
+    "reference": "Số hóa đơn",
+    "total": "Tổng cộng",
+    "extracted": "Các trường đã trích xuất để xác thực",
+    "stages": {
+      "receive": {
+        "title": "Tiếp nhận",
+        "description": "Tài liệu đến qua email, tệp tải lên hoặc hệ thống được kết nối."
+      },
+      "extract": {
+        "title": "Hiểu nội dung",
+        "description": "AI nhận diện tài liệu và trích xuất các trường quan trọng."
+      },
+      "review": {
+        "title": "Xác thực",
+        "description": "Quy tắc nghiệp vụ kiểm tra dữ liệu. Ngoại lệ được chuyển cho đội ngũ của bạn."
+      },
+      "sync": {
+        "title": "Đưa vào xử lý",
+        "description": "Dữ liệu đã duyệt cập nhật hệ thống và kích hoạt bước tiếp theo."
+      }
+    },
+    "demoNote": "Con người kiểm duyệt tại những bước quan trọng. Quy tắc rõ ràng cho các bước tiếp theo.",
+    "exampleOutcome": "Bớt nhập liệu lại. Bớt bàn giao. Quy trình đội ngũ có thể theo dõi.",
+    "moreExamples": "Khám phá tình huống ứng dụng",
+    "capabilitiesLabel": "02 / Giải pháp của chúng tôi",
+    "capabilitiesTitle": "Công nghệ thiết thực. Khả năng mạnh mẽ.",
+    "servicesLink": "Khám phá dịch vụ",
+    "capabilities": {
+      "automation": {
+        "title": "Quy trình kết nối",
+        "description": "Kết nối các công cụ hiện có và tự động hóa các bước giữa chúng. n8n liên kết hệ thống, quy tắc và con người.",
+        "examples": "Phê duyệt · Tiếp nhận nhân sự · Tích hợp hệ thống"
+      },
+      "ai": {
+        "title": "AI mang lại giá trị",
+        "description": "Ứng dụng trí tuệ vào quy trình nhiều tài liệu và thông tin, tích hợp xác thực và giám sát của con người.",
+        "examples": "Xử lý tài liệu · Phân loại · Sàng lọc yêu cầu"
+      },
+      "applications": {
+        "title": "Phần mềm phù hợp",
+        "description": "Mang đến giao diện rõ ràng cho công việc quan trọng. Ứng dụng tùy chỉnh theo quy trình và kết nối với dữ liệu của bạn.",
+        "examples": "Công cụ nội bộ · Cổng vận hành · Bảng điều khiển"
+      }
+    },
+    "stackIntro": "Bộ công nghệ tinh gọn, phối hợp hiệu quả.",
+    "stackNote": "n8n điều phối công việc. React, Node.js và Supabase kết nối giao diện, logic và dữ liệu.",
+    "approachLabel": "03 / Cách chúng tôi làm việc",
+    "approachTitle": "Khảo sát. Xây dựng. Cải tiến.",
+    "approachIntro": "Bắt đầu từ vấn đề đáng giải quyết. Xây dựng giải pháp tập trung. Cải tiến khi doanh nghiệp phát triển.",
+    "approachLink": "Phương pháp triển khai",
+    "steps": {
+      "map": {
+        "title": "Tìm đúng cơ hội.",
+        "description": "Hiểu quy trình, ngoại lệ và chi phí công việc thủ công. Xác định phạm vi rõ ràng và tiêu chí thành công."
+      },
+      "build": {
+        "title": "Vận hành trong thực tế.",
+        "description": "Xây dựng và thử nghiệm giải pháp thí điểm trên hệ thống hiện có. Xác nhận hiệu quả cùng người sử dụng."
+      },
+      "improve": {
+        "title": "Mở rộng điều hiệu quả.",
+        "description": "Đo lường kết quả, cải tiến quy trình và mở rộng với kế hoạch hỗ trợ cùng trách nhiệm rõ ràng."
+      }
+    },
+    "principlesLabel": "Nguyên tắc triển khai",
+    "principles": {
+      "fit": {
+        "title": "Thiết kế cho doanh nghiệp bạn",
+        "description": "Giải pháp độc lập, tùy chỉnh theo cách bạn vận hành."
+      },
+      "control": {
+        "title": "Rõ ràng ở từng bước",
+        "description": "Quy trình có tài liệu, ngoại lệ dễ theo dõi và con người kiểm soát."
+      },
+      "scale": {
+        "title": "Sẵn sàng phát triển",
+        "description": "Bắt đầu với một quy trình. Mở rộng theo nhu cầu."
+      }
+    },
+    "contactLabel": "Cùng xây dựng điều hữu ích",
+    "contactTitle": "Điều gì đang làm chậm đội ngũ của bạn?",
+    "contactIntro": "Hãy chia sẻ quy trình, công cụ và điểm nghẽn. Chúng tôi sẽ cùng bạn tìm nơi tự động hóa có thể tạo khác biệt.",
+    "footerTagline": "AI và tự động hóa, thiết kế cho doanh nghiệp bạn.",
+    "menu": "Trình đơn",
+    "closeMenu": "Đóng trình đơn",
+    "contactNav": "Trao đổi với chúng tôi",
+    "photography": {
+      "industryAlt": "Góc nhìn từ trên cao xuống các container và làn đường tại cảng hàng hóa.",
+      "industryCaption": "Đằng sau mỗi hoạt động là con người, quy trình và những công việc cần được đơn giản hóa.",
+      "approachAlt": "Một người làm việc với máy tính xách tay tại bàn, nhìn từ trên cao."
+    }
+  },
+  "Editorial": {
+    "beforeWeBegin": "Trước khi bắt đầu",
+    "services": {
+      "title": "Quy trình tốt hơn.",
+      "accent": "Dành cho doanh nghiệp bạn.",
+      "intro": "Từ bản đồ quy trình đầu tiên đến giải pháp vận hành thực tế, chúng tôi kết hợp tư vấn, AI và kỹ thuật để cải thiện hoạt động của bạn.",
+      "photoAlt": "Các tòa nhà văn phòng bằng kính nhìn từ mặt đường.",
+      "deliveryIntro": "Lộ trình rõ ràng từ việc hiểu vấn đề đến xây dựng và cải tiến giải pháp. Khám phá phạm vi, sản phẩm bàn giao và công cụ của từng giai đoạn.",
+      "engineeringNote": "Xây dựng giải pháp thí điểm tập trung, xác thực cùng đội ngũ của bạn và mở rộng những gì hiệu quả. Mỗi giai đoạn kết nối thiết kế với vận hành hằng ngày."
+    },
+    "about": {
+      "title": "Kinh nghiệm vận hành.",
+      "accent": "Tinh thần khám phá công nghệ.",
+      "intro": "Chúng tôi kết nối những người hiểu công việc với những người xây dựng công nghệ. Một đội ngũ tập trung giúp doanh nghiệp bạn hoạt động hiệu quả hơn.",
+      "teamIntro": "Những người kết nối nhu cầu kinh doanh với khả năng công nghệ.",
+      "storyLabel": "Vì sao chọn Enigmatic",
+      "principlesTitle": "Thiết thực từ thiết kế."
+    },
+    "cases": {
+      "title": "Quy trình thực tế.",
+      "accent": "Khả năng mới.",
+      "intro": "Khám phá cách quy trình kết nối và ứng dụng tùy chỉnh đơn giản hóa công việc giữa con người, tài liệu và hệ thống.",
+      "note": "Quy trình minh họa và giao diện mẫu. Mỗi giải pháp được thiết kế theo quy trình của khách hàng.",
+      "people": "Con người & phối hợp",
+      "operations": "Vận hành & hệ thống",
+      "documents": "Tài liệu & dữ liệu"
+    },
+    "insights": {
+      "title": "Ý tưởng cho công việc tốt hơn.",
+      "accent": "Góc nhìn thực tiễn.",
+      "intro": "Góc nhìn về AI, tự động hóa và con người phía sau quy trình kinh doanh. Điều cần cân nhắc, nơi bắt đầu và cách xây dựng có mục đích.",
+      "featured": "Góc nhìn nổi bật",
+      "read": "Đọc bài viết",
+      "more": "Thêm góc nhìn",
+      "empty": "Những góc nhìn mới sẽ sớm được chia sẻ."
+    }
   }
 }

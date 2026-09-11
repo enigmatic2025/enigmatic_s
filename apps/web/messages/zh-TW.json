@@ -1039,5 +1039,149 @@
     "org": {
       "description": "我們設計、連結並協調您的核心系統所忽略的流程。為現代供應鏈提供運營編排。"
     }
+  },
+  "HomeRefresh": {
+    "eyebrow": "AI 與自動化顧問服務",
+    "headline": "減少繁瑣工作。",
+    "headlineAccent": "開拓更多可能。",
+    "intro": "我們打造 AI 工作流程與客製化應用程式，串聯您的系統、減輕團隊的手動作業負擔，並隨業務成長而擴展。",
+    "contact": "聊聊您的流程",
+    "explore": "看看自動化如何運作",
+    "mantra": "梳理。建置。改善。",
+    "exampleLabel": "01 / 自動化實例",
+    "exampleTitle": "從收到文件，到完成工作。",
+    "exampleIntro": "將發票、表單與非結構化文件，轉為實用資料和可靠的後續處理步驟。",
+    "demoName": "智慧文件處理",
+    "illustrative": "示意流程 · 範例資料",
+    "invoice": "供應商發票",
+    "supplier": "供應商",
+    "reference": "發票編號",
+    "total": "總額",
+    "extracted": "欄位已擷取，準備驗證",
+    "stages": {
+      "receive": {
+        "title": "接收",
+        "description": "透過電子郵件、上傳或已串接的系統接收文件。"
+      },
+      "extract": {
+        "title": "理解",
+        "description": "AI 辨識文件並擷取重要欄位。"
+      },
+      "review": {
+        "title": "驗證",
+        "description": "業務規則檢查資料，例外情況交由您的團隊處理。"
+      },
+      "sync": {
+        "title": "執行後續工作",
+        "description": "核准的資料更新至系統，並觸發下一步。"
+      }
+    },
+    "demoNote": "在重要環節保留人工審核，讓後續步驟遵循清晰規則。",
+    "exampleOutcome": "減少重複輸入與交接，讓團隊掌握整個流程。",
+    "moreExamples": "探索應用案例",
+    "capabilitiesLabel": "02 / 我們打造的解決方案",
+    "capabilitiesTitle": "務實的技術。強大的可能性。",
+    "servicesLink": "探索我們的服務",
+    "capabilities": {
+      "automation": {
+        "title": "串聯工作流程",
+        "description": "連接現有工具，將工具之間的步驟自動化。n8n 串聯您的系統、規則與人員。",
+        "examples": "簽核 · 到職流程 · 系統整合"
+      },
+      "ai": {
+        "title": "創造實用價值的 AI",
+        "description": "為大量文件與資訊處理流程導入智慧能力，並內建驗證與人工監督。",
+        "examples": "文件處理 · 分類 · 請求分流"
+      },
+      "applications": {
+        "title": "貼合需求的軟體",
+        "description": "為團隊的重要工作提供清晰介面。依照您的流程打造客製化應用程式，並串接您的資料。",
+        "examples": "內部工具 · 營運入口 · 儀表板"
+      }
+    },
+    "stackIntro": "精選技術，協同運作。",
+    "stackNote": "n8n 協調工作流程；React、Node.js 與 Supabase 串聯介面、邏輯與資料。",
+    "approachLabel": "03 / 我們的工作方式",
+    "approachTitle": "梳理。建置。改善。",
+    "approachIntro": "從值得解決的問題出發，打造聚焦的解決方案，隨著業務成長持續改善。",
+    "approachLink": "我們的交付方式",
+    "steps": {
+      "map": {
+        "title": "找到合適的機會。",
+        "description": "了解流程、例外情況與手動作業成本，定義清楚的範圍與成功標準。"
+      },
+      "build": {
+        "title": "在實際環境中運作。",
+        "description": "圍繞現有系統建置並測試試行方案，與實際使用者共同驗證。"
+      },
+      "improve": {
+        "title": "擴展有效的成果。",
+        "description": "衡量成果、優化流程，並以明確的支援與權責計畫持續擴展。"
+      }
+    },
+    "principlesLabel": "我們的交付原則",
+    "principles": {
+      "fit": {
+        "title": "圍繞您的業務打造",
+        "description": "獨立、客製化的解決方案，貼合您的營運方式。"
+      },
+      "control": {
+        "title": "每一步都清楚可見",
+        "description": "完整的流程文件、可見的例外情況與人工控制。"
+      },
+      "scale": {
+        "title": "保留成長空間",
+        "description": "從一個流程開始，隨需求演進而擴展。"
+      }
+    },
+    "contactLabel": "一起打造實用的解決方案",
+    "contactTitle": "什麼拖慢了您的團隊？",
+    "contactIntro": "告訴我們您的流程、工具與瓶頸。我們將協助您探索自動化能在哪裡帶來改變。",
+    "footerTagline": "為您的業務打造 AI 與自動化。",
+    "menu": "選單",
+    "closeMenu": "關閉選單",
+    "contactNav": "與我們聊聊",
+    "photography": {
+      "industryAlt": "從空中俯瞰貨運碼頭的貨櫃與車道。",
+      "industryCaption": "每項營運背後，都有人員、流程，以及值得化繁為簡的工作。",
+      "approachAlt": "從上方觀看一個人在桌前使用筆記型電腦工作。"
+    }
+  },
+  "Editorial": {
+    "beforeWeBegin": "開始之前",
+    "services": {
+      "title": "更好的流程。",
+      "accent": "為您的業務打造。",
+      "intro": "從第一張流程圖到實際運作的解決方案，我們整合顧問服務、AI 與工程技術，讓您的營運更順暢。",
+      "photoAlt": "從街道仰望玻璃帷幕辦公大樓。",
+      "deliveryIntro": "從理解問題到建置與改善方案，每一步都有清楚的方向。探索各階段的範圍、交付成果與工具。",
+      "engineeringNote": "建置聚焦的試行方案，與您的團隊共同驗證，再擴展有效的成果。每個階段都將設計與日常營運連結。"
+    },
+    "about": {
+      "title": "營運經驗。",
+      "accent": "工程探索精神。",
+      "intro": "我們將了解實際工作的人，與打造技術的人聚在一起。同一個團隊，專注讓您的業務運作得更好。",
+      "teamIntro": "連結業務需求與技術可能性的夥伴。",
+      "storyLabel": "為什麼選擇 Enigmatic",
+      "principlesTitle": "以務實為設計原則。"
+    },
+    "cases": {
+      "title": "真實流程。",
+      "accent": "全新可能。",
+      "intro": "探索串聯工作流程與客製化應用程式，如何簡化人員、文件與系統之間的工作。",
+      "note": "示意流程與範例介面。每個解決方案皆圍繞客戶的流程設計。",
+      "people": "人員與協作",
+      "operations": "營運與系統",
+      "documents": "文件與資料"
+    },
+    "insights": {
+      "title": "讓工作更好的想法。",
+      "accent": "從實務出發的觀點。",
+      "intro": "關於 AI、自動化，以及業務流程背後的人們的思考。該提出什麼問題、從哪裡開始，以及如何有目標地打造方案。",
+      "featured": "精選觀點",
+      "read": "閱讀文章",
+      "more": "更多觀點",
+      "empty": "新的觀點即將登場。"
+    }
   }
 }

@@ -1,131 +1,27 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
+import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
-
-const footerLinks = {
-  product: [
-    { label: "Nodal", href: "/product/login" },
-    { label: "Documentation", href: "/documentation" },
-    { label: "Use Cases", href: "/product/use-cases" },
-  ],
-  company: [
-    { label: "About Us", href: "/company/about-us" },
-  ],
-  legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-  ],
-};
+import { ArrowUpRight } from "lucide-react";
 
 export function Footer() {
   const t = useTranslations("Footer");
-  const tNav = useTranslations("Navigation");
-
-  const footerLinks = {
-    product: [
-      { label: tNav("items.nodal"), href: "/product/login" },
-      { label: tNav("items.docs"), href: "/documentation" },
-      { label: tNav("items.useCases"), href: "/product/use-cases" },
-    ],
-    company: [
-      { label: tNav("items.about"), href: "/company/about-us" },
-      { label: "System Status", href: "/status" },
-    ],
-    legal: [
-      { label: tNav("items.privacy"), href: "/privacy" },
-      { label: tNav("items.terms"), href: "/terms" },
-    ],
-  };
+  const nav = useTranslations("Navigation");
+  const home = useTranslations("HomeRefresh");
+  const focus = "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-500";
 
   return (
-    <footer className="bg-background border-t border-border/40">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
-          {/* Brand Column */}
-          <div className="md:col-span-1 flex flex-col gap-6">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-8 h-8">
-                <Image
-                  src="/images/brand/enigmatic-logo.png"
-                  alt="Enigmatic Logo"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <span className="text-xl font-medium tracking-tight">
-                Enigmatic
-              </span>
-            </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              {t("tagline")}
-            </p>
-          </div>
-
-          {/* Links Columns */}
-          <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
-            {/* Product */}
-            <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-medium text-foreground">{tNav("product")}</h4>
-              <ul className="flex flex-col gap-3">
-                {footerLinks.product.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Company */}
-            <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-medium text-foreground">{tNav("company")}</h4>
-              <ul className="flex flex-col gap-3">
-                {footerLinks.company.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-medium text-foreground">{t("legal")}</h4>
-              <ul className="flex flex-col gap-3">
-                {footerLinks.legal.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+    <footer className="border-t border-border bg-background">
+      <div className="mx-auto w-[calc(100%-40px)] max-w-[1200px] py-12 sm:w-[calc(100%-64px)] lg:w-[calc(100%-96px)]">
+        <div className="flex flex-col justify-between gap-10 md:flex-row">
+          <div><Link href="/" className={`text-xl tracking-tight ${focus}`}>Enigmatic Partners</Link><p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{home("footerTagline")}</p></div>
+          <nav aria-label={home("menu")} className="grid grid-cols-2 gap-x-10 gap-y-4 text-sm">
+            {[{key:"services",href:"/services"},{key:"items.useCases",href:"/product/use-cases"},{key:"items.about",href:"/company/about-us"},{key:"insights",href:"/insights"}].map(link => <Link key={link.key} href={link.href} className={`text-muted-foreground hover:text-foreground ${focus}`}>{nav(link.key)}</Link>)}
+          </nav>
         </div>
-
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
-            {t("copyright", { year: new Date().getFullYear() })}
-          </p>
-          <div className="flex items-center gap-6">
-            {/* Social Links could go here */}
-          </div>
+        <div className="mt-10 flex flex-col justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
+          <p>{t("copyright", { year: new Date().getFullYear() })}</p>
+          <a className={`inline-flex items-center gap-2 ${focus}`} href="mailto:collaborate@enigmatic.works">collaborate@enigmatic.works<ArrowUpRight size={13} /></a>
         </div>
       </div>
     </footer>

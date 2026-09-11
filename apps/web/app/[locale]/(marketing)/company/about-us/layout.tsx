@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "About Us",
-  description:
-    "Meet the team behind Enigmatic. We build operational orchestration tools that connect people, systems, and processes into automated flows.",
-  openGraph: {
-    title: "About Us | Enigmatic",
-    description:
-      "Meet the team behind Enigmatic. We build operational orchestration tools for modern supply chains.",
-  },
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Editorial" });
+  const nav = await getTranslations({ locale, namespace: "Navigation" });
+  const title = `${nav("items.about")} | Enigmatic Partners`;
+  const description = t("about.intro");
+  return {
+    title: { absolute: title }, description,
+    openGraph: { title, description, images: ["/images/brand/brand-image.jpg"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/images/brand/brand-image.jpg"] },
+  };
+}
 
-export default function AboutUsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PageLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

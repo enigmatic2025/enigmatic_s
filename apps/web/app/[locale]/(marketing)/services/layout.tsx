@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Services",
-  description:
-    "End-to-end operational consulting — from process discovery and workflow design to platform implementation and automation. We help you streamline logistics operations.",
-  openGraph: {
-    title: "Services | Enigmatic",
-    description:
-      "End-to-end operational consulting — from process discovery and workflow design to platform implementation and automation.",
-  },
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Editorial" });
+  const nav = await getTranslations({ locale, namespace: "Navigation" });
+  const title = `${nav("services")} | Enigmatic Partners`;
+  const description = t("services.intro");
+  return {
+    title: { absolute: title }, description,
+    openGraph: { title, description, images: ["/images/brand/brand-image.jpg"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/images/brand/brand-image.jpg"] },
+  };
+}
 
-export default function ServicesLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PageLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

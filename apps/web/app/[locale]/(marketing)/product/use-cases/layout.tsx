@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Use Cases",
-  description:
-    "See how Nodal automates real operational workflows — driver onboarding, asset maintenance, billing claims, manufacturing coordination, and more.",
-  openGraph: {
-    title: "Use Cases | Enigmatic",
-    description:
-      "See how Nodal automates real operational workflows across logistics, manufacturing, and construction.",
-  },
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Editorial" });
+  const nav = await getTranslations({ locale, namespace: "Navigation" });
+  const title = `${nav("items.useCases")} | Enigmatic Partners`;
+  const description = t("cases.intro");
+  return {
+    title: { absolute: title }, description,
+    openGraph: { title, description, images: ["/images/brand/brand-image.jpg"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/images/brand/brand-image.jpg"] },
+  };
+}
 
-export default function UseCasesLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PageLayout({ children }: { children: React.ReactNode }) {
   return children;
 }
