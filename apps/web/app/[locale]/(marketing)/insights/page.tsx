@@ -7,11 +7,10 @@ import { PageHero, ContactBand, halfImageSizes, styles } from "@/components/mark
 
 export default async function InsightsPage() {
   const locale = await getLocale();
-  const t = await getTranslations("Insights");
   const e = await getTranslations("Editorial");
   const [featured, ...remaining] = getInsightPosts(locale);
   return <div className={styles.page}>
-    <PageHero label={t("title")} title={e("insights.title")} accent={e("insights.accent")} description={e("insights.intro")} />
+    <PageHero title={e("insights.title")} accent={e("insights.accent")} description={e("insights.intro")} />
     <section className={`${styles.wrap} ${styles.section}`} style={{ paddingTop: 0 }}>
       {featured ? <>
         <p className={styles.eyebrow}>{e("insights.featured")}</p>

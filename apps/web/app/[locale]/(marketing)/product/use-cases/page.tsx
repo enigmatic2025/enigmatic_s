@@ -20,7 +20,7 @@ export default async function UseCasesPage() {
   const h = await getTranslations("HomeRefresh");
   const nav = await getTranslations("Navigation");
   return <div className={styles.page}>
-    <PageHero label={nav("items.useCases")} title={e("cases.title")} accent={e("cases.accent")} description={e("cases.intro")} />
+    <PageHero title={e("cases.title")} accent={e("cases.accent")} description={e("cases.intro")} />
     <div className={styles.wrap}>
       <nav className={styles.jumpLinks} aria-label={nav("items.useCases")}>{cases.map(item => <a key={item.id} href={`#${item.id}`}>{t(`cards.${item.id}`)}</a>)}</nav>
       <p className={styles.caseNote}>{e("cases.note")}</p>

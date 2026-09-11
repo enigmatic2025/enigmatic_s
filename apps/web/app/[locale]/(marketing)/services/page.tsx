@@ -7,7 +7,7 @@ export default async function ServicesPage() {
   const h = await getTranslations("HomeRefresh");
   const e = await getTranslations("Editorial");
   return <div className={styles.page}>
-    <PageHero label={t("title")} title={e("services.title")} accent={e("services.accent")} description={e("services.intro")}>
+    <PageHero title={e("services.title")} accent={e("services.accent")} description={e("services.intro")}>
       <a className={styles.primary} href={contactHref}>{h("contact")}<ArrowRight size={17} /></a>
     </PageHero>
     <EditorialPhoto src="/images/home/corporate.jpg" alt={e("services.photoAlt")} />

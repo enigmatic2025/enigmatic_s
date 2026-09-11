@@ -10,7 +10,7 @@ const contact = "mailto:collaborate@enigmatic.works?subject=Automation%20inquiry
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "HomeRefresh" });
-  const title = `${t("eyebrow")} | Enigmatic Partners`;
+  const title = "Enigmatic Partners";
   return {
     title: { absolute: title },
     description: t("intro"),
@@ -32,7 +32,6 @@ export default async function Home() {
   return (
     <div className={styles.home}>
       <section className={`${styles.wrap} ${styles.hero}`} aria-labelledby="home-title">
-        <div className={styles.eyebrow}><span className={styles.statusDot} />{t("eyebrow")}</div>
         <h1 id="home-title">{t("headline")}<br /><span>{t("headlineAccent")}</span></h1>
         <div className={styles.heroBottom}>
           <p className={styles.lead}>{t("intro")}</p>

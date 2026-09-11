@@ -12,9 +12,8 @@ export default async function AboutUsPage() {
   const t = await getTranslations("AboutUs");
   const h = await getTranslations("HomeRefresh");
   const e = await getTranslations("Editorial");
-  const nav = await getTranslations("Navigation");
   return <div className={styles.page}>
-    <PageHero label={nav("items.about")} title={e("about.title")} accent={e("about.accent")} description={e("about.intro")} />
+    <PageHero title={e("about.title")} accent={e("about.accent")} description={e("about.intro")} />
     <section className={`${styles.wrap} ${styles.section}`} style={{ paddingTop: 0 }}>
       <div className={styles.sectionHeading}><h2>{t("team.title")}</h2><p>{e("about.teamIntro")}</p></div>
       <div className={styles.team}>{team.map(member => <article key={member.key}>

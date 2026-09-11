@@ -8,9 +8,9 @@ export const contactHref = "mailto:collaborate@enigmatic.works?subject=Automatio
 export const wideImageSizes = "(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) calc(100vw - 64px), (max-width: 1296px) calc(100vw - 96px), 1200px";
 export const halfImageSizes = "(max-width: 767px) calc(100vw - 40px), (max-width: 1296px) 45vw, 576px";
 
-export function PageHero({ label, title, accent, description, children }: { label: string; title: string; accent: string; description: string; children?: React.ReactNode }) {
+export function PageHero({ label, title, accent, description, children }: { label?: string; title: string; accent: string; description: string; children?: React.ReactNode }) {
   return <section className={`${styles.wrap} ${styles.hero}`}>
-    <p className={styles.eyebrow}><span />{label}</p>
+    {label && <p className={styles.eyebrow}><span />{label}</p>}
     <h1>{title}<br /><span>{accent}</span></h1>
     <div className={styles.heroBottom}><p className={styles.lead}>{description}</p>{children}</div>
   </section>;
