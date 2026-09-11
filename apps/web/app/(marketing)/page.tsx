@@ -4,7 +4,7 @@ import { ArrowDown, ArrowRight, Check, FileText, GitBranch, Layers3, ScanText, S
 import Link from "next/link";
 import styles from "./home.module.css";
 
-const contact = "mailto:collaborate@enigmatic.works?subject=Automation%20inquiry";
+const contact = "mailto:collaborate@enigmaticpartners.com?subject=Automation%20inquiry";
 const intro = "We build AI-powered workflows and custom applications that connect your systems, take manual work off your team, and grow with your business.";
 
 const copy = {

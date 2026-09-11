@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://enigmatic.works"),
+  metadataBase: new URL("https://enigmaticpartners.com"),
   title: {
     default: "Enigmatic | We design, connect, and orchestrate the processes your core systems ignore.",
     template: "%s | Enigmatic",
@@ -60,14 +60,14 @@ const jsonLd = {
     {
       "@type": "Organization",
       name: "Enigmatic",
-      url: "https://enigmatic.works",
-      logo: "https://enigmatic.works/images/brand/enigmatic-logo.png",
+      url: "https://enigmaticpartners.com",
+      logo: "https://enigmaticpartners.com/images/brand/enigmatic-logo.png",
       description: "We design, connect, and orchestrate the processes your core systems ignore. Operational orchestration for modern supply chains.",
     },
     {
       "@type": "WebSite",
       name: "Enigmatic",
-      url: "https://enigmatic.works",
+      url: "https://enigmaticpartners.com",
       inLanguage: "en",
     },
   ],

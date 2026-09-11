@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/logo";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 
-const contact = "mailto:collaborate@enigmatic.works?subject=Automation%20inquiry";
+const contact = "mailto:collaborate@enigmaticpartners.com?subject=Automation%20inquiry";
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-500";
 
 const links = [

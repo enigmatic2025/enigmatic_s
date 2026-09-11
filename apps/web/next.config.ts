@@ -24,22 +24,6 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         ],
       },
-      {
-        // Cache llms.txt
-        source: "/llms.txt",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=86400, s-maxage=31536000, stale-while-revalidate=86400" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-        ],
-      },
-      {
-        // Cache llms-full.txt
-        source: "/llms-full.txt",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=86400, s-maxage=31536000, stale-while-revalidate=86400" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-        ],
-      },
     ];
   },
 };

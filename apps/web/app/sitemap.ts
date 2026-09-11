@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { insightPosts } from "@/lib/insights-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://enigmatic.works";
+  const baseUrl = "https://enigmaticpartners.com";
   const now = new Date();
 
   const staticPages = [

@@ -64,7 +64,7 @@ export function CTASection({
             transition={{ delay: 0.3 }}
           >
             <Button className="sm:w-auto bg-white text-black hover:bg-white" asChild>
-              <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
+              <Link href="mailto:collaborate@enigmaticpartners.com?subject=Collaboration Inquiry">
                 {contentButtonText}
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>

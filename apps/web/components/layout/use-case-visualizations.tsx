@@ -12,16 +12,13 @@ import {
   ClipboardList,
   CreditCard,
   AlertTriangle,
+  Workflow,
   DollarSign,
   Database,
   ArrowRight,
   FileCheck,
-  Bot,
   User,
   Plus,
-  Sparkles,
-  Mic,
-  Paperclip,
 } from "lucide-react";
 import { FlowBlock } from "@/components/layout/nodal-visualizations";
 
@@ -109,116 +106,98 @@ export const DriverOnboardingPreview = () => {
 
 // --- Billing & Claims Visual ---
 export const BillingClaimsPreview = () => {
+  const claims = [
+    { id: "CLM-887", type: "Detention", amount: "$1,240", status: "Approved", tone: "text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30" },
+    { id: "INV-4021", type: "Linehaul Invoice", amount: "$8,930", status: "Matched", tone: "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30" },
+    { id: "CLM-892", type: "Detention", amount: "$2,180", status: "Exception", tone: "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30" },
+    { id: "INV-4018", type: "Fuel Surcharge", amount: "$560", status: "Synced", tone: "text-muted-foreground bg-muted" },
+  ];
+
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full p-2 md:p-8">
-      <div className="w-full max-w-5xl h-full bg-background border border-border rounded-xl shadow-sm overflow-hidden flex">
-        {/* Sidebar (Desktop only) */}
-        <div className="hidden md:flex w-64 bg-muted/30 border-r border-border flex-col p-4 gap-4">
-          <div className="flex items-center gap-2 px-2 mb-4">
-            <div className="h-6 w-6 rounded-md bg-primary flex items-center justify-center">
-              <Bot className="h-4 w-4 text-primary-foreground" />
+      <div className="w-full max-w-3xl bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+        {/* Dashboard Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center">
+              <CreditCard className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-medium text-sm">{"Natalie (Assistant)"}</span>
+            <div>
+              <h4 className="text-sm font-medium">{"Billing & Claims"}</h4>
+              <p className="text-[11px] text-muted-foreground">{"Week 24 · 4 items need attention"}</p>
+            </div>
           </div>
-
-          <div className="text-xs font-medium text-muted-foreground px-2">
-            {"Today"}
-          </div>
-          <div className="bg-muted/50 rounded-lg p-2 text-xs text-foreground font-medium cursor-pointer">
-            {"Claim #CLM-892 Discrepancy"}
-          </div>
-          <div className="px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
-            {"Driver Onboarding - John Doe"}
-          </div>
-          <div className="px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
-            {"Maintenance Request #442"}
+          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono">
+            <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>
+            {"SYNCED"}
           </div>
         </div>
 
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col bg-background relative min-w-0">
-          {/* Header (Mobile only or minimal) */}
-          <div className="h-14 border-b border-border flex items-center justify-between px-4 md:px-6 md:hidden shrink-0">
-            <span className="font-medium text-sm">{"Claim #CLM-892"}</span>
+        {/* KPI Row */}
+        <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
+          <div className="px-5 py-3">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground block">{"Open Claims"}</span>
+            <span className="text-xl font-light">12</span>
           </div>
+          <div className="px-5 py-3">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground block">{"Flagged for Review"}</span>
+            <span className="text-xl font-light text-amber-600 dark:text-amber-400">3</span>
+          </div>
+          <div className="px-5 py-3">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground block">{"Recovered This Month"}</span>
+            <span className="text-xl font-light">$18.4k</span>
+          </div>
+        </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-            {/* AI Message 1 */}
-            <div className="flex gap-3 flex-row">
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <Sparkles className="h-4 w-4 text-foreground" />
-              </div>
-              <div className="rounded-lg p-3 max-w-[80%] text-sm bg-background">
-                <p>
-                    I have analyzed documents for <span className="font-medium">Invoice #4021</span>. Rates match contract, but I suggest reviewing the detention discrepancy.
-                </p>
-              </div>
-            </div>
-
-            {/* User Message */}
-            <div className="flex gap-3 flex-row-reverse">
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <User className="h-4 w-4" />
-              </div>
-              <div className="rounded-lg p-3 max-w-[80%] text-sm bg-primary text-primary-foreground dark:bg-zinc-800 dark:text-white">
-                <p className="mb-2">
-                  {"Where is the discrepancy coming from?"}
-                </p>
-                {/* Attachment Card */}
-                <div className="flex items-center gap-3 p-2 rounded-md bg-background/10 border border-background/20">
-                  <div className="h-8 w-8 rounded bg-background/20 flex items-center justify-center">
-                    <FileText className="h-4 w-4" />
+        {/* Claims Table */}
+        <div className="px-5 py-4">
+          <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 text-[10px] uppercase tracking-wider text-muted-foreground pb-2 border-b border-border/60">
+            <span>{"Claim"}</span>
+            <span className="text-right">{"Amount"}</span>
+            <span className="text-right">{"Status"}</span>
+          </div>
+          <div className="divide-y divide-border/60">
+            {claims.map((claim) => (
+              <div key={claim.id} className={`grid grid-cols-[1fr_auto_auto] gap-x-4 items-center py-2 text-xs ${claim.id === "CLM-892" ? "bg-amber-50/50 dark:bg-amber-900/10 -mx-2 px-2 rounded" : ""}`}>
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <span className="font-medium block truncate">{"#"}{claim.id}</span>
+                    <span className="text-[10px] text-muted-foreground">{claim.type}</span>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-medium truncate">
-                      Signed_POD.pdf
-                    </p>
-                    <p className="text-[10px] opacity-70">840 KB</p>
-                  </div>
-                  <CheckCircle className="h-3 w-3 text-white/70 ml-2 shrink-0" />
                 </div>
+                <span className="text-right font-mono text-xs">{claim.amount}</span>
+                <span className={`ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full ${claim.tone}`}>{claim.status}</span>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
 
-            {/* AI Message 2 */}
-            <div className="flex gap-3 flex-row">
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <Sparkles className="h-4 w-4 text-foreground" />
-              </div>
-              <div className="rounded-lg p-3 max-w-[80%] text-sm bg-background">
-                <p>
-                  {"The carrier logged 4 hours, but the facility geofence only shows 2 hours."}
-                </p>
-                <p className="mt-2">
-                    I have prepared the claim as <span className="text-green-600 font-medium bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded text-xs">Ready for Review</span>.
-                </p>
-              </div>
+        {/* Exception Detail */}
+        <div className="mx-4 mb-4 p-4 rounded-lg border border-amber-200 dark:border-amber-900/40 bg-amber-50/60 dark:bg-amber-900/10">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 shrink-0" />
+            <span className="text-xs font-medium text-amber-900 dark:text-amber-100">{"Detention Discrepancy — #CLM-892"}</span>
+            <span className="ml-auto text-[10px] font-medium text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded-full">{"Ready for Review"}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="p-2 rounded-md bg-background border border-border/60">
+              <span className="text-[10px] text-muted-foreground block">{"Carrier Log"}</span>
+              <span className="text-sm font-medium">{"4 hours"}</span>
+            </div>
+            <div className="p-2 rounded-md bg-background border border-border/60">
+              <span className="text-[10px] text-muted-foreground block">{"Geofence Record"}</span>
+              <span className="text-sm font-medium">{"2 hours"}</span>
             </div>
           </div>
-
-          {/* Input Area - Natalie Style */}
-          <div className="p-4 border-t bg-background/50">
-            <div className="max-w-3xl mx-auto w-full relative">
-              <div className="bg-background border border-primary/10 rounded-md min-h-20 p-3 text-sm text-muted-foreground relative">
-                {"Message Natalie..."}
-                <div className="absolute bottom-2 right-2 flex gap-2">
-                  <button className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground">
-                    <Paperclip className="h-4 w-4" />
-                  </button>
-                  <button className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground">
-                    <Mic className="h-4 w-4" />
-                  </button>
-                  <button className="h-8 w-8 flex items-center justify-center rounded-md bg-primary text-primary-foreground">
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-              <div className="text-center mt-2">
-                <p className="text-[10px] text-muted-foreground">
-                  {"Natalie can make mistakes. Please review critical info."}
-                </p>
-              </div>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] text-muted-foreground flex items-center gap-1.5 min-w-0">
+              <CheckCircle className="h-3 w-3 text-green-600 shrink-0" />
+              <span className="truncate">{"Signed_POD.pdf attached · Rate matches contract"}</span>
+            </span>
+            <div className="flex gap-2 shrink-0">
+              <span className="text-[11px] font-medium px-3 py-1.5 rounded-md border border-border bg-background">{"Review"}</span>
+              <span className="text-[11px] font-medium px-3 py-1.5 rounded-md bg-primary text-primary-foreground">{"Approve"}</span>
             </div>
           </div>
         </div>
@@ -268,7 +247,7 @@ export const ManufacturingMaterialFlowPreview = () => {
 
         {/* Automated Actions Log */}
         <div className="px-6 pb-6">
-           <h5 className="text-xs font-medium text-muted-foreground mb-3 text-center uppercase tracking-wider">{"Smart Resolution Steps"}</h5>
+           <h5 className="text-xs font-medium text-muted-foreground mb-3 text-center uppercase tracking-wider">{"Automated Resolution Steps"}</h5>
            <div className="space-y-3 relative">
               {/* Line */}
               <div className="absolute left-3.5 top-2 bottom-2 w-px bg-border"></div>
@@ -287,7 +266,7 @@ export const ManufacturingMaterialFlowPreview = () => {
                {/* Step 2 */}
               <div className="relative flex items-center gap-3">
                  <div className="h-7 w-7 rounded-full bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 flex items-center justify-center shrink-0 z-10">
-                    <Bot className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+                    <Workflow className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
                  </div>
                  <div className="text-sm">
                     <span className="font-medium">{"Reorder Suggested"}</span>
@@ -347,11 +326,11 @@ export const ConstructionSiteCoordinationPreview = () => {
                     <span className="text-[10px] text-muted-foreground mt-1">{"Foreman Mike"}</span>
                  </div>
 
-                 {/* Bot Response (Left) */}
+                 {/* Automated Response (Left) */}
                  <div className="flex flex-col items-start">
                     <div className="flex gap-2 items-end max-w-[90%]">
                         <div className="h-6 w-6 rounded-full bg-purple-600 flex items-center justify-center shrink-0">
-                           <Bot className="h-3 w-3 text-white" />
+                           <Workflow className="h-3 w-3 text-white" />
                         </div>
                         <div className="bg-white dark:bg-zinc-800 border border-border rounded-2xl rounded-tl-sm px-4 py-3 text-sm shadow-sm">
                            <p className="mb-2">

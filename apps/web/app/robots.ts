@@ -1,17 +1,13 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://enigmatic.works";
+  const baseUrl = "https://enigmaticpartners.com";
 
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-      },
-      {
-        userAgent: ["GPTBot", "ClaudeBot", "Bytespider", "ChatGPT-User"],
-        allow: ["/llms.txt", "/llms-full.txt"],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

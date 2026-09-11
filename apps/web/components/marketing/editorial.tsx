@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import styles from "./editorial.module.css";
 
 export { styles };
-export const contactHref = "mailto:collaborate@enigmatic.works?subject=Automation%20inquiry";
+export const contactHref = "mailto:collaborate@enigmaticpartners.com?subject=Automation%20inquiry";
 export const wideImageSizes = "(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) calc(100vw - 64px), (max-width: 1296px) calc(100vw - 96px), 1200px";
 export const halfImageSizes = "(max-width: 767px) calc(100vw - 40px), (max-width: 1296px) 45vw, 576px";
 

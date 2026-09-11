@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Handle, Position, NodeProps } from "reactflow";
 import { cn } from "@/lib/utils";
-import { Calculator, ArrowRightLeft, Plus, Sparkles, Zap } from "lucide-react";
+import { Calculator, ArrowRightLeft, Plus } from "lucide-react";
 
 // --- Card Node (Container) ---
 export const CardNode = memo(({ data, selected }: NodeProps) => {
@@ -157,64 +157,3 @@ export const ListBlockNode = memo(({ data }: NodeProps) => {
 
 ListBlockNode.displayName = "ListBlockNode";
 
-// --- AI Prompt Node ---
-export const AIPromptNode = memo(() => {
-  return (
-    <div className="relative w-full max-w-md">
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="bg-muted-foreground! w-2! h-2!"
-      />
-
-      <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden">
-        <div className="flex items-center justify-between border-b border-border p-3 bg-muted/30">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-purple-500" />
-            <span className="text-sm font-medium">Prompt completion</span>
-          </div>
-          <span className="text-[10px] font-medium bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-            AI
-          </span>
-        </div>
-        <div className="p-4">
-          <div className="text-sm text-muted-foreground mb-4">
-            Pull out key information from deal
-            <span className="inline-block w-2 h-2 rounded-full bg-blue-400 ml-2 animate-pulse"></span>
-          </div>
-
-          <div className="rounded-lg bg-muted/50 p-3 border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-5 w-5 rounded bg-indigo-600 flex items-center justify-center">
-                <Zap className="h-3 w-3 text-white" />
-              </div>
-              <span className="text-xs font-medium">Linear</span>
-              <span className="ml-auto text-[10px] bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded flex items-center gap-1">
-                <Zap className="h-2 w-2" /> Strong with Jane
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Linear is a B2B SaaS company with 11-50 employees and an estimated
-              ARR of $1-10 million
-              <span className="inline-block w-0.5 h-3 bg-blue-500 ml-0.5 align-middle animate-pulse"></span>
-            </p>
-          </div>
-
-          <div className="mt-3 flex justify-center">
-            <span className="text-xs text-blue-500 flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-full">
-              <Sparkles className="h-3 w-3" /> AI is typing...
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="bg-muted-foreground! w-2! h-2!"
-      />
-    </div>
-  );
-});
-
-AIPromptNode.displayName = "AIPromptNode";

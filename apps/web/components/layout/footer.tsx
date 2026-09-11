@@ -24,7 +24,7 @@ export function Footer() {
         </div>
         <div className="mt-10 flex flex-col justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
           <p>© {new Date().getFullYear()} Enigmatic Technologies. All rights reserved.</p>
-          <a className={`inline-flex items-center gap-2 ${focus}`} href="mailto:collaborate@enigmatic.works">collaborate@enigmatic.works<ArrowUpRight size={13} /></a>
+          <a className={`inline-flex items-center gap-2 ${focus}`} href="mailto:collaborate@enigmaticpartners.com">collaborate@enigmaticpartners.com<ArrowUpRight size={13} /></a>
         </div>
       </div>
     </footer>

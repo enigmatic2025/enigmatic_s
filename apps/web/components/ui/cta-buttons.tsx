@@ -18,7 +18,7 @@ export function CTAButtons({ className }: CTAButtonsProps) {
       )}
     >
       <Button className="w-full sm:w-auto hover:bg-black dark:hover:bg-white" asChild>
-        <Link href="mailto:collaborate@enigmatic.works?subject=Collaboration Inquiry">
+        <Link href="mailto:collaborate@enigmaticpartners.com?subject=Collaboration Inquiry">
           Collaborate
           <ArrowRight className="ml-2 w-4 h-4" />
         </Link>

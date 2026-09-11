@@ -17,15 +17,14 @@ import {
   Database,
   AlertTriangle,
   Webhook,
-  Bot,
   User,
   Calendar,
   Activity,
   Package,
   ClipboardList,
+  FileCheck2,
   Siren,
   HardHat,
-  Sparkles,
 } from "lucide-react";
 import { FlowBlockNode, ConditionNode } from "@/components/ui/flow-nodes";
 
@@ -132,10 +131,10 @@ export const DriverOnboardingFlow = () => {
       position: { x: 130, y: 280 },
       style: { width: 240 },
       data: {
-        label: "Background Review",
-        subLabel: "Natalie (Assistant)",
-        icon: Sparkles,
-        badge: "Assisted",
+        label: "Document Validation",
+        subLabel: "Contract & Safety Rules",
+        icon: FileCheck2,
+        badge: "Automated",
         iconBg:
           "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
       },
@@ -313,9 +312,9 @@ export const ManufacturingFlow = () => {
       style: { width: 240 },
       data: {
         label: "Anomaly Alert",
-        subLabel: "Natalie Suggested Review",
-        icon: Sparkles,
-        badge: "Smart Alert",
+        subLabel: "Threshold Exceeded",
+        icon: AlertTriangle,
+        badge: "Alert",
         iconBg:
           "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
       },
