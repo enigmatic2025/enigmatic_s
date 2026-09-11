@@ -5,7 +5,7 @@ import { PageHero, ContactBand, halfImageSizes, styles } from "@/components/mark
 
 const team = [
   { name: "Chris Schmitt", key: "chris", image: "/images/company/team/chris.jpg", linkedin: "https://www.linkedin.com/in/chris-schmitt-92086442/" },
-  { name: "Phi Tran", key: "phi", image: "/images/company/team/phi.jpg", linkedin: "https://www.linkedin.com/in/phi-tran-m-s/" },
+  { name: "Phi Tran", key: "phi", image: "/images/company/team/phitran.jpg", linkedin: "https://www.linkedin.com/in/phi-tran-m-s/" },
 ];
 
 export default async function AboutUsPage() {
