@@ -40,7 +40,7 @@
 
   /* Brand trio — the logo hues, deepened to pass 4.5:1 on light surfaces */
   --brand-blue: #4f65c7;
-  --brand-violet: #7c53d1;
+  --brand-violet: #9b7de6;
   --brand-pink: #a047b3;
 
   /* Status (diagrams and sample interfaces only) */
@@ -74,7 +74,7 @@
 
   /* Brand trio — sampled from the logo mark */
   --brand-blue: #6582ff;
-  --brand-violet: #9765ff;
+  --brand-violet: #b595ff;
   --brand-pink: #e465ff;
 
   --success: oklch(0.8 0.15 158);
