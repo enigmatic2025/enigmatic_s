@@ -10,6 +10,7 @@ export const contactLabel = "Discuss your process";
 export const navLinks = [
   { label: "Services", href: "/services" },
   { label: "Use Cases", href: "/use-cases" },
+  { label: "Portfolio", href: "/portfolio" },
   { label: "About Us", href: "/company/about-us" },
   { label: "Insights", href: "/insights" },
 ] as const;
