@@ -6,7 +6,6 @@ import {
   siNextdotjs,
   siNodedotjs,
   siOllama,
-  siPytorch,
   siReact,
   siSupabase,
   type SimpleIcon,
@@ -56,7 +55,6 @@ export const techStack: { key: string; icon: SimpleIcon; name: string }[] = [
   { key: "supabase", icon: siSupabase, name: "Supabase" },
   { key: "huggingface", icon: siHuggingface, name: "Hugging Face" },
   { key: "ollama", icon: siOllama, name: "Ollama" },
-  { key: "pytorch", icon: siPytorch, name: "PyTorch" },
   { key: "docker", icon: siDocker, name: "Docker" },
 ];
 
